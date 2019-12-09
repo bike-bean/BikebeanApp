@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">BikeBeanApp</string>
+    <string name="title_home">Status und SMS</string>
+    <string name="title_dashboard">Karte</string>
+    <string name="title_notifications">WLAN-Ortung</string>
+    <string name="button_get_location">Standort abfragen</string>
+</resources>
