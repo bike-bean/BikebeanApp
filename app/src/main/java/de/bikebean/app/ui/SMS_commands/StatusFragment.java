@@ -40,7 +40,6 @@ import java.util.Map;
 import de.bikebean.app.BuildConfig;
 import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
-import de.bikebean.app.SmsReceiver;
 
 public class StatusFragment extends Fragment implements View.OnClickListener {
 
