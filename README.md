@@ -10,11 +10,9 @@ Visit [bike-bean.de](https://bike-bean.de/) for more information about the proje
 - Estimation of the Battery Life
 - Wifi positioning
 
-<!--
-## Overview
+## Technical Overview
 
-(Overview image)
--->
+![](img/Overview.png)
 
 ## Where to get
 
