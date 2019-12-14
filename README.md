@@ -12,7 +12,13 @@ Visit [bike-bean.de](https://bike-bean.de/) for more information about the proje
 
 ## Technical Overview
 
+### Use Cases
+
 ![](img/Overview.png)
+
+### Views
+
+![](img/Overview_Views.png)
 
 ## Where to get
 
