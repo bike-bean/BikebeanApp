@@ -1,4 +1,4 @@
-package de.bikebean.app.ui.Map;
+package de.bikebean.app.ui.map;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -15,26 +15,23 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONException;
 
+import java.util.Objects;
+
 import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
-import de.bikebean.app.ui.SMS_commands.StatusFragment;
+import de.bikebean.app.ui.status.StatusFragment;
 
-public class MapFragment extends Fragment implements  OnMapReadyCallback {
+public class MapFragment extends Fragment implements OnMapReadyCallback {
 
 //    private DashboardViewModel dashboardViewModel;
 
-    MapView mMapView;
-    GoogleMap mGoogleMap;
-
-    public MapFragment() throws JSONException {
-    }
+    private MapView mMapView;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -42,7 +39,7 @@ public class MapFragment extends Fragment implements  OnMapReadyCallback {
     {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
-        mMapView = (MapView) v.findViewById(R.id.mapview1);
+        mMapView = v.findViewById(R.id.mapview1);
         mMapView.onCreate(savedInstanceState);
         mMapView.getMapAsync(this); //this is important
 
@@ -52,52 +49,44 @@ public class MapFragment extends Fragment implements  OnMapReadyCallback {
 
 
     public void onMapReady(GoogleMap googleMap) {
-        mGoogleMap = googleMap;
-        mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
 
         //TODO: Zurücksetzen auf Normal = einfach diesen Code entfernen
 //        mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
-
-        LatLng bikebean = new LatLng(52.401911,13.575564);
-
+        // LatLng bikebean = new LatLng(52.401911,13.575564);
 
         //TODO: auskommentieren, wenn API aktiviert wird
         LatLng current_position_bike = null;
         try {
-            current_position_bike = new LatLng(StatusFragment.getCurrent_position_Lat(), StatusFragment.getCurrent_position_Lng());
+            current_position_bike = new LatLng(
+                    StatusFragment.getCurrentPositionLat(),
+                    StatusFragment.getCurrentPositionLng());
         } catch (JSONException e) {
             e.printStackTrace();
             Log.d(MainActivity.TAG, "Error.Lat- & LngGetter: " + e.getMessage());
         }
 
-
-
-
-
 //        int zufallszahl1 = (int)((Math.random()) * 6 + 1);
 //        int zufallszahl2 = (int)((Math.random()) * 15 + 1);
 
-
-
         //Marker auf der Karte
-        mGoogleMap.addMarker(new MarkerOptions()
+        googleMap.addMarker(new MarkerOptions()
                 //TODO: Scharf stellen mit echten Koordinaten aus API
-                .position(current_position_bike)
+                .position(Objects.requireNonNull(current_position_bike))
 //                .position(bikebean)
                 //TODO: Name des Fahrrads einfügbar machen / Info für Snippet
                 .title("Mein Fahrrad")
-//                .snippet("∑ Funkmasten: "+StatusFragment.getNumber_of_celltowers()+",   ∑ WAP: "+StatusFragment.getNumber_of_wifiaccesspoints())
-                .snippet("Anzahl Funkmasten: "+StatusFragment.getNumber_of_celltowers()+", Anzahl WAPs: "+StatusFragment.getNumber_of_wifiaccesspoints())
+//                .snippet("∑ Funkmasten: "+StatusFragment.getNumberOfCelltowers()+",   ∑ WAP: "+StatusFragment.getNumberOfWifiaccesspoints())
+                .snippet("Anzahl Funkmasten: "+StatusFragment.getNumberOfCelltowers()+", Anzahl WAPs: "+StatusFragment.getNumberOfWifiaccesspoints())
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
 
         ));
 
         //TODO: Scharf stellen mit echten Koordinaten aus API
 //        Zoom am Anfang einstellen
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current_position_bike, 12));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current_position_bike, 12));
 //        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bikebean, 16));
-
 
 
 //        //TODO: Scharf stellen mit echten Koordinaten aus API
@@ -114,7 +103,7 @@ public class MapFragment extends Fragment implements  OnMapReadyCallback {
         try {
             circleOptions = new CircleOptions()
                     .center(current_position_bike)
-                    .radius(StatusFragment.getCurrent_position_Accuracy())
+                    .radius(StatusFragment.getCurrentPositionAccuracy())
                     .strokeWidth(10)
                     .strokeColor(Color.BLACK)
             ;
@@ -123,13 +112,8 @@ public class MapFragment extends Fragment implements  OnMapReadyCallback {
             Log.d(MainActivity.TAG, "Error.AccurancyGetter "+e.getMessage());
         }
 
-
-
-
-
-
         // Get back the mutable Circle
-        Circle circle = mGoogleMap.addCircle(circleOptions);
+        googleMap.addCircle(circleOptions);
     }
 
     @Override

@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/navigation_status"
-        android:name="de.bikebean.app.ui.SMS_commands.StatusFragment"
+        android:name="de.bikebean.app.ui.status.StatusFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_status" />
 
     <fragment
         android:id="@+id/navigation_map"
-        android:name="de.bikebean.app.ui.Map.MapFragment"
+        android:name="de.bikebean.app.ui.map.MapFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_map" />
 
     <fragment
         android:id="@+id/navigation_wifi"
-        android:name="de.bikebean.app.ui.Wifi_localization.Wifi_localizationFragment"
+        android:name="de.bikebean.app.ui.wifi_localization.Wifi_localizationFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_wifi_localization" />
 </navigation>

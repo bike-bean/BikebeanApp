@@ -1,18 +1,18 @@
-package de.bikebean.app.ui.Wifi_localization;
+package de.bikebean.app.ui.wifi_localization;
 
-        import android.os.Bundle;
-        import android.view.LayoutInflater;
-        import android.view.View;
-        import android.view.ViewGroup;
-        import android.widget.TextView;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
-        import androidx.annotation.Nullable;
-        import androidx.annotation.NonNull;
-        import androidx.fragment.app.Fragment;
-        import androidx.lifecycle.Observer;
-        import androidx.lifecycle.ViewModelProviders;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
-        import de.bikebean.app.R;
+import de.bikebean.app.R;
 
 public class Wifi_localizationFragment extends Fragment {
 
