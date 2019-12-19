@@ -10,9 +10,6 @@ android {
     defaultConfig {
 
         buildConfigField("String", "GOOGLEMAPSAPIKEY", keyProperties['GoogleMapsAPIKey'])
-        buildConfigField("String", "TELEFONNUMMER1", keyProperties['Telefonnummer1'])
-        buildConfigField("String", "TELEFONNUMMER2", keyProperties['Telefonnummer2'])
-
 
         applicationId "de.bikebean.app"
         minSdkVersion 19
