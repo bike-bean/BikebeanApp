@@ -31,5 +31,5 @@ Alternatively, you can download a prebuilt version (apk) in the
 
 ## References
 
-- [Bike Bean Instructions (PDF)](https://bike-bean.de/wp-content/uploads/2019/12/Anleitung_29_11_2019.pdf) -- SMS Commands etc.
+- [Bike Bean Instructions (PDF)](https://bike-bean.de/wp-content/uploads/2019/12/Anleitung_15_12_2019.pdf) -- SMS Commands etc.
 - [SMS Listener (StackOverflow)](https://stackoverflow.com/a/23732410) -- StackOverflow Solution for SMSListener by stefan.nsk
