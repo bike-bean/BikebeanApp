@@ -23,7 +23,6 @@
         <EditTextPreference
             app:defaultValue="Default value"
             app:key="edit_text_preference_1"
-            app:selectAllOnFocus="true"
             app:singleLine="true"
             app:title="Edit text preference"
             app:isPreferenceVisible="false" />
@@ -35,7 +34,6 @@
 
         <EditTextPreference
             app:key="warningNumber"
-            app:selectAllOnFocus="true"
             app:selectable="false"
             app:singleLine="true"
             app:title="@string/warning_number_title" />

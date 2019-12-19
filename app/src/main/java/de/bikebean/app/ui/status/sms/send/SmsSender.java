@@ -23,7 +23,7 @@ public class SmsSender extends StatusFragment {
         this.act = act;
     }
 
-    public void send(String Number_bike) {
+    public void send(String Number_bike, String message) {
         if (ContextCompat.checkSelfPermission(ctx, android.Manifest.permission.SEND_SMS)
                 != PackageManager.PERMISSION_GRANTED) {
 
@@ -47,7 +47,6 @@ public class SmsSender extends StatusFragment {
         } else {
             // Permission has already been granted
             SmsManager smsManager = SmsManager.getDefault();
-            String message = "wapp";
             smsManager.sendTextMessage(Number_bike, null, message, null, null);
             Toast.makeText(ctx, "SMS an " + Number_bike + " gesendet",
                     Toast.LENGTH_LONG).show();

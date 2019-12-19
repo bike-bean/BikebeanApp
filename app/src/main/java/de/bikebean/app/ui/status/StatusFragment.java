@@ -104,7 +104,7 @@ public class StatusFragment extends Fragment {
         buttonGetLocation.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Log.d(MainActivity.TAG, "Button gedrückt");
-                smsSender.send(numberBike);
+                smsSender.send(numberBike, "wapp");
             }
         });
 
