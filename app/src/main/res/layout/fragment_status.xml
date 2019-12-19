@@ -93,6 +93,59 @@
                     android:layout_height="match_parent">
 
                     <TextView
+                        android:id="@+id/statusText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="20dp"
+                        android:text="@string/status_text"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <Button
+                        android:id="@+id/button_get_status"
+                        android:layout_width="200dp"
+                        android:layout_height="60dp"
+                        android:padding="10dp"
+                        android:text="@string/button_get_status" />
+
+                    <TextView
+                        android:id="@+id/text_status_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/lastUpdatedText2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/last_updated" />
+
+                    <TextView
+                        android:id="@+id/datetimeText2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/datetime_default_text"
+                        android:textAlignment="textEnd" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
                         android:id="@+id/batteryText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -127,14 +180,14 @@
                     android:layout_height="match_parent">
 
                     <TextView
-                        android:id="@+id/lastUpdatedText2"
+                        android:id="@+id/lastUpdatedText3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/last_updated" />
 
                     <TextView
-                        android:id="@+id/datetimeText2"
+                        android:id="@+id/datetimeText3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"

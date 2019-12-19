@@ -4,10 +4,12 @@
     <string name="title_dashboard">Karte</string>
     <string name="title_notifications">WLAN-Ortung</string>
     <string name="button_get_location">Standort abfragen</string>
+    <string name="button_get_status">Status abfragen</string>
     <string name="last_updated">Letzte Aktualisierung:</string>
     <string name="status_heading">Bike Bean Status</string>
     <string name="settings_heading">Einstellungen</string>
     <string name="location_text">Standort</string>
+    <string name="status_text">Status</string>
     <string name="datetime_default_text">DD.MM.YY - HH:MM:SS</string>
     <string name="battery_text">Batterie</string>
     <string name="estimated_charge_text">Geschätzte Ladung:</string>

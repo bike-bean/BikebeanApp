@@ -50,9 +50,9 @@ public class StatusFragment extends Fragment {
     private Button buttonCreateSmsView;
     private Button buttonAdditionalSettings;
     private Button buttonGetLocation;
+    private Button buttonGetStatus;
     private TextView textOben;
-    //Todo: Button für Statusabfrage
-    // + Statusinformationen parsen und darstellen
+    //Todo: Statusinformationen parsen und darstellen
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState)
@@ -64,8 +64,9 @@ public class StatusFragment extends Fragment {
         // UI Elements
         textOben = root.findViewById(R.id.text_status);
         buttonAdditionalSettings = root.findViewById(R.id.button_additional_settings);
-        buttonGetLocation = root.findViewById(R.id.button_get_location);
         buttonCreateSmsView = root.findViewById(R.id.sms_button);
+        buttonGetStatus = root.findViewById(R.id.button_get_status);
+        buttonGetLocation = root.findViewById(R.id.button_get_location);
 
         statusViewModel.getText().observe(this, new Observer<String>() {
             @Override
@@ -105,6 +106,14 @@ public class StatusFragment extends Fragment {
             public void onClick(View v) {
                 Log.d(MainActivity.TAG, "Button gedrückt");
                 smsSender.send(numberBike, "wapp");
+            }
+        });
+
+        buttonGetStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(MainActivity.TAG, "Button gedrückt");
+                smsSender.send(numberBike, "status");
             }
         });
 
