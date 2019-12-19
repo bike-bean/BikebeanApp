@@ -1,4 +1,4 @@
-package de.bikebean.app.ui.SMS_commands;
+package de.bikebean.app.ui.status;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

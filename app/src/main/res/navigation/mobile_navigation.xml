@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_status"
-        android:name="de.bikebean.app.ui.SMS_commands.StatusFragment"
+        android:name="de.bikebean.app.ui.status.StatusFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_status" />
 

@@ -4,4 +4,33 @@
     <string name="title_dashboard">Karte</string>
     <string name="title_notifications">WLAN-Ortung</string>
     <string name="button_get_location">Standort abfragen</string>
+    <string name="last_updated">Letzte Aktualisierung:</string>
+    <string name="status_heading">Bike Bean Status</string>
+    <string name="settings_heading">Einstellungen</string>
+    <string name="location_text">Standort</string>
+    <string name="datetime_default_text">DD.MM.YY - HH:MM:SS</string>
+    <string name="battery_text">Batterie</string>
+    <string name="estimated_charge_text">Geschätzte Ladung:</string>
+
+    <string name="title_activity_sms">SMS Historie</string>
+    <string name="title_activity_settings">Einstellungen</string>
+
+    <!-- Preference Titles -->
+    <string name="general_header">Allgemein</string>
+    <string name="interval_header">Intervall</string>
+    <string name="wlan_header">Bike Bean WLAN</string>
+
+    <!-- General Preferences -->
+    <string name="number_title">Telefonnummer der Bike Bean</string>
+    <string name="warning_number_title">Nummer für Akkustands-Warnungen</string>
+
+    <!-- Intervall Preferences -->
+    <string name="interval_title">Intervall setzen</string>
+    <string name="interval_summary">Bike Bean wird nach der gesetzten Zeit neue Nachrichten abrufen.</string>
+
+    <!-- WLAN Preferences -->
+    <string name="wlan_title">WLAN Status</string>
+    <string name="wlan_summary_on">Bike Bean ist per WLAN auffindbar.
+        ACHTUNG: Die Batterielaufzeit der Bike Bean wird drastisch reduziert!</string>
+    <string name="wlan_summary_off">Bike Bean ist nicht per WLAN auffindbar.</string>
 </resources>

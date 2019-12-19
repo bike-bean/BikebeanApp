@@ -17,10 +17,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO: Set bikeBeanNumber in a better place than here!
-        // Maybe create a central config / settings repository.
-        SmsListener.setBikeBeanNumber("6505551212");
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 

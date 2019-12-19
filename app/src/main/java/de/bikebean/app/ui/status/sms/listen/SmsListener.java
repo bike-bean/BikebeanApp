@@ -1,11 +1,16 @@
-package de.bikebean.app;
+package de.bikebean.app.ui.status.sms.listen;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
 import android.util.Log;
+
+import androidx.preference.PreferenceManager;
+
+import de.bikebean.app.MainActivity;
 
 
 public class SmsListener extends BroadcastReceiver {
@@ -16,24 +21,19 @@ public class SmsListener extends BroadcastReceiver {
      if the SMS is coming from "our" bikebean
      */
 
-    // TODO: Put bikeBeanNumber in a better place than here!
-    // Maybe create a central config / settings repository.
-    private static String bikeBeanNumber;
-
-    public static void setBikeBeanNumber(String bikeBeanNumber) {
-        SmsListener.bikeBeanNumber = bikeBeanNumber;
-    }
-
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(MainActivity.TAG, "New SMS received...");
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        final String bikeBeanNumber = sharedPreferences.getString("number", "");
 
         if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION.equals(intent.getAction())) {
             for (SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
                 String messageBody = smsMessage.getMessageBody();
                 String sender = smsMessage.getOriginatingAddress();
 
-                if (sender != null && sender.equals(SmsListener.bikeBeanNumber))
+                if (sender != null && sender.equals(bikeBeanNumber))
                     Log.d(MainActivity.TAG, messageBody);
                     // TODO: Do some more stuff with the message here!
                 else if (sender != null)

@@ -28,7 +28,16 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:allowBackup">
+        <activity
+            android:name=".ui.status.settings.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.bikebean.app.MainActivity" />
+        </activity>
 
         <activity
             android:name=".MainActivity"
@@ -42,12 +51,21 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ui.status.sms.SmsActivity"
+            android:label="@string/title_activity_sms">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.bikebean.app.MainActivity" />
+        </activity>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
         <receiver
-            android:name=".SmsListener"
+            android:name=".ui.status.sms.listen.SmsListener"
             android:permission="android.permission.BROADCAST_SMS">
             <intent-filter android:priority="1000">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
