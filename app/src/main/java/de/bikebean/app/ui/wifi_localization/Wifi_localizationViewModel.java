@@ -1,4 +1,4 @@
-package de.bikebean.app.ui.Wifi_localization;
+package de.bikebean.app.ui.wifi_localization;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
