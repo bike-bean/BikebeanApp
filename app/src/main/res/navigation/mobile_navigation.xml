@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/navigation_map"
-        android:name="de.bikebean.app.ui.Map.MapFragment"
+        android:name="de.bikebean.app.ui.map.MapFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_map" />
 
