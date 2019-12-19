@@ -1,13 +1,9 @@
 package de.bikebean.app.ui.status.sms;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.database.MergeCursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,26 +21,26 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 
-import com.lifeofcoding.cacheutlislibrary.CacheUtils;
-
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Objects;
 
 import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
+import de.bikebean.app.Utils;
 
 public class SmsActivity extends AppCompatActivity {
 
     private static final int REQUEST_PERMISSION_KEY = 1;
 
-    private ArrayList<HashMap<String, String>> smsList = new ArrayList<>();
-    private ArrayList<HashMap<String, String>> tmpList = new ArrayList<>();
-    private LoadSms loadSmsTask;
-    private ListView listView;
+    private static ArrayList<HashMap<String, String>> tmpList = new ArrayList<>();
+    private static ArrayList<HashMap<String, String>> smsList = new ArrayList<>();
 
     private String address;
+
+    // Ui Elements
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +53,6 @@ public class SmsActivity extends AppCompatActivity {
         address = sharedPreferences.getString("number", "");
 
         listView = findViewById(R.id.listView);
-
-        CacheUtils.configureCache(this);
     }
 
     @Override
@@ -66,17 +60,16 @@ public class SmsActivity extends AppCompatActivity {
         super.onResume();
 
         String[] PERMISSIONS = {
-                Manifest.permission.READ_SMS,
-                Manifest.permission.SEND_SMS,
+                android.Manifest.permission.READ_SMS,
+                android.Manifest.permission.SEND_SMS,
                 Manifest.permission.RECEIVE_SMS
         };
 
-        if(!Utils.hasPermissions(this, PERMISSIONS)){
+        if(Utils.hasPermissions(this, PERMISSIONS)){
             ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_PERMISSION_KEY);
         } else {
             init();
-            loadSmsTask = new LoadSms();
-            loadSmsTask.execute();
+            new LoadSms(this).execute(address);
         }
     }
 
@@ -90,10 +83,21 @@ public class SmsActivity extends AppCompatActivity {
         } catch(Exception e) {
             Log.d(MainActivity.TAG, "SMS Cache file not found, creating it...");
         }
+
+        if(!tmpList.equals(smsList)) {
+            ChatAdapter adapter = new ChatAdapter(SmsActivity.this, address, smsList);
+            listView.setAdapter(adapter);
+        }
     }
 
-    @SuppressLint("StaticFieldLeak")
-    class LoadSms extends AsyncTask<String, Void, String> {
+    private static class LoadSms extends AsyncTask<String, Void, String> {
+
+        private WeakReference<SmsActivity> activityReference;
+
+        // only retain a weak reference to the activity
+        LoadSms(SmsActivity context) {
+            activityReference = new WeakReference<>(context);
+        }
 
         @Override
         protected void onPreExecute() {
@@ -102,62 +106,28 @@ public class SmsActivity extends AppCompatActivity {
         }
 
         protected String doInBackground(String... args) {
-            String xml = "";
-            String[] argList = { address };
+            SmsActivity act = activityReference.get();
+            String address = args[0];
 
-            try {
-                Cursor inbox = getContentResolver().query(
-                        Uri.parse("content://sms/inbox"), null,
-                        "address=?", argList,
-                        null, null);
-
-                Cursor sent = getContentResolver().query(
-                        Uri.parse("content://sms/sent"), null,
-                        "address=?", argList,
-                        null, null);
-
-                // Attaching inbox and sent sms
-                Cursor c = new MergeCursor(new Cursor[]{inbox,sent});
-
-                if (c.moveToFirst()) {
-                    for (int i = 0; i < c.getCount(); i++) {
-                        String phone = c.getString(c.getColumnIndexOrThrow("address"));
-                        String _id = c.getString(c.getColumnIndexOrThrow("_id"));
-                        String thread_id = c.getString(c.getColumnIndexOrThrow("thread_id"));
-                        String msg = c.getString(c.getColumnIndexOrThrow("body"));
-                        String type = c.getString(c.getColumnIndexOrThrow("type"));
-                        String timestamp = c.getString(c.getColumnIndexOrThrow("date"));
-
-                        smsList.add(Utils.mappingInbox(
-                                _id, thread_id, phone,
-                                msg, type, timestamp,
-                                Utils.convertToTime(timestamp)));
-                        c.moveToNext();
-                    }
-                }
-                c.close();
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            }
-
-            // Arranging sms by timestamp descending
-            Collections.sort(smsList, new Utils.MapComparator(Utils.KEY_TIMESTAMP, "asc"));
+            Utils.doReadSMS(address, act.getContentResolver(), smsList);
 
             // Updating cache data
             try {
-                Utils.createCachedFile (SmsActivity.this, smsList);
+                Utils.createCachedFile(act, smsList);
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            return xml;
+            return address;
         }
 
         @Override
-        protected void onPostExecute(String xml) {
+        protected void onPostExecute(String address) {
+            SmsActivity act = activityReference.get();
+
             if(!tmpList.equals(smsList)) {
-                ChatAdapter adapter = new ChatAdapter(SmsActivity.this, address, smsList);
-                listView.setAdapter(adapter);
+                ChatAdapter adapter = new ChatAdapter(act, address, smsList);
+                act.listView.setAdapter(adapter);
             }
         }
     }
@@ -172,8 +142,7 @@ public class SmsActivity extends AppCompatActivity {
         if (requestCode == REQUEST_PERMISSION_KEY) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 init();
-                loadSmsTask = new LoadSms();
-                loadSmsTask.execute();
+                new LoadSms(this).execute(address);
             } else {
                 Toast.makeText(SmsActivity.this, "You must accept permissions.", Toast.LENGTH_LONG).show();
             }
