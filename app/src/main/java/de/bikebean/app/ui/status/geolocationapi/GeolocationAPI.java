@@ -21,6 +21,7 @@ import de.bikebean.app.BuildConfig;
 import de.bikebean.app.MainActivity;
 import de.bikebean.app.ui.status.StatusFragment;
 import de.bikebean.app.ui.status.settings.SettingsActivity;
+import de.bikebean.app.ui.status.settings.UpdateSettings;
 
 public class GeolocationAPI {
 
@@ -37,7 +38,7 @@ public class GeolocationAPI {
     }
 
     //POST Request API #3
-    public void httpPOST(final String requestBody, final SettingsActivity s) {
+    public void httpPOST(final String requestBody, final UpdateSettings s) {
         JsonObjectRequest postRequest = new JsonObjectRequest(
                 Request.Method.POST, url, null,
                 new Response.Listener<JSONObject>() {
