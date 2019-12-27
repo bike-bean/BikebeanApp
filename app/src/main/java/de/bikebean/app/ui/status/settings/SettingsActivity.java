@@ -1,6 +1,8 @@
 package de.bikebean.app.ui.status.settings;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
@@ -10,7 +12,9 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
@@ -21,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 // import java.util.Map;
+import java.util.Objects;
 
 import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
@@ -46,6 +51,10 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
+
+        final SMSSendWarningDialogFragment smsSendWarningDialogFragment = new SMSSendWarningDialogFragment();
+        FragmentManager fragmentManager;
+
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
@@ -90,7 +99,16 @@ public class SettingsActivity extends AppCompatActivity {
                     }
                 });
             }
+
+
+            showDialog();
         }
+
+        private void showDialog() {
+            smsSendWarningDialogFragment.show(fragmentManager, "smswarning");
+        }
+    }
+
     public void updateBattery(Context ctx, int value) {
         if (settings == null) {
             settings = PreferenceManager.getDefaultSharedPreferences(ctx);
@@ -220,6 +238,24 @@ public class SettingsActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    public static class SMSSendWarningDialogFragment extends DialogFragment {
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the Builder class for convenient dialog construction
+            AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
+
+            builder.setMessage(R.string.sms_send_warning)
+                    .setPositiveButton(R.string.continue_send_sms, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                        }
+                    });
+
+            return builder.create();
+        }
+    }
 
     private static String getTimestamp() {
         return new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.GERMANY).format(Calendar.getInstance().getTime());
