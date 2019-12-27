@@ -21,13 +21,6 @@
         app:title="@string/general_header">
 
         <EditTextPreference
-            app:defaultValue="Default value"
-            app:key="edit_text_preference_1"
-            app:singleLine="true"
-            app:title="Edit text preference"
-            app:isPreferenceVisible="false" />
-
-        <EditTextPreference
             app:key="number"
             app:title="@string/number_title"
             app:useSimpleSummaryProvider="true" />
@@ -37,16 +30,28 @@
             app:selectable="false"
             app:singleLine="true"
             app:title="@string/warning_number_title" />
+
+        <EditTextPreference
+            app:key="warningNumberLastChange"
+            app:singleLine="true"
+            app:isPreferenceVisible="false" />
+
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/interval_header">
+    <PreferenceCategory
+        app:title="@string/interval_header">
 
         <ListPreference
             app:defaultValue="12"
-            app:entries="@array/intervall_entries"
-            app:entryValues="@array/intervall_values"
+            app:entries="@array/interval_entries"
+            app:entryValues="@array/interval_values"
             app:key="interval"
             app:title="@string/interval_title" />
+
+        <EditTextPreference
+            app:key="intervalLastChange"
+            app:singleLine="true"
+            app:isPreferenceVisible="false" />
 
     </PreferenceCategory>
 
@@ -61,6 +66,71 @@
             app:summaryOn="@string/wlan_summary_on"
             app:title="@string/wlan_title" />
 
+        <EditTextPreference
+            app:key="wifiLastChange"
+            app:singleLine="true"
+            app:isPreferenceVisible="false" />
+
     </PreferenceCategory>
 
+    <!-- TODO: Location erweitern mit Feldern -->
+    <EditTextPreference
+        app:key="location"
+        app:singleLine="true"
+        app:isPreferenceVisible="false" />
+
+    <EditTextPreference
+        app:key="locationLastChange"
+        app:singleLine="true"
+        app:isPreferenceVisible="false" />
+
+    <Preference
+        app:key="batteryStatus"
+        app:singleLine="true"
+        app:isPreferenceVisible="false" />
+
+    <EditTextPreference
+        app:key="batteryLastChange"
+        app:singleLine="true"
+        app:isPreferenceVisible="false" />
+
+    <EditTextPreference
+        app:key="wifiList"
+        app:singleLine="true"
+        app:isPreferenceVisible="false" />
+
+    <EditTextPreference
+        app:key="wifiListLastChange"
+        app:singleLine="true"
+        app:isPreferenceVisible="false" />
+
+    <Preference
+        app:key="numberWifiAccessPoints"
+        app:singleLine="true"
+        app:isPreferenceVisible="false" />
+
+    <EditTextPreference
+        app:key="numberWifiAccessPointsLastChange"
+        app:singleLine="true"
+        app:isPreferenceVisible="false" />
+
+    <Preference
+        app:key="numberCellTowers"
+        app:singleLine="true"
+        app:isPreferenceVisible="false" />
+
+    <EditTextPreference
+        app:key="numberCellTowersLastChange"
+        app:singleLine="true"
+        app:isPreferenceVisible="false" />
+
+    <Preference
+        app:key="lat"
+        app:singleLine="true"
+        app:isPreferenceVisible="false" />
+
+    <Preference
+        app:key="lng"
+        app:singleLine="true"
+        app:isPreferenceVisible="false" />
 </PreferenceScreen>

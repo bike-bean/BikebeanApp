@@ -11,6 +11,7 @@ import android.util.Log;
 import androidx.preference.PreferenceManager;
 
 import de.bikebean.app.MainActivity;
+import de.bikebean.app.ui.status.sms.parser.SmsParser;
 
 
 public class SmsListener extends BroadcastReceiver {
@@ -28,16 +29,24 @@ public class SmsListener extends BroadcastReceiver {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         final String bikeBeanNumber = sharedPreferences.getString("number", "");
 
+        final SmsParser smsParser = new SmsParser();
+
         if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION.equals(intent.getAction())) {
+            StringBuilder messageBody = new StringBuilder();
+
             for (SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
-                String messageBody = smsMessage.getMessageBody();
+                String messageBodyInner = smsMessage.getMessageBody();
                 String sender = smsMessage.getOriginatingAddress();
 
-                if (sender != null && sender.equals(bikeBeanNumber))
-                    Log.d(MainActivity.TAG, messageBody);
-                    // TODO: Do some more stuff with the message here!
-                else if (sender != null)
+                if (sender != null && sender.equals(bikeBeanNumber)) {
+                    messageBody.append(messageBodyInner);
+                } else if (sender != null)
                     Log.d(MainActivity.TAG, "Sender is not ours. (" + sender + ")");
+            }
+
+            if (!messageBody.toString().equals("")) {
+                Log.d(MainActivity.TAG, messageBody.toString());
+                smsParser.updateStatus(context, messageBody.toString());
             }
         }
     }

@@ -61,10 +61,66 @@
                         android:padding="10dp"
                         android:text="@string/button_get_location" />
 
-                    <TextView
-                        android:id="@+id/text_status"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" >
+
+                            <TextView
+                                android:id="@+id/textView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingStart="2dp"
+                                android:paddingEnd="20dp"
+                                android:text="@string/lat" />
+
+                            <TextView
+                                android:id="@+id/lat"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </TableRow>
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" >
+
+                            <TextView
+                                android:id="@+id/textView2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingStart="2dp"
+                                android:paddingEnd="10dp"
+                                android:text="@string/lng" />
+
+                            <TextView
+                                android:id="@+id/lng"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </TableRow>
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" >
+
+                            <TextView
+                                android:id="@+id/textView3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingStart="2dp"
+                                android:paddingEnd="10dp"
+                                android:text="@string/acc" />
+
+                            <TextView
+                                android:id="@+id/acc"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+                        </TableRow>
+
+                    </TableLayout>
+
                 </TableRow>
 
                 <TableRow
@@ -166,12 +222,16 @@
                         android:layout_height="wrap_content"
                         android:text="@string/estimated_charge_text" />
 
-                    <ImageView
-                        android:id="@+id/imageView"
+                    <TextView
+                        android:id="@+id/batteryStatusText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:contentDescription="@string/battery_text"
-                        app:srcCompat="@android:drawable/ic_lock_idle_low_battery" />
+                        android:drawableStart="@android:drawable/ic_lock_idle_low_battery"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp"
+                        android:text=""
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
                 </TableRow>
 

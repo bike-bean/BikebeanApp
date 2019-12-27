@@ -1,7 +1,6 @@
 package de.bikebean.app.ui.status.sms.send;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.telephony.SmsManager;

@@ -12,7 +12,7 @@
     <string name="status_text">Status</string>
     <string name="datetime_default_text">DD.MM.YY - HH:MM:SS</string>
     <string name="battery_text">Batterie</string>
-    <string name="estimated_charge_text">Geschätzte Ladung:</string>
+    <string name="estimated_charge_text">Ladezustand:</string>
 
     <string name="title_activity_sms">SMS Historie</string>
     <string name="title_activity_settings">Einstellungen</string>
@@ -35,4 +35,17 @@
     <string name="wlan_summary_on">Bike Bean ist per WLAN auffindbar.
         ACHTUNG: Die Batterielaufzeit der Bike Bean wird drastisch reduziert!</string>
     <string name="wlan_summary_off">Bike Bean ist nicht per WLAN auffindbar.</string>
+
+    <!-- Location Preferences -->
+    <string name="lat">Lat: </string>
+    <string name="lng">Lng: </string>
+    <string name="acc">+/-: </string>
+
+    <!-- Warning Strings -->
+    <string name="sms_send_warning">Achtung! Beim Ändern dieser Einstellungen
+        (mit Ausnahme der Bike Bean Telefonnummer) werden SMS an Bike Bean
+        gesendet um den Status zu übertragen. Dies kann Kosten des
+        Netzbetreibers verursachen!</string>
+    <string name="continue_send_sms">Verstanden!</string>
+    <string name="abort_send_sms">Abbrechen</string>
 </resources>
