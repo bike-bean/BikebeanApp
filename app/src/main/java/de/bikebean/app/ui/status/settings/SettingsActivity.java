@@ -15,11 +15,14 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
+import androidx.preference.SwitchPreference;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -62,7 +65,16 @@ public class SettingsActivity extends AppCompatActivity {
             EditTextPreference numberPreference = findPreference("number");
 
             EditTextPreference warningNumberPreference = findPreference("warningNumber");
+            final EditTextPreference warningNumberLastChange = findPreference("warningNumberLastChange");
+
+            SwitchPreference wifiSwitch = findPreference("wlan");
+            final EditTextPreference wifiLastChange = findPreference("wifiLastChange");
+
             ListPreference intervalPreference = findPreference("interval");
+            final EditTextPreference intervalLastChange = findPreference("intervalLastChange");
+
+            final FragmentActivity act = Objects.requireNonNull(getActivity());
+            fragmentManager = act.getSupportFragmentManager();
 
             if (intervalPreference != null) {
                 intervalPreference.setSummaryProvider(new Preference.SummaryProvider<ListPreference>() {
@@ -75,10 +87,26 @@ public class SettingsActivity extends AppCompatActivity {
                         return "Bike Bean wird alle " + value + "h neue Nachrichten prüfen.";
                     }
                 });
+
+                intervalPreference.setOnPreferenceChangeListener(
+                        new Preference.OnPreferenceChangeListener() {
+                    @Override
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+                        Log.d(MainActivity.TAG, "Setting " + preference.getKey() +
+                                " about to be changed to " + newValue);
+                        String timeStamp = SettingsActivity.getTimestamp();
+                        Log.d(MainActivity.TAG, "Date: " + timeStamp);
+                        if (intervalLastChange != null) {
+                            intervalLastChange.setText(timeStamp);
+                        }
+                        return true;
+                    }
+                });
             }
 
             if (warningNumberPreference != null) {
-                warningNumberPreference.setSummaryProvider(new Preference.SummaryProvider<EditTextPreference>() {
+                warningNumberPreference.setSummaryProvider(
+                        new Preference.SummaryProvider<EditTextPreference>() {
                     @Override
                     public CharSequence provideSummary(EditTextPreference preference) {
                         String text = preference.getText();
@@ -86,6 +114,21 @@ public class SettingsActivity extends AppCompatActivity {
                             return "Automatisch";
                         }
                         return "Automatisch (" + text + ")";
+                    }
+                });
+
+                warningNumberPreference.setOnPreferenceChangeListener(
+                        new Preference.OnPreferenceChangeListener() {
+                    @Override
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+                        Log.d(MainActivity.TAG, "Setting " + preference.getKey() +
+                                " about to be changed to " + newValue);
+                        String timeStamp = SettingsActivity.getTimestamp();
+                        Log.d(MainActivity.TAG, "Date: " + timeStamp);
+                        if (warningNumberLastChange != null) {
+                            warningNumberLastChange.setText(timeStamp);
+                        }
+                        return true;
                     }
                 });
             }
@@ -100,6 +143,22 @@ public class SettingsActivity extends AppCompatActivity {
                 });
             }
 
+            if (wifiSwitch != null) {
+                wifiSwitch.setOnPreferenceChangeListener(
+                        new Preference.OnPreferenceChangeListener() {
+                    @Override
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+                        Log.d(MainActivity.TAG, "Setting " + preference.getKey() +
+                                " about to be changed to " + newValue);
+                        String timeStamp = SettingsActivity.getTimestamp();
+                        Log.d(MainActivity.TAG, "Date: " + timeStamp);
+                        if (wifiLastChange != null) {
+                            wifiLastChange.setText(timeStamp);
+                        }
+                        return true;
+                    }
+                });
+            }
 
             showDialog();
         }
