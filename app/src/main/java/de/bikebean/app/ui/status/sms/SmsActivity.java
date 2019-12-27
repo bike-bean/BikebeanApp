@@ -109,7 +109,7 @@ public class SmsActivity extends AppCompatActivity {
             SmsActivity act = activityReference.get();
             String address = args[0];
 
-            Utils.doReadSMS(address, act.getContentResolver(), smsList);
+            Utils.doReadSMS(address, act, smsList);
 
             // Updating cache data
             try {
