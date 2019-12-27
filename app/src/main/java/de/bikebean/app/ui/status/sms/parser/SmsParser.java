@@ -65,6 +65,7 @@ public class SmsParser {
     }
 }
 
+
 class WifiAccessPoint {
     String macAddress;
     Integer signalStrength;
@@ -78,6 +79,7 @@ class CellTower {
     Integer cellId;
     Integer signalStrength;
 }
+
 
 class LocationAPIBody {
     ArrayList<CellTower> cellTowers;

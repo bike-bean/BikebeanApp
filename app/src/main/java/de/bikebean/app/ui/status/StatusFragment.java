@@ -51,41 +51,30 @@ public class StatusFragment extends Fragment {
     private Button buttonAdditionalSettings;
     private Button buttonGetLocation;
     private Button buttonGetStatus;
-    private TextView textOben;
-    //Todo: Statusinformationen parsen und darstellen
+    private TextView batteryStatusText;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState)
     {
-        // Veränderliche Textview: Status über die letzten abgefragten Standortdaten
-        StatusViewModel statusViewModel = ViewModelProviders.of(this).get(StatusViewModel.class);
         View root = inflater.inflate(R.layout.fragment_status, container, false);
 
         // UI Elements
-        textOben = root.findViewById(R.id.text_status);
+        batteryStatusText = root.findViewById(R.id.batteryStatusText);
         buttonAdditionalSettings = root.findViewById(R.id.button_additional_settings);
         buttonCreateSmsView = root.findViewById(R.id.sms_button);
         buttonGetStatus = root.findViewById(R.id.button_get_status);
         buttonGetLocation = root.findViewById(R.id.button_get_location);
 
-        statusViewModel.getText().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textOben.setText(s);
-            }
-        });
-
         return root;
     }
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         // Get Activity and Context
-        ctx = Objects.requireNonNull(getActivity()).getApplicationContext();
         act = Objects.requireNonNull(getActivity());
+        ctx = act.getApplicationContext();
 
         final SmsSender smsSender = new SmsSender(ctx, act);
         final SmsParser smsParser = new SmsParser();

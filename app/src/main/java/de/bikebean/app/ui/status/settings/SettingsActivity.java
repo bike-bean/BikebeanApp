@@ -12,7 +12,6 @@ import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-// import androidx.preference.SwitchPreference;
 
 import de.bikebean.app.R;
 
@@ -21,6 +20,7 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_settings);
         getSupportFragmentManager()
                 .beginTransaction()
@@ -37,8 +37,8 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
-            // SwitchPreference wlanSwitch = findPreference("wlan");
             EditTextPreference numberPreference = findPreference("number");
+
             EditTextPreference warningNumberPreference = findPreference("warningNumber");
             ListPreference intervalPreference = findPreference("interval");
 
@@ -71,11 +71,11 @@ public class SettingsActivity extends AppCompatActivity {
             if (numberPreference != null) {
                 numberPreference.setOnBindEditTextListener(
                         new EditTextPreference.OnBindEditTextListener() {
-                            @Override
-                            public void onBindEditText(@NonNull EditText editText) {
+                    @Override
+                    public void onBindEditText(@NonNull EditText editText) {
                                 editText.setInputType(InputType.TYPE_CLASS_PHONE);
-                            }
-                        });
+                    }
+                });
             }
         }
     }

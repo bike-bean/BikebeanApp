@@ -166,12 +166,16 @@
                         android:layout_height="wrap_content"
                         android:text="@string/estimated_charge_text" />
 
-                    <ImageView
-                        android:id="@+id/imageView"
+                    <TextView
+                        android:id="@+id/batteryStatusText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:contentDescription="@string/battery_text"
-                        app:srcCompat="@android:drawable/ic_lock_idle_low_battery" />
+                        android:drawableStart="@android:drawable/ic_lock_idle_low_battery"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp"
+                        android:text=""
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
                 </TableRow>
 

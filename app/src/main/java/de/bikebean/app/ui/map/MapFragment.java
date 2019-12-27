@@ -29,7 +29,7 @@ import de.bikebean.app.ui.status.StatusFragment;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
-//    private DashboardViewModel dashboardViewModel;
+    // private DashboardViewModel dashboardViewModel;
 
     private MapView mMapView;
 
@@ -45,7 +45,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         return v;
     }
-    
 
 
     public void onMapReady(GoogleMap googleMap) {
@@ -53,8 +52,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         //TODO: Zurücksetzen auf Normal = einfach diesen Code entfernen
 //        mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-
-        // LatLng bikebean = new LatLng(52.401911,13.575564);
 
         //TODO: auskommentieren, wenn API aktiviert wird
         LatLng current_position_bike = null;
@@ -67,17 +64,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             Log.d(MainActivity.TAG, "Error.Lat- & LngGetter: " + e.getMessage());
         }
 
-//        int zufallszahl1 = (int)((Math.random()) * 6 + 1);
-//        int zufallszahl2 = (int)((Math.random()) * 15 + 1);
-
         //Marker auf der Karte
         googleMap.addMarker(new MarkerOptions()
                 //TODO: Scharf stellen mit echten Koordinaten aus API
                 .position(Objects.requireNonNull(current_position_bike))
-//                .position(bikebean)
                 //TODO: Name des Fahrrads einfügbar machen / Info für Snippet
                 .title("Mein Fahrrad")
-//                .snippet("∑ Funkmasten: "+StatusFragment.getNumberOfCelltowers()+",   ∑ WAP: "+StatusFragment.getNumberOfWifiaccesspoints())
                 .snippet("Anzahl Funkmasten: "+StatusFragment.getNumberOfCelltowers()+", Anzahl WAPs: "+StatusFragment.getNumberOfWifiaccesspoints())
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
 
@@ -88,17 +80,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current_position_bike, 12));
 //        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bikebean, 16));
 
-
-//        //TODO: Scharf stellen mit echten Koordinaten aus API
-//        CircleOptions circleOptions = new CircleOptions()
-//                .center(bikebean)
-//                .radius(100)
-//                .strokeWidth(10)
-//                .strokeColor(Color.BLACK)
-//        ;
-
-
-                // Instantiates a new CircleOptions object and defines the center and radius
         CircleOptions circleOptions = null;
         try {
             circleOptions = new CircleOptions()
