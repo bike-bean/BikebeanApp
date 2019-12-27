@@ -10,6 +10,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
@@ -19,6 +20,7 @@ import java.util.Map;
 import de.bikebean.app.BuildConfig;
 import de.bikebean.app.MainActivity;
 import de.bikebean.app.ui.status.StatusFragment;
+import de.bikebean.app.ui.status.settings.SettingsActivity;
 
 public class GeolocationAPI {
 
@@ -27,20 +29,29 @@ public class GeolocationAPI {
     private static final String url = baseUrl + GoogleMapsAPIKey;
 
     private RequestQueue queue;
+    private Context ctx;
 
     public GeolocationAPI(Context ctx) {
+        this.ctx = ctx;
         queue = Volley.newRequestQueue(ctx);
     }
 
     //POST Request API #3
-    public void httpPOST(final String requestBody) {
+    public void httpPOST(final String requestBody, final SettingsActivity s) {
         JsonObjectRequest postRequest = new JsonObjectRequest(
                 Request.Method.POST, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d(MainActivity.TAG, "RESPONSE FROM SERVER: " + response.toString());
-                        StatusFragment.setCurrentPositionBikeCoordinates(response);
+                        try {
+                            JSONObject location = response.getJSONObject("location");
+                            s.updateLngLat(ctx, (float) location.getDouble("lat"),
+                                    (float) location.getDouble("lng"),
+                                    (float) response.getDouble("accuracy"));
+                        } catch (JSONException e) {
+                            assert true;
+                        }
                     }
                 },
                 new Response.ErrorListener() {
