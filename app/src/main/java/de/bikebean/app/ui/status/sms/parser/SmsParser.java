@@ -43,20 +43,11 @@ public class SmsParser {
 
         for (String s : stringArrayWapp) {
             // Länge des Substrings ist Unterscheidungskriterium
-            switch (s.length()) {
-                case 0: // Fall: Leerzeile (Substring = 0 Zeichen lang)
-                    break;
-                case 2: // Fall: Akkustand (Substring = 2 Zeichen lang)
-                    // StatusFragment.setBatteryStatus(Integer.parseInt(s));
-                    break;
-                case 14: // Fall: WifiAccessPoint ( Substring = 14 Zeichen lang)
-                    WifiAccessPoint wap = new WifiAccessPoint();
-                    wap.macAddress = s.substring(2);
-                    wap.signalStrength = Integer.parseInt("-" + s.substring(0, 2));
+            WifiAccessPoint wap = new WifiAccessPoint();
+            wap.macAddress = s.substring(2);
+            wap.signalStrength = Integer.parseInt("-" + s.substring(0, 2));
 
-                    locationAPIBody.wifiAccessPoints.add(wap);
-                    break;
-            }
+            locationAPIBody.wifiAccessPoints.add(wap);
         }
 
         return numberWifiAccessPoints;
