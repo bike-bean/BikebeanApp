@@ -95,6 +95,13 @@
                                 android:paddingEnd="10dp"
                                 android:text="@string/lng" />
 
+                            <ProgressBar
+                                android:id="@+id/progressBar"
+                                style="?android:attr/progressBarStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:visibility="gone" />
+
                             <TextView
                                 android:id="@+id/lng"
                                 android:layout_width="wrap_content"

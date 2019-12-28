@@ -1,7 +1,10 @@
 package de.bikebean.app.ui.status.sms.parser;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
+
+import androidx.preference.PreferenceManager;
 
 import com.google.gson.Gson;
 
@@ -42,12 +45,14 @@ public class SmsParser {
         int numberWifiAccessPoints = stringArrayWapp.length;
 
         for (String s : stringArrayWapp) {
-            // Länge des Substrings ist Unterscheidungskriterium
-            WifiAccessPoint wap = new WifiAccessPoint();
-            wap.macAddress = s.substring(2);
-            wap.signalStrength = Integer.parseInt("-" + s.substring(0, 2));
+            if (!s.equals("    ")) {
+                // Länge des Substrings ist Unterscheidungskriterium
+                WifiAccessPoint wap = new WifiAccessPoint();
+                wap.macAddress = s.substring(2);
+                wap.signalStrength = Integer.parseInt("-" + s.substring(0, 2));
 
-            locationAPIBody.wifiAccessPoints.add(wap);
+                locationAPIBody.wifiAccessPoints.add(wap);
+            }
         }
 
         return numberWifiAccessPoints;
@@ -59,16 +64,18 @@ public class SmsParser {
         int numberCellTowers = stringArrayWapp.length;
 
         for (String s : stringArrayWapp) {
-            String[] stringArray_gsm_towers = s.split(",");
-            CellTower c = new CellTower();
+            if (!s.equals("    ")) {
+                String[] stringArray_gsm_towers = s.split(",");
+                CellTower c = new CellTower();
 
-            c.mobileCountryCode = Integer.parseInt(stringArray_gsm_towers[0]);
-            c.mobileNetworkCode = Integer.parseInt(stringArray_gsm_towers[1]);
-            c.locationAreaCode = Integer.parseInt(stringArray_gsm_towers[2], 16);
-            c.cellId = Integer.parseInt(stringArray_gsm_towers[3], 16);
-            c.signalStrength = Integer.parseInt("-" + stringArray_gsm_towers[4]);
+                c.mobileCountryCode = Integer.parseInt(stringArray_gsm_towers[0]);
+                c.mobileNetworkCode = Integer.parseInt(stringArray_gsm_towers[1]);
+                c.locationAreaCode = Integer.parseInt(stringArray_gsm_towers[2], 16);
+                c.cellId = Integer.parseInt(stringArray_gsm_towers[3], 16);
+                c.signalStrength = Integer.parseInt("-" + stringArray_gsm_towers[4]);
 
-            locationAPIBody.cellTowers.add(c);
+                locationAPIBody.cellTowers.add(c);
+            }
         }
 
         return numberCellTowers;
@@ -123,56 +130,19 @@ public class SmsParser {
         }
     }
 
-    public void testParseSMS(Context ctx) {
-        GeolocationAPI geolocationAPI = new GeolocationAPI(ctx);
+    public void updateLatLng(Context ctx) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
         UpdateSettings updateSettings = new UpdateSettings();
+        GeolocationAPI geolocationAPI = new GeolocationAPI(ctx);
 
-        //  [rssi (signal strength) MINUS DAZUBASTELN (2 Ziffern),
-        //  Mac-Adresse DOPPELPUNKTE DAZUBASTELN (12 Ziffern/Buchstaben)]
-        //  Akkustand
-//        String wappBsp1 ="90788102493fd4\n" +
-//                "66946ab01746ac\n" +
-//                "801062e5b58896\n" +
-//                "715e904350f67d\n" +
-//                "\n" +
-//                "81\n";
+        String wappCellTowers = sharedPreferences.getString("location", "");
+        String wappWifi = sharedPreferences.getString("wifiList", "");
 
-        String wappBsp1 =
-                "87788102493fd4\n" +
-                        "66946ab01746ac\n" +
-                        "801062e5b58896\n" +
-                        "7058904350f67d\n" +
-                        "\n" +
-                        "80\n";
+        Log.d(MainActivity.TAG, "Updating Lat/Lng...");
+        Log.d(MainActivity.TAG, wappCellTowers);
+        Log.d(MainActivity.TAG, wappWifi);
 
-        //  [mcc (3 Ziffern), mnc (2 Ziffern),
-        //  lac (hexadezimal, string 1-4 (vielleicht5?!) Zeichen),
-        //  cellid (hexadezimal, string 1-4 Zeichen),
-        //  rxl (2 Ziffern)]
-        //  ZEILENUMBRUCH
-        //  ...
-        //  Akkustand 2-3 Ziffern
-        //  ...
-        //  ZEILENUMBRUCH
-//        String wappBsp2 = "262,03,55f1,a473,36\n" +
-//                "262,03,55f1,5653,20\n" +
-//                "262,03,55f1,4400,20\n" +
-//                "262,03,55f1,8b40,11\n" +
-//                "262,03,55f1,6bb2,10\n" +
-//                "262,03,55f1,0833,10\n" +
-//                "262,03,55f1,efb4,09\n";
-
-        String wappBsp2 = "262,03,55f1,a473,36\n" +
-                "262,03,55f1,5653,21\n" +
-                "262,03,55f1,4400,20\n" +
-                "262,03,55f1,8b40,12\n" +
-                "262,03,55f1,6bb2,10\n" +
-                "262,03,55f1,0833,09\n" +
-                "262,03,55f1,6bcd,03\n";
-
-        String requestBody = parseSMS(wappBsp1 + wappBsp2, updateSettings, ctx);
-
-        // POST Request API #2
+        String requestBody = parseSMS(wappWifi + "...." + wappCellTowers, updateSettings, ctx);
         geolocationAPI.httpPOST(requestBody, updateSettings);
     }
 }

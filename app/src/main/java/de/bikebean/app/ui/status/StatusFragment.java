@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,8 +21,10 @@ import java.util.Objects;
 
 import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
+import de.bikebean.app.Utils;
 import de.bikebean.app.ui.status.settings.SettingsActivity;
 import de.bikebean.app.ui.status.sms.SmsActivity;
+import de.bikebean.app.ui.status.sms.parser.SmsParser;
 import de.bikebean.app.ui.status.sms.send.SmsSender;
 
 public class StatusFragment extends Fragment {
@@ -42,6 +45,7 @@ public class StatusFragment extends Fragment {
     private TextView lngText;
     private TextView accText;
     private TextView locationLastChangedText;
+    private ProgressBar progressBar;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState)
@@ -52,6 +56,7 @@ public class StatusFragment extends Fragment {
         latText = root.findViewById(R.id.lat);
         lngText = root.findViewById(R.id.lng);
         accText = root.findViewById(R.id.acc);
+        progressBar = root.findViewById(R.id.progressBar);
         locationLastChangedText = root.findViewById(R.id.datetimeText1);
         statusLastChangedText = root.findViewById(R.id.datetimeText2);
         batteryLastChangedText = root.findViewById(R.id.datetimeText3);
@@ -112,14 +117,25 @@ public class StatusFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
         String batteryStatus = sharedPreferences.getInt("batteryStatus", 0) + " %";
+        SmsParser smsParser = new SmsParser();
 
         latText.setText(String.valueOf(sharedPreferences.getFloat("lat", (float) 0.0)));
         lngText.setText(String.valueOf(sharedPreferences.getFloat("lng", (float) 0.0)));
         accText.setText(String.valueOf(sharedPreferences.getFloat("acc", (float) 0.0)));
+        progressBar.setVisibility(ProgressBar.GONE);
         locationLastChangedText.setText(sharedPreferences.getString("locationLastChange", ""));
         statusLastChangedText.setText(sharedPreferences.getString("statusLastChange", ""));
         batteryLastChangedText.setText(sharedPreferences.getString("batteryLastChange", ""));
         batteryStatusText.setText(batteryStatus);
+
+        if (!Utils.isLatLngUpdated(ctx)) {
+            latText.setText("");
+            lngText.setText("");
+            accText.setText("");
+            progressBar.setVisibility(ProgressBar.VISIBLE);
+            smsParser.updateLatLng(ctx);
+        }
     }
 }

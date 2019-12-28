@@ -19,8 +19,6 @@ import java.util.Map;
 
 import de.bikebean.app.BuildConfig;
 import de.bikebean.app.MainActivity;
-import de.bikebean.app.ui.status.StatusFragment;
-import de.bikebean.app.ui.status.settings.SettingsActivity;
 import de.bikebean.app.ui.status.settings.UpdateSettings;
 
 public class GeolocationAPI {

@@ -123,6 +123,29 @@ public class Utils {
         }
     }
 
+    public static boolean isLatLngUpdated(Context ctx) {
+        final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.GERMANY);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+
+        String s1 = sharedPreferences.getString("locationLastChange", "01.01.1990 00:00:00");
+        String s2 = sharedPreferences.getString("latLngLastChange", "02.01.1990 00:00:00");
+        Log.d(MainActivity.TAG, "Location last update: " + s1);
+        Log.d(MainActivity.TAG, "Lat/Lng last update: " + s2);
+
+        try {
+            Date d_old = dateFormat.parse(s1);
+            Date d_new = dateFormat.parse(s2);
+            if (d_new != null) {
+                return d_new.compareTo(d_old) >= 0;
+            } else {
+                return false;
+            }
+        } catch(ParseException e) {
+            Log.d(MainActivity.TAG, "Parser Error!");
+            return false;
+        }
+    }
+
     public static boolean hasPermissions(Context context, String... permissions) {
         if (context != null && permissions != null) {
             for (String permission : permissions) {
