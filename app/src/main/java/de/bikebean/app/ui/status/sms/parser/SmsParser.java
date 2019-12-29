@@ -226,10 +226,10 @@ class SMSTypes {
     private Matcher intervalChangedMatcher;
 
     SMSTypes(String smsText) {
-        Pattern statusWarningNumberPattern = Pattern.compile("(Warningnumber: )([0-9]{8,})");
-        Pattern statusIntervalPattern = Pattern.compile("(Interval: )(1|2|4|8|12|24)( h)");
+        Pattern statusWarningNumberPattern = Pattern.compile("(Warningnumber: )([+0-9]{8,})");
+        Pattern statusIntervalPattern = Pattern.compile("(Interval: )(1|2|4|8|12|24)(h)");
         Pattern statusWifiStatusPattern = Pattern.compile("(Wifi Status: )(on|off)");
-        Pattern statusBatteryStatusPattern = Pattern.compile("(Battery Status: )([0-9]{1,3})( %)");
+        Pattern statusBatteryStatusPattern = Pattern.compile("(Battery Status: )([0-9]{1,3})(%)");
         Pattern warningNumberPattern = Pattern.compile(
                 "(Warningnumber has been changed to )([0-9]{8,})"
         );
@@ -335,19 +335,15 @@ class SMSTypes {
     }
 
     int getBattery() {
-        int count = 0;
-        StringBuilder result = new StringBuilder();
+        String result = "";
         batteryMatcher.reset();
 
         while (batteryMatcher.find()) {
-            count++;
-            result.append(batteryMatcher.group());
-            if (count > 1) {
-                throw new RuntimeException("There should only be one battery status per message.");
-            }
+            // use the last entry that matches battery specs
+            result = batteryMatcher.group();
         }
 
-        return Integer.parseInt(result.toString());
+        return Integer.parseInt(result);
     }
 
     String getInterval() {
