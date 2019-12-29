@@ -116,8 +116,12 @@ public class Utils {
     private static boolean isNewer(Context ctx, Date d_new) {
         final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.GERMANY);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+        final String defaultDate = "01.01.1990 00:00:00";
 
-        String s = sharedPreferences.getString("batteryLastChange", "01.01.1990 00:00:00");
+        String s = sharedPreferences.getString("batteryLastChange", defaultDate);
+        if (s.isEmpty())
+            s = defaultDate;
+
         Log.d(MainActivity.TAG, "DB Entry is from: " + s);
 
         try {

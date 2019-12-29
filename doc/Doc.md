@@ -37,10 +37,10 @@ To test the SMS API, use the following strings:
 
 | SMS Befehl    | Text |
 | ------------- | ------------------------------------ |
-| Pos           | 262,03,55f1,a473,36<br>262,03,55f1,5653,21<br>262,03,55f1,4400,20<br>262,03,55f1,8b40,12<br>262,03,55f1,6bb2,10<br>262,03,55f1,0833,09<br>262,03,55f1,6bcd,03<br>.............<br>Battery Status: 30 % |
-| Status        | Warningnumber: 015112345678<br>Interval: 12 h<br>Wifi Status: on<br>Battery Status: 90 % |
-| Wifi on       | Fancy Wifi SSID,30<br>Another Wifi SSID,60<br>Wifi is on!<br>Battery Status: 5 % |
-| Wifi off      | Wifi Off<br>Battery Status: 100 % |
-| Warningnumber | Warningnumber has been changed to 0179987654321<br>Battery Status: 15 % |
+| Pos           | 262,03,55f1,a473,36<br>262,03,55f1,5653,21<br>262,03,55f1,4400,20<br>262,03,55f1,8b40,12<br>262,03,55f1,6bb2,10<br>262,03,55f1,0833,09<br>262,03,55f1,6bcd,03<br>.............<br>Battery Status: 30% |
+| Status        | Warningnumber: 015112345678<br>Interval: 12h<br>Wifi Status: on<br>Battery Status: 90% |
+| Wifi on       | Fancy Wifi SSID,30<br>Another Wifi SSID,60<br>Wifi is on!<br>Battery Status: 5% |
+| Wifi off      | Wifi Off<br>Battery Status: 100% |
+| Warningnumber | Warningnumber has been changed to 0179987654321<br>Battery Status: 15% |
 | Wapp          | 301f2e3d4c5b6a<br>45798897a6b5c4<br>87788102493fd4<br>..............<br>80<br>262,03,55f1,a473,36<br>262,03,55f1,5653,21<br>262,03,55f1,4400,20<br>262,03,55f1,8b40,12<br>262,03,55f1,6bb2,10<br>262,03,55f1,0833,09<br>262,03,55f1,6bcd,03<br>............. |
-| Int \<x\>     | GSM will be switched on every 12 hours.<br>Battery Status: 64 % |
+| Int \<x\>     | GSM will be switched on every 12 hours.<br>Battery Status: 64% |
