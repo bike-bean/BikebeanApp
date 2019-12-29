@@ -1,13 +1,17 @@
 package de.bikebean.app;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.MergeCursor;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
+import androidx.preference.PreferenceManager;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -15,6 +19,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +27,9 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Objects;
+
+import de.bikebean.app.ui.status.sms.parser.SmsParser;
 
 public class Utils {
 
@@ -32,9 +40,12 @@ public class Utils {
 
     public static void doReadSMS(
             String address,
-            ContentResolver contentResolver,
+            Activity act,
             ArrayList<HashMap<String, String>> smsList) {
-        String[] argList = { address };
+        String[] argList = {address};
+        Context ctx = act.getApplicationContext();
+        ContentResolver contentResolver = act.getContentResolver();
+        SmsParser smsParser = new SmsParser();
 
         try {
             Cursor inbox = contentResolver.query(
@@ -48,7 +59,7 @@ public class Utils {
                     null, null);
 
             // Attaching inbox and sent sms
-            Cursor c = new MergeCursor(new Cursor[]{inbox,sent});
+            Cursor c = new MergeCursor(new Cursor[]{inbox, sent});
 
             if (c.moveToFirst()) {
                 for (int i = 0; i < c.getCount(); i++) {
@@ -71,8 +82,76 @@ public class Utils {
             e.printStackTrace();
         }
 
-        // Arranging sms by timestamp descending
         Collections.sort(smsList, new MapComparator(KEY_TIMESTAMP, "asc"));
+
+        // Get latest SMS and check if latest update is newer
+        if (!smsList.isEmpty()) {
+            HashMap<String, String> item;
+
+            for (int i = 1; ;i++) {
+                item = smsList.get(smsList.size() - i);
+                if (Objects.equals(item.get("type"), "1"))
+                    break;
+            }
+
+            Date date = new Date(Long.parseLong(Objects.requireNonNull(item.get("timestamp"))));
+            DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.GERMANY);
+            Log.d(MainActivity.TAG, "SMS is from " + formatter.format(date));
+
+            if (isNewer(ctx, date)) {
+                Log.d(MainActivity.TAG, "SMS is newer than latest update! Parsing SMS...");
+                smsParser.updateStatus(ctx, item.get("msg"));
+            } else {
+                Log.d(MainActivity.TAG, "SMS is older than latest update.");
+            }
+        }
+    }
+
+    private static boolean isNewer(Context ctx, Date d_new) {
+        final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.GERMANY);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+
+        String s = sharedPreferences.getString("batteryLastChange", "01.01.1990 00:00:00");
+        Log.d(MainActivity.TAG, "DB Entry is from: " + s);
+
+        try {
+            Date d_old = dateFormat.parse(s);
+            return d_new.compareTo(d_old) >= 0;
+        } catch(ParseException e) {
+            Log.d(MainActivity.TAG, "Parser Error!");
+            return true;
+        }
+    }
+
+    public static boolean isLatLngUpdated(Context ctx) {
+        final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.GERMANY);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+
+        String s1 = sharedPreferences.getString("locationLastChange", "01.01.1990 00:00:00");
+        String s2 = sharedPreferences.getString("latLngLastChange", "02.01.1990 00:00:00");
+        Log.d(MainActivity.TAG, "Location last update: " + s1);
+        Log.d(MainActivity.TAG, "Lat/Lng last update: " + s2);
+
+        try {
+            Date d_old = dateFormat.parse(s1);
+            Date d_new = dateFormat.parse(s2);
+            if (d_new != null) {
+                return d_new.compareTo(d_old) >= 0;
+            } else {
+                return false;
+            }
+        } catch(ParseException e) {
+            Log.d(MainActivity.TAG, "Parser Error!");
+            return false;
+        }
+    }
+
+    public static boolean isWarningNumberSet(Context ctx) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+        String w = sharedPreferences.getString("warningNumber", "");
+        boolean b = sharedPreferences.getBoolean("askedForWarningNumber", true);
+
+        return !w.isEmpty() || b;
     }
 
     public static boolean hasPermissions(Context context, String... permissions) {

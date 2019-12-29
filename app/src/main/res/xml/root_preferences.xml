@@ -73,7 +73,6 @@
 
     </PreferenceCategory>
 
-    <!-- TODO: Location erweitern mit Feldern -->
     <EditTextPreference
         app:key="location"
         app:singleLine="true"

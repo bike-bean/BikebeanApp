@@ -15,6 +15,10 @@
 
 ![](img/UC_Read_Settings.png)
 
+### Change Settings
+
+![](img/UC_Change_Settings.png)
+
 ## SMS API
 
 | SMS Befehl    | Antwort                              | Beschreibung | Umgesetzt? |
