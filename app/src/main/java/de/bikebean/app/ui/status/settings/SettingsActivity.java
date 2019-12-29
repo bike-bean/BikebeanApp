@@ -66,6 +66,8 @@ public class SettingsActivity extends AppCompatActivity {
             ListPreference intervalPreference = findPreference("interval");
             final EditTextPreference intervalLastChange = findPreference("intervalLastChange");
 
+            EditTextPreference number = findPreference("number");
+
             final FragmentActivity act = Objects.requireNonNull(getActivity());
             fragmentManager = act.getSupportFragmentManager();
             final Context ctx = act.getApplicationContext();
@@ -125,6 +127,14 @@ public class SettingsActivity extends AppCompatActivity {
                                 editText.setInputType(InputType.TYPE_CLASS_PHONE);
                             }
                         });
+                numberPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    @Override
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+                        UpdateSettings updateSettings = new UpdateSettings();
+                        updateSettings.resetAll(ctx);
+                        return true;
+                    }
+                });
             }
 
             if (wifiSwitch != null) {
