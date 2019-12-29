@@ -1,12 +1,12 @@
 <resources>
     <!-- Reply Preference -->
     <string-array name="interval_entries">
-        <item>1h</item>
-        <item>2h</item>
-        <item>4h</item>
-        <item>8h</item>
-        <item>12h</item>
-        <item>24h</item>
+        <item>1h (Akkulaufzeit ca. 175 Tage)</item>
+        <item>2h (Akkulaufzeit ca. 260 Tage)</item>
+        <item>4h (Akkulaufzeit ca. 346 Tage)</item>
+        <item>8h (Akkulaufzeit ca. 415 Tage)</item>
+        <item>12h (Akklaufzeit ca. 444 Tage)</item>
+        <item>24h (Akkulaufzeit ca. 477 Tage)</item>
     </string-array>
 
     <string-array name="interval_values">

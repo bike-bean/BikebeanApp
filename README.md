@@ -23,6 +23,18 @@ See [Design Doc](doc/Doc.md).
 Alternatively, you can download a prebuilt version (apk) in the
 [release](https://github.com/Ludwigmair1986/BikebeanApp/releases) section.
 
+## Todos
+
+- Internationalization
+  - Translation to different languages
+  - Setting for changing the language
+- Add capability to add more than one bike bean number
+- Add initial configuration process
+- Make interpolation for estimating the battery duration
+- Add some buttons (donation, contact, settings?)
+- revisit UI (make it more pretty)
+- Add wifi localization feature
+
 ## References
 
 - [Bike Bean Instructions (PDF)](https://bike-bean.de/wp-content/uploads/2019/12/Anleitung_15_12_2019.pdf) -- SMS Commands etc.

@@ -50,6 +50,7 @@ public class SmsParser {
                 WifiAccessPoint wap = new WifiAccessPoint();
                 wap.macAddress = s.substring(2);
                 wap.signalStrength = Integer.parseInt("-" + s.substring(0, 2));
+                wap.toMacAddress();
 
                 locationAPIBody.wifiAccessPoints.add(wap);
             }
@@ -151,6 +152,24 @@ public class SmsParser {
 class WifiAccessPoint {
     String macAddress;
     Integer signalStrength;
+
+    void toMacAddress() {
+        String str = macAddress;
+        StringBuilder tmp = new StringBuilder();
+        final int divisor = 2;
+
+        while(str.length() > 0) {
+            String nextChunk = str.substring(0, divisor);
+            tmp.append(nextChunk);
+            if (str.length() > 2) {
+                tmp.append(":");
+            }
+
+            str = str.substring(divisor);
+        }
+
+        macAddress = tmp.toString();
+    }
 }
 
 

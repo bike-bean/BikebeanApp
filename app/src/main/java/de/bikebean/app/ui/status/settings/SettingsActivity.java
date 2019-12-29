@@ -8,6 +8,7 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -127,12 +128,20 @@ public class SettingsActivity extends AppCompatActivity {
                                 editText.setInputType(InputType.TYPE_CLASS_PHONE);
                             }
                         });
+                numberPreference.setDialogMessage("Bitte mit Ländercode (z.B. +49 für Deutschland) eingeben");
                 numberPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                     @Override
                     public boolean onPreferenceChange(Preference preference, Object newValue) {
                         UpdateSettings updateSettings = new UpdateSettings();
                         updateSettings.resetAll(ctx);
-                        return true;
+
+                        if (!newValue.toString().substring(0, 1).equals("+")) {
+                            Toast.makeText(ctx, "Bitte mit Ländercode (+49) eingeben!",
+                                    Toast.LENGTH_LONG).show();
+                            return false;
+                        }
+                        else
+                            return true;
                     }
                 });
             }
