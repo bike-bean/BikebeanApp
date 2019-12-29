@@ -89,20 +89,26 @@ public class Utils {
             HashMap<String, String> item;
 
             for (int i = 1; ;i++) {
+                if (i > smsList.size()) {
+                    item = null;
+                    break;
+                }
                 item = smsList.get(smsList.size() - i);
                 if (Objects.equals(item.get("type"), "1"))
                     break;
             }
 
-            Date date = new Date(Long.parseLong(Objects.requireNonNull(item.get("timestamp"))));
-            DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.GERMANY);
-            Log.d(MainActivity.TAG, "SMS is from " + formatter.format(date));
+            if (item != null) {
+                Date date = new Date(Long.parseLong(Objects.requireNonNull(item.get("timestamp"))));
+                DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.GERMANY);
+                Log.d(MainActivity.TAG, "SMS is from " + formatter.format(date));
 
-            if (isNewer(ctx, date)) {
-                Log.d(MainActivity.TAG, "SMS is newer than latest update! Parsing SMS...");
-                smsParser.updateStatus(ctx, item.get("msg"));
-            } else {
-                Log.d(MainActivity.TAG, "SMS is older than latest update.");
+                if (isNewer(ctx, date)) {
+                    Log.d(MainActivity.TAG, "SMS is newer than latest update! Parsing SMS...");
+                    smsParser.updateStatus(ctx, item.get("msg"));
+                } else {
+                    Log.d(MainActivity.TAG, "SMS is older than latest update.");
+                }
             }
         }
     }
@@ -126,9 +132,16 @@ public class Utils {
     public static boolean isLatLngUpdated(Context ctx) {
         final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.GERMANY);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+        String defaultDate1 = "01.01.1990 00:00:00";
+        String defaultDate2 = "02.01.1990 00:00:00";
 
-        String s1 = sharedPreferences.getString("locationLastChange", "01.01.1990 00:00:00");
-        String s2 = sharedPreferences.getString("latLngLastChange", "02.01.1990 00:00:00");
+        String s1 = sharedPreferences.getString("locationLastChange", defaultDate1);
+        String s2 = sharedPreferences.getString("latLngLastChange", defaultDate2);
+        if (s1.isEmpty())
+            s1 = defaultDate1;
+        if (s2.isEmpty())
+            s2 = defaultDate2;
+
         Log.d(MainActivity.TAG, "Location last update: " + s1);
         Log.d(MainActivity.TAG, "Lat/Lng last update: " + s2);
 

@@ -23,6 +23,11 @@ public class SmsSender extends StatusFragment {
     }
 
     public void send(String Number_bike, String message) {
+        if (Number_bike.isEmpty()) {
+            Toast.makeText(ctx, "Keine Nummer gespeichert!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         if (ContextCompat.checkSelfPermission(ctx, android.Manifest.permission.SEND_SMS)
                 != PackageManager.PERMISSION_GRANTED) {
 
