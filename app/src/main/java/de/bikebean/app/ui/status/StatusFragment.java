@@ -32,6 +32,7 @@ public class StatusFragment extends Fragment {
     protected Context ctx;
     protected FragmentActivity act;
     private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     // Ui Elements
     private Button buttonCreateSmsView;
@@ -120,6 +121,8 @@ public class StatusFragment extends Fragment {
 
         String batteryStatus = sharedPreferences.getInt("batteryStatus", 0) + " %";
         SmsParser smsParser = new SmsParser();
+        SmsSender smsSender = new SmsSender(ctx, act);
+        String numberBike = sharedPreferences.getString("number", "");
 
         latText.setText(String.valueOf(sharedPreferences.getFloat("lat", (float) 0.0)));
         lngText.setText(String.valueOf(sharedPreferences.getFloat("lng", (float) 0.0)));
@@ -136,6 +139,17 @@ public class StatusFragment extends Fragment {
             accText.setText("");
             progressBar.setVisibility(ProgressBar.VISIBLE);
             smsParser.updateLatLng(ctx);
+        }
+
+        if (!Utils.isWarningNumberSet(ctx)) {
+            Log.d(MainActivity.TAG, "Warningnumber is not set!");
+            editor = sharedPreferences.edit();
+            editor.putBoolean("askedForWarningNumber", true);
+            editor.apply();
+
+            smsSender.send(numberBike, "Warningnumber");
+        } else {
+            Log.d(MainActivity.TAG, "Warningnumber is orderly set.");
         }
     }
 }

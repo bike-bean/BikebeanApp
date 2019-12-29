@@ -146,6 +146,14 @@ public class Utils {
         }
     }
 
+    public static boolean isWarningNumberSet(Context ctx) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+        String w = sharedPreferences.getString("warningNumber", "");
+        boolean b = sharedPreferences.getBoolean("askedForWarningNumber", true);
+
+        return !w.isEmpty() || b;
+    }
+
     public static boolean hasPermissions(Context context, String... permissions) {
         if (context != null && permissions != null) {
             for (String permission : permissions) {

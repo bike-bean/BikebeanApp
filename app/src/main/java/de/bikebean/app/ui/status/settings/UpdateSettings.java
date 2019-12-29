@@ -147,6 +147,49 @@ public class UpdateSettings {
         editor.apply();
     }
 
+    void resetAll(Context ctx) {
+        if (settings == null) {
+            settings = PreferenceManager.getDefaultSharedPreferences(ctx);
+        }
+
+        editor = settings.edit();
+
+        editor.putInt("batteryStatus", 0);
+        editor.putString("interval", "");
+        editor.putString("warningNumber", "");
+        editor.putBoolean("wlan", false);
+        editor.putString("location", "");
+
+        editor.putString("wifiList", "");
+        editor.putInt("numberCellTowers", 0);
+        editor.putInt("numberWifiAccessPoints", 0);
+        editor.putFloat("lat", (float) 0.0);
+        editor.putFloat("lng", (float) 0.0);
+
+        editor.putFloat("acc", (float) 0.0);
+        editor.putString("latLngLastChange", "");
+        editor.putBoolean("askedForWarningNumber", false);
+
+
+        editor.putString("batteryLastChange", "");
+        editor.putString("statusLastChange", "");
+        editor.putString("intervalLastChange", "");
+        editor.putString("statusLastChange", "");
+        editor.putString("warningNumberLastChange", "");
+
+        editor.putString("statusLastChange", "");
+        editor.putString("wifiLastChange", "");
+        editor.putString("statusLastChange", "");
+        editor.putString("locationLastChange", "");
+        editor.putString("wifiListLastChange", "");
+
+        editor.putString("numberCellTowersLastChange", "");
+        editor.putString("numberWifiAccessPointsLastChange", "");
+
+        // Commit the edits!
+        editor.apply();
+    }
+
     static String getTimestamp() {
         return new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.GERMANY).format(Calendar.getInstance().getTime());
     }

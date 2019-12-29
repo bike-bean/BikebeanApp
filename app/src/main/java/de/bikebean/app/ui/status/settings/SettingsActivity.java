@@ -1,6 +1,7 @@
 package de.bikebean.app.ui.status.settings;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.InputType;
@@ -19,12 +20,14 @@ import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreference;
 
 import java.util.Objects;
 
 import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
+import de.bikebean.app.ui.status.sms.send.SmsSender;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -65,6 +68,10 @@ public class SettingsActivity extends AppCompatActivity {
 
             final FragmentActivity act = Objects.requireNonNull(getActivity());
             fragmentManager = act.getSupportFragmentManager();
+            final Context ctx = act.getApplicationContext();
+
+            final String numberBike = Objects.requireNonNull(number).getText();
+            final SmsSender smsSender = new SmsSender(ctx, act);
 
             if (intervalPreference != null) {
                 intervalPreference.setSummaryProvider(new Preference.SummaryProvider<ListPreference>() {
@@ -89,6 +96,8 @@ public class SettingsActivity extends AppCompatActivity {
                                 if (intervalLastChange != null) {
                                     intervalLastChange.setText(timeStamp);
                                 }
+
+                                smsSender.send(numberBike, "Int " + newValue);
                                 return true;
                             }
                         });
@@ -104,21 +113,6 @@ public class SettingsActivity extends AppCompatActivity {
                                     return "Automatisch";
                                 }
                                 return "Automatisch (" + text + ")";
-                            }
-                        });
-
-                warningNumberPreference.setOnPreferenceChangeListener(
-                        new Preference.OnPreferenceChangeListener() {
-                            @Override
-                            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                                Log.d(MainActivity.TAG, "Setting " + preference.getKey() +
-                                        " about to be changed to " + newValue);
-                                String timeStamp = UpdateSettings.getTimestamp();
-                                Log.d(MainActivity.TAG, "Date: " + timeStamp);
-                                if (warningNumberLastChange != null) {
-                                    warningNumberLastChange.setText(timeStamp);
-                                }
-                                return true;
                             }
                         });
             }
@@ -145,6 +139,8 @@ public class SettingsActivity extends AppCompatActivity {
                                 if (wifiLastChange != null) {
                                     wifiLastChange.setText(timeStamp);
                                 }
+
+                                smsSender.send(numberBike, "Wifi " + ((boolean) newValue ? "on" : "off" ));
                                 return true;
                             }
                         });
