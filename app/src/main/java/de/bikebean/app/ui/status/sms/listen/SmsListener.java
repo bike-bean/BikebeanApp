@@ -29,7 +29,6 @@ public class SmsListener extends BroadcastReceiver {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         final String bikeBeanNumber = sharedPreferences.getString("number", "");
 
-        final SmsParser smsParser = new SmsParser();
 
         if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION.equals(intent.getAction())) {
             StringBuilder messageBody = new StringBuilder();
@@ -45,8 +44,14 @@ public class SmsListener extends BroadcastReceiver {
             }
 
             if (!messageBody.toString().equals("")) {
+                SmsParser smsParser = new SmsParser(messageBody.toString());
                 Log.d(MainActivity.TAG, messageBody.toString());
-                smsParser.updateStatus(context, messageBody.toString());
+                int type = smsParser.getType();
+                smsParser.updateStatus(context, type);
+
+                if (type == SmsParser.SMS_TYPE_CELL_TOWERS) {
+                    SmsParser.updateLatLng(context);
+                }
             }
         }
     }
