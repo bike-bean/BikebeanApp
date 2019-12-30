@@ -120,7 +120,6 @@ public class StatusFragment extends Fragment {
         super.onResume();
 
         String batteryStatus = sharedPreferences.getInt("batteryStatus", 0) + " %";
-        SmsParser smsParser = new SmsParser();
         SmsSender smsSender = new SmsSender(ctx, act);
         String numberBike = sharedPreferences.getString("number", "");
 
@@ -138,7 +137,7 @@ public class StatusFragment extends Fragment {
             lngText.setText("");
             accText.setText("");
             progressBar.setVisibility(ProgressBar.VISIBLE);
-            smsParser.updateLatLng(ctx);
+            SmsParser.updateLatLng(ctx);
         }
 
         if (!Utils.isWarningNumberSet(ctx)) {

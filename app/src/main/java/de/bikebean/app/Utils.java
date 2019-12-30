@@ -38,6 +38,9 @@ public class Utils {
     public static final String KEY_TIME = "time";
     private static final String KEY_TIMESTAMP = "timestamp";
 
+    private static final int READ_DONE = 0;
+    private static final int NEED_MORE_INFO = 1;
+
     public static void doReadSMS(
             String address,
             Activity act,
@@ -45,7 +48,6 @@ public class Utils {
         String[] argList = {address};
         Context ctx = act.getApplicationContext();
         ContentResolver contentResolver = act.getContentResolver();
-        SmsParser smsParser = new SmsParser();
 
         try {
             Cursor inbox = contentResolver.query(
@@ -86,9 +88,11 @@ public class Utils {
 
         // Get latest SMS and check if latest update is newer
         if (!smsList.isEmpty()) {
+            int i = 1;
             HashMap<String, String> item;
+            HashMap<String, String> item2;
 
-            for (int i = 1; ;i++) {
+            for (;;i++) {
                 if (i > smsList.size()) {
                     item = null;
                     break;
@@ -98,19 +102,54 @@ public class Utils {
                     break;
             }
 
-            if (item != null) {
+            for (;;i++) {
+                if (i > smsList.size()) {
+                    item2 = null;
+                    break;
+                }
+                item2 = smsList.get(smsList.size() - (i+1));
+                if (Objects.equals(item2.get("type"), "1"))
+                    break;
+            }
+
+            if (updateStatus(ctx, item, false) == READ_DONE)
+                assert true;
+            else
+                updateStatus(ctx, item2, true);
+        }
+    }
+
+    private static int updateStatus(Context ctx, HashMap<String, String> item, boolean isSecond) {
+        if (item != null) {
+            if (!isSecond) {
+                SmsParser smsParser = new SmsParser(item.get("msg"));
                 Date date = new Date(Long.parseLong(Objects.requireNonNull(item.get("timestamp"))));
                 DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.GERMANY);
                 Log.d(MainActivity.TAG, "SMS is from " + formatter.format(date));
-
                 if (isNewer(ctx, date)) {
                     Log.d(MainActivity.TAG, "SMS is newer than latest update! Parsing SMS...");
-                    smsParser.updateStatus(ctx, item.get("msg"));
+                    int type = smsParser.getType();
+                    smsParser.updateStatus(ctx, type);
+                    if (type == SmsParser.SMS_TYPE_WIFI_LIST) {
+                        SmsParser.updateLatLng(ctx);
+                    }
+                    if (type == SmsParser.SMS_TYPE_CELL_TOWERS) {
+                        return NEED_MORE_INFO;
+                    }
                 } else {
                     Log.d(MainActivity.TAG, "SMS is older than latest update.");
                 }
+            } else {
+                SmsParser smsParser = new SmsParser(item.get("msg"));
+                int type = smsParser.getType();
+                smsParser.updateStatus(ctx, type);
+                if (type == SmsParser.SMS_TYPE_WIFI_LIST) {
+                    SmsParser.updateLatLng(ctx);
+                }
             }
         }
+
+        return READ_DONE;
     }
 
     private static boolean isNewer(Context ctx, Date d_new) {
