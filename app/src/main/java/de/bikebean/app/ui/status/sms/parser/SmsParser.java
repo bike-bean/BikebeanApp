@@ -27,7 +27,6 @@ public class SmsParser {
     public final static int SMS_TYPE_WIFI_LIST = 51;  // wapp part 2
     private final static int SMS_TYPE_INT = 6;
 
-
     // MATCHERS
     // position
     private Matcher positionMatcher;
