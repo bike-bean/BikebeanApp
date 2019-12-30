@@ -83,11 +83,6 @@ public class SmsActivity extends AppCompatActivity {
         } catch(Exception e) {
             Log.d(MainActivity.TAG, "SMS Cache file not found, creating it...");
         }
-
-        if(!tmpList.equals(smsList)) {
-            ChatAdapter adapter = new ChatAdapter(SmsActivity.this, address, smsList);
-            listView.setAdapter(adapter);
-        }
     }
 
     private static class LoadSms extends AsyncTask<String, Void, String> {
