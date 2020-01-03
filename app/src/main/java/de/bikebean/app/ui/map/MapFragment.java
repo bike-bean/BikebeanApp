@@ -1,7 +1,5 @@
 package de.bikebean.app.ui.map;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,38 +8,42 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.preference.PreferenceManager;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.Objects;
-
 import de.bikebean.app.R;
+import de.bikebean.app.ui.status.StatusViewModel;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
-    // private DashboardViewModel dashboardViewModel;
-    private SharedPreferences sharedPreferences;
+    private StatusViewModel statusViewModel;
 
     private MapView mMapView;
 
+    // Map elements
+    private Marker marker;
+    private Circle circle;
+    private MutableLatLng currentPositionBike;
+    private Snippet snippet;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState)
-    {
+                             ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
         mMapView = v.findViewById(R.id.mapview1);
         mMapView.onCreate(savedInstanceState);
-        mMapView.getMapAsync(this); //this is important
+        mMapView.getMapAsync(this); // this is important
 
         return v;
     }
@@ -50,51 +52,63 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        FragmentActivity act = Objects.requireNonNull(getActivity());
-        Context ctx = act.getApplicationContext();
-
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+        statusViewModel = new ViewModelProvider(this).get(StatusViewModel.class);
     }
 
     public void onMapReady(GoogleMap googleMap) {
         googleMap.getUiSettings().setZoomControlsEnabled(true);
+        // googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
-        //TODO: Zurücksetzen auf Normal = einfach diesen Code entfernen
-//        mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        currentPositionBike = new MutableLatLng(0.0, 0.0);
+        snippet = new Snippet(0, 0);
 
-        //TODO: auskommentieren, wenn API aktiviert wird
-        LatLng current_position_bike = new LatLng(
-                sharedPreferences.getFloat("lat", (float) 0.0),
-                sharedPreferences.getFloat("lng", (float) 0.0));
+        // Set a marker
+        marker = googleMap.addMarker(new MarkerOptions()
+                .position(currentPositionBike.get())
+                .title("Mein Fahrrad") //TODO: Name des Fahrrads einfügbar machen
+                .snippet(snippet.toString())
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
+        );
 
-        //Marker auf der Karte
-        googleMap.addMarker(new MarkerOptions()
-                //TODO: Scharf stellen mit echten Koordinaten aus API
-                .position(Objects.requireNonNull(current_position_bike))
-                //TODO: Name des Fahrrads einfügbar machen / Info für Snippet
-                .title("Mein Fahrrad")
-                .snippet("Anzahl Funkmasten: " +
-                        sharedPreferences.getInt("numberCellTowers", 0) +
-                        ", Anzahl WAPs: " +
-                        sharedPreferences.getInt("numberWifiAccessPoints", 0))
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
-
-        ));
-
-        //TODO: Scharf stellen mit echten Koordinaten aus API
-//        Zoom am Anfang einstellen
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current_position_bike, 12));
-//        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bikebean, 16));
-
-        // Instantiates a new CircleOptions object and defines the center and radius
-        CircleOptions circleOptions = new CircleOptions()
-                .center(current_position_bike)
-                .radius(sharedPreferences.getFloat("acc", (float) 0.0))
+        // Set a circle
+        circle = googleMap.addCircle(new CircleOptions()
+                .center(currentPositionBike.get())
+                .radius(0.0)
                 .strokeWidth(10)
-                .strokeColor(Color.BLACK);
+                .strokeColor(Color.BLACK)
+        );
 
-        // Get back the mutable Circle
-        googleMap.addCircle(circleOptions);
+        // Set up observer to adjust changes to the view
+        statusViewModel.getStatusLocationLat().observe(getViewLifecycleOwner(), statuses -> {
+            if (statuses.size() == 0)
+                return;
+
+            marker.setPosition(currentPositionBike.setLat(statuses.get(0).getValue()));
+            circle.setCenter(currentPositionBike.get());
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPositionBike.get(), 14));
+        });
+        statusViewModel.getStatusLocationLng().observe(getViewLifecycleOwner(), statuses -> {
+            if (statuses.size() == 0)
+                return;
+            marker.setPosition(currentPositionBike.setLng(statuses.get(0).getValue()));
+            circle.setCenter(currentPositionBike.get());
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPositionBike.get(), 14));
+        });
+        statusViewModel.getStatusLocationAcc().observe(getViewLifecycleOwner(), statuses -> {
+            if (statuses.size() == 0)
+                return;
+            circle.setRadius(statuses.get(0).getValue());
+        });
+        statusViewModel.getStatusNumberCellTowers().observe(getViewLifecycleOwner(), statuses -> {
+            if (statuses.size() == 0)
+                return;
+            marker.setSnippet(snippet.setNumberCellTowers(statuses.get(0).getValue().intValue()));
+        });
+        statusViewModel.getStatusNumberWifiAccessPoints().observe(getViewLifecycleOwner(), statuses -> {
+            if (statuses.size() == 0)
+                return;
+            marker.setSnippet(snippet.setNumberWifiAccessPoints(statuses.get(0).getValue().intValue()));
+        });
     }
 
     @Override
@@ -115,16 +129,55 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mMapView.onLowMemory();
     }
 
+    class Snippet {
+        private int numberCellTowers;
+        private int numberWifiAccessPoints;
 
-//Ursprünglicher Code:
-//        dashboardViewModel =
-//                ViewModelProviders.of(this).get(DashboardViewModel.class);
-//        View root = inflater.inflate(R.layout.fragment_map, container, false);
-//        final TextView textView = root.findViewById(R.id.text_dashboard);
-//        dashboardViewModel.getText().observe(this, new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                textView.setText(s);
-//            }
-//        });
+        Snippet(int a, int b) {
+            numberCellTowers = a;
+            numberWifiAccessPoints = b;
+        }
+
+        @NonNull
+        public String toString() {
+            String descCellTowers = "Anzahl Funkmasten: ";
+            String descWifiAccessPoints = ", Anzahl WAPs: ";
+
+            return descCellTowers + numberCellTowers +
+                    descWifiAccessPoints + numberWifiAccessPoints;
+        }
+
+        String setNumberCellTowers(int a) {
+            numberCellTowers = a;
+            return toString();
+        }
+
+        String setNumberWifiAccessPoints(int b) {
+            numberWifiAccessPoints = b;
+            return toString();
+        }
+    }
+
+    class MutableLatLng {
+
+        private LatLng latLng;
+
+        MutableLatLng(double lat, double lng) {
+            latLng = new LatLng(lat, lng);
+        }
+
+        LatLng setLat(double lat) {
+            latLng = new LatLng(lat, latLng.longitude);
+            return latLng;
+        }
+
+        LatLng setLng(double lng) {
+            latLng = new LatLng(latLng.latitude, lng);
+            return latLng;
+        }
+
+        LatLng get() {
+            return latLng;
+        }
+    }
 }

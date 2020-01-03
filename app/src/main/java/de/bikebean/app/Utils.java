@@ -1,205 +1,122 @@
 package de.bikebean.app;
 
-import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.database.MergeCursor;
-import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.lang.ref.WeakReference;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
+import java.util.UUID;
 
+import de.bikebean.app.db.sms.Sms;
+import de.bikebean.app.db.status.Status;
+import de.bikebean.app.ui.status.StatusViewModel;
+import de.bikebean.app.ui.status.location.LocationUpdater;
+import de.bikebean.app.ui.status.sms.SmsViewModel;
 import de.bikebean.app.ui.status.sms.parser.SmsParser;
 
-public class Utils {
-
-    public static final String KEY_MSG = "msg";
-    public static final String KEY_TYPE = "type";
-    public static final String KEY_TIME = "time";
-    private static final String KEY_TIMESTAMP = "timestamp";
+public class Utils extends AsyncTask<String, Void, String> {
 
     private static final int READ_DONE = 0;
     private static final int NEED_MORE_INFO = 1;
 
-    public static void doReadSMS(
-            String address,
-            Activity act,
-            ArrayList<HashMap<String, String>> smsList) {
-        String[] argList = {address};
-        Context ctx = act.getApplicationContext();
-        ContentResolver contentResolver = act.getContentResolver();
+    private final WeakReference<Context> contextReference;
+    private final WeakReference<SmsViewModel> smsViewModelReference;
+    private final WeakReference<StatusViewModel> statusViewModelReference;
 
-        try {
-            Cursor inbox = contentResolver.query(
-                    Uri.parse("content://sms/inbox"), null,
-                    "address=?", argList,
-                    null, null);
+    public Utils(Context context, SmsViewModel smsViewModel, StatusViewModel statusViewModel) {
+        contextReference = new WeakReference<>(context);
+        smsViewModelReference = new WeakReference<>(smsViewModel);
+        statusViewModelReference = new WeakReference<>(statusViewModel);
+    }
 
-            Cursor sent = contentResolver.query(
-                    Uri.parse("content://sms/sent"), null,
-                    "address=?", argList,
-                    null, null);
+    @Override
+    protected String doInBackground(String... args) {
+        Context ctx = contextReference.get();
+        SmsViewModel smsViewModel = smsViewModelReference.get();
+        StatusViewModel statusViewModel = statusViewModelReference.get();
 
-            // Attaching inbox and sent sms
-            Cursor c = new MergeCursor(new Cursor[]{inbox, sent});
+        checkLastTwoMessages(ctx, smsViewModel, statusViewModel);
+        return "";
+    }
 
-            if (c.moveToFirst()) {
-                for (int i = 0; i < c.getCount(); i++) {
-                    String phone = c.getString(c.getColumnIndexOrThrow("address"));
-                    String _id = c.getString(c.getColumnIndexOrThrow("_id"));
-                    String thread_id = c.getString(c.getColumnIndexOrThrow("thread_id"));
-                    String msg = c.getString(c.getColumnIndexOrThrow("body"));
-                    String type = c.getString(c.getColumnIndexOrThrow("type"));
-                    String timestamp = c.getString(c.getColumnIndexOrThrow("date"));
+    private void checkLastTwoMessages(
+            Context ctx,
+            SmsViewModel smsViewModel,
+            StatusViewModel statusViewModel) {
+        // Get the last to SMS and update the local database
+        List<Sms> l = smsViewModel.getLatestTwoInInbox();
 
-                    smsList.add(mappingInbox(
-                            _id, thread_id, phone,
-                            msg, type, timestamp,
-                            Utils.convertToTime(timestamp)));
-                    c.moveToNext();
-                }
-            }
-            c.close();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }
+        if (l.size() > 1) {
+            Sms item = l.get(0);
+            Sms item2 = l.get(1);
 
-        Collections.sort(smsList, new MapComparator(KEY_TIMESTAMP, "asc"));
-
-        // Get latest SMS and check if latest update is newer
-        if (!smsList.isEmpty()) {
-            int i = 1;
-            HashMap<String, String> item;
-            HashMap<String, String> item2;
-
-            for (;;i++) {
-                if (i > smsList.size()) {
-                    item = null;
-                    break;
-                }
-                item = smsList.get(smsList.size() - i);
-                if (Objects.equals(item.get("type"), "1"))
-                    break;
-            }
-
-            for (;;i++) {
-                if (i > smsList.size()) {
-                    item2 = null;
-                    break;
-                }
-                item2 = smsList.get(smsList.size() - (i+1));
-                if (Objects.equals(item2.get("type"), "1"))
-                    break;
-            }
-
-            if (updateStatus(ctx, item, false) == READ_DONE)
+            if (updateStatus(ctx, statusViewModel, item, false) == READ_DONE)
                 assert true;
             else
-                updateStatus(ctx, item2, true);
+                updateStatus(ctx, statusViewModel, item2, true);
+        } else if (l.size() > 0) {
+            Sms item = l.get(0);
+
+            if (updateStatus(ctx, statusViewModel, item, false) == NEED_MORE_INFO)
+                new LocationUpdater(ctx, statusViewModel).execute();
         }
     }
 
-    private static int updateStatus(Context ctx, HashMap<String, String> item, boolean isSecond) {
+    private int updateStatus(
+            Context ctx,
+            StatusViewModel statusViewModel,
+            Sms item,
+            boolean isSecond) {
         if (item != null) {
             if (!isSecond) {
-                SmsParser smsParser = new SmsParser(item.get("msg"));
-                Date date = new Date(Long.parseLong(Objects.requireNonNull(item.get("timestamp"))));
-                DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.GERMANY);
-                Log.d(MainActivity.TAG, "SMS is from " + formatter.format(date));
-                if (isNewer(ctx, date)) {
+                Date date = new Date(item.getTimestamp());
+                Log.d(MainActivity.TAG, "SMS is from " + date.toString());
+
+                if (isNewer(date, statusViewModel)) {
                     Log.d(MainActivity.TAG, "SMS is newer than latest update! Parsing SMS...");
+                    SmsParser smsParser = new SmsParser(item.getBody());
                     int type = smsParser.getType();
-                    smsParser.updateStatus(ctx, type);
-                    if (type == SmsParser.SMS_TYPE_WIFI_LIST) {
-                        SmsParser.updateLatLng(ctx);
-                    }
-                    if (type == SmsParser.SMS_TYPE_CELL_TOWERS) {
+                    smsParser.updateStatus(ctx, type, statusViewModel);
+                    if (type == SmsParser.SMS_TYPE_WIFI_LIST)
+                        new LocationUpdater(ctx, statusViewModel).execute();
+                    if (type == SmsParser.SMS_TYPE_CELL_TOWERS)
                         return NEED_MORE_INFO;
-                    }
-                } else {
+                } else
                     Log.d(MainActivity.TAG, "SMS is older than latest update.");
-                }
             } else {
-                SmsParser smsParser = new SmsParser(item.get("msg"));
+                SmsParser smsParser = new SmsParser(item.getBody());
                 int type = smsParser.getType();
-                smsParser.updateStatus(ctx, type);
-                if (type == SmsParser.SMS_TYPE_WIFI_LIST) {
-                    SmsParser.updateLatLng(ctx);
-                }
+                smsParser.updateStatus(ctx, type, statusViewModel);
+                if (type == SmsParser.SMS_TYPE_WIFI_LIST)
+                    new LocationUpdater(ctx, statusViewModel).execute();
             }
         }
 
         return READ_DONE;
     }
 
-    private static boolean isNewer(Context ctx, Date d_new) {
-        final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.GERMANY);
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
-        final String defaultDate = "01.01.1990 00:00:00";
+    private boolean isNewer(Date d_new, StatusViewModel statusViewModel) {
+        List<de.bikebean.app.db.status.Status> l = statusViewModel.getBattery();
+        Date d;
 
-        String s = sharedPreferences.getString("batteryLastChange", defaultDate);
-        if (s.isEmpty())
-            s = defaultDate;
+        if (l.size() > 0) {
+            d = new Date(l.get(0).getTimestamp());
+        } else return false;
 
-        Log.d(MainActivity.TAG, "DB Entry is from: " + s);
+        Log.d(MainActivity.TAG, "DB Entry is from: " + d.toString());
 
-        try {
-            Date d_old = dateFormat.parse(s);
-            return d_new.compareTo(d_old) >= 0;
-        } catch(ParseException e) {
-            Log.d(MainActivity.TAG, "Parser Error!");
-            return true;
-        }
-    }
-
-    public static boolean isLatLngUpdated(Context ctx) {
-        final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.GERMANY);
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
-        String defaultDate1 = "01.01.1990 00:00:00";
-        String defaultDate2 = "02.01.1990 00:00:00";
-
-        String s1 = sharedPreferences.getString("locationLastChange", defaultDate1);
-        String s2 = sharedPreferences.getString("latLngLastChange", defaultDate2);
-        if (s1.isEmpty())
-            s1 = defaultDate1;
-        if (s2.isEmpty())
-            s2 = defaultDate2;
-
-        Log.d(MainActivity.TAG, "Location last update: " + s1);
-        Log.d(MainActivity.TAG, "Lat/Lng last update: " + s2);
-
-        try {
-            Date d_old = dateFormat.parse(s1);
-            Date d_new = dateFormat.parse(s2);
-            if (d_new != null) {
-                return d_new.compareTo(d_old) >= 0;
-            } else {
-                return false;
-            }
-        } catch(ParseException e) {
-            Log.d(MainActivity.TAG, "Parser Error!");
-            return false;
-        }
+        return d_new.compareTo(d) >= 0;
     }
 
     public static boolean isWarningNumberSet(Context ctx) {
@@ -210,7 +127,7 @@ public class Utils {
         return !w.isEmpty() || b;
     }
 
-    public static boolean hasPermissions(Context context, String... permissions) {
+    static boolean hasPermissions(Context context, String... permissions) {
         if (context != null && permissions != null) {
             for (String permission : permissions) {
                 if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
@@ -221,68 +138,13 @@ public class Utils {
         return false;
     }
 
-    private static String convertToTime(String timestamp) {
-        long datetime = Long.parseLong(timestamp);
+    public static String convertToTime(long datetime) {
         Date date = new Date(datetime);
-        DateFormat formatter = new SimpleDateFormat("dd/MM HH:mm", Locale.GERMANY);
+        DateFormat formatter = new SimpleDateFormat("dd.MM HH:mm", Locale.GERMANY);
         return formatter.format(date);
     }
 
-    private static HashMap<String, String> mappingInbox(
-            String _id, String thread_id, String phone,
-            String msg, String type,
-            String timestamp, String time) {
-        HashMap<String, String> map = new HashMap<>();
-        String _ID = "_id";
-        String KEY_THREAD_ID = "thread_id";
-        String KEY_PHONE = "phone";
-
-        map.put(_ID, _id);
-        map.put(KEY_THREAD_ID, thread_id);
-        map.put(KEY_PHONE, phone);
-        map.put(KEY_MSG, msg);
-        map.put(KEY_TYPE, type);
-        map.put(KEY_TIMESTAMP, timestamp);
-        map.put(KEY_TIME, time);
-
-        return map;
-    }
-
-    public static void createCachedFile(Context context, ArrayList<HashMap<String, String>> dataList) throws IOException {
-        FileOutputStream fos = context.openFileOutput("smsapp", Context.MODE_PRIVATE);
-        ObjectOutputStream oos = new ObjectOutputStream(fos);
-        oos.writeObject(dataList);
-        oos.close();
-        fos.close();
-    }
-
-    public static Object readCachedFile(Context context) throws IOException, ClassNotFoundException {
-        FileInputStream fis = context.openFileInput("smsapp");
-        ObjectInputStream ois = new ObjectInputStream(fis);
-        return ois.readObject();
-    }
-
-    public static class MapComparator implements Comparator<HashMap<String, String>> {
-
-        private final String key;
-        private final String order;
-
-        MapComparator(String key, String order) {
-            this.key = key;
-            this.order = order;
-        }
-
-        public int compare(HashMap<String, String> first,
-                           HashMap<String, String> second) {
-            String firstValue = first.get(key);
-            String secondValue = second.get(key);
-            if (firstValue != null && secondValue != null) {
-                if(this.order.toLowerCase().contentEquals("asc"))
-                    return firstValue.compareTo(secondValue);
-                else
-                    return secondValue.compareTo(firstValue);
-            } else
-                return 0;
-        }
+    public static String createTransactionID() {
+        return UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
     }
 }
