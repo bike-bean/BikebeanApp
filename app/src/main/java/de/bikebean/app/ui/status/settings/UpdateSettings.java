@@ -9,28 +9,22 @@ import androidx.preference.PreferenceManager;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
-// import java.util.Map;
 
 import de.bikebean.app.MainActivity;
+import de.bikebean.app.db.status.Status;
+import de.bikebean.app.ui.status.StatusViewModel;
 
 public class UpdateSettings {
 
     private SharedPreferences settings;
     private SharedPreferences.Editor editor;
 
-    public void updateBattery(Context ctx, int value) {
-        if (settings == null) {
-            settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-        }
-
-        editor = settings.edit();
-
-        editor.putInt("batteryStatus", value);
-        editor.putString("batteryLastChange", getTimestamp());
-        editor.putString("statusLastChange", getTimestamp());
-
-        // Commit the edits!
-        editor.apply();
+    public void updateBattery(int value, StatusViewModel vm) {
+        Status s = new Status(
+                System.currentTimeMillis(), "battery",
+                (double) value, "", Status.STATUS_CONFIRMED
+        );
+        vm.insert(s);
     }
 
     public void updateInterval(Context ctx, String value) {
@@ -78,73 +72,52 @@ public class UpdateSettings {
         editor.apply();
     }
 
-    public void updatePosition(Context ctx, String value) {
-        if (settings == null) {
-            settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-        }
-
-        editor = settings.edit();
-
-        editor.putString("location", value);
-        editor.putString("locationLastChange", getTimestamp());
-
-        editor.apply();
+    public void updatePosition(String value, StatusViewModel vm) {
+        vm.insert(new Status(
+                System.currentTimeMillis(), "cellTowers",
+                (double) 0, value, Status.STATUS_CONFIRMED)
+        );
     }
 
-    public void updateWifiList(Context ctx, String value) {
-        if (settings == null) {
-            settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-        }
-
-        editor = settings.edit();
-
-        editor.putString("wifiList", value);
-        editor.putString("wifiListLastChange", getTimestamp());
-
-        editor.apply();
+    public void updateWifiList(String value, StatusViewModel vm) {
+        vm.insert(new Status(
+                System.currentTimeMillis(), "wifiAccessPoints",
+                (double) 0, value, Status.STATUS_CONFIRMED)
+        );
     }
 
-    public void updateNoCellTowers(Context ctx, int number) {
-        if (settings == null) {
-            settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-        }
+    public void updateNoCellTowers(int number, StatusViewModel vm) {
+        Status s = new Status(
+                System.currentTimeMillis(), "noCellTowers",
+                (double) number, "", Status.STATUS_CONFIRMED);
 
-        editor = settings.edit();
-
-        editor.putInt("numberCellTowers", number);
-        editor.putString("numberCellTowersLastChange", getTimestamp());
-
-        editor.apply();
+        vm.insert(s);
     }
 
-    public void updateNoWifiAccessPoints(Context ctx, int number) {
-        if (settings == null) {
-            settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-        }
+    public void updateNoWifiAccessPoints(int number, StatusViewModel vm) {
+        Status s = new Status(
+                System.currentTimeMillis(), "noWifiAccessPoints",
+                (double) number, "", Status.STATUS_CONFIRMED);
 
-        editor = settings.edit();
-
-        editor.putInt("numberWifiAccessPoints", number);
-        editor.putString("numberWifiAccessPointsLastChange", getTimestamp());
-
-        editor.apply();
+        vm.insert(s);
     }
 
-    public void updateLngLat(Context ctx, Float Lat, Float Lng, Float Acc) {
-        if (settings == null) {
-            settings = PreferenceManager.getDefaultSharedPreferences(ctx);
-        }
+    public void updateLngLat(Float Lat, Float Lng, Float Acc, StatusViewModel vm) throws InterruptedException {
+        Status s1 = new Status(
+                System.currentTimeMillis(), "lat",
+                (double) Lat, "", Status.STATUS_CONFIRMED);
+        Thread.sleep(1);
+        Status s2 = new Status(
+                System.currentTimeMillis(), "lng",
+                (double) Lng, "", Status.STATUS_CONFIRMED);
+        Thread.sleep(1);
+        Status s3 = new Status(
+                System.currentTimeMillis(), "acc",
+                (double) Acc, "", Status.STATUS_CONFIRMED);
 
-        editor = settings.edit();
-
-        editor.putFloat("lat", Lat);
-        editor.putFloat("lng", Lng);
-        editor.putFloat("acc", Acc);
-        editor.putString("latLngLastChange", getTimestamp());
-
-        // Map<String,?> m = settings.getAll();
-
-        editor.apply();
+        vm.insert(s1);
+        vm.insert(s2);
+        vm.insert(s3);
     }
 
     void resetAll(Context ctx) {
@@ -154,37 +127,17 @@ public class UpdateSettings {
 
         editor = settings.edit();
 
-        editor.putInt("batteryStatus", 0);
         editor.putString("interval", "");
         editor.putString("warningNumber", "");
         editor.putBoolean("wlan", false);
-        editor.putString("location", "");
 
-        editor.putString("wifiList", "");
-        editor.putInt("numberCellTowers", 0);
-        editor.putInt("numberWifiAccessPoints", 0);
-        editor.putFloat("lat", (float) 0.0);
-        editor.putFloat("lng", (float) 0.0);
-
-        editor.putFloat("acc", (float) 0.0);
-        editor.putString("latLngLastChange", "");
-        editor.putBoolean("askedForWarningNumber", false);
-
-
-        editor.putString("batteryLastChange", "");
         editor.putString("statusLastChange", "");
         editor.putString("intervalLastChange", "");
         editor.putString("statusLastChange", "");
         editor.putString("warningNumberLastChange", "");
-
-        editor.putString("statusLastChange", "");
         editor.putString("wifiLastChange", "");
-        editor.putString("statusLastChange", "");
-        editor.putString("locationLastChange", "");
-        editor.putString("wifiListLastChange", "");
 
-        editor.putString("numberCellTowersLastChange", "");
-        editor.putString("numberWifiAccessPointsLastChange", "");
+        editor.putBoolean("askedForWarningNumber", false);
 
         // Commit the edits!
         editor.apply();

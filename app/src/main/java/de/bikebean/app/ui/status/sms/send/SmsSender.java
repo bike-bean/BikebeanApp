@@ -11,19 +11,25 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import de.bikebean.app.Utils;
+import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.ui.status.StatusFragment;
+import de.bikebean.app.ui.status.sms.SmsViewModel;
 
 public class SmsSender extends StatusFragment {
 
     private static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 0;
+
+    private final Context ctx;
+    private final FragmentActivity act;
 
     public SmsSender(Context ctx, FragmentActivity act) {
         this.ctx = ctx;
         this.act = act;
     }
 
-    public void send(String Number_bike, String message) {
-        if (Number_bike.isEmpty()) {
+    public void send(String phoneNumber, String message, SmsViewModel smsViewModel) {
+        if (phoneNumber.isEmpty()) {
             Toast.makeText(ctx, "Keine Nummer gespeichert!", Toast.LENGTH_LONG).show();
             return;
         }
@@ -51,15 +57,24 @@ public class SmsSender extends StatusFragment {
         } else {
             // Permission has already been granted
             SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(Number_bike, null, message, null, null);
-            Toast.makeText(ctx, "SMS an " + Number_bike + " gesendet",
+            long timestamp = System.currentTimeMillis();
+            Sms sms = new Sms(Utils.createTransactionID(), phoneNumber, message, "2",
+                    Utils.convertToTime(timestamp), timestamp);
+            smsViewModel.insert(sms);
+
+            smsManager.sendTextMessage(phoneNumber, null,
+                    message, null, null);
+            Toast.makeText(ctx, "SMS an " + phoneNumber + " gesendet",
                     Toast.LENGTH_LONG).show();
         }
     }
 
     //Handle the permissions request response
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(
+            int requestCode,
+            @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
         if (requestCode == MY_PERMISSIONS_REQUEST_SEND_SMS) {// If request is cancelled, the result arrays are empty.
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

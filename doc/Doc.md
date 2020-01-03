@@ -42,5 +42,5 @@ To test the SMS API, use the following strings:
 | Wifi on       | Fancy Wifi SSID,30<br>Another Wifi SSID,60<br>Wifi is on!<br>Battery Status: 5% |
 | Wifi off      | Wifi Off<br>Battery Status: 100% |
 | Warningnumber | Warningnumber has been changed to 0179987654321<br>Battery Status: 15% |
-| Wapp          | 301f2e3d4c5b6a<br>45798897a6b5c4<br>87788102493fd4<br>..............<br>80<br>262,03,55f1,a473,36<br>262,03,55f1,5653,21<br>262,03,55f1,4400,20<br>262,03,55f1,8b40,12<br>262,03,55f1,6bb2,10<br>262,03,55f1,0833,09<br>262,03,55f1,6bcd,03<br>............. |
+| Wapp          | 77788102493fd4<br>831062e5b58896<br>6564cc22b982ba<br>6758904350f67d<br>42<br>..............<br>262,03,55f1,a473,34<br>262,03,55f1,efb4,21<br>262,03,55f1,5653,21<br>262,03,55f1,4400,21<br>262,03,55f1,8b40,20<br>262,03,55f1,efb6,13<br>262,03,55f1,6bb2,11<br> |
 | Int \<x\>     | GSM will be switched on every 12 hours.<br>Battery Status: 64% |

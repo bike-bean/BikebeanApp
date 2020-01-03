@@ -1,10 +1,7 @@
 package de.bikebean.app.ui.status.sms.parser;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
-
-import androidx.preference.PreferenceManager;
 
 import com.google.gson.Gson;
 
@@ -13,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.bikebean.app.MainActivity;
-import de.bikebean.app.ui.status.geolocationapi.GeolocationAPI;
+import de.bikebean.app.ui.status.StatusViewModel;
 import de.bikebean.app.ui.status.settings.UpdateSettings;
 
 public class SmsParser {
@@ -29,27 +26,27 @@ public class SmsParser {
 
     // MATCHERS
     // position
-    private Matcher positionMatcher;
+    private final Matcher positionMatcher;
 
     // status
-    private Matcher statusWarningNumberMatcher;
-    private Matcher statusIntervalMatcher;
-    private Matcher statusWifiStatusMatcher;
-    private Matcher statusBatteryStatusMatcher;
+    private final Matcher statusWarningNumberMatcher;
+    private final Matcher statusIntervalMatcher;
+    private final Matcher statusWifiStatusMatcher;
+    private final Matcher statusBatteryStatusMatcher;
 
     // wifi
-    private Matcher wifiStatusOnMatcher;
-    private Matcher wifiStatusOffMatcher;
+    private final Matcher wifiStatusOnMatcher;
+    private final Matcher wifiStatusOffMatcher;
 
     // warning number
-    private Matcher warningNumberMatcher;
+    private final Matcher warningNumberMatcher;
 
     // wapp
-    private Matcher wifiMatcher;
-    private Matcher batteryMatcher;
+    private final Matcher wifiMatcher;
+    private final Matcher batteryMatcher;
 
     // interval
-    private Matcher intervalChangedMatcher;
+    private final Matcher intervalChangedMatcher;
 
     public SmsParser(String smsText) {
         Pattern statusWarningNumberPattern = Pattern.compile("(Warningnumber: )([+0-9]{8,})");
@@ -113,46 +110,46 @@ public class SmsParser {
         return type;
     }
 
-    public void updateStatus(Context ctx, int type) {
+    public void updateStatus(Context ctx, int type, StatusViewModel vm) {
         UpdateSettings updateSettings = new UpdateSettings();
         Log.d(MainActivity.TAG, String.format("Detected Type %d", type));
 
         switch (type) {
             case SMS_TYPE_POSITION:
                 // TODO: Update Position Setting
-                updateSettings.updateBattery(ctx, getStatusBattery());
+                updateSettings.updateBattery(getStatusBattery(), vm);
                 break;
             case SMS_TYPE_STATUS:
                 updateSettings.updateWarningNumber(ctx, getStatusWarningNumber());
                 updateSettings.updateInterval(ctx, getStatusInterval());
                 updateSettings.updateWifi(ctx, getStatusWifi());
-                updateSettings.updateBattery(ctx, getStatusBattery());
+                updateSettings.updateBattery(getStatusBattery(), vm);
                 break;
             case SMS_TYPE_WIFI_ON:
                 updateSettings.updateWifi(ctx, true);
-                updateSettings.updateBattery(ctx, getStatusBattery());
+                updateSettings.updateBattery(getStatusBattery(), vm);
                 break;
             case SMS_TYPE_WIFI_OFF:
                 updateSettings.updateWifi(ctx, false);
-                updateSettings.updateBattery(ctx, getStatusBattery());
+                updateSettings.updateBattery(getStatusBattery(), vm);
                 break;
             case SMS_TYPE_WARNING_NUMBER:
                 updateSettings.updateWarningNumber(ctx, getWarningNumber());
-                updateSettings.updateBattery(ctx, getStatusBattery());
+                updateSettings.updateBattery(getStatusBattery(), vm);
                 break;
             case SMS_TYPE_CELL_TOWERS:
-                updateSettings.updatePosition(ctx, getWappCellTowers());
+                updateSettings.updatePosition(getWappCellTowers(), vm);
                 break;
             case SMS_TYPE_WIFI_LIST:
                 int batteryStatus = getBattery();
                 Log.d(MainActivity.TAG, "batteryStatus: " + batteryStatus);
 
-                updateSettings.updateBattery(ctx, batteryStatus);
-                updateSettings.updateWifiList(ctx, getWappWifi());
+                updateSettings.updateBattery(batteryStatus, vm);
+                updateSettings.updateWifiList(getWappWifi(), vm);
                 break;
             case SMS_TYPE_INT:
                 updateSettings.updateInterval(ctx, getInterval());
-                updateSettings.updateBattery(ctx, getStatusBattery());
+                updateSettings.updateBattery(getStatusBattery(), vm);
                 break;
         }
     }
@@ -237,7 +234,7 @@ public class SmsParser {
         return result;
     }
 
-    private static String parseSMS(String sms, UpdateSettings s, Context ctx) {
+    public static String parseSMS(String sms, UpdateSettings s, StatusViewModel vm) {
         final Gson gson = new Gson();
 
         LocationAPIBody locationAPIBody = new LocationAPIBody();
@@ -252,8 +249,8 @@ public class SmsParser {
         Log.d(MainActivity.TAG, "cellTowers_JsonArray: " + gson.toJson(locationAPIBody.cellTowers));
         Log.d(MainActivity.TAG, "numberCellTowers: " + numberCellTowers);
 
-        s.updateNoWifiAccessPoints(ctx, numberWifiAccessPoints);
-        s.updateNoCellTowers(ctx, numberCellTowers);
+        s.updateNoWifiAccessPoints(numberWifiAccessPoints, vm);
+        s.updateNoCellTowers(numberCellTowers, vm);
 
         // Create final json string
         return gson.toJson(locationAPIBody);
@@ -300,24 +297,6 @@ public class SmsParser {
 
         return numberCellTowers;
     }
-
-    public static void updateLatLng(Context ctx) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
-        UpdateSettings updateSettings = new UpdateSettings();
-        GeolocationAPI geolocationAPI = new GeolocationAPI(ctx);
-
-        String wappCellTowers = sharedPreferences.getString("location", "");
-        String wappWifi = sharedPreferences.getString("wifiList", "");
-
-        Log.d(MainActivity.TAG, "Updating Lat/Lng...");
-        Log.d(MainActivity.TAG, wappCellTowers);
-        Log.d(MainActivity.TAG, wappWifi);
-
-        if (!(wappCellTowers.isEmpty() || wappWifi.isEmpty())) {
-            String requestBody = parseSMS(wappWifi + "...." + wappCellTowers, updateSettings, ctx);
-            geolocationAPI.httpPOST(requestBody, updateSettings);
-        }
-    }
 }
 
 
@@ -355,8 +334,8 @@ class CellTower {
 
 
 class LocationAPIBody {
-    ArrayList<CellTower> cellTowers;
-    ArrayList<WifiAccessPoint> wifiAccessPoints;
+    final ArrayList<CellTower> cellTowers;
+    final ArrayList<WifiAccessPoint> wifiAccessPoints;
 
     LocationAPIBody() {
         cellTowers = new ArrayList<>();
