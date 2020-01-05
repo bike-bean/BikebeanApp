@@ -31,7 +31,7 @@
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
         <activity
-            android:name=".ui.status.settings.SettingsActivity"
+            android:name=".ui.status.preferences.PreferencesActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".MainActivity">
             <meta-data

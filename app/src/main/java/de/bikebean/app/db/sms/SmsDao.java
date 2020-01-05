@@ -20,9 +20,18 @@ public interface SmsDao {
     @Query("SELECT * FROM sms_table ORDER BY timestamp DESC")
     LiveData<List<Sms>> getAll();
 
-    @Query("SELECT COUNT(*) FROM sms_table WHERE type LIKE :type")
-    int getCountByType(String type);
+    @Query("SELECT * FROM sms_table WHERE state = :state AND type = :type ORDER BY timestamp DESC")
+    LiveData<List<Sms>> getByStateAndType(int state, int type);
 
-    @Query("SELECT * FROM sms_table WHERE type LIKE :type ORDER BY timestamp DESC LIMIT :limit")
-    List<Sms> getLatestByType(int limit, String type);
+    @Query("SELECT COUNT(*) FROM sms_table WHERE type LIKE :type")
+    int getCountByType(int type);
+
+    @Query("SELECT * FROM sms_table WHERE _id = :id")
+    List<Sms> getSmsById(int id);
+
+    @Query("SELECT * FROM sms_table WHERE type = :type LIMIT 1")
+    List<Sms> getLatestId(int type);
+
+    @Query("UPDATE sms_table SET state = :state WHERE _id = :id")
+    void updateStateById(int state, int id);
 }

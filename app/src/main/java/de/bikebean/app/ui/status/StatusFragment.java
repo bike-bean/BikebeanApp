@@ -25,19 +25,22 @@ import de.bikebean.app.R;
 import de.bikebean.app.Utils;
 import de.bikebean.app.db.status.Status;
 import de.bikebean.app.ui.status.location.LocationUpdater;
-import de.bikebean.app.ui.status.location.UpdateChecker;
-import de.bikebean.app.ui.status.settings.SettingsActivity;
+import de.bikebean.app.ui.status.preferences.PreferencesActivity;
 import de.bikebean.app.ui.status.sms.SmsActivity;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 import de.bikebean.app.ui.status.sms.send.SmsSender;
 
 public class StatusFragment extends Fragment {
 
+    private static final int LOCATION_DEFAULT = 0;
+    private static final int LOCATION_PENDING = 1;
+
     private Context ctx;
     private FragmentActivity act;
     private SharedPreferences sharedPreferences;
-    private SmsViewModel smsViewModel;
+    private SmsSender smsSender;
     private StatusViewModel statusViewModel;
+    private SmsViewModel smsViewModel;
 
     private String numberBikeBean;
 
@@ -77,9 +80,12 @@ public class StatusFragment extends Fragment {
         act = Objects.requireNonNull(getActivity());
         ctx = act.getApplicationContext();
 
-        final SmsSender smsSender = new SmsSender(ctx, act);
-        smsViewModel = new ViewModelProvider(this).get(SmsViewModel.class);
+        smsSender = new SmsSender(ctx, act);
         statusViewModel = new ViewModelProvider(this).get(StatusViewModel.class);
+        smsViewModel = new  ViewModelProvider(this).get(SmsViewModel.class);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+        numberBikeBean = sharedPreferences.getString("number", "");
+
         statusViewModel.getStatusBattery().observe(getViewLifecycleOwner(), statuses -> {
             if (statuses.size() == 0)
                 return;
@@ -104,57 +110,64 @@ public class StatusFragment extends Fragment {
         statusViewModel.getStatusLocationAcc().observe(getViewLifecycleOwner(), statuses -> {
             if (statuses.size() == 0)
                 return;
-            accText.setText(String.valueOf(statuses.get(0).getValue()));
+            Status s = statuses.get(0);
+            String acc = s.getValue() + " m";
+
+            accText.setText(acc);
             locationLastChangedText.setText(Utils.convertToTime(statuses.get(0).getTimestamp()));
         });
+        statusViewModel.getPendingCellTowers().observe(getViewLifecycleOwner(), statuses -> {
+            if (statuses.size() == 0)
+                return;
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
-        numberBikeBean = sharedPreferences.getString("number", "");
+            String cellTowers = statuses.get(0).getLongValue();
+            int smsId = statuses.get(0).getSmsId();
+            setLocationArea(LOCATION_PENDING);
+
+            new LocationUpdater(ctx, statusViewModel, isLocationUpdated -> {
+                if (isLocationUpdated) {
+                    smsViewModel.markParsed(smsId);
+                    setLocationArea(LOCATION_PENDING);
+                }
+            }).execute(cellTowers, "cellTowers");
+        });
+        statusViewModel.getPendingWifiAccessPoints().observe(getViewLifecycleOwner(), statuses -> {
+            if (statuses.size() == 0)
+                return;
+
+            String wifiAccessPoints = statuses.get(0).getLongValue();
+            int smsId = statuses.get(0).getSmsId();
+            setLocationArea(LOCATION_PENDING);
+
+            new LocationUpdater(ctx, statusViewModel, isLocationUpdated -> {
+                if (isLocationUpdated) {
+                    smsViewModel.markParsed(smsId);
+                    setLocationArea(LOCATION_DEFAULT);
+                }
+            }).execute(wifiAccessPoints, "wifiAccessPoints");
+        });
 
         // Finalize UI Elements
-        buttonCreateSmsView.setOnClickListener(v -> {
-            Intent intent = new Intent(ctx, SmsActivity.class);
-            act.startActivity(intent);
-        });
-        buttonGetLocation.setOnClickListener(v -> {
-            Log.d(MainActivity.TAG, "Button gedrückt");
-            smsSender.send(numberBikeBean, "Wapp", smsViewModel);
-        });
-        buttonGetStatus.setOnClickListener(v -> {
-            Log.d(MainActivity.TAG, "Button gedrückt");
-            smsSender.send(numberBikeBean, "Status", smsViewModel);
-        });
-        buttonAdditionalSettings.setOnClickListener(v -> {
-            Intent intent = new Intent(ctx, SettingsActivity.class);
-            act.startActivity(intent);
-        });
+        buttonCreateSmsView.setOnClickListener(v ->
+                act.startActivity(new Intent(ctx, SmsActivity.class)));
+        buttonGetLocation.setOnClickListener(v ->
+                smsSender.send(numberBikeBean, "Wapp", smsViewModel));
+        buttonGetStatus.setOnClickListener(v ->
+                smsSender.send(numberBikeBean, "Status", smsViewModel));
+        buttonAdditionalSettings.setOnClickListener(v ->
+                act.startActivity(new Intent(ctx, PreferencesActivity.class)));
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        SmsSender smsSender = new SmsSender(ctx, act);
-
-        progressBar.setVisibility(ProgressBar.GONE);
+        // TODO: Make LiveData for this
         statusLastChangedText.setText(sharedPreferences.getString("statusLastChange", ""));
 
-        // Get the last two SMS and update the local database
-        new Utils(ctx, smsViewModel, statusViewModel).execute();
-
-        // Check if latest coordinates were retrieved
-        new UpdateChecker(statusViewModel, isLatLngUpdated -> {
-            if (!isLatLngUpdated) {
-                latText.setText("");
-                lngText.setText("");
-                accText.setText("");
-                progressBar.setVisibility(ProgressBar.VISIBLE);
-                new LocationUpdater(ctx, statusViewModel).execute();
-            }
-        }).execute();
-
+        // TODO: Make this async and "smarter" (not in onResume...)
         // Check if the warning number is set, otherwise send a SMS
-        if (!Utils.isWarningNumberSet(ctx)) {
+        if (!Utils.isWarningNumberSet(sharedPreferences)) {
             Log.d(MainActivity.TAG, "Warningnumber is not set!");
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putBoolean("askedForWarningNumber", true);
@@ -163,6 +176,17 @@ public class StatusFragment extends Fragment {
             smsSender.send(numberBikeBean, "Warningnumber", smsViewModel);
         } else {
             Log.d(MainActivity.TAG, "Warningnumber is orderly set.");
+        }
+    }
+
+    private void setLocationArea(int state) {
+        if (state == LOCATION_PENDING) {
+            latText.setText("");
+            lngText.setText("");
+            accText.setText("");
+            progressBar.setVisibility(ProgressBar.VISIBLE);
+        } else if (state == LOCATION_DEFAULT) {
+            progressBar.setVisibility(ProgressBar.GONE);
         }
     }
 }

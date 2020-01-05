@@ -16,23 +16,33 @@ public class SmsViewModel extends AndroidViewModel {
     private final SmsRepository mRepository;
 
     private final LiveData<List<Sms>> mChat;
+    private final LiveData<List<Sms>> mNewIncoming;
 
     public SmsViewModel(Application application) {
         super(application);
         mRepository = new SmsRepository(application);
         mChat = mRepository.getChat();
+        mNewIncoming = mRepository.getNewIncoming();
     }
 
-    LiveData<List<Sms>> getChat() {
+    public LiveData<List<Sms>> getChat() {
         return mChat;
+    }
+
+    public LiveData<List<Sms>> getNewIncoming() {
+        return mNewIncoming;
     }
 
     public int getInboxCount() {
         return mRepository.getInboxCount();
     }
 
-    public List<Sms> getLatestTwoInInbox() {
-        return mRepository.getLatestTwoInInbox();
+    public List<Sms> getSmsById(int id) {
+        return mRepository.getSmsById(id);
+    }
+
+    public int getLatestId() {
+        return mRepository.getLatestId();
     }
 
     public void fetchSms(Context context, String address, String timestamp) {
@@ -43,5 +53,9 @@ public class SmsViewModel extends AndroidViewModel {
 
     public void insert(Sms sms) {
         mRepository.insert(sms);
+    }
+
+    public void markParsed(int id) {
+        mRepository.markParsed(id);
     }
 }

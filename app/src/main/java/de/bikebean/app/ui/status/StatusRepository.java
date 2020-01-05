@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.lifecycle.LiveData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.bikebean.app.db.BikeBeanRoomDatabase;
@@ -19,17 +20,23 @@ class StatusRepository {
     private final LiveData<List<Status>> mStatusLocationAcc;
     private final LiveData<List<Status>> mStatusNumberCellTowers;
     private final LiveData<List<Status>> mStatusNumberWifiAccessPoints;
+    private final LiveData<List<Status>> mPendingCellTowers;
+    private final LiveData<List<Status>> mPendingWifiAccessPoints;
 
     StatusRepository(Application application) {
         BikeBeanRoomDatabase db = BikeBeanRoomDatabase.getDatabase(application);
         mStatusDao = db.statusDao();
 
-        mStatusBattery = mStatusDao.getAllByKey("battery");
-        mStatusLocationLat = mStatusDao.getAllByKey("lat");
-        mStatusLocationLng = mStatusDao.getAllByKey("lng");
-        mStatusLocationAcc = mStatusDao.getAllByKey("acc");
-        mStatusNumberCellTowers = mStatusDao.getAllByKey("numberCellTowers");
-        mStatusNumberWifiAccessPoints = mStatusDao.getAllByKey("numberWifiAccessPoints");
+        mStatusBattery = mStatusDao.getAllByKey(Status.KEY_BATTERY);
+        mStatusLocationLat = mStatusDao.getAllByKey(Status.KEY_LAT);
+        mStatusLocationLng = mStatusDao.getAllByKey(Status.KEY_LNG);
+        mStatusLocationAcc = mStatusDao.getAllByKey(Status.KEY_ACC);
+        mStatusNumberCellTowers = mStatusDao.getAllByKey(Status.KEY_NO_CELL_TOWERS);
+        mStatusNumberWifiAccessPoints = mStatusDao.getAllByKey(Status.KEY_NO_WIFI_ACCESS_POINTS);
+        mPendingCellTowers = mStatusDao.getByKeyAndState(
+                Status.KEY_CELL_TOWERS, Status.STATUS_PENDING);
+        mPendingWifiAccessPoints = mStatusDao.getByKeyAndState(
+                Status.KEY_WIFI_ACCESS_POINTS, Status.STATUS_PENDING);
     }
 
     LiveData<List<Status>> getStatusBattery() {
@@ -56,23 +63,28 @@ class StatusRepository {
         return mStatusNumberWifiAccessPoints;
     }
 
-    List<Status> getCellTowers() {
-        return mStatusDao.getByKey("cellTowers");
+    LiveData<List<Status>> getPendingCellTowers() {
+        return mPendingCellTowers;
     }
 
-    List<Status> getWifiAccessPoints() {
-        return mStatusDao.getByKey("wifiAccessPoints");
-    }
-
-    List<Status> getLng() {
-        return mStatusDao.getByKey("lng");
+    LiveData<List<Status>> getPendingWifiAccessPoints() {
+        return mPendingWifiAccessPoints;
     }
 
     List<Status> getBattery() {
-        return mStatusDao.getByKey("battery");
+        return mStatusDao.getByKey(Status.KEY_BATTERY);
     }
 
     void insert(final Status status) {
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() -> mStatusDao.insert(status));
+    }
+
+    void confirmBySmsId(final int smsId) {
+        mStatusDao.updateStateBySmsId(Status.STATUS_CONFIRMED, smsId);
+    }
+
+    void confirmLocationKeys() {
+        mStatusDao.updateStateByKey(Status.STATUS_CONFIRMED, "cellTowers");
+        mStatusDao.updateStateByKey(Status.STATUS_CONFIRMED, "wifiAccessPoints");
     }
 }

@@ -3,6 +3,7 @@ package de.bikebean.app.ui.status.sms.send;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.provider.Telephony;
 import android.telephony.SmsManager;
 import android.widget.Toast;
 
@@ -58,9 +59,13 @@ public class SmsSender extends StatusFragment {
             // Permission has already been granted
             SmsManager smsManager = SmsManager.getDefault();
             long timestamp = System.currentTimeMillis();
-            Sms sms = new Sms(Utils.createTransactionID(), phoneNumber, message, "2",
-                    Utils.convertToTime(timestamp), timestamp);
-            smsViewModel.insert(sms);
+
+            synchronized (this) {
+                new SmsSendIdGetter(smsViewModel, id -> smsViewModel.insert(new Sms(
+                        id-1, phoneNumber, message, Telephony.Sms.MESSAGE_TYPE_SENT,
+                        Sms.STATUS_NEW, Utils.convertToTime(timestamp), timestamp))
+                ).execute();
+            }
 
             smsManager.sendTextMessage(phoneNumber, null,
                     message, null, null);

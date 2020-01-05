@@ -17,8 +17,8 @@ import java.util.Map;
 
 import de.bikebean.app.BuildConfig;
 import de.bikebean.app.MainActivity;
+import de.bikebean.app.db.status.Status;
 import de.bikebean.app.ui.status.StatusViewModel;
-import de.bikebean.app.ui.status.settings.UpdateSettings;
 
 class GeolocationAPI {
 
@@ -33,17 +33,17 @@ class GeolocationAPI {
     }
 
     //POST Request API #3
-    void httpPOST(final String requestBody, final UpdateSettings s, StatusViewModel vm) {
+    void httpPOST(final String requestBody, StatusViewModel vm) {
         JsonObjectRequest postRequest = new JsonObjectRequest(
                 Request.Method.POST, url, null,
                 response -> {
                     Log.d(MainActivity.TAG, "RESPONSE FROM SERVER: " + response.toString());
                     try {
                         JSONObject location = response.getJSONObject("location");
-                        s.updateLngLat(
-                                (float) location.getDouble("lat"),
-                                (float) location.getDouble("lng"),
-                                (float) response.getDouble("accuracy"),
+                        updateLngLatAcc(
+                                location.getDouble("lat"),
+                                location.getDouble("lng"),
+                                response.getDouble("accuracy"),
                                 vm
                         );
                     } catch (JSONException | InterruptedException e) {
@@ -80,5 +80,26 @@ class GeolocationAPI {
         };
 
         queue.add(postRequest);
+    }
+
+    private void updateLngLatAcc(
+            double lat, double lng, double acc,
+            StatusViewModel statusViewModel) throws InterruptedException {
+        statusViewModel.insert(new Status(
+                System.currentTimeMillis(), Status.KEY_LAT,
+                lat, "", Status.STATUS_CONFIRMED,
+                0));
+        Thread.sleep(1);
+        statusViewModel.insert(new Status(
+                System.currentTimeMillis(), Status.KEY_LNG,
+                lng, "", Status.STATUS_CONFIRMED,
+                0));
+        Thread.sleep(1);
+        statusViewModel.insert(new Status(
+                System.currentTimeMillis(), Status.KEY_ACC,
+                acc, "", Status.STATUS_CONFIRMED,
+                0));
+
+        statusViewModel.confirmLocationKeys();
     }
 }

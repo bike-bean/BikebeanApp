@@ -8,10 +8,12 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "sms_table")
 public class Sms {
 
+    public static final int STATUS_NEW = 0;
+    public static final int STATUS_PARSED = 1;
+
     @PrimaryKey
-    @NonNull
     @ColumnInfo(name = "_id")
-    private final String mId;
+    private final int mId;
 
     @NonNull
     @ColumnInfo(name = "address")
@@ -21,9 +23,11 @@ public class Sms {
     @ColumnInfo(name = "body")
     private final String mBody;
 
-    @NonNull
     @ColumnInfo(name = "type")
-    private final String mType;
+    private final int mType;
+
+    @ColumnInfo(name = "state")
+    private final int mState;
 
     @NonNull
     @ColumnInfo(name = "date")
@@ -33,10 +37,11 @@ public class Sms {
     private final long mTimestamp;
 
     public Sms(
-            @NonNull String id,
+            int id,
             @NonNull String address,
             @NonNull String body,
-            @NonNull String type,
+            int type,
+            int state,
             @NonNull String date,
             long timestamp
     ) {
@@ -44,11 +49,12 @@ public class Sms {
         this.mAddress = address;
         this.mBody = body;
         this.mType = type;
+        this.mState = state;
         this.mDate = date;
         this.mTimestamp = timestamp;
     }
 
-    public String getId() {
+    public int getId() {
         return this.mId;
     }
 
@@ -60,8 +66,12 @@ public class Sms {
         return this.mBody;
     }
 
-    public String getType() {
+    public int getType() {
         return this.mType;
+    }
+
+    public int getState() {
+        return this.mState;
     }
 
     public String getDate() {
