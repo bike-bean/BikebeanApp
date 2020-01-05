@@ -1,54 +1,108 @@
 package de.bikebean.app.ui.status.sms.parser;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.util.Log;
 
-import com.google.gson.Gson;
+import androidx.preference.PreferenceManager;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.bikebean.app.MainActivity;
+import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.ui.status.StatusViewModel;
-import de.bikebean.app.ui.status.settings.UpdateSettings;
+import de.bikebean.app.ui.status.preferences.PreferenceUpdater;
 
-public class SmsParser {
+public class SmsParser extends AsyncTask<String, Void, Boolean> {
 
     private final static int SMS_TYPE_POSITION = 0;
     private final static int SMS_TYPE_STATUS = 1;
     private final static int SMS_TYPE_WIFI_ON = 2;
     private final static int SMS_TYPE_WIFI_OFF = 3;
     private final static int SMS_TYPE_WARNING_NUMBER = 4;
-    public final static int SMS_TYPE_CELL_TOWERS = 50;  // wapp part 1
-    public final static int SMS_TYPE_WIFI_LIST = 51;  // wapp part 2
+    private final static int SMS_TYPE_CELL_TOWERS = 50;  // wapp part 1
+    private final static int SMS_TYPE_WIFI_LIST = 51;  // wapp part 2
     private final static int SMS_TYPE_INT = 6;
 
     // MATCHERS
     // position
-    private final Matcher positionMatcher;
+    private Matcher positionMatcher;
 
     // status
-    private final Matcher statusWarningNumberMatcher;
-    private final Matcher statusIntervalMatcher;
-    private final Matcher statusWifiStatusMatcher;
-    private final Matcher statusBatteryStatusMatcher;
+    private Matcher statusWarningNumberMatcher;
+    private Matcher statusIntervalMatcher;
+    private Matcher statusWifiStatusMatcher;
+    private Matcher statusBatteryStatusMatcher;
 
     // wifi
-    private final Matcher wifiStatusOnMatcher;
-    private final Matcher wifiStatusOffMatcher;
+    private Matcher wifiStatusOnMatcher;
+    private Matcher wifiStatusOffMatcher;
 
     // warning number
-    private final Matcher warningNumberMatcher;
+    private Matcher warningNumberMatcher;
 
     // wapp
-    private final Matcher wifiMatcher;
-    private final Matcher batteryMatcher;
+    private Matcher wifiMatcher;
+    private Matcher batteryMatcher;
 
     // interval
-    private final Matcher intervalChangedMatcher;
+    private Matcher intervalChangedMatcher;
 
-    public SmsParser(String smsText) {
+    private final WeakReference<StatusViewModel> statusViewModelReference;
+    private final WeakReference<AsyncResponse> asyncResponseReference;
+
+    public interface AsyncResponse {
+        void onDatabaseUpdated(boolean isDatabaseUpdated);
+    }
+
+    private int smsId;
+
+    private ArrayList<de.bikebean.app.db.status.Status> newStatusEntries;
+    private SharedPreferences settings;
+    private PreferenceUpdater preferenceUpdater;
+
+    public SmsParser(Sms sms,
+                     Context context,
+                     StatusViewModel statusViewModel,
+                     AsyncResponse delegate) {
+        statusViewModelReference = new WeakReference<>(statusViewModel);
+        asyncResponseReference = new WeakReference<>(delegate);
+
+        settings = PreferenceManager.getDefaultSharedPreferences(context);
+        preferenceUpdater = new PreferenceUpdater();
+        newStatusEntries = new ArrayList<>();
+
+        initMatchers(sms.getBody());
+        smsId = sms.getId();
+    }
+
+    @Override
+    protected Boolean doInBackground(String... args) {
+        // Parse Sms to get which type it is
+        int type = getType();
+        Log.d(MainActivity.TAG, String.format("Detected Type %d", type));
+
+        // Update the status entries for the status db and the user preferences
+        loadNewStatusEntries(type);
+        updatePreferences(settings, type);
+
+        // add each status entry to the status viewModel ( -> database )
+        for (de.bikebean.app.db.status.Status status : newStatusEntries)
+            statusViewModelReference.get().insert(status);
+
+        return true;
+    }
+
+    @Override
+    protected void onPostExecute(Boolean isDatabaseUpdated) {
+        asyncResponseReference.get().onDatabaseUpdated(isDatabaseUpdated);
+    }
+
+    private void initMatchers(String smsText) {
         Pattern statusWarningNumberPattern = Pattern.compile("(Warningnumber: )([+0-9]{8,})");
         Pattern statusIntervalPattern = Pattern.compile("(Interval: )(1|2|4|8|12|24)(h)");
         Pattern statusWifiStatusPattern = Pattern.compile("(Wifi Status: )(on|off)");
@@ -86,7 +140,74 @@ public class SmsParser {
         batteryMatcher = batteryPattern.matcher(smsText);
     }
 
-    public int getType() {
+    private void loadNewStatusEntries(int type) {
+        // Add the battery entry as it will be present most of the time
+        newStatusEntries.add(new de.bikebean.app.db.status.Status(
+                System.currentTimeMillis(),
+                de.bikebean.app.db.status.Status.KEY_BATTERY,
+                getStatusBattery(),
+                "",
+                de.bikebean.app.db.status.Status.STATUS_CONFIRMED,
+                smsId)
+        );
+
+        // add further entries based on sms type
+        switch (type) {
+            case SMS_TYPE_POSITION:
+                // TODO: Update Position Setting
+                break;
+            case SMS_TYPE_CELL_TOWERS:
+                newStatusEntries.remove(0); // remove the battery entry in this special case
+                newStatusEntries.add(new de.bikebean.app.db.status.Status(
+                        System.currentTimeMillis(),
+                        de.bikebean.app.db.status.Status.KEY_CELL_TOWERS,
+                        0.0,
+                        getWappCellTowers(),
+                        de.bikebean.app.db.status.Status.STATUS_PENDING,
+                        smsId)
+                );
+                break;
+            case SMS_TYPE_WIFI_LIST:
+                double batteryStatus = getBattery();
+                Log.d(MainActivity.TAG, "batteryStatus: " + batteryStatus);
+                // battery value is encoded differently in this case
+                newStatusEntries.get(0).setValue(batteryStatus);
+                newStatusEntries.add(new de.bikebean.app.db.status.Status(
+                        System.currentTimeMillis(),
+                        de.bikebean.app.db.status.Status.KEY_WIFI_ACCESS_POINTS,
+                        0.0,
+                        getWappWifi(),
+                        de.bikebean.app.db.status.Status.STATUS_PENDING,
+                        smsId)
+                );
+                break;
+        }
+    }
+
+    private void updatePreferences(SharedPreferences settings, int type) {
+        // only update the preferences settings here (which the user can control directly)
+        switch (type) {
+            case SMS_TYPE_STATUS:
+                preferenceUpdater.updateWarningNumber(settings, getStatusWarningNumber());
+                preferenceUpdater.updateInterval(settings, getStatusInterval());
+                preferenceUpdater.updateWifi(settings, getStatusWifi());
+                break;
+            case SMS_TYPE_WIFI_ON:
+                preferenceUpdater.updateWifi(settings, true);
+                break;
+            case SMS_TYPE_WIFI_OFF:
+                preferenceUpdater.updateWifi(settings, false);
+                break;
+            case SMS_TYPE_WARNING_NUMBER:
+                preferenceUpdater.updateWarningNumber(settings, getWarningNumber());
+                break;
+            case SMS_TYPE_INT:
+                preferenceUpdater.updateInterval(settings, getInterval());
+                break;
+        }
+    }
+
+    private int getType() {
         int type = -1;
 
         if (positionMatcher.find() && statusBatteryStatusMatcher.find())
@@ -110,50 +231,6 @@ public class SmsParser {
         return type;
     }
 
-    public void updateStatus(Context ctx, int type, StatusViewModel vm) {
-        UpdateSettings updateSettings = new UpdateSettings();
-        Log.d(MainActivity.TAG, String.format("Detected Type %d", type));
-
-        switch (type) {
-            case SMS_TYPE_POSITION:
-                // TODO: Update Position Setting
-                updateSettings.updateBattery(getStatusBattery(), vm);
-                break;
-            case SMS_TYPE_STATUS:
-                updateSettings.updateWarningNumber(ctx, getStatusWarningNumber());
-                updateSettings.updateInterval(ctx, getStatusInterval());
-                updateSettings.updateWifi(ctx, getStatusWifi());
-                updateSettings.updateBattery(getStatusBattery(), vm);
-                break;
-            case SMS_TYPE_WIFI_ON:
-                updateSettings.updateWifi(ctx, true);
-                updateSettings.updateBattery(getStatusBattery(), vm);
-                break;
-            case SMS_TYPE_WIFI_OFF:
-                updateSettings.updateWifi(ctx, false);
-                updateSettings.updateBattery(getStatusBattery(), vm);
-                break;
-            case SMS_TYPE_WARNING_NUMBER:
-                updateSettings.updateWarningNumber(ctx, getWarningNumber());
-                updateSettings.updateBattery(getStatusBattery(), vm);
-                break;
-            case SMS_TYPE_CELL_TOWERS:
-                updateSettings.updatePosition(getWappCellTowers(), vm);
-                break;
-            case SMS_TYPE_WIFI_LIST:
-                int batteryStatus = getBattery();
-                Log.d(MainActivity.TAG, "batteryStatus: " + batteryStatus);
-
-                updateSettings.updateBattery(batteryStatus, vm);
-                updateSettings.updateWifiList(getWappWifi(), vm);
-                break;
-            case SMS_TYPE_INT:
-                updateSettings.updateInterval(ctx, getInterval());
-                updateSettings.updateBattery(getStatusBattery(), vm);
-                break;
-        }
-    }
-
     // TODO: implement
     // String getPosition() {}
 
@@ -170,8 +247,12 @@ public class SmsParser {
         return result.equals("on");
     }
 
-    private int getStatusBattery() {
-        return Integer.parseInt(getMatcherResult(statusBatteryStatusMatcher));
+    private double getStatusBattery() {
+        String result = getMatcherResult(statusBatteryStatusMatcher);
+
+        if (!result.isEmpty())
+            return Double.parseDouble(result);
+        else return 0.0;
     }
 
     private String getWarningNumber() {
@@ -202,7 +283,7 @@ public class SmsParser {
         return result.toString();
     }
 
-    private int getBattery() {
+    private double getBattery() {
         String result = "";
         batteryMatcher.reset();
 
@@ -211,7 +292,7 @@ public class SmsParser {
             result = batteryMatcher.group();
         }
 
-        return Integer.parseInt(result);
+        return Double.parseDouble(result);
     }
 
     private String getInterval() {
@@ -233,112 +314,5 @@ public class SmsParser {
 
         return result;
     }
-
-    public static String parseSMS(String sms, UpdateSettings s, StatusViewModel vm) {
-        final Gson gson = new Gson();
-
-        LocationAPIBody locationAPIBody = new LocationAPIBody();
-        String smsText1 = sms.split("([.]){4}")[0];
-        String smsText2 = sms.split("([.]){4}")[1];
-
-        int numberWifiAccessPoints = parseSms1(smsText1, locationAPIBody);
-        int numberCellTowers = parseSms2(smsText2, locationAPIBody);
-
-        Log.d(MainActivity.TAG, "WifiAccessPoints_JsonArray: " + gson.toJson(locationAPIBody.wifiAccessPoints));
-        Log.d(MainActivity.TAG, "numberWifiAccessPoints: " + numberWifiAccessPoints);
-        Log.d(MainActivity.TAG, "cellTowers_JsonArray: " + gson.toJson(locationAPIBody.cellTowers));
-        Log.d(MainActivity.TAG, "numberCellTowers: " + numberCellTowers);
-
-        s.updateNoWifiAccessPoints(numberWifiAccessPoints, vm);
-        s.updateNoCellTowers(numberCellTowers, vm);
-
-        // Create final json string
-        return gson.toJson(locationAPIBody);
-    }
-
-    private static int parseSms1(String sms, LocationAPIBody locationAPIBody) {
-        String[] stringArrayWapp = sms.split("\n");
-        int numberWifiAccessPoints = stringArrayWapp.length;
-
-        for (String s : stringArrayWapp) {
-            if (!s.equals("    ")) {
-                // Länge des Substrings ist Unterscheidungskriterium
-                WifiAccessPoint wap = new WifiAccessPoint();
-                wap.macAddress = s.substring(2);
-                wap.signalStrength = Integer.parseInt("-" + s.substring(0, 2));
-                wap.toMacAddress();
-
-                locationAPIBody.wifiAccessPoints.add(wap);
-            }
-        }
-
-        return numberWifiAccessPoints;
-    }
-
-    private static int parseSms2(String sms, LocationAPIBody locationAPIBody) {
-        String[] stringArrayWapp = sms.split("\n");
-
-        int numberCellTowers = stringArrayWapp.length;
-
-        for (String s : stringArrayWapp) {
-            if (!s.equals("    ")) {
-                String[] stringArray_gsm_towers = s.split(",");
-                CellTower c = new CellTower();
-
-                c.mobileCountryCode = Integer.parseInt(stringArray_gsm_towers[0]);
-                c.mobileNetworkCode = Integer.parseInt(stringArray_gsm_towers[1]);
-                c.locationAreaCode = Integer.parseInt(stringArray_gsm_towers[2], 16);
-                c.cellId = Integer.parseInt(stringArray_gsm_towers[3], 16);
-                c.signalStrength = Integer.parseInt("-" + stringArray_gsm_towers[4]);
-
-                locationAPIBody.cellTowers.add(c);
-            }
-        }
-
-        return numberCellTowers;
-    }
 }
 
-
-class WifiAccessPoint {
-    String macAddress;
-    Integer signalStrength;
-
-    void toMacAddress() {
-        String str = macAddress;
-        StringBuilder tmp = new StringBuilder();
-        final int divisor = 2;
-
-        while(str.length() > 0) {
-            String nextChunk = str.substring(0, divisor);
-            tmp.append(nextChunk);
-            if (str.length() > 2) {
-                tmp.append(":");
-            }
-
-            str = str.substring(divisor);
-        }
-
-        macAddress = tmp.toString();
-    }
-}
-
-
-class CellTower {
-    Integer mobileCountryCode;
-    Integer mobileNetworkCode;
-    Integer locationAreaCode;
-    Integer cellId;
-    Integer signalStrength;
-}
-
-
-class LocationAPIBody {
-    final ArrayList<CellTower> cellTowers;
-    final ArrayList<WifiAccessPoint> wifiAccessPoints;
-
-    LocationAPIBody() {
-        cellTowers = new ArrayList<>();
-        wifiAccessPoints = new ArrayList<>();
-    }
-}

@@ -18,8 +18,11 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import de.bikebean.app.db.sms.Sms;
+import de.bikebean.app.ui.status.StatusViewModel;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 import de.bikebean.app.ui.status.sms.listen.SmsListener;
+import de.bikebean.app.ui.status.sms.parser.SmsParser;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_PERMISSION_KEY = 1;
 
     private SmsViewModel smsViewModel;
+    private StatusViewModel statusViewModel;
 
     private String address;
 
@@ -36,6 +40,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         smsViewModel = new ViewModelProvider(this).get(SmsViewModel.class);
+        statusViewModel = new ViewModelProvider(this).get(StatusViewModel.class);
+
+        // Listen for new incoming messages and react to their content
+        smsViewModel.getNewIncoming().observe(this, newSmsList -> {
+            for (Sms newSms : newSmsList)
+                new SmsParser(newSms, getApplicationContext(), statusViewModel, isDatabaseUpdated -> {
+                    smsViewModel.markParsed(newSms.getId());
+                }).execute();
+        });
 
         setupNavView();
 

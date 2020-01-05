@@ -1,7 +1,8 @@
-package de.bikebean.app.ui.status.settings;
+package de.bikebean.app.ui.status.preferences;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -20,6 +21,7 @@ import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreference;
 
 import java.util.Objects;
@@ -29,7 +31,7 @@ import de.bikebean.app.R;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 import de.bikebean.app.ui.status.sms.send.SmsSender;
 
-public class SettingsActivity extends AppCompatActivity {
+public class PreferencesActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,17 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
+            smsViewModel = new ViewModelProvider(this).get(SmsViewModel.class);
+
+            // act and ctx
+            final FragmentActivity act = Objects.requireNonNull(getActivity());
+            fragmentManager = act.getSupportFragmentManager();
+            final Context ctx = act.getApplicationContext();
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+
+            final SmsSender smsSender = new SmsSender(ctx, act);
+            PreferenceUpdater preferenceUpdater = new PreferenceUpdater();
+
             // Preferences
             final EditTextPreference numberPreference = findPreference("number");
             final EditTextPreference warningNumberPreference = findPreference("warningNumber");
@@ -67,25 +80,20 @@ public class SettingsActivity extends AppCompatActivity {
             final EditTextPreference intervalLastChange = findPreference("intervalLastChange");
             final EditTextPreference wifiLastChange = findPreference("wifiLastChange");
 
-            final FragmentActivity act = Objects.requireNonNull(getActivity());
-            fragmentManager = act.getSupportFragmentManager();
-            final Context ctx = act.getApplicationContext();
-            smsViewModel = new ViewModelProvider(this).get(SmsViewModel.class);
             final String numberBike = Objects.requireNonNull(numberPreference).getText();
-            final SmsSender smsSender = new SmsSender(ctx, act);
 
             numberPreference.setOnBindEditTextListener(
                     editText -> editText.setInputType(InputType.TYPE_CLASS_PHONE));
             numberPreference.setDialogMessage("Bitte mit Ländercode (z.B. +49 für Deutschland) eingeben");
             numberPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                UpdateSettings updateSettings = new UpdateSettings();
-                updateSettings.resetAll(ctx);
+                preferenceUpdater.resetAll(sharedPreferences);
 
                 if (!newValue.toString().substring(0, 1).equals("+")) {
-                                                                  Toast.makeText(ctx, "Bitte mit Ländercode (+49) eingeben!",
-                                                                  Toast.LENGTH_LONG).show();
-                                                                  return false;
-                                                                  }
+                    Toast.makeText(
+                            ctx, "Bitte mit Ländercode (+49) eingeben!",
+                            Toast.LENGTH_LONG).show();
+                    return false;
+                }
                 else
                     return true;
             });
@@ -99,19 +107,18 @@ public class SettingsActivity extends AppCompatActivity {
                     return "Bike Bean wird alle " + value + "h neue Nachrichten prüfen.";
                 });
 
-                intervalPreference.setOnPreferenceChangeListener(
-                        (preference, newValue) -> {
-                            Log.d(MainActivity.TAG, "Setting " + preference.getKey() +
-                                    " about to be changed to " + newValue);
-                            String timeStamp = UpdateSettings.getTimestamp();
-                            Log.d(MainActivity.TAG, "Date: " + timeStamp);
-                            if (intervalLastChange != null) {
-                                intervalLastChange.setText(timeStamp);
-                            }
+                intervalPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    Log.d(MainActivity.TAG, "Setting " + preference.getKey() +
+                            " about to be changed to " + newValue);
+                    String timeStamp = PreferenceUpdater.getTimestamp();
+                    Log.d(MainActivity.TAG, "Date: " + timeStamp);
+                    if (intervalLastChange != null) {
+                        intervalLastChange.setText(timeStamp);
+                    }
 
-                            smsSender.send(numberBike, "Int " + newValue, smsViewModel);
-                            return true;
-                        });
+                    smsSender.send(numberBike, "Int " + newValue, smsViewModel);
+                    return true;
+                });
             }
 
             if (warningNumberPreference != null) {
@@ -126,19 +133,18 @@ public class SettingsActivity extends AppCompatActivity {
             }
 
             if (wifiSwitch != null) {
-                wifiSwitch.setOnPreferenceChangeListener(
-                        (preference, newValue) -> {
-                            Log.d(MainActivity.TAG, "Setting " + preference.getKey() +
-                                    " about to be changed to " + newValue);
-                            String timeStamp = UpdateSettings.getTimestamp();
-                            Log.d(MainActivity.TAG, "Date: " + timeStamp);
-                            if (wifiLastChange != null) {
-                                wifiLastChange.setText(timeStamp);
-                            }
+                wifiSwitch.setOnPreferenceChangeListener((preference, newValue) -> {
+                    Log.d(MainActivity.TAG, "Setting " + preference.getKey() +
+                            " about to be changed to " + newValue);
+                    String timeStamp = PreferenceUpdater.getTimestamp();
+                    Log.d(MainActivity.TAG, "Date: " + timeStamp);
+                    if (wifiLastChange != null) {
+                        wifiLastChange.setText(timeStamp);
+                    }
 
-                            smsSender.send(numberBike, "Wifi " + ((boolean) newValue ? "on" : "off" ), smsViewModel);
-                            return true;
-                        });
+                    smsSender.send(numberBike, "Wifi " + ((boolean) newValue ? "on" : "off" ), smsViewModel);
+                    return true;
+                });
             }
 
             showDialog();

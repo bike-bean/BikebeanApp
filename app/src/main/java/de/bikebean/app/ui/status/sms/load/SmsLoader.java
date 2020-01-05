@@ -69,6 +69,7 @@ public class SmsLoader extends AsyncTask<String, Void, String> {
 
     private void traverseInboxAndClose(Cursor inbox, SmsViewModel vm) {
         if (inbox.moveToFirst()) {
+            Log.d(MainActivity.TAG, "Loading " + inbox.getCount() + " SMS");
             for (int i = 0; i < inbox.getCount(); i++) {
                 String address = inbox.getString(inbox.getColumnIndexOrThrow("address"));
                 String id = inbox.getString(inbox.getColumnIndexOrThrow("_id"));
@@ -78,8 +79,11 @@ public class SmsLoader extends AsyncTask<String, Void, String> {
                 String date = inbox.getString(inbox.getColumnIndexOrThrow("date"));
                 long timestamp = Long.parseLong(date);
 
-                vm.insert(new Sms(id, address, body, type,
-                        Utils.convertToTime(timestamp), timestamp));
+                if (vm.getSmsById(Integer.parseInt(id)).size() == 0)
+                    vm.insert(new Sms(Integer.parseInt(id), address, body, Integer.parseInt(type),
+                            Sms.STATUS_NEW, Utils.convertToTime(timestamp), timestamp));
+                else
+                    Log.d(MainActivity.TAG, "SMS " + id + " is already present");
 
                 inbox.moveToNext();
             }

@@ -19,6 +19,8 @@ public class StatusViewModel extends AndroidViewModel {
     private final LiveData<List<Status>> mStatusLocationAcc;
     private final LiveData<List<Status>> mStatusNumberCellTowers;
     private final LiveData<List<Status>> mStatusNumberWifiAccessPoints;
+    private final LiveData<List<Status>> mPendingCellTowers;
+    private final LiveData<List<Status>> mPendingWifiAccessPoints;
 
     public StatusViewModel(Application application) {
         super(application);
@@ -29,6 +31,8 @@ public class StatusViewModel extends AndroidViewModel {
         mStatusLocationAcc = mRepository.getStatusLocationAcc();
         mStatusNumberCellTowers = mRepository.getStatusNumberCellTowers();
         mStatusNumberWifiAccessPoints = mRepository.getStatusNumberWifiAccessPoints();
+        mPendingCellTowers = mRepository.getPendingCellTowers();
+        mPendingWifiAccessPoints = mRepository.getPendingWifiAccessPoints();
     }
 
     LiveData<List<Status>> getStatusBattery() {
@@ -55,16 +59,12 @@ public class StatusViewModel extends AndroidViewModel {
         return mStatusNumberCellTowers;
     }
 
-    public List<Status> getCellTowers() {
-        return mRepository.getCellTowers();
+    LiveData<List<Status>> getPendingCellTowers() {
+        return mPendingCellTowers;
     }
 
-    public List<Status> getWifiAccessPoints() {
-        return mRepository.getWifiAccessPoints();
-    }
-
-    public List<Status> getLng() {
-        return mRepository.getLng();
+    LiveData<List<Status>> getPendingWifiAccessPoints() {
+        return mPendingWifiAccessPoints;
     }
 
     public List<Status> getBattery() {
@@ -73,5 +73,13 @@ public class StatusViewModel extends AndroidViewModel {
 
     public void insert(Status status) {
         mRepository.insert(status);
+    }
+
+    public void confirmBySmsId(int smsId) {
+        mRepository.confirmBySmsId(smsId);
+    }
+
+    public void confirmLocationKeys() {
+        mRepository.confirmLocationKeys();
     }
 }

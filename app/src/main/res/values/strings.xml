@@ -10,7 +10,6 @@
     <string name="settings_heading">Einstellungen</string>
     <string name="location_text">Standort</string>
     <string name="status_text">Status</string>
-    <string name="datetime_default_text">DD.MM.YY - HH:MM:SS</string>
     <string name="battery_text">Batterie</string>
     <string name="estimated_charge_text">Ladezustand:</string>
 

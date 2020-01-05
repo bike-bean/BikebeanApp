@@ -16,7 +16,7 @@ import de.bikebean.app.db.sms.SmsDao;
 import de.bikebean.app.db.status.Status;
 import de.bikebean.app.db.status.StatusDao;
 
-@Database(entities = {Sms.class, Status.class}, version = 5, exportSchema = false)
+@Database(entities = {Sms.class, Status.class}, version = 7, exportSchema = false)
 public abstract class BikeBeanRoomDatabase extends RoomDatabase {
 
     public abstract SmsDao smsDao();

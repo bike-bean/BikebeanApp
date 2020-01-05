@@ -1,6 +1,7 @@
 package de.bikebean.app.ui.status.sms;
 
 import android.content.Context;
+import android.provider.Telephony;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +57,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         if (mSms != null) {
             Sms current = mSms.get(position);
 
-            if (current.getType().equals("1")) {
+            if (current.getType() == Telephony.Sms.MESSAGE_TYPE_INBOX) {
                 // Make FROM elements visible (message from other part)
                 holder.msgFrom.setVisibility(View.VISIBLE);
                 holder.msgYou.setVisibility(View.GONE);
@@ -65,7 +66,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
                 holder.lblMsgFrom.setText(String.format("Bike Bean (%s)", current.getAddress()));
                 holder.timeMsgFrom.setText(current.getDate());
             } else {
-                // Make YOUR elements visible (message from us)
+                // Make OUR elements visible (message from us)
                 holder.msgYou.setVisibility(View.VISIBLE);
                 holder.msgFrom.setVisibility(View.GONE);
 
