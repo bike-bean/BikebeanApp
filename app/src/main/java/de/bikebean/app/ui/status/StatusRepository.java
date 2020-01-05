@@ -84,7 +84,9 @@ class StatusRepository {
     }
 
     void confirmLocationKeys() {
-        mStatusDao.updateStateByKey(Status.STATUS_CONFIRMED, "cellTowers");
-        mStatusDao.updateStateByKey(Status.STATUS_CONFIRMED, "wifiAccessPoints");
+        BikeBeanRoomDatabase.databaseWriteExecutor.execute(() ->
+                mStatusDao.updateStateByKey(Status.STATUS_CONFIRMED, Status.KEY_CELL_TOWERS));
+        BikeBeanRoomDatabase.databaseWriteExecutor.execute(() ->
+                mStatusDao.updateStateByKey(Status.STATUS_CONFIRMED, Status.KEY_WIFI_ACCESS_POINTS));
     }
 }

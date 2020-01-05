@@ -16,9 +16,8 @@ public class LocationUpdater extends AsyncTask<String, Void, Boolean> {
     private final WeakReference<StatusViewModel> statusViewModelReference;
     private AsyncResponse mDelegate;
 
-    private volatile static boolean isCellTowersSet, isWifiAccessPointsSet;
+    private volatile static boolean isCellTowersSet = false, isWifiAccessPointsSet = false;
     private volatile static String cellTowers, wifiAccessPoints;
-    private volatile static boolean isLocationUpdated;
 
     public interface AsyncResponse {
         void onLocationUpdated(boolean isLocationUpdated);
@@ -35,37 +34,29 @@ public class LocationUpdater extends AsyncTask<String, Void, Boolean> {
         Context context = contextReference.get();
         StatusViewModel statusViewModel = statusViewModelReference.get();
 
-        isCellTowersSet = isWifiAccessPointsSet = isLocationUpdated = false;
-
         String key = args[1];
 
-        try {
-            waitForOther(key);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        if (key.equals("cellTowers"))
+        if (key.equals("cellTowers")) {
             cellTowers = args[0];
-        else if (key.equals("wifiAccessPoints"))
-            wifiAccessPoints = args[0];
-
-        synchronized (this) {
-            if (isLocationUpdated)
-                return true;
-
-            GeolocationAPI geolocationAPI = new GeolocationAPI(context);
-            ApiParser apiParser = new ApiParser(statusViewModel);
-
-            Log.d(MainActivity.TAG, "Updating Lat/Lng...");
-            Log.d(MainActivity.TAG, cellTowers);
-            Log.d(MainActivity.TAG, wifiAccessPoints);
-
-            String requestBody = apiParser.createJsonApiBody(cellTowers, wifiAccessPoints);
-            geolocationAPI.httpPOST(requestBody, statusViewModel);
-
-            isLocationUpdated = true;
+            isCellTowersSet = true;
         }
+        else if (key.equals("wifiAccessPoints")) {
+            wifiAccessPoints = args[0];
+            isWifiAccessPointsSet = true;
+        }
+
+        if (!(isCellTowersSet && isWifiAccessPointsSet))
+            return false;
+
+        GeolocationAPI geolocationAPI = new GeolocationAPI(context);
+        ApiParser apiParser = new ApiParser(statusViewModel);
+
+        Log.d(MainActivity.TAG, "Updating Lat/Lng...");
+        Log.d(MainActivity.TAG, cellTowers);
+        Log.d(MainActivity.TAG, wifiAccessPoints);
+
+        String requestBody = apiParser.createJsonApiBody(cellTowers, wifiAccessPoints);
+        geolocationAPI.httpPOST(requestBody, statusViewModel);
 
         return true;
     }
@@ -75,22 +66,4 @@ public class LocationUpdater extends AsyncTask<String, Void, Boolean> {
         mDelegate.onLocationUpdated(isLocationUpdated);
     }
 
-    private void waitForOther(String key) throws InterruptedException {
-        if (key.equals("cellTowers"))
-            waitForWifiAccessPoints();
-        else if (key.equals("wifiAccessPoints"))
-            waitForCellTowers();
-    }
-
-    private void waitForCellTowers() throws InterruptedException {
-        while (!isCellTowersSet) {
-            Thread.sleep(100);
-        }
-    }
-
-    private void waitForWifiAccessPoints() throws InterruptedException {
-        while (!isWifiAccessPointsSet) {
-            Thread.sleep(100);
-        }
-    }
 }

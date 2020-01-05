@@ -25,7 +25,7 @@ public class SmsViewModel extends AndroidViewModel {
         mNewIncoming = mRepository.getNewIncoming();
     }
 
-    public LiveData<List<Sms>> getChat() {
+    LiveData<List<Sms>> getChat() {
         return mChat;
     }
 
