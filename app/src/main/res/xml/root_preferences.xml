@@ -26,6 +26,12 @@
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
+            app:key="name"
+            app:title="@string/name_title"
+            app:defaultValue="Mein Fahrrad"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
             app:key="warningNumber"
             app:selectable="false"
             app:singleLine="true"
@@ -42,10 +48,9 @@
         app:title="@string/interval_header">
 
         <ListPreference
-            app:defaultValue="12"
+            app:key="interval"
             app:entries="@array/interval_entries"
             app:entryValues="@array/interval_values"
-            app:key="interval"
             app:title="@string/interval_title" />
 
         <EditTextPreference
@@ -59,9 +64,9 @@
         app:title="@string/wlan_header">
 
         <SwitchPreference
+            app:key="wlan"
             app:defaultValue="false"
             app:icon="@drawable/ic_signal_wifi_4_bar_black_24dp"
-            app:key="wlan"
             app:summaryOff="@string/wlan_summary_off"
             app:summaryOn="@string/wlan_summary_on"
             app:title="@string/wlan_title" />

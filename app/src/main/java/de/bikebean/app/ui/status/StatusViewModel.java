@@ -13,6 +13,7 @@ public class StatusViewModel extends AndroidViewModel {
 
     private final StatusRepository mRepository;
 
+    private final LiveData<List<Status>> mStatus;
     private final LiveData<List<Status>> mStatusBattery;
     private final LiveData<List<Status>> mStatusLocationLat;
     private final LiveData<List<Status>> mStatusLocationLng;
@@ -24,7 +25,10 @@ public class StatusViewModel extends AndroidViewModel {
 
     public StatusViewModel(Application application) {
         super(application);
+
         mRepository = new StatusRepository(application);
+
+        mStatus = mRepository.getStatus();
         mStatusBattery = mRepository.getStatusBattery();
         mStatusLocationLat = mRepository.getStatusLocationLat();
         mStatusLocationLng = mRepository.getStatusLocationLng();
@@ -33,6 +37,10 @@ public class StatusViewModel extends AndroidViewModel {
         mStatusNumberWifiAccessPoints = mRepository.getStatusNumberWifiAccessPoints();
         mPendingCellTowers = mRepository.getPendingCellTowers();
         mPendingWifiAccessPoints = mRepository.getPendingWifiAccessPoints();
+    }
+
+    public LiveData<List<Status>> getStatus() {
+        return mStatus;
     }
 
     LiveData<List<Status>> getStatusBattery() {

@@ -3,6 +3,7 @@ package de.bikebean.app.ui.status;
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Transformations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import de.bikebean.app.db.status.StatusDao;
 class StatusRepository {
 
     private final StatusDao mStatusDao;
+    private final LiveData<List<Status>> mStatus;
     private final LiveData<List<Status>> mStatusBattery;
     private final LiveData<List<Status>> mStatusLocationLat;
     private final LiveData<List<Status>> mStatusLocationLng;
@@ -27,6 +29,7 @@ class StatusRepository {
         BikeBeanRoomDatabase db = BikeBeanRoomDatabase.getDatabase(application);
         mStatusDao = db.statusDao();
 
+        mStatus = mStatusDao.getAllByKey(Status.KEY_STATUS);
         mStatusBattery = mStatusDao.getAllByKey(Status.KEY_BATTERY);
         mStatusLocationLat = mStatusDao.getAllByKey(Status.KEY_LAT);
         mStatusLocationLng = mStatusDao.getAllByKey(Status.KEY_LNG);
@@ -37,6 +40,10 @@ class StatusRepository {
                 Status.KEY_CELL_TOWERS, Status.STATUS_PENDING);
         mPendingWifiAccessPoints = mStatusDao.getByKeyAndState(
                 Status.KEY_WIFI_ACCESS_POINTS, Status.STATUS_PENDING);
+    }
+
+    LiveData<List<Status>> getStatus() {
+        return mStatus;
     }
 
     LiveData<List<Status>> getStatusBattery() {
@@ -64,11 +71,11 @@ class StatusRepository {
     }
 
     LiveData<List<Status>> getPendingCellTowers() {
-        return mPendingCellTowers;
+        return Transformations.distinctUntilChanged(mPendingCellTowers);
     }
 
     LiveData<List<Status>> getPendingWifiAccessPoints() {
-        return mPendingWifiAccessPoints;
+        return Transformations.distinctUntilChanged(mPendingWifiAccessPoints);
     }
 
     List<Status> getBattery() {

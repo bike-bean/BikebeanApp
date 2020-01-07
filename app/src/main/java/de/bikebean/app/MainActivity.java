@@ -1,6 +1,7 @@
 package de.bikebean.app;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = "BIKE";
     private static final int REQUEST_PERMISSION_KEY = 1;
+    private static final int INITIAL_CONFIGURATION_KEY = 2;
 
     private SmsViewModel smsViewModel;
     private StatusViewModel statusViewModel;
@@ -45,9 +47,8 @@ public class MainActivity extends AppCompatActivity {
         // Listen for new incoming messages and react to their content
         smsViewModel.getNewIncoming().observe(this, newSmsList -> {
             for (Sms newSms : newSmsList)
-                new SmsParser(newSms, getApplicationContext(), statusViewModel, isDatabaseUpdated -> {
-                    smsViewModel.markParsed(newSms.getId());
-                }).execute();
+                new SmsParser(newSms, getApplicationContext(), statusViewModel,
+                        isDatabaseUpdated -> smsViewModel.markParsed(newSms.getId())).execute();
         });
 
         setupNavView();
@@ -57,7 +58,10 @@ public class MainActivity extends AppCompatActivity {
         address = sharedPreferences.getString("number", "");
 
         setupSmsListener();
-        fetchSms();
+        if (address.equals(""))
+            startInitialConfiguration();
+        else
+            fetchSms();
     }
 
     private void setupNavView() {
@@ -76,15 +80,22 @@ public class MainActivity extends AppCompatActivity {
         SmsListener.setSmsViewModel(smsViewModel);
     }
 
+    private void startInitialConfiguration() {
+        startActivityForResult(
+                new Intent(this, InitialConfigurationActivity.class),
+                INITIAL_CONFIGURATION_KEY
+        );
+    }
+
     private void fetchSms() {
-        String[] PERMISSIONS = {
+        String[] permissions = {
                 android.Manifest.permission.READ_SMS,
                 android.Manifest.permission.SEND_SMS,
                 Manifest.permission.RECEIVE_SMS
         };
 
-        if (Utils.hasPermissions(this, PERMISSIONS))
-            ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_PERMISSION_KEY);
+        if (Utils.hasNoPermissions(this, permissions))
+            ActivityCompat.requestPermissions(this, permissions, REQUEST_PERMISSION_KEY);
         else
             smsViewModel.fetchSms(this, address, "");
     }
@@ -103,5 +114,19 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "You must accept permissions.", Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    @Override
+    protected void onActivityResult(
+            int requestCode,
+            int resultCode,
+            Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == INITIAL_CONFIGURATION_KEY)
+            if (resultCode == RESULT_OK)
+                fetchSms();
+            else if (resultCode == RESULT_CANCELED)
+                startInitialConfiguration();
     }
 }

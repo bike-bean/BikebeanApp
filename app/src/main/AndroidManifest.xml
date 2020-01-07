@@ -11,7 +11,6 @@
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -31,6 +30,9 @@
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
         <activity
+            android:name=".InitialConfigurationActivity">
+        </activity>
+        <activity
             android:name=".ui.status.preferences.PreferencesActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".MainActivity">
@@ -38,23 +40,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.bikebean.app.MainActivity" />
         </activity>
-
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
-
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.status.sms.SmsActivity"
             android:label="@string/title_activity_sms">
-
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.bikebean.app.MainActivity" />
@@ -62,7 +59,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
+            android:value="@string/google_maps_api_key" />
 
         <receiver
             android:name=".ui.status.sms.listen.SmsListener"
@@ -72,5 +69,4 @@
             </intent-filter>
         </receiver>
     </application>
-
 </manifest>
