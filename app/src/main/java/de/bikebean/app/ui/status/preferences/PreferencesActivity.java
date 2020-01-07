@@ -28,6 +28,7 @@ import java.util.Objects;
 
 import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
+import de.bikebean.app.Utils;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 import de.bikebean.app.ui.status.sms.send.SmsSender;
 
@@ -84,18 +85,22 @@ public class PreferencesActivity extends AppCompatActivity {
 
             numberPreference.setOnBindEditTextListener(
                     editText -> editText.setInputType(InputType.TYPE_CLASS_PHONE));
-            numberPreference.setDialogMessage("Bitte mit Ländercode (z.B. +49 für Deutschland) eingeben");
+            numberPreference.setDialogMessage(R.string.number_subtitle);
             numberPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                preferenceUpdater.resetAll(sharedPreferences);
-
-                if (!newValue.toString().substring(0, 1).equals("+")) {
+                if (newValue.toString().equals("")) {
+                    Toast.makeText(
+                            ctx, "Bitte Nummber eingeben!",
+                            Toast.LENGTH_LONG).show();
+                    return false;
+                } else if (!newValue.toString().substring(0, 1).equals("+")) {
                     Toast.makeText(
                             ctx, "Bitte mit Ländercode (+49) eingeben!",
                             Toast.LENGTH_LONG).show();
                     return false;
-                }
-                else
+                } else {
+                    preferenceUpdater.resetAll(sharedPreferences);
                     return true;
+                }
             });
 
             if (intervalPreference != null) {
@@ -110,7 +115,7 @@ public class PreferencesActivity extends AppCompatActivity {
                 intervalPreference.setOnPreferenceChangeListener((preference, newValue) -> {
                     Log.d(MainActivity.TAG, "Setting " + preference.getKey() +
                             " about to be changed to " + newValue);
-                    String timeStamp = PreferenceUpdater.getTimestamp();
+                    String timeStamp = Utils.getTimestamp();
                     Log.d(MainActivity.TAG, "Date: " + timeStamp);
                     if (intervalLastChange != null) {
                         intervalLastChange.setText(timeStamp);
@@ -136,7 +141,7 @@ public class PreferencesActivity extends AppCompatActivity {
                 wifiSwitch.setOnPreferenceChangeListener((preference, newValue) -> {
                     Log.d(MainActivity.TAG, "Setting " + preference.getKey() +
                             " about to be changed to " + newValue);
-                    String timeStamp = PreferenceUpdater.getTimestamp();
+                    String timeStamp = Utils.getTimestamp();
                     Log.d(MainActivity.TAG, "Date: " + timeStamp);
                     if (wifiLastChange != null) {
                         wifiLastChange.setText(timeStamp);

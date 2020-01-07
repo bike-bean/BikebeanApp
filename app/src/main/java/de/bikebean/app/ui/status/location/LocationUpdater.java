@@ -7,13 +7,14 @@ import android.util.Log;
 import java.lang.ref.WeakReference;
 
 import de.bikebean.app.MainActivity;
+import de.bikebean.app.db.status.Status;
 import de.bikebean.app.ui.status.StatusViewModel;
 import de.bikebean.app.ui.status.preferences.PreferenceUpdater;
 
 public class LocationUpdater extends AsyncTask<String, Void, Boolean> {
 
     private final WeakReference<Context> contextReference;
-    private final WeakReference<StatusViewModel> statusViewModelReference;
+    private StatusViewModel mStatusViewModel;
     private AsyncResponse mDelegate;
 
     private volatile static boolean isCellTowersSet = false, isWifiAccessPointsSet = false;
@@ -25,22 +26,20 @@ public class LocationUpdater extends AsyncTask<String, Void, Boolean> {
 
     public LocationUpdater(Context context, StatusViewModel statusViewModel, AsyncResponse delegate) {
         contextReference = new WeakReference<>(context);
-        statusViewModelReference = new WeakReference<>(statusViewModel);
+        mStatusViewModel = statusViewModel;
         mDelegate = delegate;
     }
 
     @Override
     protected Boolean doInBackground(String... args) {
         Context context = contextReference.get();
-        StatusViewModel statusViewModel = statusViewModelReference.get();
 
         String key = args[1];
 
-        if (key.equals("cellTowers")) {
+        if (key.equals(de.bikebean.app.db.status.Status.KEY_CELL_TOWERS)) {
             cellTowers = args[0];
             isCellTowersSet = true;
-        }
-        else if (key.equals("wifiAccessPoints")) {
+        } else if (key.equals(de.bikebean.app.db.status.Status.KEY_WIFI_ACCESS_POINTS)) {
             wifiAccessPoints = args[0];
             isWifiAccessPointsSet = true;
         }
@@ -49,14 +48,12 @@ public class LocationUpdater extends AsyncTask<String, Void, Boolean> {
             return false;
 
         GeolocationAPI geolocationAPI = new GeolocationAPI(context);
-        ApiParser apiParser = new ApiParser(statusViewModel);
+        ApiParser apiParser = new ApiParser(mStatusViewModel);
 
         Log.d(MainActivity.TAG, "Updating Lat/Lng...");
-        Log.d(MainActivity.TAG, cellTowers);
-        Log.d(MainActivity.TAG, wifiAccessPoints);
 
         String requestBody = apiParser.createJsonApiBody(cellTowers, wifiAccessPoints);
-        geolocationAPI.httpPOST(requestBody, statusViewModel);
+        geolocationAPI.httpPOST(requestBody, mStatusViewModel);
 
         return true;
     }
@@ -65,5 +62,4 @@ public class LocationUpdater extends AsyncTask<String, Void, Boolean> {
     protected void onPostExecute(Boolean isLocationUpdated) {
         mDelegate.onLocationUpdated(isLocationUpdated);
     }
-
 }

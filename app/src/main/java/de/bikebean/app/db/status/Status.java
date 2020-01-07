@@ -22,6 +22,7 @@ public class Status {
     public static final String KEY_WIFI_ACCESS_POINTS = "wifiAccessPoints";
     public static final String KEY_NO_CELL_TOWERS = "noCellTowers";
     public static final String KEY_NO_WIFI_ACCESS_POINTS = "noWifiAccessPoints";
+    public static final String KEY_STATUS = "status";
 
     @PrimaryKey
     @ColumnInfo(name = "timestamp")

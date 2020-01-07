@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
+import java.util.Locale;
 import java.util.Objects;
 
 import de.bikebean.app.MainActivity;
@@ -93,18 +94,19 @@ public class StatusFragment extends Fragment {
             Status s = statuses.get(0);
             String batteryStatus = s.getValue() + " %";
             batteryStatusText.setText(batteryStatus);
+            // Todo: change the battery icon based on state of charge
             batteryLastChangedText.setText(Utils.convertToTime(s.getTimestamp()));
         });
         statusViewModel.getStatusLocationLat().observe(getViewLifecycleOwner(), statuses -> {
             if (statuses.size() == 0)
                 return;
-            latText.setText(String.valueOf(statuses.get(0).getValue()));
+            latText.setText(String.format(Locale.GERMANY, "%.7f", statuses.get(0).getValue()));
             locationLastChangedText.setText(Utils.convertToTime(statuses.get(0).getTimestamp()));
         });
         statusViewModel.getStatusLocationLng().observe(getViewLifecycleOwner(), statuses -> {
             if (statuses.size() == 0)
                 return;
-            lngText.setText(String.valueOf(statuses.get(0).getValue()));
+            lngText.setText(String.format(Locale.GERMANY, "%.7f", statuses.get(0).getValue()));
             locationLastChangedText.setText(Utils.convertToTime(statuses.get(0).getTimestamp()));
         });
         statusViewModel.getStatusLocationAcc().observe(getViewLifecycleOwner(), statuses -> {
@@ -146,6 +148,10 @@ public class StatusFragment extends Fragment {
                 }
             }).execute(wifiAccessPoints, "wifiAccessPoints");
         });
+        statusViewModel.getStatus().observe(getViewLifecycleOwner(), statuses -> {
+            for (Status status : statuses)
+                statusLastChangedText.setText(Utils.convertToTime(status.getTimestamp()));
+        });
 
         // Finalize UI Elements
         buttonCreateSmsView.setOnClickListener(v ->
@@ -161,9 +167,6 @@ public class StatusFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        // TODO: Make LiveData for this
-        statusLastChangedText.setText(sharedPreferences.getString("statusLastChange", ""));
 
         // TODO: Make this async and "smarter" (not in onResume...)
         // Check if the warning number is set, otherwise send a SMS

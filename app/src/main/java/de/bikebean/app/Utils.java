@@ -1,5 +1,6 @@
 package de.bikebean.app;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -8,6 +9,7 @@ import androidx.core.app.ActivityCompat;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -20,15 +22,22 @@ public class Utils {
         return !w.isEmpty() || b;
     }
 
-    static boolean hasPermissions(Context context, String... permissions) {
-        if (context != null && permissions != null) {
+    public static boolean hasNoPermissions(Activity activity, String... permissions) {
+        if (activity != null && permissions != null) {
             for (String permission : permissions) {
-                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(activity, permission)
+                        != PackageManager.PERMISSION_GRANTED) {
                     return true;
                 }
             }
         }
         return false;
+    }
+
+    public static String getTimestamp() {
+        return new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.GERMANY).format(
+                Calendar.getInstance().getTime()
+        );
     }
 
     public static String convertToTime(long datetime) {

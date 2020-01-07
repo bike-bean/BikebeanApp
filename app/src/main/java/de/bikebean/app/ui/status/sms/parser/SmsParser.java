@@ -181,6 +181,19 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
                         smsId)
                 );
                 break;
+            case SMS_TYPE_STATUS:
+            case SMS_TYPE_INT:
+            case SMS_TYPE_WIFI_ON:
+            case SMS_TYPE_WIFI_OFF:
+            case SMS_TYPE_WARNING_NUMBER:
+                newStatusEntries.add(new de.bikebean.app.db.status.Status(
+                        System.currentTimeMillis(),
+                        de.bikebean.app.db.status.Status.KEY_STATUS,
+                        0.0,
+                        "",
+                        de.bikebean.app.db.status.Status.STATUS_CONFIRMED,
+                        smsId)
+                );
         }
     }
 

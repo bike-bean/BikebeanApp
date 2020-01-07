@@ -1,12 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#00007f</color>
-    <color name="colorPrimaryDark">#00007f</color>
-    <color name="colorAccent">#00BCD4</color>
+    <!-- Material 800 colors. See https://www.materialui.co/colors -->
+    <color name="red">#C62828</color>
+    <color name="pink">#AD1457</color>
+    <color name="purple">#6A1B9A</color>
+    <color name="deepPurple">#4527A0</color>
+    <color name="indigo">#283593</color>
+    <color name="blue">#1565C0</color>
+    <color name="lightBlue">#0277BD</color>
+    <color name="cyan">#00838F</color>
+    <color name="teal">#00695C</color>
+    <color name="green">#2E7D32</color>
+    <color name="lightGreen">#558B2F</color>
+    <color name="lime">#9E9D24</color>
+    <color name="yellow">#F9A825</color>
+    <color name="amber">#FF8F00</color>
+    <color name="orange">#EF6C00</color>
+    <color name="deepOrange">#D84315</color>
+    <color name="brown">#4E342E</color>
+    <color name="grey">#424242</color>
+    <color name="blueGrey">#37474F</color>
+    <color name="grey400">#BDBDBD</color>
+    <color name="grey300">#E0E0E0</color>
+    <color name="grey200">#EEEEEE</color>
 </resources>
-
-<!--<resources>-->
-<!--<color name="colorPrimary">#008577</color>-->
-<!--<color name="colorPrimaryDark">#00574B</color>-->
-<!--<color name="colorAccent">#D81B60</color>-->
-<!--</resources>-->
