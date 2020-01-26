@@ -177,9 +177,8 @@ public class StatusFragment extends Fragment {
             editor.apply();
 
             smsSender.send(numberBikeBean, "Warningnumber", smsViewModel);
-        } else {
+        } else
             Log.d(MainActivity.TAG, "Warningnumber is orderly set.");
-        }
     }
 
     private void setLocationArea(int state) {
@@ -188,8 +187,7 @@ public class StatusFragment extends Fragment {
             lngText.setText("");
             accText.setText("");
             progressBar.setVisibility(ProgressBar.VISIBLE);
-        } else if (state == LOCATION_DEFAULT) {
+        } else if (state == LOCATION_DEFAULT)
             progressBar.setVisibility(ProgressBar.GONE);
-        }
     }
 }
