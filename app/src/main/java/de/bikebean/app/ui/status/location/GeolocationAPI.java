@@ -32,7 +32,7 @@ class GeolocationAPI {
         queue = Volley.newRequestQueue(ctx);
     }
 
-    //POST Request API #3
+    //POST Request Geolocation API
     void httpPOST(final String requestBody, StatusViewModel vm) {
         JsonObjectRequest postRequest = new JsonObjectRequest(
                 Request.Method.POST, url, null,
@@ -50,28 +50,17 @@ class GeolocationAPI {
                         assert true;
                     }
                 },
-                error -> { // error
+                error -> {
                     Log.d(MainActivity.TAG, "Error.Response: " + error.getMessage());
                 }
         ) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-//                headers.put("Accept", "application/json");
-//                headers.put("Content-Type", "application/json; charset=utf-8");
                 headers.put("Content-Type", "application/json");
 
                 return headers;
             }
-
-//            @Override
-//            protected Map<String, String> getParams() {
-//                Map<String, String>  params = new HashMap<String, String>();
-//                params.put("cellTowers", cellTowers.toString());
-//                params.put("wifiAccessPoints", wifiAccessPoints.toString());
-//
-//                return params;
-//            }
 
             @Override
             public byte[] getBody() {

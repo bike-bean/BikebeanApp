@@ -129,7 +129,7 @@ public class StatusFragment extends Fragment {
             new LocationUpdater(ctx, statusViewModel, isLocationUpdated -> {
                 if (isLocationUpdated) {
                     smsViewModel.markParsed(smsId);
-                    setLocationArea(LOCATION_PENDING);
+                    setLocationArea(LOCATION_DEFAULT);
                 }
             }).execute(cellTowers, "cellTowers");
         });

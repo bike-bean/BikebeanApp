@@ -27,7 +27,8 @@ import de.bikebean.app.ui.status.sms.parser.SmsParser;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String TAG = "BIKE";
+    public static final String TAG = "TAG123";
+
     private static final int REQUEST_PERMISSION_KEY = 1;
     private static final int INITIAL_CONFIGURATION_KEY = 2;
 

@@ -50,4 +50,11 @@
     <string name="continue_send_sms">Verstanden!</string>
     <string name="continue_general">Weiter</string>
     <string name="abort_send_sms">Abbrechen</string>
+
+    <!-- WifiScan -->
+    <string name="wifi_disabled">Bitte aktivieren Sie das WLAN</string>
+    <string name="location_disabled">Bitte aktivieren Sie Ihren GPS Standort (ist mittlerweile nötig zur WLAN-Ermittlung in Apps)</string>
+    <string name="scanning_wifi">Scanne WLANs</string>
+
+
 </resources>
