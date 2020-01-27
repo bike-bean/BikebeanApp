@@ -42,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
 
         initPreferences();
 
+        getSupportActionBar().hide();
+
         // init the ViewModels
         smsViewModel = new ViewModelProvider(this).get(SmsViewModel.class);
         statusViewModel = new ViewModelProvider(this).get(StatusViewModel.class);
