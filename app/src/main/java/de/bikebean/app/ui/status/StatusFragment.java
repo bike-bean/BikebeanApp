@@ -172,14 +172,13 @@ public class StatusFragment extends Fragment {
         // Check if the warning number is set, otherwise send a SMS
         if (!Utils.isWarningNumberSet(sharedPreferences)) {
             Log.d(MainActivity.TAG, "Warningnumber is not set!");
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean("askedForWarningNumber", true);
-            editor.apply();
+            sharedPreferences.edit()
+                    .putBoolean("askedForWarningNumber", true)
+                    .apply();
 
             smsSender.send(numberBikeBean, "Warningnumber", smsViewModel);
-        } else {
+        } else
             Log.d(MainActivity.TAG, "Warningnumber is orderly set.");
-        }
     }
 
     private void setLocationArea(int state) {
@@ -188,8 +187,7 @@ public class StatusFragment extends Fragment {
             lngText.setText("");
             accText.setText("");
             progressBar.setVisibility(ProgressBar.VISIBLE);
-        } else if (state == LOCATION_DEFAULT) {
+        } else if (state == LOCATION_DEFAULT)
             progressBar.setVisibility(ProgressBar.GONE);
-        }
     }
 }

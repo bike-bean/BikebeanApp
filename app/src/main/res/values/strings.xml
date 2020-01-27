@@ -32,9 +32,9 @@
 
     <!-- WLAN Preferences -->
     <string name="wlan_title">WLAN Status</string>
-    <string name="wlan_summary_on">Bike Bean ist per WLAN auffindbar.
+    <string name="wlan_summary_on">Bike-Bean strahlt WLAN aus.
         ACHTUNG: Die Batterielaufzeit der Bike Bean wird drastisch reduziert!</string>
-    <string name="wlan_summary_off">Bike Bean ist nicht per WLAN auffindbar.</string>
+    <string name="wlan_summary_off">Bike-Bean strahlt aktuell kein WLAN aus.</string>
 
     <!-- Location Preferences -->
     <string name="lat">Lat: </string>
@@ -42,10 +42,9 @@
     <string name="acc">+/-: </string>
 
     <!-- Warning Strings -->
-    <string name="sms_send_warning">Achtung! Beim Ändern dieser Einstellungen
-        (mit Ausnahme der Bike Bean Telefonnummer) werden SMS an Bike Bean
-        gesendet um den Status zu übertragen. Dies kann Kosten des
-        Netzbetreibers verursachen!</string>
+    <string name="sms_send_warning">Achtung! Es wird eine
+        SMS an Bike Bean gesendet um den Befehl zu übertragen.
+        Dies kann Kosten des Netzbetreibers verursachen!</string>
     <string name="number_subtitle">Bitte mit Ländercode (z.B. +49 für Deutschland) eingeben"</string>
     <string name="continue_send_sms">Verstanden!</string>
     <string name="continue_general">Weiter</string>

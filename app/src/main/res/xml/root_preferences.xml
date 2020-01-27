@@ -42,6 +42,10 @@
             app:singleLine="true"
             app:isPreferenceVisible="false" />
 
+        <SwitchPreference
+            app:key="askedForWarningNumber"
+            app:singleLine="true"
+            app:isPreferenceVisible="false" />
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -49,6 +53,7 @@
 
         <ListPreference
             app:key="interval"
+            app:defaultValue="1"
             app:entries="@array/interval_entries"
             app:entryValues="@array/interval_values"
             app:title="@string/interval_title" />

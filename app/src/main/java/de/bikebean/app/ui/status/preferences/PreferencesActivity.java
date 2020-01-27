@@ -1,27 +1,20 @@
 package de.bikebean.app.ui.status.preferences;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreference;
 
 import java.util.Objects;
@@ -50,10 +43,6 @@ public class PreferencesActivity extends AppCompatActivity {
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
-
-        final SMSSendWarningDialogFragment smsSendWarningDialogFragment = new SMSSendWarningDialogFragment();
-        FragmentManager fragmentManager;
-
         private SmsViewModel smsViewModel;
 
         @Override
@@ -64,12 +53,9 @@ public class PreferencesActivity extends AppCompatActivity {
 
             // act and ctx
             final FragmentActivity act = Objects.requireNonNull(getActivity());
-            fragmentManager = act.getSupportFragmentManager();
             final Context ctx = act.getApplicationContext();
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
 
             final SmsSender smsSender = new SmsSender(ctx, act);
-            PreferenceUpdater preferenceUpdater = new PreferenceUpdater();
 
             // Preferences
             final EditTextPreference numberPreference = findPreference("number");
@@ -98,7 +84,7 @@ public class PreferencesActivity extends AppCompatActivity {
                             Toast.LENGTH_LONG).show();
                     return false;
                 } else {
-                    preferenceUpdater.resetAll(sharedPreferences);
+                    resetAll();
                     return true;
                 }
             });
@@ -151,29 +137,27 @@ public class PreferencesActivity extends AppCompatActivity {
                     return true;
                 });
             }
-
-            showDialog();
         }
 
-        private void showDialog() {
-            smsSendWarningDialogFragment.show(fragmentManager, "smswarning");
-        }
-    }
+        void resetAll() {
+            // Preferences
+            final EditTextPreference warningNumberPreference = findPreference("warningNumber");
+            final ListPreference intervalPreference = findPreference("interval");
+            final SwitchPreference wifiSwitch = findPreference("wlan");
+            final EditTextPreference intervalLastChange = findPreference("intervalLastChange");
+            final EditTextPreference warningNumberLastChange = findPreference("warningNumberLastChange");
+            final EditTextPreference wifiLastChange = findPreference("wifiLastChange");
+            final SwitchPreference askedForWarningNumber = findPreference("askedForWarningNumber");
+            final SwitchPreference initialLoading = findPreference("initialLoading");
 
-    public static class SMSSendWarningDialogFragment extends DialogFragment {
-
-        @NonNull
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the Builder class for convenient dialog construction
-            AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
-
-            builder.setMessage(R.string.sms_send_warning)
-                    .setPositiveButton(R.string.continue_send_sms, (dialog, id) -> {
-
-                    });
-
-            return builder.create();
+            Objects.requireNonNull(intervalPreference).setValue("1");
+            Objects.requireNonNull(wifiSwitch).setChecked(false);
+            Objects.requireNonNull(warningNumberPreference).setText("");
+            Objects.requireNonNull(intervalLastChange).setText("");
+            Objects.requireNonNull(warningNumberLastChange).setText("");
+            Objects.requireNonNull(wifiLastChange).setText("");
+            Objects.requireNonNull(askedForWarningNumber).setChecked(false);
+            Objects.requireNonNull(initialLoading).setChecked(true);
         }
     }
 }

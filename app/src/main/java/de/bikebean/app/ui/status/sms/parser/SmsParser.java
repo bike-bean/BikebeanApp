@@ -20,13 +20,13 @@ import de.bikebean.app.ui.status.preferences.PreferenceUpdater;
 public class SmsParser extends AsyncTask<String, Void, Boolean> {
 
     private final static int SMS_TYPE_POSITION = 0;
-    private final static int SMS_TYPE_STATUS = 1;
-    private final static int SMS_TYPE_WIFI_ON = 2;
-    private final static int SMS_TYPE_WIFI_OFF = 3;
-    private final static int SMS_TYPE_WARNING_NUMBER = 4;
-    private final static int SMS_TYPE_CELL_TOWERS = 50;  // wapp part 1
-    private final static int SMS_TYPE_WIFI_LIST = 51;  // wapp part 2
-    private final static int SMS_TYPE_INT = 6;
+    public final static int SMS_TYPE_STATUS = 1;
+    public final static int SMS_TYPE_WIFI_ON = 2;
+    public final static int SMS_TYPE_WIFI_OFF = 3;
+    public final static int SMS_TYPE_WARNING_NUMBER = 4;
+    public final static int SMS_TYPE_CELL_TOWERS = 50;  // wapp part 1
+    public final static int SMS_TYPE_WIFI_LIST = 51;  // wapp part 2
+    public final static int SMS_TYPE_INT = 6;
 
     // MATCHERS
     // position
@@ -78,6 +78,14 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
 
         initMatchers(sms.getBody());
         smsId = sms.getId();
+    }
+
+    public SmsParser(Sms sms) {
+        initMatchers(sms.getBody());
+        smsId = sms.getId();
+
+        statusViewModelReference = new WeakReference<>(null);
+        asyncResponseReference = new WeakReference<>(null);
     }
 
     @Override
@@ -220,7 +228,7 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
         }
     }
 
-    private int getType() {
+    public int getType() {
         int type = -1;
 
         if (positionMatcher.find() && statusBatteryStatusMatcher.find())
@@ -247,20 +255,20 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
     // TODO: implement
     // String getPosition() {}
 
-    private String getStatusWarningNumber() {
+    public String getStatusWarningNumber() {
         return getMatcherResult(statusWarningNumberMatcher);
     }
 
-    private String getStatusInterval() {
+    public String getStatusInterval() {
         return getMatcherResult(statusIntervalMatcher);
     }
 
-    private boolean getStatusWifi() {
+    public boolean getStatusWifi() {
         String result = getMatcherResult(statusWifiStatusMatcher);
         return result.equals("on");
     }
 
-    private double getStatusBattery() {
+    public double getStatusBattery() {
         String result = getMatcherResult(statusBatteryStatusMatcher);
 
         if (!result.isEmpty())
@@ -268,11 +276,11 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
         else return 0.0;
     }
 
-    private String getWarningNumber() {
+    public String getWarningNumber() {
         return getMatcherResult(warningNumberMatcher);
     }
 
-    private String getWappCellTowers() {
+    public String getWappCellTowers() {
         StringBuilder result = new StringBuilder();
         positionMatcher.reset();
 
@@ -284,7 +292,7 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
         return result.toString();
     }
 
-    private String getWappWifi() {
+    public String getWappWifi() {
         StringBuilder result = new StringBuilder();
         wifiMatcher.reset();
 
@@ -296,7 +304,7 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
         return result.toString();
     }
 
-    private double getBattery() {
+    public double getBattery() {
         String result = "";
         batteryMatcher.reset();
 
@@ -308,7 +316,7 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
         return Double.parseDouble(result);
     }
 
-    private String getInterval() {
+    public String getInterval() {
         return getMatcherResult(intervalChangedMatcher);
     }
 

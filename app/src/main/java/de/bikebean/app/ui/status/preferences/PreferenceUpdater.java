@@ -13,10 +13,24 @@ public class PreferenceUpdater {
                 .apply();
     }
 
+    public void updateInterval(SharedPreferences settings, String value, String date) {
+        settings.edit()
+                .putString("interval", value)
+                .putString("intervalLastChange", date)
+                .apply();
+    }
+
     public void updateWarningNumber(SharedPreferences settings, String value) {
         settings.edit()
                 .putString("warningNumber", value)
                 .putString("warningNumberLastChange", Utils.getTimestamp())
+                .apply();
+    }
+
+    public void updateWarningNumber(SharedPreferences settings, String value, String date) {
+        settings.edit()
+                .putString("warningNumber", value)
+                .putString("warningNumberLastChange", date)
                 .apply();
     }
 
@@ -27,15 +41,16 @@ public class PreferenceUpdater {
                 .apply();
     }
 
-    void resetAll(SharedPreferences settings) {
+    public void updateWifi(SharedPreferences settings, boolean state, String date) {
         settings.edit()
-                .putString("interval", "")
-                .putString("warningNumber", "")
-                .putBoolean("wlan", false)
-                .putString("intervalLastChange", "")
-                .putString("warningNumberLastChange", "")
-                .putString("wifiLastChange", "")
-                .putBoolean("askedForWarningNumber", false)
+                .putBoolean("wlan", state)
+                .putString("wifiLastChange", date)
+                .apply();
+    }
+
+    public void updateInitialLoading(SharedPreferences settings, boolean state) {
+        settings.edit()
+                .putBoolean("initialLoading", state)
                 .apply();
     }
 }
