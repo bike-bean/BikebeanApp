@@ -24,10 +24,19 @@ public class SmsSender extends StatusFragment {
     private final Context ctx;
     private final FragmentActivity act;
 
+    private SmsSendWarningDialogFragment smsSendWarningDialogFragment;
+
     public SmsSender(Context ctx, FragmentActivity act) {
         this.ctx = ctx;
         this.act = act;
+
+        smsSendWarningDialogFragment = new SmsSendWarningDialogFragment();
+        smsSendWarningDialogFragment.setSmsSender(this);
     }
+
+    private SmsViewModel smsViewModel;
+    private String message;
+    private String phoneNumber;
 
     public void send(String phoneNumber, String message, SmsViewModel smsViewModel) {
         if (phoneNumber.isEmpty()) {
@@ -35,6 +44,15 @@ public class SmsSender extends StatusFragment {
             return;
         }
 
+        this.phoneNumber = phoneNumber;
+        this.message = message;
+        this.smsViewModel = smsViewModel;
+
+        prepareSend();
+    }
+
+    private void prepareSend() {
+        // TODO: Add Utils function to handle that permission stuff (at least check if present)
         if (ContextCompat.checkSelfPermission(ctx, android.Manifest.permission.SEND_SMS)
                 != PackageManager.PERMISSION_GRANTED) {
 
@@ -57,21 +75,38 @@ public class SmsSender extends StatusFragment {
             }
         } else {
             // Permission has already been granted
-            SmsManager smsManager = SmsManager.getDefault();
-            long timestamp = System.currentTimeMillis();
 
-            synchronized (this) {
-                new SmsSendIdGetter(smsViewModel, id -> smsViewModel.insert(new Sms(
-                        id-1, phoneNumber, message, Telephony.Sms.MESSAGE_TYPE_SENT,
-                        Sms.STATUS_NEW, Utils.convertToTime(timestamp), timestamp))
-                ).execute();
-            }
-
-            smsManager.sendTextMessage(phoneNumber, null,
-                    message, null, null);
-            Toast.makeText(ctx, "SMS an " + phoneNumber + " gesendet",
-                    Toast.LENGTH_LONG).show();
+            smsSendWarningDialogFragment.show(act.getSupportFragmentManager(), "smsWarning");
         }
+    }
+
+    void cancelSend() {
+        /*
+        The user decided to cancel, don't send an SMS and signal it to the user.
+        */
+        Toast.makeText(ctx,"Vorgang abgebrochen.",
+                Toast.LENGTH_LONG).show();
+    }
+
+    void reallySend() {
+        /*
+        The user decided to send the SMS, so actually send it!
+        */
+        SmsManager smsManager = SmsManager.getDefault();
+        long timestamp = System.currentTimeMillis();
+
+        synchronized (this) {
+            new SmsSendIdGetter(smsViewModel, smsId -> smsViewModel.insert(new Sms(
+                    smsId - 1, phoneNumber, message, Telephony.Sms.MESSAGE_TYPE_SENT,
+                    Sms.STATUS_NEW, Utils.convertToTime(timestamp), timestamp))
+            ).execute();
+        }
+
+        smsManager.sendTextMessage(phoneNumber,null,
+                message,null,null);
+
+        Toast.makeText(ctx,"SMS an " + phoneNumber + " gesendet",
+                Toast.LENGTH_LONG).show();
     }
 
     //Handle the permissions request response
@@ -92,21 +127,19 @@ public class SmsSender extends StatusFragment {
                 //TODO: Man könnte das hier doch wieder auskommentieren (und sicherstellen, dass es wie der Code in sensSMSMessage() aussieht
 //                    SmsManager smsManager = SmsManager.getDefault();
 //                    smsManager.sendTextMessage(phoneNo, null, message, null, null);
-//                    Toast.makeText(getApplicationContext(), "SMS sent.",
+//                    Toast.makeText(ctx, "SMS sent.",
 //                            Toast.LENGTH_LONG).show();
 
                 assert true;
             } else {
                 // permission denied, boo! Disable the
                 // functionality that depends on this permission.
-//                    Toast.makeText(getApplicationContext(),
+//                    Toast.makeText(ctx,
 //                            "SMS failed, please try again.", Toast.LENGTH_LONG).show();
                 return;
             }
             // other 'case' lines to check for other
             // permissions this app might request.
-            //TODO: Welche Permissions werden noch gebraucht?
-            //TODO: Standort für WLAN, SMS empfangen, SMS Listener (?!)
             assert true;
         }
     }

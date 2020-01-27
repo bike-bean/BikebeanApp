@@ -11,6 +11,7 @@ import android.util.Log;
 import androidx.preference.PreferenceManager;
 
 import de.bikebean.app.MainActivity;
+import de.bikebean.app.ui.status.StatusViewModel;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 
 public class SmsListener extends BroadcastReceiver {
@@ -21,9 +22,14 @@ public class SmsListener extends BroadcastReceiver {
      our viewModel to update the SMS in background.
      */
     private static SmsViewModel mSmsViewModel;
+    private static StatusViewModel mStatusViewModel;
 
     public static void setSmsViewModel(SmsViewModel smsViewModel) {
         mSmsViewModel = smsViewModel;
+    }
+
+    public static void setStatusViewModel(StatusViewModel statusViewModel) {
+        mStatusViewModel = statusViewModel;
     }
 
     @Override
@@ -32,6 +38,9 @@ public class SmsListener extends BroadcastReceiver {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         final String address = sharedPreferences.getString("number", "");
+        boolean initialLoading = sharedPreferences.getBoolean(
+                "initialLoading", true
+        );
 
         if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION.equals(intent.getAction())) {
             boolean isMessageFromBikeBean = false;
@@ -47,7 +56,13 @@ public class SmsListener extends BroadcastReceiver {
             }
 
             if (isMessageFromBikeBean)
-                mSmsViewModel.fetchSms(context, address, "true");
+                mSmsViewModel.fetchSms(
+                        context,
+                        mStatusViewModel,
+                        address,
+                        "true",
+                        String.valueOf(initialLoading)
+                );
         }
     }
 }

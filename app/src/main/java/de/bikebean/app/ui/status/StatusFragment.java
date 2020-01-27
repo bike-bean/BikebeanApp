@@ -172,9 +172,9 @@ public class StatusFragment extends Fragment {
         // Check if the warning number is set, otherwise send a SMS
         if (!Utils.isWarningNumberSet(sharedPreferences)) {
             Log.d(MainActivity.TAG, "Warningnumber is not set!");
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean("askedForWarningNumber", true);
-            editor.apply();
+            sharedPreferences.edit()
+                    .putBoolean("askedForWarningNumber", true)
+                    .apply();
 
             smsSender.send(numberBikeBean, "Warningnumber", smsViewModel);
         } else
