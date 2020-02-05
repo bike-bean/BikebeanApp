@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -36,11 +38,11 @@ import java.util.Objects;
 import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
 import de.bikebean.app.Utils;
-import de.bikebean.app.ui.status.StatusViewModel;
+import de.bikebean.app.ui.status.StateViewModel;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
-    private StatusViewModel statusViewModel;
+    private StateViewModel stateViewModel;
     private static final int REQUEST_PERMISSION_KEY = 1;
 
     private MapView mMapView;
@@ -80,7 +82,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        statusViewModel = new ViewModelProvider(this).get(StatusViewModel.class);
+        stateViewModel = new ViewModelProvider(this).get(StateViewModel.class);
+
+        // hide the toolbar for this fragment
+        AppCompatActivity act = (AppCompatActivity) getActivity();
+        ActionBar actionbar = Objects.requireNonNull(act).getSupportActionBar();
+        Objects.requireNonNull(actionbar).hide();
     }
 
     public void onMapReady(GoogleMap googleMap) {
@@ -137,32 +144,32 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         initializationDone = false;
 
         // Set up observer to adjust changes to the view
-        statusViewModel.getStatusLocationLat().observe(getViewLifecycleOwner(), statuses -> {
+        stateViewModel.getStatusLocationLat().observe(getViewLifecycleOwner(), statuses -> {
             if (statuses.size() == 0)
                 return;
             marker.setPosition(currentPositionBike.setLat(statuses.get(0).getValue()));
             circle.setCenter(currentPositionBike.get());
             setCamera();
         });
-        statusViewModel.getStatusLocationLng().observe(getViewLifecycleOwner(), statuses -> {
+        stateViewModel.getStatusLocationLng().observe(getViewLifecycleOwner(), statuses -> {
             if (statuses.size() == 0)
                 return;
             marker.setPosition(currentPositionBike.setLng(statuses.get(0).getValue()));
             circle.setCenter(currentPositionBike.get());
             setCamera();
         });
-        statusViewModel.getStatusLocationAcc().observe(getViewLifecycleOwner(), statuses -> {
+        stateViewModel.getStatusLocationAcc().observe(getViewLifecycleOwner(), statuses -> {
             if (statuses.size() == 0)
                 return;
             circle.setRadius(statuses.get(0).getValue());
             setCamera();
         });
-        statusViewModel.getStatusNumberCellTowers().observe(getViewLifecycleOwner(), statuses -> {
+        stateViewModel.getStatusNumberCellTowers().observe(getViewLifecycleOwner(), statuses -> {
             if (statuses.size() == 0)
                 return;
             marker.setSnippet(snippet.setNumberCellTowers(statuses.get(0).getValue().intValue()));
         });
-        statusViewModel.getStatusNumberWifiAccessPoints().observe(getViewLifecycleOwner(), statuses -> {
+        stateViewModel.getStatusNumberWifiAccessPoints().observe(getViewLifecycleOwner(), statuses -> {
             if (statuses.size() == 0)
                 return;
             marker.setSnippet(snippet.setNumberWifiAccessPoints(statuses.get(0).getValue().intValue()));

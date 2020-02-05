@@ -1,26 +1,24 @@
 package de.bikebean.app;
 
-import android.Manifest;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.Objects;
+
 import de.bikebean.app.db.sms.Sms;
-import de.bikebean.app.ui.status.StatusViewModel;
+import de.bikebean.app.ui.status.StateViewModel;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 import de.bikebean.app.ui.status.sms.listen.SmsListener;
 import de.bikebean.app.ui.status.sms.parser.SmsParser;
@@ -31,45 +29,46 @@ public class MainActivity extends AppCompatActivity {
 
     // These are ViewModels
     private SmsViewModel smsViewModel;
-    private StatusViewModel statusViewModel;
+    private StateViewModel stateViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // init the usual UI stuff
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setupNavView();
+        setupNavViewAndActionBar();
 
         initPreferences();
 
-        getSupportActionBar().hide();
-
         // init the ViewModels
         smsViewModel = new ViewModelProvider(this).get(SmsViewModel.class);
-        statusViewModel = new ViewModelProvider(this).get(StatusViewModel.class);
+        stateViewModel = new ViewModelProvider(this).get(StateViewModel.class);
 
         setupObservers();
         setupSmsListener();
 
         if (address.equals(""))
-            startInitialConfiguration();
+            // Navigate to the initial configuration screen
+            Navigation.findNavController(this, R.id.nav_host_fragment)
+                .navigate(R.id.initial_configuration_action);
         else
             fetchSms();
     }
 
-    private void setupNavView() {
+    private void setupNavViewAndActionBar() {
         /*
-        Setup some UI stuff for the navigation bar at the bottom
+        Setup some UI stuff for the navigation bar at the bottom and the action bar at the top
          */
         BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_status, R.id.navigation_map, R.id.navigation_wifi)
-                .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+
         NavigationUI.setupWithNavController(navView, navController);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        Objects.requireNonNull(toolbar.getOverflowIcon()).setColorFilter(
+                ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_ATOP
+        );
+        setSupportActionBar(toolbar);
     }
 
     // These fields represent Preferences:
@@ -79,6 +78,21 @@ public class MainActivity extends AppCompatActivity {
     //   (This is for avoiding an overhaul of new messages at the start of the app,
     //    which happens if the user has some older messages from the bike bean)
     private boolean initialLoading;
+
+    private void fetchSms() {
+        /*
+        Load the messages from the phone's message storage into the App-internal DB.
+        */
+        initPreferences();
+
+        smsViewModel.fetchSms(
+                this,
+                stateViewModel,
+                address,
+                "",
+                String.valueOf(initialLoading)
+        );
+    }
 
     private void initPreferences() {
         SharedPreferences sharedPreferences =
@@ -101,8 +115,8 @@ public class MainActivity extends AppCompatActivity {
         // Listen for new incoming messages and react to their content
         smsViewModel.getNewIncoming().observe(this, newSmsList -> {
             for (Sms newSms : newSmsList)
-                new SmsParser(newSms, getApplicationContext(), statusViewModel,
-                        isDatabaseUpdated -> smsViewModel.markParsed(newSms.getId())).execute();
+                new SmsParser(newSms, stateViewModel, isDatabaseUpdated ->
+                        smsViewModel.markParsed(newSms.getId())).execute();
         });
     }
 
@@ -113,90 +127,6 @@ public class MainActivity extends AppCompatActivity {
         so that it can save the newly arrived message(s))
          */
         SmsListener.setSmsViewModel(smsViewModel);
-        SmsListener.setStatusViewModel(statusViewModel);
-    }
-
-    private static final int INITIAL_CONFIGURATION_KEY = 2;
-
-    private void startInitialConfiguration() {
-        /*
-        Start the initial configuration screen.
-         */
-        startActivityForResult(
-                new Intent(this, InitialConfigurationActivity.class),
-                INITIAL_CONFIGURATION_KEY
-        );
-    }
-
-    private static final int REQUEST_PERMISSION_KEY = 1;
-
-    private void fetchSms() {
-        /*
-        Load the messages from the phone's message storage into the App-internal DB.
-
-        Before that, take care if the user has granted the necessary permissions.
-         */
-        String[] permissions = {
-                android.Manifest.permission.READ_SMS,
-                android.Manifest.permission.SEND_SMS,
-                Manifest.permission.RECEIVE_SMS
-        };
-
-        if (Utils.hasNoPermissions(this, permissions)) {
-            // TODO: display a dialog explaining the need of SMS permissions.
-            ActivityCompat.requestPermissions(this, permissions, REQUEST_PERMISSION_KEY);
-        }
-        else
-            smsViewModel.fetchSms(
-                    this,
-                    statusViewModel,
-                    address,
-                    "",
-                    String.valueOf(initialLoading)
-            );
-    }
-
-    @Override
-    public void onRequestPermissionsResult(
-            int requestCode,
-            @NonNull String[] permissions,
-            @NonNull int[] grantResults) {
-        /*
-        This is executed after the user has decided if he wants to grant permissions to the App.
-
-        If successful, start with fetching the messages.
-        If not, display a toast noting the user needs to accept. Then prompt the user again!
-        TODO: make the prompt translatable!
-         */
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        // final String prompt = "You must accept permissions!";
-        final String prompt = "Die App wird ohne Berechtigung nicht funktionieren!";
-
-        if (requestCode == REQUEST_PERMISSION_KEY) {
-            if (grantResults.length <= 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED)
-                Toast.makeText(this, prompt, Toast.LENGTH_LONG).show();
-            fetchSms();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(
-            int requestCode,
-            int resultCode,
-            Intent data) {
-        /*
-        This is executed after the initial configuration screen
-        (where the user is prompted to enter their bike bean's phone number)
-
-        If successful, start with fetching the messages.
-        If not, re-show the initial configuration screen.
-         */
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == INITIAL_CONFIGURATION_KEY)
-            if (resultCode == RESULT_OK)
-                fetchSms();
-            else if (resultCode == RESULT_CANCELED)
-                startInitialConfiguration();
+        SmsListener.setStatusViewModel(stateViewModel);
     }
 }

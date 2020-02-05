@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
@@ -61,6 +63,10 @@ public class Wifi_localizationFragment extends Fragment {
         // Get Activity and Context
         act = Objects.requireNonNull(getActivity());
         ctx = act.getApplicationContext();
+
+        // hide the actionbar for this fragment
+        ActionBar actionbar = ((AppCompatActivity) act).getSupportActionBar();
+        Objects.requireNonNull(actionbar).hide();
 
         buttonScan.setOnClickListener(view -> scanWifi());
 

@@ -7,55 +7,60 @@ import android.util.Log;
 import java.lang.ref.WeakReference;
 
 import de.bikebean.app.MainActivity;
-import de.bikebean.app.db.status.Status;
-import de.bikebean.app.ui.status.StatusViewModel;
-import de.bikebean.app.ui.status.preferences.PreferenceUpdater;
+import de.bikebean.app.db.state.State;
+import de.bikebean.app.ui.status.StateViewModel;
+import de.bikebean.app.ui.status.sms.SmsViewModel;
 
 public class LocationUpdater extends AsyncTask<String, Void, Boolean> {
 
     private final WeakReference<Context> contextReference;
-    private StatusViewModel mStatusViewModel;
+    private StateViewModel mStateViewModel;
+    private SmsViewModel mSmsViewModel;
     private AsyncResponse mDelegate;
 
     private volatile static boolean isCellTowersSet = false, isWifiAccessPointsSet = false;
     private volatile static String cellTowers, wifiAccessPoints;
 
+    private int mSmsId;
+
     public interface AsyncResponse {
         void onLocationUpdated(boolean isLocationUpdated);
     }
 
-    public LocationUpdater(Context context, StatusViewModel statusViewModel, AsyncResponse delegate) {
+    LocationUpdater(Context context, StateViewModel stateViewModel, SmsViewModel smsViewModel,
+                    int smsId, AsyncResponse delegate) {
         contextReference = new WeakReference<>(context);
-        mStatusViewModel = statusViewModel;
+        mStateViewModel = stateViewModel;
+        mSmsViewModel = smsViewModel;
         mDelegate = delegate;
+        mSmsId = smsId;
     }
 
     @Override
     protected Boolean doInBackground(String... args) {
-        Context context = contextReference.get();
+        String key = args[0];
 
-        String key = args[1];
-
-        if (key.equals(de.bikebean.app.db.status.Status.KEY_CELL_TOWERS)) {
-            cellTowers = args[0];
+        if (key.equals(State.KEY_CELL_TOWERS)) {
+            cellTowers = args[1];
             isCellTowersSet = true;
-        } else if (key.equals(de.bikebean.app.db.status.Status.KEY_WIFI_ACCESS_POINTS)) {
-            wifiAccessPoints = args[0];
+        } else if (key.equals(State.KEY_WIFI_ACCESS_POINTS)) {
+            wifiAccessPoints = args[1];
             isWifiAccessPointsSet = true;
         }
 
         if (!(isCellTowersSet && isWifiAccessPointsSet))
             return false;
 
-        GeolocationAPI geolocationAPI = new GeolocationAPI(context);
-        ApiParser apiParser = new ApiParser(mStatusViewModel);
+        GeolocationAPI geolocationAPI = new GeolocationAPI(contextReference.get(), mStateViewModel, mSmsViewModel);
+        ApiParser apiParser = new ApiParser(mStateViewModel, mSmsViewModel);
 
         Log.d(MainActivity.TAG, "Updating Lat/Lng...");
 
-        String requestBody = apiParser.createJsonApiBody(cellTowers, wifiAccessPoints);
-        geolocationAPI.httpPOST(requestBody, mStatusViewModel);
+        String requestBody = apiParser.createJsonApiBody(cellTowers, wifiAccessPoints, mSmsId);
+        if (requestBody.isEmpty())
+            return false;
 
-        return true;
+        return geolocationAPI.httpPOST(requestBody, mSmsId);
     }
 
     @Override

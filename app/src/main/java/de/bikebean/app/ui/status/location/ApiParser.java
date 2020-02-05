@@ -5,27 +5,38 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.bikebean.app.MainActivity;
-import de.bikebean.app.db.status.Status;
-import de.bikebean.app.ui.status.StatusViewModel;
-import de.bikebean.app.ui.status.preferences.PreferenceUpdater;
+import de.bikebean.app.db.sms.Sms;
+import de.bikebean.app.db.state.State;
+import de.bikebean.app.ui.status.StateViewModel;
+import de.bikebean.app.ui.status.sms.SmsViewModel;
 
 class ApiParser {
 
-    private StatusViewModel mStatusViewModel;
+    private StateViewModel mStateViewModel;
+    private SmsViewModel mSmsViewModel;
 
     private LocationAPIBody locationAPIBody;
 
     private final Gson gson = new Gson();
 
-    ApiParser(StatusViewModel statusViewModel) {
-        mStatusViewModel = statusViewModel;
+    ApiParser(StateViewModel stateViewModel, SmsViewModel smsViewModel) {
+        mStateViewModel = stateViewModel;
+        mSmsViewModel = smsViewModel;
 
         locationAPIBody = new LocationAPIBody();
     }
 
-    String createJsonApiBody(String cellTowers, String wifiAccessPoints) {
+    String createJsonApiBody(String cellTowers, String wifiAccessPoints, int smsId) {
+        List<Sms> l = mSmsViewModel.getSmsById(smsId);
+
+        if (l.size() == 0)
+            return "";
+
+        Sms sms = l.get(0);
+
         int numberWifiAccessPoints = parseWifiAccessPoints(wifiAccessPoints, locationAPIBody);
         int numberCellTowers = parseCellTowers(cellTowers, locationAPIBody);
 
@@ -34,14 +45,14 @@ class ApiParser {
         Log.d(MainActivity.TAG, "cellTowers_JsonArray: " + gson.toJson(locationAPIBody.cellTowers));
         Log.d(MainActivity.TAG, "numberCellTowers: " + numberCellTowers);
 
-        mStatusViewModel.insert(new Status(
-                System.currentTimeMillis(), Status.KEY_NO_WIFI_ACCESS_POINTS,
-                (double) numberWifiAccessPoints, "", Status.STATUS_CONFIRMED, 0)
+        mStateViewModel.insert(new State(
+                sms.getTimestamp(), State.KEY_NO_WIFI_ACCESS_POINTS,
+                (double) numberWifiAccessPoints, "", State.STATUS_CONFIRMED, sms.getId())
         );
 
-        mStatusViewModel.insert(new Status(
-                System.currentTimeMillis(), Status.KEY_NO_CELL_TOWERS,
-                (double) numberCellTowers, "", Status.STATUS_CONFIRMED, 0)
+        mStateViewModel.insert(new State(
+                sms.getTimestamp(), State.KEY_NO_CELL_TOWERS,
+                (double) numberCellTowers, "", State.STATUS_CONFIRMED, sms.getId())
         );
 
         // Create final json string

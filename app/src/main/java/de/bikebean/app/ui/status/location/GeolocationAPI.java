@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -13,12 +14,15 @@ import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.bikebean.app.BuildConfig;
 import de.bikebean.app.MainActivity;
-import de.bikebean.app.db.status.Status;
-import de.bikebean.app.ui.status.StatusViewModel;
+import de.bikebean.app.db.sms.Sms;
+import de.bikebean.app.db.state.State;
+import de.bikebean.app.ui.status.StateViewModel;
+import de.bikebean.app.ui.status.sms.SmsViewModel;
 
 class GeolocationAPI {
 
@@ -28,32 +32,27 @@ class GeolocationAPI {
 
     private final RequestQueue queue;
 
-    GeolocationAPI(Context ctx) {
+    private StateViewModel vm;
+    private SmsViewModel sm;
+    private Sms sms;
+
+    GeolocationAPI(Context ctx, StateViewModel stateViewModel, SmsViewModel sm) {
         queue = Volley.newRequestQueue(ctx);
+        vm = stateViewModel;
+        this.sm = sm;
     }
 
     //POST Request Geolocation API
-    void httpPOST(final String requestBody, StatusViewModel vm) {
-        JsonObjectRequest postRequest = new JsonObjectRequest(
-                Request.Method.POST, url, null,
-                response -> {
-                    Log.d(MainActivity.TAG, "RESPONSE FROM SERVER: " + response.toString());
-                    try {
-                        JSONObject location = response.getJSONObject("location");
-                        updateLngLatAcc(
-                                location.getDouble("lat"),
-                                location.getDouble("lng"),
-                                response.getDouble("accuracy"),
-                                vm
-                        );
-                    } catch (JSONException | InterruptedException e) {
-                        assert true;
-                    }
-                },
-                error -> {
-                    Log.d(MainActivity.TAG, "Error.Response: " + error.getMessage());
-                }
-        ) {
+    boolean httpPOST(final String requestBody, int smsId) {
+        List<Sms> l = sm.getSmsById(smsId);
+
+        if (l.size() == 0)
+            return false;
+
+        this.sms = l.get(0);
+
+        queue.add(new JsonObjectRequest(Request.Method.POST, url, null,
+                this::responseListener, this::errorListener) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
@@ -66,29 +65,47 @@ class GeolocationAPI {
             public byte[] getBody() {
                 return requestBody.getBytes(StandardCharsets.UTF_8);
             }
-        };
+        });
 
-        queue.add(postRequest);
+        return true;
     }
 
-    private void updateLngLatAcc(
-            double lat, double lng, double acc,
-            StatusViewModel statusViewModel) throws InterruptedException {
-        statusViewModel.insert(new Status(
-                System.currentTimeMillis(), Status.KEY_LAT,
-                lat, "", Status.STATUS_CONFIRMED,
-                0));
-        Thread.sleep(1);
-        statusViewModel.insert(new Status(
-                System.currentTimeMillis(), Status.KEY_LNG,
-                lng, "", Status.STATUS_CONFIRMED,
-                0));
-        Thread.sleep(1);
-        statusViewModel.insert(new Status(
-                System.currentTimeMillis(), Status.KEY_ACC,
-                acc, "", Status.STATUS_CONFIRMED,
-                0));
+    private void responseListener(JSONObject response) {
+        Log.d(MainActivity.TAG, "RESPONSE FROM SERVER: " + response.toString());
+        try {
+            JSONObject location = response.getJSONObject("location");
+            updateLngLatAcc(
+                    location.getDouble("lat"),
+                    location.getDouble("lng"),
+                    response.getDouble("accuracy"),
+                    vm, sms
+            );
+        } catch (JSONException | InterruptedException e) {
+            assert true;
+        }
+    }
 
-        statusViewModel.confirmLocationKeys();
+    private void errorListener(VolleyError error) {
+        Log.d(MainActivity.TAG, "Error.Response: " + error.getMessage());
+    }
+
+    private void updateLngLatAcc(double lat, double lng, double acc, StateViewModel vm, Sms sms)
+            throws InterruptedException {
+        vm.insert(new State(
+                sms.getTimestamp(), State.KEY_LAT, lat,
+                "", State.STATUS_CONFIRMED, sms.getId())
+        );
+        Thread.sleep(1);
+        vm.insert(new State(
+                sms.getTimestamp(), State.KEY_LNG, lng,
+                "", State.STATUS_CONFIRMED, sms.getId())
+        );
+        Thread.sleep(1);
+        vm.insert(new State(
+                sms.getTimestamp(), State.KEY_ACC, acc,
+                "", State.STATUS_CONFIRMED, sms.getId())
+        );
+
+        vm.confirmLocationKeys();
     }
 }

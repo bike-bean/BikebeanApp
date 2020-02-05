@@ -2,16 +2,24 @@
     <string name="app_name">BikeBeanApp</string>
     <string name="title_home">Status</string>
     <string name="title_dashboard">Karte</string>
-    <string name="title_notifications">WLAN-Ortung</string>
-    <string name="button_get_location">Neue Abfrage</string>
-    <string name="button_get_status">Status abfragen</string>
+    <string name="title_wifi">WLAN-Ortung</string>
+    <string name="button_get_location">Abfragen</string>
+    <string name="button_get_status">Abfragen</string>
     <string name="last_updated">Letzte Aktualisierung:</string>
     <string name="status_heading">Willkommen!</string>
     <string name="settings_heading">Einstellungen</string>
     <string name="location_text">Standort</string>
     <string name="status_text">Status</string>
     <string name="battery_text">Batterie</string>
-    <string name="estimated_charge_text">Ladezustand:</string>
+    <string name="charge_text">Ladezustand:</string>
+    <string name="estimated_charge_text">Zeit bis 10%:</string>
+    <string name="auf_karte_zeigen">Anzeigen</string>
+
+    <string name="pending_text">Erwarte Bestätigung in ca. %s h (%s)</string>
+    <string name="wifi_switch_on_transition">Wird eingeschaltet</string>
+    <string name="wifi_switch_off_transition">Wird ausgeschaltet</string>
+
+    <string name="interval_switch_transition">Wird auf %dh umgestellt</string>
 
     <string name="title_activity_sms">SMS Historie</string>
     <string name="title_activity_settings">Einstellungen</string>
@@ -27,13 +35,12 @@
     <string name="warning_number_title">Nummer für Akkustands-Warnungen</string>
 
     <!-- Intervall Preferences -->
-    <string name="interval_title">Intervall setzen</string>
-    <string name="interval_summary">Bike Bean wird nach der gesetzten Zeit neue Nachrichten abrufen.</string>
+    <string name="interval_summary">Bike Bean wird alle %sh neue Nachrichten prüfen.</string>
 
     <!-- WLAN Preferences -->
     <string name="wlan_title">WLAN Status</string>
-    <string name="wlan_summary_on">Bike-Bean strahlt WLAN aus.
-        ACHTUNG: Die Batterielaufzeit der Bike Bean wird drastisch reduziert!</string>
+    <string name="wlan_summary_on">Bike-Bean strahlt WLAN aus.\nACHTUNG:
+        Die Batterielaufzeit der Bike Bean wird stark reduziert!</string>
     <string name="wlan_summary_off">Bike-Bean strahlt aktuell kein WLAN aus.</string>
 
     <!-- Location Preferences -->
@@ -46,6 +53,7 @@
         SMS an Bike Bean gesendet um den Befehl zu übertragen.
         Dies kann Kosten des Netzbetreibers verursachen!</string>
     <string name="number_subtitle">Bitte mit Ländercode (z.B. +49 für Deutschland) eingeben"</string>
+    <string name="number_error">Nummer darf nicht leer sein!</string>
     <string name="continue_send_sms">Verstanden!</string>
     <string name="continue_general">Weiter</string>
     <string name="abort_send_sms">Abbrechen</string>
@@ -54,6 +62,7 @@
     <string name="wifi_disabled">Bitte aktivieren Sie das WLAN</string>
     <string name="location_disabled">Bitte aktivieren Sie Ihren GPS Standort (ist mittlerweile nötig zur WLAN-Ermittlung in Apps)</string>
     <string name="scanning_wifi">Scanne WLANs</string>
-
+    <string name="phone_hint">+4912345678910</string>
+    <string name="prompt_number">Bitte gib als erstes die Telefonnummer der Bike Bean ein:</string>
 
 </resources>

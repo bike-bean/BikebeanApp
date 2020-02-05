@@ -30,9 +30,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
-        <activity
-            android:name=".InitialConfigurationActivity">
-        </activity>
+
         <activity
             android:name=".ui.status.preferences.PreferencesActivity"
             android:label="@string/title_activity_settings"
@@ -57,6 +55,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.bikebean.app.MainActivity" />
         </activity>
+        <activity android:name=".InitialConfigurationActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

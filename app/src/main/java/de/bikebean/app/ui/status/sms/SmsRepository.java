@@ -16,12 +16,14 @@ import de.bikebean.app.db.sms.SmsDao;
 class SmsRepository {
 
     private final SmsDao mSmsDao;
+
     private final LiveData<List<Sms>> mChat;
     private final LiveData<List<Sms>> mNewIncoming;
 
     SmsRepository(Application application) {
         BikeBeanRoomDatabase db = BikeBeanRoomDatabase.getDatabase(application);
         mSmsDao = db.smsDao();
+
         mChat = mSmsDao.getAll();
         mNewIncoming = mSmsDao.getByStateAndType(Sms.STATUS_NEW, Telephony.Sms.MESSAGE_TYPE_INBOX);
     }
@@ -33,6 +35,8 @@ class SmsRepository {
     LiveData<List<Sms>> getNewIncoming() {
         return mNewIncoming;
     }
+
+
 
     int getInboxCount() {
         return mSmsDao.getCountByType(Telephony.Sms.MESSAGE_TYPE_INBOX);

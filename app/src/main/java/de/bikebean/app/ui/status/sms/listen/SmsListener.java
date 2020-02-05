@@ -11,7 +11,7 @@ import android.util.Log;
 import androidx.preference.PreferenceManager;
 
 import de.bikebean.app.MainActivity;
-import de.bikebean.app.ui.status.StatusViewModel;
+import de.bikebean.app.ui.status.StateViewModel;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 
 public class SmsListener extends BroadcastReceiver {
@@ -22,14 +22,14 @@ public class SmsListener extends BroadcastReceiver {
      our viewModel to update the SMS in background.
      */
     private static SmsViewModel mSmsViewModel;
-    private static StatusViewModel mStatusViewModel;
+    private static StateViewModel mStateViewModel;
 
     public static void setSmsViewModel(SmsViewModel smsViewModel) {
         mSmsViewModel = smsViewModel;
     }
 
-    public static void setStatusViewModel(StatusViewModel statusViewModel) {
-        mStatusViewModel = statusViewModel;
+    public static void setStatusViewModel(StateViewModel stateViewModel) {
+        mStateViewModel = stateViewModel;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class SmsListener extends BroadcastReceiver {
             if (isMessageFromBikeBean)
                 mSmsViewModel.fetchSms(
                         context,
-                        mStatusViewModel,
+                        mStateViewModel,
                         address,
                         "true",
                         String.valueOf(initialLoading)

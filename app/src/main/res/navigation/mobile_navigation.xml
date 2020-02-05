@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
@@ -9,7 +10,37 @@
         android:id="@+id/navigation_status"
         android:name="de.bikebean.app.ui.status.StatusFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_status" />
+        tools:layout="@layout/fragment_status" >
+
+        <action
+            android:id="@+id/map_action"
+            app:destination="@id/navigation_map"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+
+        <action
+            android:id="@+id/settings_action"
+            app:destination="@id/navigation_settings"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+
+        <action
+            android:id="@+id/sms_history_action"
+            app:destination="@id/navigation_sms_history"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+
+        <action
+            android:id="@+id/initial_configuration_action"
+            app:destination="@id/navigation_initial_configuration" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_map"
@@ -20,6 +51,25 @@
     <fragment
         android:id="@+id/navigation_wifi"
         android:name="de.bikebean.app.ui.wifi_localization.Wifi_localizationFragment"
-        android:label="@string/title_notifications"
+        android:label="@string/title_wifi"
         tools:layout="@layout/fragment_wifi_localization" />
+
+    <activity
+        android:id="@+id/navigation_settings"
+        android:name="de.bikebean.app.ui.status.preferences.PreferencesActivity"
+        android:label="@string/title_activity_settings"
+        tools:layout="@layout/activity_settings" />
+
+    <activity
+        android:id="@+id/navigation_sms_history"
+        android:name="de.bikebean.app.ui.status.sms.SmsActivity"
+        android:label="@string/title_activity_sms"
+        tools:layout="@layout/activity_sms" />
+
+    <activity
+        android:id="@+id/navigation_initial_configuration"
+        android:name="de.bikebean.app.InitialConfigurationActivity"
+        android:label="activity_initial_configuration"
+        tools:layout="@layout/activity_initial_configuration" />
+
 </navigation>

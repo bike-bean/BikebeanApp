@@ -13,14 +13,14 @@ import java.util.concurrent.Executors;
 
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.sms.SmsDao;
-import de.bikebean.app.db.status.Status;
-import de.bikebean.app.db.status.StatusDao;
+import de.bikebean.app.db.state.State;
+import de.bikebean.app.db.state.StateDao;
 
-@Database(entities = {Sms.class, Status.class}, version = 7, exportSchema = false)
+@Database(entities = {Sms.class, State.class}, version = 10, exportSchema = false)
 public abstract class BikeBeanRoomDatabase extends RoomDatabase {
 
     public abstract SmsDao smsDao();
-    public abstract StatusDao statusDao();
+    public abstract StateDao stateDao();
 
     private static volatile BikeBeanRoomDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
@@ -49,10 +49,16 @@ public abstract class BikeBeanRoomDatabase extends RoomDatabase {
 
             // Code to be executed on
             // App restarts goes here!
-            // databaseWriteExecutor.execute(() -> {
-            //    SmsDao dao = INSTANCE.smsDao();
-            //    dao.deleteAll();
-            // });
         }
     };
+
+    public static void resetAll() {
+        databaseWriteExecutor.execute(() -> {
+            SmsDao dao0 = INSTANCE.smsDao();
+            dao0.deleteAll();
+
+            StateDao dao1 = INSTANCE.stateDao();
+            dao1.deleteAll();
+        });
+    }
 }
