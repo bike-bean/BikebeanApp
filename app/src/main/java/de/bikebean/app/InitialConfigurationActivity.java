@@ -83,19 +83,19 @@ public class InitialConfigurationActivity extends AppCompatActivity {
                 stateViewModel.insert(new State(
                         1, State.KEY_WARNING_NUMBER,
                         0.0, "",
-                        State.STATUS_UNSET, 0)
+                        State.STATUS_CONFIRMED, 0)
                 );
 
                 stateViewModel.insert(new State(
                         1, State.KEY_INTERVAL,
                         1.0, "",
-                        State.STATUS_UNSET, 0)
+                        State.STATUS_CONFIRMED, 0)
                 );
 
                 stateViewModel.insert(new State(
                         1, State.KEY_WIFI,
                         0.0, "",
-                        State.STATUS_UNSET, 0)
+                        State.STATUS_CONFIRMED, 0)
                 );
 
                 progressBar.setVisibility(View.VISIBLE);
