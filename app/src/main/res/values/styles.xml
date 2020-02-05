@@ -1,20 +1,37 @@
 <resources>
-
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/bikeBeanGreen</item>
-        <item name="colorPrimaryDark">@color/bikeBeanGreen</item>
-        <item name="colorAccent">@color/lightBlue</item>
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryVariant">@color/primaryVariant</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorOnPrimary">@color/primaryTextColor</item>
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorSecondaryVariant">@color/secondaryVariant</item>
+        <item name="colorOnSecondary">@color/secondaryTextColor</item>
+        <item name="actionBarStyle">@style/Widget.AppTheme.AppBarTheme</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <style name="TextAppearance.AppTheme.Unemphasized" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">14sp</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="TextAppearance.AppTheme.Error" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/design_default_color_error</item>
+    </style>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="Widget.AppTheme.SendButton" parent="Widget.MaterialComponents.Button">
+        <item name="icon">@drawable/ic_send_white_24dp</item>
+    </style>
+
+    <style name="Widget.AppTheme.AppBarTheme" parent="Widget.MaterialComponents.ActionBar.Primary">
+        <item name="background">@color/secondaryColor</item>
+        <item name="titleTextStyle">@style/TextAppearance.AppTheme.Primary</item>
+    </style>
+
+    <style name="TextAppearance.AppTheme.Primary" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textColor">@color/secondaryTextColor</item>
+    </style>
 
 </resources>

@@ -5,5 +5,5 @@
     <dimen name="fragment_horizontal_margin">8dp</dimen>
     <dimen name="fragment_vertical_margin">8dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
-    <dimen name="tile_padding">6dp</dimen>
+    <dimen name="tile_padding">8dp</dimen>
 </resources>

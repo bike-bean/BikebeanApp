@@ -1,18 +1,22 @@
-package de.bikebean.app.db.status;
+package de.bikebean.app.db.state;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "status_table")
-public class Status {
+@Entity(tableName = "state_table")
+public class State {
 
     // Confirmed through SMS with newest data (default state)
     public static final int STATUS_CONFIRMED = 0;
     // CellTowers and WifiAccessPoints that have not yet been used for calculation of the location
-    // (Future: Also Settings that have not yet been confirmed? How to mark in UI??)
+    // Also Settings that have not yet been confirmed.
     public static final int STATUS_PENDING = 1;
+    // Settings that have yet not even been set
+    // (Mostly warningNumber)
+    public static final int STATUS_UNSET = 2;
 
     public static final String KEY_BATTERY = "battery";
     public static final String KEY_LAT = "lat";
@@ -22,9 +26,14 @@ public class Status {
     public static final String KEY_WIFI_ACCESS_POINTS = "wifiAccessPoints";
     public static final String KEY_NO_CELL_TOWERS = "noCellTowers";
     public static final String KEY_NO_WIFI_ACCESS_POINTS = "noWifiAccessPoints";
+    public static final String KEY_WIFI = "wifi";
+    public static final String KEY_INTERVAL = "interval";
+    public static final String KEY_WARNING_NUMBER = "warningNumber";
     public static final String KEY_STATUS = "status";
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    public int id;
+
     @ColumnInfo(name = "timestamp")
     private long mTimestamp;
 
@@ -46,7 +55,7 @@ public class Status {
     @ColumnInfo(name = "sms_id")
     private int mSmsId;
 
-    public Status(
+    public State(
             long timestamp,
             @NonNull String key,
             @NonNull Double value,
@@ -62,7 +71,21 @@ public class Status {
         this.mSmsId = smsId;
     }
 
-    String getKey() {
+    // For "PENDING" State
+    @Ignore
+    public State(
+            @NonNull String key,
+            double value
+    ) {
+        this.mTimestamp = System.currentTimeMillis();
+        this.mKey = key;
+        this.mValue = value;
+        this.mLongValue = "";
+        this.mState = STATUS_PENDING;
+        this.mSmsId = 0; // Maybe allow changing this in the future?
+    }
+
+    public String getKey() {
         return this.mKey;
     }
 
@@ -70,24 +93,20 @@ public class Status {
         return this.mTimestamp;
     }
 
-    public void setTimestamp(long timestamp) {
-        this.mTimestamp = timestamp;
-    }
-
     public Double getValue() {
         return this.mValue;
-    }
-
-    public void setValue(double value) {
-        this.mValue = value;
     }
 
     public String getLongValue() {
         return this.mLongValue;
     }
 
-    int getState() {
+    public int getState() {
         return this.mState;
+    }
+
+    public void setState(int state) {
+        this.mState = state;
     }
 
     public int getSmsId() {

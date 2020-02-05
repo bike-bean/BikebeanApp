@@ -9,7 +9,7 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 import de.bikebean.app.db.sms.Sms;
-import de.bikebean.app.ui.status.StatusViewModel;
+import de.bikebean.app.ui.status.StateViewModel;
 import de.bikebean.app.ui.status.sms.load.SmsLoader;
 
 public class SmsViewModel extends AndroidViewModel {
@@ -21,6 +21,7 @@ public class SmsViewModel extends AndroidViewModel {
 
     public SmsViewModel(Application application) {
         super(application);
+
         mRepository = new SmsRepository(application);
         mChat = mRepository.getChat();
         mNewIncoming = mRepository.getNewIncoming();
@@ -46,11 +47,12 @@ public class SmsViewModel extends AndroidViewModel {
         return mRepository.getLatestId();
     }
 
-    public void fetchSms(Context context, StatusViewModel statusViewModel,
+    public void fetchSms(Context context, StateViewModel stateViewModel,
                          String address, String timestamp, String initialLoading) {
         // load the sms list in background
-        SmsLoader smsLoader = new SmsLoader(context, this, statusViewModel);
-        smsLoader.execute(address, timestamp, initialLoading);
+        new SmsLoader(
+                context, this, stateViewModel
+        ).execute(address, timestamp, initialLoading);
     }
 
     public void insert(Sms sms) {
