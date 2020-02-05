@@ -32,20 +32,9 @@ public class StatusFragment extends Fragment {
         // init sub-fragments
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.include0, new LocationStatusFragment())
-                .addToBackStack(null)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
-
-        getChildFragmentManager().beginTransaction()
                 .replace(R.id.include1, new StatusStatusFragment())
-                .addToBackStack(null)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
-
-        getChildFragmentManager().beginTransaction()
                 .replace(R.id.include2, new BatteryStatusFragment())
-                .addToBackStack(null)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .disallowAddToBackStack()
                 .commit();
 
         setHasOptionsMenu(true);
