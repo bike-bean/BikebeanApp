@@ -16,13 +16,16 @@ public class LiveDataTimerViewModel extends AndroidViewModel {
     private final MutableLiveData<Long> mResidualTime1 = new MutableLiveData<>();
     private final MutableLiveData<Long> mResidualTime2 = new MutableLiveData<>();
     private final MutableLiveData<Long> mResidualTime3 = new MutableLiveData<>();
+    private final MutableLiveData<Long> mResidualTime4 = new MutableLiveData<>();
 
     private long mStopTime1;
     private long mStopTime2;
     private long mStopTime3;
+    private long mStopTime4;
     private Timer timer1;
     private Timer timer2;
     private Timer timer3;
+    private Timer timer4;
 
     public LiveDataTimerViewModel(Application application) {
         super(application);
@@ -30,6 +33,7 @@ public class LiveDataTimerViewModel extends AndroidViewModel {
         timer1 = new Timer();
         timer2 = new Timer();
         timer3 = new Timer();
+        timer4 = new Timer();
     }
 
     long startTimer1(long startTime, int interval) {
@@ -77,6 +81,21 @@ public class LiveDataTimerViewModel extends AndroidViewModel {
         return mStopTime3;
     }
 
+    long startTimer4(long startTime, int interval) {
+        mStopTime4 = startTime + interval * 1000 * 60 * 60;
+        timer4 = new Timer();
+
+        timer4.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                final long newValueSeconds = (mStopTime4 - System.currentTimeMillis()) / (1000);
+                mResidualTime4.postValue(newValueSeconds);
+            }
+        }, ONE_SECOND, ONE_SECOND);
+
+        return mStopTime4;
+    }
+
     LiveData<Long> getResidualTime1() {
         return mResidualTime1;
     }
@@ -87,6 +106,10 @@ public class LiveDataTimerViewModel extends AndroidViewModel {
 
     LiveData<Long> getResidualTime3() {
         return mResidualTime3;
+    }
+
+    LiveData<Long> getResidualTime4() {
+        return mResidualTime4;
     }
 
     void cancelTimer1() {
@@ -101,11 +124,16 @@ public class LiveDataTimerViewModel extends AndroidViewModel {
         timer3.cancel();
     }
 
+    void cancelTimer4() {
+        timer4.cancel();
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();
         timer1.cancel();
         timer2.cancel();
         timer3.cancel();
+        timer4.cancel();
     }
 }

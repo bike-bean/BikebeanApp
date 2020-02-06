@@ -40,8 +40,8 @@ public class StatusStatusFragment extends Fragment {
     private SmsSender smsSender;
 
     // UI Elements
-    private Button buttonGetStatus;
-    private TextView statusLastChangedText;
+    private Button statusButton;
+    private TextView statusPendingStatus, statusLastChangedText;
 
     private Spinner intervalDropdown;
     private TextView intervalPendingStatus, intervalSummary;
@@ -67,8 +67,9 @@ public class StatusStatusFragment extends Fragment {
         warningNumberSummary = v.findViewById(R.id.warningNumberSummary);
         warningNumberPendingStatus = v.findViewById(R.id.warningNumberPendingStatus);
 
-        buttonGetStatus = v.findViewById(R.id.button_get_status);
+        statusButton = v.findViewById(R.id.statusButton);
         statusLastChangedText = v.findViewById(R.id.datetimeText2);
+        statusPendingStatus = v.findViewById(R.id.statusPendingStatus);
 
         return v;
     }
@@ -103,24 +104,18 @@ public class StatusStatusFragment extends Fragment {
 
     private void setupListeners(LifecycleOwner l) {
         st.getStatusWifi().observe(l, this::setElements);
-        /*
-        st.getStatus().observe(l, states -> {
-            for (State state : states)
-                statusLastChangedText.setText(Utils.convertToDateHuman(state.getTimestamp()));
-        });
-        */
+        st.getStatus().observe(l, this::setElements);
         st.getStatusWarningNumber().observe(l, this::setElements);
-
         st.getStatusInterval().observe(l, this::setElements);
+
         st.getIntervalAborted().observe(l, this::handleIntervalAborted);
     }
-
 
     private void initUserInteractionElements() {
         // React to user interactions
         State statusState = new State(State.KEY_STATUS, 0.0);
 
-        buttonGetStatus.setOnClickListener(v -> sendSms("State", statusState));
+        statusButton.setOnClickListener(v -> sendSms("Status", statusState));
         intervalDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -195,6 +190,9 @@ public class StatusStatusFragment extends Fragment {
                     case State.KEY_WARNING_NUMBER:
                         setWarningNumberElementsUnset(state);
                         break;
+                    case State.KEY_STATUS:
+                        setStatusElementsUnset(state);
+                        break;
                 }
                 break;
             case State.STATUS_CONFIRMED:
@@ -207,6 +205,9 @@ public class StatusStatusFragment extends Fragment {
                         break;
                     case State.KEY_WARNING_NUMBER:
                         setWarningNumberElementsConfirmed(state);
+                        break;
+                    case State.KEY_STATUS:
+                        setStatusElementsConfirmed(state);
                         break;
                 }
                 break;
@@ -221,11 +222,15 @@ public class StatusStatusFragment extends Fragment {
                     case State.KEY_WARNING_NUMBER:
                         setWarningNumberElementsPending(state);
                         break;
+                    case State.KEY_STATUS:
+                        setStatusElementsPending(state);
+                        break;
                 }
                 break;
         }
     }
 
+    // confirmed
     private void setIntervalElementsConfirmed(State state) {
         String intervalSummaryString =
                 getResources().getString(R.string.interval_summary);
@@ -267,6 +272,16 @@ public class StatusStatusFragment extends Fragment {
         warningNumberPendingStatus.setText("");
     }
 
+    private void setStatusElementsConfirmed(State state) {
+        tv.getResidualTime4().removeObservers(this);
+        tv.cancelTimer4();
+
+        statusLastChangedText.setText(Utils.convertToDateHuman(state.getTimestamp()));
+        statusPendingStatus.setText("");
+        statusButton.setEnabled(true);
+    }
+
+    // pending
     private void setIntervalElementsPending(State state) {
         String intervalTransitionString =
                 getResources().getString(R.string.interval_switch_transition);
@@ -305,6 +320,17 @@ public class StatusStatusFragment extends Fragment {
         warningNumberSummary.setText(R.string.warning_number_pending_text);
     }
 
+    private void setStatusElementsPending(State state) {
+        long stopTime = tv.startTimer4(state.getTimestamp(), Utils.getConfirmedIntervalSync(st));
+        tv.getResidualTime4().observe(this, s ->
+                updatePendingText(statusPendingStatus, stopTime, s)
+        );
+
+        // Don't change the statusLastChangedText here!
+        statusButton.setEnabled(false);
+    }
+
+    // unset
     private void setWarningNumberElementsUnset(State state) {
         tv.getResidualTime3().removeObservers(this);
         tv.cancelTimer3();
@@ -312,6 +338,17 @@ public class StatusStatusFragment extends Fragment {
         sendSms("Warningnumber", new State(State.KEY_WARNING_NUMBER, 0.0));
         warningNumberSummary.setText(state.getLongValue());
         warningNumberPendingStatus.setText("");
+    }
+
+    private void setStatusElementsUnset(State state) {
+        tv.getResidualTime4().removeObservers(this);
+        tv.cancelTimer4();
+
+        assert state != null;
+
+        statusLastChangedText.setText(R.string.no_data);
+        statusPendingStatus.setText("");
+        statusButton.setEnabled(true);
     }
 
     private void updatePendingText(TextView textView, long stopTime, long residualSeconds) {

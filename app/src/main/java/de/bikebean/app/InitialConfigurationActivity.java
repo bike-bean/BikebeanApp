@@ -101,6 +101,12 @@ public class InitialConfigurationActivity extends AppCompatActivity {
                         State.STATUS_CONFIRMED, 0)
                 );
 
+                stateViewModel.insert(new State(
+                        1, State.KEY_STATUS,
+                        0.0, "",
+                        State.STATUS_UNSET, 0)
+                );
+
                 progressBar.setVisibility(View.VISIBLE);
                 fetchSms();
             }

@@ -73,6 +73,6 @@ public class BatteryStatusFragment extends Fragment {
             batteryLastChangedText.setText(Utils.convertToDateHuman(s.getTimestamp()));
         });
 
-        buttonGetBattery.setOnClickListener(v -> smsSender.send("State", statusState));
+        buttonGetBattery.setOnClickListener(v -> smsSender.send("Status", statusState));
     }
 }
