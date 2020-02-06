@@ -1,7 +1,6 @@
 package de.bikebean.app.ui.status.status;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,7 +18,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +33,6 @@ import de.bikebean.app.ui.status.sms.send.SmsSender;
 
 public class StatusStatusFragment extends Fragment {
 
-    private SharedPreferences sharedPreferences;
     private StateViewModel st;
     private LiveDataTimerViewModel tv;
     private FragmentActivity act;
@@ -84,7 +81,6 @@ public class StatusStatusFragment extends Fragment {
 
         LifecycleOwner l = getViewLifecycleOwner();
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(act);
         smsSender = new SmsSender(ctx, act, sm, st);
 
         initIntervalDropdown();
@@ -128,7 +124,9 @@ public class StatusStatusFragment extends Fragment {
         }
         */
         st.getStatusInterval().observe(l, this::setElements);
+        st.getIntervalAborted().observe(l, this::handleIntervalAborted);
     }
+
 
     private void initUserInteractionElements() {
         // React to user interactions
@@ -182,13 +180,10 @@ public class StatusStatusFragment extends Fragment {
     * according to the states from the viewModel.
     * */
     // Cached copy of parsed sms
-    private List<Integer> parsedSms = new ArrayList<>();
+    private final List<Integer> parsedSms = new ArrayList<>();
 
     private void setElements(List<State> states) {
         if (states.size() == 0)
-            return;
-
-        if (sharedPreferences.getBoolean("initialLoading", true))
             return;
 
         State state = states.get(0);
@@ -267,7 +262,6 @@ public class StatusStatusFragment extends Fragment {
         intervalSummary.setText(
                 String.format(intervalTransitionString, state.getValue().intValue())
         );
-        intervalPendingStatus.setText(R.string.pending_text);
     }
 
     private void setWifiElementsPending(State state) {
@@ -286,6 +280,13 @@ public class StatusStatusFragment extends Fragment {
     }
 
     private void updatePendingText(TextView textView, long stopTime, long residualSeconds) {
+        if (residualSeconds < 0) {
+            textView.setText(getResources().getString(R.string.overdue,
+                    Utils.convertToDateHuman(stopTime))
+            );
+            return;
+        }
+
         int hours = (int) residualSeconds / 60 / 60;
         int minutes = (int) (residualSeconds / 60 ) - (hours * 60);
 
@@ -296,6 +297,13 @@ public class StatusStatusFragment extends Fragment {
                 hoursPadded + ":" + minutesPadded,
                 Utils.convertToTime(stopTime))
         );
+    }
+
+    private void handleIntervalAborted(boolean b) {
+        if (b) {
+            intervalDropdown.setSelection(0);
+            st.notifyIntervalAbort(false);
+        }
     }
 
     private void sendSms(String message, State update) {

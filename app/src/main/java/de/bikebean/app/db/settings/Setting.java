@@ -7,8 +7,8 @@ import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 
 public abstract class Setting {
-    protected Sms sms;
-    protected String key;
+    Sms sms;
+    String key;
 
     public long getDate() {
         return sms.getTimestamp();
@@ -18,11 +18,11 @@ public abstract class Setting {
         return key;
     }
 
-    public int getId() {
+    private int getId() {
         return sms.getId();
     }
 
-    public abstract Object get();
+    protected abstract Object get();
 
     public List<State> updatePreferences(List<Setting> settingList) {
         /*

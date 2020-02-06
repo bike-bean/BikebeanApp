@@ -1,16 +1,9 @@
 apply plugin: 'com.android.application'
 
-def keyPropertiesFile = rootProject.file("keys.properties")
-def keyProperties = new Properties()
-keyProperties.load(new FileInputStream(keyPropertiesFile))
-
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
     defaultConfig {
-
-        buildConfigField("String", "GOOGLEMAPSAPIKEY", keyProperties['GoogleMapsAPIKey'])
-
         applicationId "de.bikebean.app"
         minSdkVersion 19
         targetSdkVersion 29
@@ -52,8 +45,8 @@ dependencies {
     annotationProcessor "androidx.lifecycle:lifecycle-compiler:2.2.0"
 
     // Maps
-    implementation 'androidx.navigation:navigation-fragment:2.2.0'
-    implementation 'androidx.navigation:navigation-ui:2.2.0'
+    implementation 'androidx.navigation:navigation-fragment:2.2.1'
+    implementation 'androidx.navigation:navigation-ui:2.2.1'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
 

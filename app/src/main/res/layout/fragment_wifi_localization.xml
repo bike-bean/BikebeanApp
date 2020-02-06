@@ -9,7 +9,7 @@
     <ListView
         android:id="@+id/wifiList"
         android:layout_width="match_parent"
-        android:layout_height="312dp"
+        android:layout_height="0dp"
         android:layout_weight="0.97"/>
 
     <Button
@@ -18,6 +18,6 @@
         android:layout_height="50dp"
         android:layout_gravity="bottom"
         android:layout_margin="15dp"
-        android:text="Scan WiFi"/>
+        android:text="@string/scan_wifi"/>
 
 </LinearLayout>

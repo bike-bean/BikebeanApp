@@ -4,7 +4,7 @@ import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 
 public class WarningNumber extends Setting {
-    private String warningNumber;
+    private final String warningNumber;
 
     public WarningNumber(String warningNumber, Sms sms) {
         this.warningNumber = warningNumber;

@@ -1,14 +1,12 @@
 package de.bikebean.app.ui.status.sms.send;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.lang.ref.WeakReference;
 
-import de.bikebean.app.MainActivity;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 
-public class SmsSendIdGetter extends AsyncTask<String, Void, Integer> {
+class SmsSendIdGetter extends AsyncTask<String, Void, Integer> {
 
     private final WeakReference<SmsViewModel> smsViewModelReference;
     private final WeakReference<AsyncResponse> asyncResponseReference;

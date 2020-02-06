@@ -17,9 +17,9 @@ import de.bikebean.app.ui.status.sms.parser.SmsParser;
 
 public class Conversation {
 
-    private StateViewModel stateViewModel;
+    private final StateViewModel stateViewModel;
 
-    private List<Setting> internalList = new ArrayList<>();
+    private final List<Setting> internalList = new ArrayList<>();
 
     public Conversation(StateViewModel stateViewModel) {
         this.stateViewModel = stateViewModel;

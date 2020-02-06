@@ -1,12 +1,12 @@
 <resources>
     <string-array name="interval_entries">
+        <item>Intervall setzen</item>
         <item>1h (Akkulaufzeit ca. 175 Tage)</item>
         <item>2h (Akkulaufzeit ca. 260 Tage)</item>
         <item>4h (Akkulaufzeit ca. 346 Tage)</item>
         <item>8h (Akkulaufzeit ca. 415 Tage)</item>
         <item>12h (Akklaufzeit ca. 444 Tage)</item>
         <item>24h (Akkulaufzeit ca. 477 Tage)</item>
-        <item>Intervall setzen</item>
     </string-array>
 
     <string-array name="interval_values">

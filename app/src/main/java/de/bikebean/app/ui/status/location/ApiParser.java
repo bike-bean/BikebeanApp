@@ -15,10 +15,10 @@ import de.bikebean.app.ui.status.sms.SmsViewModel;
 
 class ApiParser {
 
-    private StateViewModel mStateViewModel;
-    private SmsViewModel mSmsViewModel;
+    private final StateViewModel mStateViewModel;
+    private final SmsViewModel mSmsViewModel;
 
-    private LocationAPIBody locationAPIBody;
+    private final LocationAPIBody locationAPIBody;
 
     private final Gson gson = new Gson();
 

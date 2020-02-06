@@ -4,7 +4,7 @@ import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 
 public class Wifi extends Setting {
-    private boolean wifi;
+    private final boolean wifi;
 
     public Wifi(boolean wifi, Sms sms) {
         this.wifi = wifi;

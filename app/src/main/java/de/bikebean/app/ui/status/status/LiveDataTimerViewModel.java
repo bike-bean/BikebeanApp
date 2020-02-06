@@ -9,12 +9,12 @@ import androidx.lifecycle.MutableLiveData;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class LiveDataTimerViewModel extends AndroidViewModel {
+class LiveDataTimerViewModel extends AndroidViewModel {
 
     private static final int ONE_SECOND = 1000;
 
-    private MutableLiveData<Long> mResidualTime1 = new MutableLiveData<>();
-    private MutableLiveData<Long> mResidualTime2 = new MutableLiveData<>();
+    private final MutableLiveData<Long> mResidualTime1 = new MutableLiveData<>();
+    private final MutableLiveData<Long> mResidualTime2 = new MutableLiveData<>();
 
     private long mStopTime1;
     private long mStopTime2;

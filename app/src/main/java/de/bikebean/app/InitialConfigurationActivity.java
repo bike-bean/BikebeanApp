@@ -23,6 +23,9 @@ import de.bikebean.app.ui.status.sms.SmsViewModel;
 
 public class InitialConfigurationActivity extends AppCompatActivity {
 
+    public static final double INITIAL_WIFI = 0.0;
+    public static final double INITIAL_INTERVAL = 1.0;
+
     private StateViewModel stateViewModel;
     private SmsViewModel smsViewModel;
     private SharedPreferences sharedPreferences;
@@ -88,13 +91,13 @@ public class InitialConfigurationActivity extends AppCompatActivity {
 
                 stateViewModel.insert(new State(
                         1, State.KEY_INTERVAL,
-                        1.0, "",
+                        INITIAL_INTERVAL, "",
                         State.STATUS_CONFIRMED, 0)
                 );
 
                 stateViewModel.insert(new State(
                         1, State.KEY_WIFI,
-                        0.0, "",
+                        INITIAL_WIFI, "",
                         State.STATUS_CONFIRMED, 0)
                 );
 

@@ -7,7 +7,6 @@
     <string name="button_get_status">Abfragen</string>
     <string name="last_updated">Letzte Aktualisierung:</string>
     <string name="status_heading">Willkommen!</string>
-    <string name="settings_heading">Einstellungen</string>
     <string name="location_text">Standort</string>
     <string name="status_text">Status</string>
     <string name="battery_text">Batterie</string>
@@ -57,6 +56,8 @@
     <string name="continue_send_sms">Verstanden!</string>
     <string name="continue_general">Weiter</string>
     <string name="abort_send_sms">Abbrechen</string>
+    <string name="overdue">Bestätigung überfällig! (%s)</string>
+    <string name="no_data">Keine Daten vorhanden!</string>
 
     <!-- WifiScan -->
     <string name="wifi_disabled">Bitte aktivieren Sie das WLAN</string>
@@ -64,5 +65,6 @@
     <string name="scanning_wifi">Scanne WLANs</string>
     <string name="phone_hint">+4912345678910</string>
     <string name="prompt_number">Bitte gib als erstes die Telefonnummer der Bike Bean ein:</string>
+    <string name="scan_wifi">Scan WiFi</string>
 
 </resources>

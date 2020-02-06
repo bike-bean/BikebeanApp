@@ -105,10 +105,6 @@ public class State {
         return this.mState;
     }
 
-    public void setState(int state) {
-        this.mState = state;
-    }
-
     public int getSmsId() {
         return this.mSmsId;
     }

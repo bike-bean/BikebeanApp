@@ -4,7 +4,7 @@ import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 
 public class Battery extends Setting {
-    private double battery;
+    private final double battery;
 
     public Battery(double battery, Sms sms) {
         this.battery = battery;

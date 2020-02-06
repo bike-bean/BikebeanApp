@@ -2,7 +2,6 @@ package de.bikebean.app;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 
@@ -11,7 +10,6 @@ import androidx.core.content.ContextCompat;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +18,6 @@ import java.util.Map;
 
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.status.StateViewModel;
-import de.bikebean.app.ui.status.status.StatusStatusFragment;
 
 public class Utils {
 
@@ -44,12 +41,6 @@ public class Utils {
             }
         }
         return false;
-    }
-
-    public static String getTimestamp() {
-        return new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.GERMANY).format(
-                Calendar.getInstance().getTime()
-        );
     }
 
     public static String convertToTime(long datetime) {
@@ -155,14 +146,11 @@ public class Utils {
 
         new Thread(() -> {
             List<State> wifiList = st.getWifi();
-            State lastWifiState;
 
             if (wifiList.size() > 0)
-                lastWifiState = wifiList.get(0);
+                oldWifiValue.set(String.valueOf(wifiList.get(0).getValue() > 0));
             else
-                return;
-
-            oldWifiValue.set(String.valueOf(lastWifiState.getValue() > 0));
+                oldWifiValue.set(String.valueOf(InitialConfigurationActivity.INITIAL_WIFI));
         }).start();
 
         while (oldWifiValue.get().isEmpty()) {
@@ -181,14 +169,11 @@ public class Utils {
 
         new Thread(() -> {
             List<State> wifiList = st.getConfirmedWifi();
-            State lastWifiState;
 
             if (wifiList.size() > 0)
-                lastWifiState = wifiList.get(0);
+                oldWifiValue.set(String.valueOf(wifiList.get(0).getValue() > 0));
             else
-                return;
-
-            oldWifiValue.set(String.valueOf(lastWifiState.getValue() > 0));
+                oldWifiValue.set(String.valueOf(InitialConfigurationActivity.INITIAL_WIFI));
         }).start();
 
         while (oldWifiValue.get().isEmpty()) {
@@ -207,15 +192,11 @@ public class Utils {
 
         new Thread(() -> {
             List<State> intervalList = st.getInterval();
-            State lastIntervalState;
 
             if (intervalList.size() > 0)
-                lastIntervalState = intervalList.get(0);
+                oldIntervalValue.set(String.valueOf(intervalList.get(0).getValue().intValue()));
             else
-                return;
-
-            int interval = lastIntervalState.getValue().intValue();
-            oldIntervalValue.set(String.valueOf(interval));
+                oldIntervalValue.set(String.valueOf((int) InitialConfigurationActivity.INITIAL_INTERVAL));
         }).start();
 
         while (oldIntervalValue.get().isEmpty()) {
@@ -234,15 +215,11 @@ public class Utils {
 
         new Thread(() -> {
             List<State> intervalList = st.getIntervalConfirmed();
-            State lastIntervalState;
 
             if (intervalList.size() > 0)
-                lastIntervalState = intervalList.get(0);
+                intervalConfirmed.set(String.valueOf(intervalList.get(0).getValue().intValue()));
             else
-                return;
-
-            int interval = lastIntervalState.getValue().intValue();
-            intervalConfirmed.set(String.valueOf(interval));
+                intervalConfirmed.set(String.valueOf((int) InitialConfigurationActivity.INITIAL_INTERVAL));
         }).start();
 
         while (intervalConfirmed.get().isEmpty()) {

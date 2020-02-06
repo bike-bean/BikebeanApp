@@ -27,8 +27,8 @@ public class SmsSendWarnDialog extends DialogFragment {
         return inst;
     }
 
-    private WeakReference<Activity> activityWeakReference;
-    private SmsSender smsSender;
+    private final WeakReference<Activity> activityWeakReference;
+    private final SmsSender smsSender;
 
     private SmsSendWarnDialog(SmsSender smsSender, Activity activity) {
         this.smsSender = smsSender;

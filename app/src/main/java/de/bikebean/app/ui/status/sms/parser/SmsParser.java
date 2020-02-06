@@ -39,7 +39,7 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
     private final WeakReference<StateViewModel> statusViewModelReference;
     private final WeakReference<AsyncResponse> asyncResponseReference;
 
-    private Sms sms;
+    private final Sms sms;
     private int type;
 
     public SmsParser(Sms sms, StateViewModel stateViewModel, AsyncResponse delegate) {

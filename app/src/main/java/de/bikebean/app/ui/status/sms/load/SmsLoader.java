@@ -21,8 +21,8 @@ import de.bikebean.app.ui.status.sms.SmsViewModel;
 public class SmsLoader extends AsyncTask<String, Void, String> {
 
     private final WeakReference<Context> activityReference;
-    private SmsViewModel smsViewModel;
-    private StateViewModel stateViewModel;
+    private final SmsViewModel smsViewModel;
+    private final StateViewModel stateViewModel;
 
     public SmsLoader(Context context, SmsViewModel smsViewModel, StateViewModel stateViewModel) {
         activityReference = new WeakReference<>(context);
@@ -74,10 +74,12 @@ public class SmsLoader extends AsyncTask<String, Void, String> {
             } else {
                 Log.d(MainActivity.TAG, "Initial Loading");
 
-                if (traverseInboxAndCloseInitial(inbox, smsViewModel))
+                if (traverseInboxAndCloseInitial(inbox, smsViewModel)) {
+                    Log.d(MainActivity.TAG, "Initial Loading completed");
                     PreferenceManager.getDefaultSharedPreferences(context).edit()
                             .putBoolean("initialLoading", false)
                             .apply();
+                }
             }
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
