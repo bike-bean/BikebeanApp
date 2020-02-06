@@ -16,7 +16,7 @@ class StateRepository {
 
     private final LiveData<List<State>> mStatus;
     private final LiveData<List<State>> mStatusBattery;
-    //private final LiveData<List<State>> mStatusWarningNumber;
+    private final LiveData<List<State>> mStatusWarningNumber;
     private final LiveData<List<State>> mStatusInterval;
     private final LiveData<List<State>> mStatusWifi;
     private final LiveData<List<State>> mStatusLocationLat;
@@ -34,7 +34,7 @@ class StateRepository {
 
         mStatus = mStateDao.getAllByKey(State.KEY_STATUS);
         mStatusBattery = mStateDao.getAllByKey(State.KEY_BATTERY);
-        //mStatusWarningNumber = mStateDao.getAllByKey(State.KEY_WARNING_NUMBER);
+        mStatusWarningNumber = mStateDao.getAllByKey(State.KEY_WARNING_NUMBER);
         mStatusInterval = mStateDao.getAllByKey(State.KEY_INTERVAL);
         mStatusWifi = mStateDao.getAllByKey(State.KEY_WIFI);
         mStatusLocationLat = mStateDao.getAllByKey(State.KEY_LAT);
@@ -57,11 +57,9 @@ class StateRepository {
         return mStatusBattery;
     }
 
-    /*
     LiveData<List<State>> getStatusWarningNumber() {
         return mStatusWarningNumber;
     }
-    */
 
     LiveData<List<State>> getStatusInterval() {
         return mStatusInterval;

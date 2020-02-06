@@ -37,10 +37,10 @@ public abstract class Setting {
             if (setting.getDate() != 0)
                 if (setting.getKey().equals(State.KEY_CELL_TOWERS) || setting.getKey().equals(State.KEY_WIFI_ACCESS_POINTS))
                     setting.addStatusEntryPending(newStateEntries);
-                else if (!setting.getKey().equals(State.KEY_WARNING_NUMBER))
-                    setting.addStatusEntryConfirmed(newStateEntries, false);
-                else
+                else if (setting.getKey().equals(State.KEY_WARNING_NUMBER))
                     setting.addStatusEntryConfirmed(newStateEntries, true);
+                else
+                    setting.addStatusEntryConfirmed(newStateEntries, false);
 
         return newStateEntries;
     }

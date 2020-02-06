@@ -130,7 +130,7 @@
         android:paddingTop="@dimen/fragment_vertical_margin">
 
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/imageView0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -150,7 +150,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/intervalStatusJeading"
+                    android:id="@+id/intervalStatusHeading"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -178,6 +178,62 @@
 
             <TextView
                 android:id="@+id/intervalPendingStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppTheme.Error" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/fragment_vertical_margin">
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:contentDescription="@string/interval_header"
+            android:paddingStart="@dimen/fragment_horizontal_margin"
+            android:paddingEnd="@dimen/activity_horizontal_margin"
+            android:src="@drawable/ic_add_alert_black_24dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/warningNumberStatusHeading"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/warning_number_title"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/warningNumberSummary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppTheme.Unemphasized" />
+
+            <TextView
+                android:id="@+id/warningNumberPendingStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppTheme.Error" />

@@ -85,8 +85,8 @@ public class InitialConfigurationActivity extends AppCompatActivity {
 
                 stateViewModel.insert(new State(
                         1, State.KEY_WARNING_NUMBER,
-                        0.0, "",
-                        State.STATUS_CONFIRMED, 0)
+                        0.0, getString(R.string.warning_number_default),
+                        State.STATUS_UNSET, 0)
                 );
 
                 stateViewModel.insert(new State(

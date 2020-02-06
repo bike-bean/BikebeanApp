@@ -18,6 +18,10 @@
     <string name="wifi_switch_on_transition">Wird eingeschaltet</string>
     <string name="wifi_switch_off_transition">Wird ausgeschaltet</string>
 
+    <string name="warning_number_summary">Automatisch (%s)</string>
+    <string name="warning_number_default">Nicht gesetzt</string>
+    <string name="warning_number_pending_text">Wird neu gesetzt</string>
+
     <string name="interval_switch_transition">Wird auf %dh umgestellt</string>
 
     <string name="title_activity_sms">SMS Historie</string>

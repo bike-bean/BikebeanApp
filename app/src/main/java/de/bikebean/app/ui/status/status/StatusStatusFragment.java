@@ -49,6 +49,8 @@ public class StatusStatusFragment extends Fragment {
     private Switch wlanSwitch;
     private TextView wlanPendingStatus, wlanSummary;
 
+    private TextView warningNumberPendingStatus, warningNumberSummary;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -61,6 +63,9 @@ public class StatusStatusFragment extends Fragment {
         intervalDropdown = v.findViewById(R.id.intervalDropdown);
         intervalSummary = v.findViewById(R.id.intervalSummary);
         intervalPendingStatus = v.findViewById(R.id.intervalPendingStatus);
+
+        warningNumberSummary = v.findViewById(R.id.warningNumberSummary);
+        warningNumberPendingStatus = v.findViewById(R.id.warningNumberPendingStatus);
 
         buttonGetStatus = v.findViewById(R.id.button_get_status);
         statusLastChangedText = v.findViewById(R.id.datetimeText2);
@@ -103,26 +108,9 @@ public class StatusStatusFragment extends Fragment {
             for (State state : states)
                 statusLastChangedText.setText(Utils.convertToDateHuman(state.getTimestamp()));
         });
-        // TODO: create text field for warning number and popularize it here
-        st.getStatusWarningNumber().observe(l, states ->
-                initState(states, State.KEY_WARNING_NUMBER,
-                        "Warningnumber", 0.0, parsedWarningNumberSms)
-        );
         */
-        // warningNumber:
-        // sendSms(sendSmsMsg, update);
-        /*
-        if (warningNumberPreference != null) {
-            warningNumberPreference.setSummaryProvider(
-                    (Preference.SummaryProvider<EditTextPreference>) preference -> {
-                        String text = preference.getText();
-                        if (TextUtils.isEmpty(text)) {
-                            return "Automatisch";
-                        }
-                        return "Automatisch (" + text + ")";
-                    });
-        }
-        */
+        st.getStatusWarningNumber().observe(l, this::setElements);
+
         st.getStatusInterval().observe(l, this::setElements);
         st.getIntervalAborted().observe(l, this::handleIntervalAborted);
     }
@@ -196,7 +184,19 @@ public class StatusStatusFragment extends Fragment {
         parsedSms.add(id);
 
         switch (state.getState()) {
-            case State.STATUS_UNSET:  // AND:
+            case State.STATUS_UNSET:
+                switch (state.getKey()) {
+                    case State.KEY_INTERVAL:
+                        setIntervalElementsConfirmed(state);
+                        break;
+                    case State.KEY_WIFI:
+                        setWifiElementsConfirmed(state);
+                        break;
+                    case State.KEY_WARNING_NUMBER:
+                        setWarningNumberElementsUnset(state);
+                        break;
+                }
+                break;
             case State.STATUS_CONFIRMED:
                 switch (state.getKey()) {
                     case State.KEY_INTERVAL:
@@ -204,6 +204,9 @@ public class StatusStatusFragment extends Fragment {
                         break;
                     case State.KEY_WIFI:
                         setWifiElementsConfirmed(state);
+                        break;
+                    case State.KEY_WARNING_NUMBER:
+                        setWarningNumberElementsConfirmed(state);
                         break;
                 }
                 break;
@@ -214,6 +217,9 @@ public class StatusStatusFragment extends Fragment {
                         break;
                     case State.KEY_WIFI:
                         setWifiElementsPending(state);
+                        break;
+                    case State.KEY_WARNING_NUMBER:
+                        setWarningNumberElementsPending(state);
                         break;
                 }
                 break;
@@ -250,6 +256,17 @@ public class StatusStatusFragment extends Fragment {
         wlanPendingStatus.setText("");
     }
 
+    private void setWarningNumberElementsConfirmed(State state) {
+        tv.getResidualTime3().removeObservers(this);
+        tv.cancelTimer3();
+
+        warningNumberSummary.setText(String.format(
+                getString(R.string.warning_number_summary),
+                state.getLongValue())
+        );
+        warningNumberPendingStatus.setText("");
+    }
+
     private void setIntervalElementsPending(State state) {
         String intervalTransitionString =
                 getResources().getString(R.string.interval_switch_transition);
@@ -277,6 +294,24 @@ public class StatusStatusFragment extends Fragment {
             wlanSummary.setText(R.string.wifi_switch_off_transition);
             wlanSwitch.setChecked(false);
         }
+    }
+
+    private void setWarningNumberElementsPending(State state) {
+        long stopTime = tv.startTimer3(state.getTimestamp(), Utils.getConfirmedIntervalSync(st));
+        tv.getResidualTime3().observe(this, s ->
+                updatePendingText(warningNumberPendingStatus, stopTime, s)
+        );
+
+        warningNumberSummary.setText(R.string.warning_number_pending_text);
+    }
+
+    private void setWarningNumberElementsUnset(State state) {
+        tv.getResidualTime3().removeObservers(this);
+        tv.cancelTimer3();
+
+        sendSms("Warningnumber", new State(State.KEY_WARNING_NUMBER, 0.0));
+        warningNumberSummary.setText(state.getLongValue());
+        warningNumberPendingStatus.setText("");
     }
 
     private void updatePendingText(TextView textView, long stopTime, long residualSeconds) {

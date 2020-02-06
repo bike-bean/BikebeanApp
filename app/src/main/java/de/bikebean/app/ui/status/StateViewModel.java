@@ -14,11 +14,19 @@ public class StateViewModel extends AndroidViewModel {
 
     private final StateRepository mRepository;
 
-    private final LiveData<List<State>> mStatus;
+    /*
+    LiveData
+     */
+    // Battery
     private final LiveData<List<State>> mStatusBattery;
-    // private final LiveData<List<State>> mStatusWarningNumber;
+
+    // Status
+    private final LiveData<List<State>> mStatus;
+    private final LiveData<List<State>> mStatusWarningNumber;
     private final LiveData<List<State>> mStatusInterval;
     private final LiveData<List<State>> mStatusWifi;
+
+    // Location
     private final LiveData<List<State>> mStatusLocationLat;
     private final LiveData<List<State>> mStatusLocationLng;
     private final LiveData<List<State>> mStatusLocationAcc;
@@ -28,6 +36,7 @@ public class StateViewModel extends AndroidViewModel {
     private final LiveData<List<State>> mPendingCellTowers;
     private final LiveData<List<State>> mPendingWifiAccessPoints;
 
+    // Other
     private final MutableLiveData<Boolean> mIntervalAborted;
 
     public StateViewModel(Application application) {
@@ -35,11 +44,13 @@ public class StateViewModel extends AndroidViewModel {
 
         mRepository = new StateRepository(application);
 
-        mStatus = mRepository.getStatus();
         mStatusBattery = mRepository.getStatusBattery();
-        // mStatusWarningNumber = mRepository.getStatusWarningNumber();
+
+        mStatus = mRepository.getStatus();
+        mStatusWarningNumber = mRepository.getStatusWarningNumber();
         mStatusInterval = mRepository.getStatusInterval();
         mStatusWifi = mRepository.getStatusWifi();
+
         mStatusLocationLat = mRepository.getStatusLocationLat();
         mStatusLocationLng = mRepository.getStatusLocationLng();
         mStatusLocationAcc = mRepository.getStatusLocationAcc();
@@ -60,11 +71,9 @@ public class StateViewModel extends AndroidViewModel {
         return mStatusBattery;
     }
 
-    /*
     public LiveData<List<State>> getStatusWarningNumber() {
         return mStatusWarningNumber;
     }
-    */
 
     public LiveData<List<State>> getStatusInterval() {
         return mStatusInterval;
@@ -168,6 +177,8 @@ public class StateViewModel extends AndroidViewModel {
     public void notifyIntervalAbort(boolean b) {
         mIntervalAborted.postValue(b);
     }
+
+
 
     public LiveData<Boolean> getIntervalAborted() {
         return mIntervalAborted;

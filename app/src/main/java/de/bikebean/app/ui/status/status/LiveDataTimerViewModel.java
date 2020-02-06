@@ -9,23 +9,27 @@ import androidx.lifecycle.MutableLiveData;
 import java.util.Timer;
 import java.util.TimerTask;
 
-class LiveDataTimerViewModel extends AndroidViewModel {
+public class LiveDataTimerViewModel extends AndroidViewModel {
 
     private static final int ONE_SECOND = 1000;
 
     private final MutableLiveData<Long> mResidualTime1 = new MutableLiveData<>();
     private final MutableLiveData<Long> mResidualTime2 = new MutableLiveData<>();
+    private final MutableLiveData<Long> mResidualTime3 = new MutableLiveData<>();
 
     private long mStopTime1;
     private long mStopTime2;
+    private long mStopTime3;
     private Timer timer1;
     private Timer timer2;
+    private Timer timer3;
 
     public LiveDataTimerViewModel(Application application) {
         super(application);
 
         timer1 = new Timer();
         timer2 = new Timer();
+        timer3 = new Timer();
     }
 
     long startTimer1(long startTime, int interval) {
@@ -58,12 +62,31 @@ class LiveDataTimerViewModel extends AndroidViewModel {
         return mStopTime2;
     }
 
+    long startTimer3(long startTime, int interval) {
+        mStopTime3 = startTime + interval * 1000 * 60 * 60;
+        timer3 = new Timer();
+
+        timer3.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                final long newValueSeconds = (mStopTime3 - System.currentTimeMillis()) / (1000);
+                mResidualTime3.postValue(newValueSeconds);
+            }
+        }, ONE_SECOND, ONE_SECOND);
+
+        return mStopTime3;
+    }
+
     LiveData<Long> getResidualTime1() {
         return mResidualTime1;
     }
 
     LiveData<Long> getResidualTime2() {
         return mResidualTime2;
+    }
+
+    LiveData<Long> getResidualTime3() {
+        return mResidualTime3;
     }
 
     void cancelTimer1() {
@@ -74,10 +97,15 @@ class LiveDataTimerViewModel extends AndroidViewModel {
         timer2.cancel();
     }
 
+    void cancelTimer3() {
+        timer3.cancel();
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();
         timer1.cancel();
         timer2.cancel();
+        timer3.cancel();
     }
 }

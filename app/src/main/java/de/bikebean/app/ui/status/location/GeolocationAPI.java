@@ -82,7 +82,7 @@ class GeolocationAPI {
                     response.getDouble("accuracy"),
                     vm, sms
             );
-        } catch (JSONException | InterruptedException e) {
+        } catch (JSONException e) {
             assert true;
         }
     }
@@ -91,18 +91,15 @@ class GeolocationAPI {
         Log.d(MainActivity.TAG, "Error.Response: " + error.getMessage());
     }
 
-    private void updateLngLatAcc(double lat, double lng, double acc, StateViewModel vm, Sms sms)
-            throws InterruptedException {
+    private void updateLngLatAcc(double lat, double lng, double acc, StateViewModel vm, Sms sms) {
         vm.insert(new State(
                 sms.getTimestamp(), State.KEY_LAT, lat,
                 "", State.STATUS_CONFIRMED, sms.getId())
         );
-        Thread.sleep(1);
         vm.insert(new State(
                 sms.getTimestamp(), State.KEY_LNG, lng,
                 "", State.STATUS_CONFIRMED, sms.getId())
         );
-        Thread.sleep(1);
         vm.insert(new State(
                 sms.getTimestamp(), State.KEY_ACC, acc,
                 "", State.STATUS_CONFIRMED, sms.getId())

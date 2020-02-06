@@ -125,11 +125,7 @@ public class SmsLoader extends AsyncTask<String, Void, String> {
         } else
             return false;
 
-        try {
-            conversation.updatePreferences();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        conversation.updatePreferences();
 
         return true;
     }

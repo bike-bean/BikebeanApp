@@ -52,10 +52,8 @@ public class Conversation {
                 }
     }
 
-    public void updatePreferences() throws InterruptedException {
-        for(State state : internalList.get((0)).updatePreferences(internalList)) {
+    public void updatePreferences() {
+        for(State state : internalList.get((0)).updatePreferences(internalList))
             this.stateViewModel.insert(state);
-            Thread.sleep(10);
-        }
     }
 }

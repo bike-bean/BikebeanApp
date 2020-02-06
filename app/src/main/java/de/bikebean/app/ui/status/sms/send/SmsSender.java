@@ -46,7 +46,7 @@ public class SmsSender {
         if (phoneNumber.isEmpty())
             return;
 
-        SmsSendWarnDialog smsSendWarnDialog = SmsSendWarnDialog.getInstance(this, act);
+        SmsSendWarnDialog smsSendWarnDialog = new SmsSendWarnDialog(this, act);
         Dialog dialog = smsSendWarnDialog.getDialog();
 
         if (dialog == null)

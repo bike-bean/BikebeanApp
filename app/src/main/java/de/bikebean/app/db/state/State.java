@@ -19,17 +19,17 @@ public class State {
     public static final int STATUS_UNSET = 2;
 
     public static final String KEY_BATTERY = "battery";
+    public static final String KEY_STATUS = "status";
+    public static final String KEY_WARNING_NUMBER = "warningNumber";
+    public static final String KEY_INTERVAL = "interval";
+    public static final String KEY_WIFI = "wifi";
     public static final String KEY_LAT = "lat";
     public static final String KEY_LNG = "lng";
     public static final String KEY_ACC = "acc";
-    public static final String KEY_CELL_TOWERS = "cellTowers";
-    public static final String KEY_WIFI_ACCESS_POINTS = "wifiAccessPoints";
     public static final String KEY_NO_CELL_TOWERS = "noCellTowers";
     public static final String KEY_NO_WIFI_ACCESS_POINTS = "noWifiAccessPoints";
-    public static final String KEY_WIFI = "wifi";
-    public static final String KEY_INTERVAL = "interval";
-    public static final String KEY_WARNING_NUMBER = "warningNumber";
-    public static final String KEY_STATUS = "status";
+    public static final String KEY_CELL_TOWERS = "cellTowers";
+    public static final String KEY_WIFI_ACCESS_POINTS = "wifiAccessPoints";
 
     @PrimaryKey(autoGenerate = true)
     public int id;
