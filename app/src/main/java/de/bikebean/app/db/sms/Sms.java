@@ -70,7 +70,7 @@ public class Sms {
         return this.mType;
     }
 
-    int getState() {
+    public int getState() {
         return this.mState;
     }
 

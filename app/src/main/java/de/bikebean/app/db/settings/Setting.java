@@ -7,8 +7,8 @@ import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 
 public abstract class Setting {
-    protected Sms sms;
-    protected String key;
+    Sms sms;
+    String key;
 
     public long getDate() {
         return sms.getTimestamp();
@@ -18,11 +18,11 @@ public abstract class Setting {
         return key;
     }
 
-    public int getId() {
+    private int getId() {
         return sms.getId();
     }
 
-    public abstract Object get();
+    protected abstract Object get();
 
     public List<State> updatePreferences(List<Setting> settingList) {
         /*
@@ -37,10 +37,10 @@ public abstract class Setting {
             if (setting.getDate() != 0)
                 if (setting.getKey().equals(State.KEY_CELL_TOWERS) || setting.getKey().equals(State.KEY_WIFI_ACCESS_POINTS))
                     setting.addStatusEntryPending(newStateEntries);
-                else if (!setting.getKey().equals(State.KEY_WARNING_NUMBER))
-                    setting.addStatusEntryConfirmed(newStateEntries, false);
-                else
+                else if (setting.getKey().equals(State.KEY_WARNING_NUMBER))
                     setting.addStatusEntryConfirmed(newStateEntries, true);
+                else
+                    setting.addStatusEntryConfirmed(newStateEntries, false);
 
         return newStateEntries;
     }

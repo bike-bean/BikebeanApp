@@ -17,8 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.bikebean.app.BuildConfig;
 import de.bikebean.app.MainActivity;
+import de.bikebean.app.R;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.status.StateViewModel;
@@ -26,20 +26,22 @@ import de.bikebean.app.ui.status.sms.SmsViewModel;
 
 class GeolocationAPI {
 
-    private static final String GoogleMapsAPIKey = BuildConfig.GOOGLEMAPSAPIKEY;
-    private static final String baseUrl = "https://www.googleapis.com/geolocation/v1/geolocate?key=";
-    private static final String url = baseUrl + GoogleMapsAPIKey;
+    private final String url;
 
     private final RequestQueue queue;
 
-    private StateViewModel vm;
-    private SmsViewModel sm;
+    private final StateViewModel vm;
+    private final SmsViewModel sm;
     private Sms sms;
 
     GeolocationAPI(Context ctx, StateViewModel stateViewModel, SmsViewModel sm) {
         queue = Volley.newRequestQueue(ctx);
         vm = stateViewModel;
         this.sm = sm;
+
+        String googleMapsAPIKey = ctx.getResources().getString(R.string.google_maps_api_key);
+        String baseUrl = "https://www.googleapis.com/geolocation/v1/geolocate?key=";
+        url = baseUrl + googleMapsAPIKey;
     }
 
     //POST Request Geolocation API
@@ -80,7 +82,7 @@ class GeolocationAPI {
                     response.getDouble("accuracy"),
                     vm, sms
             );
-        } catch (JSONException | InterruptedException e) {
+        } catch (JSONException e) {
             assert true;
         }
     }
@@ -89,18 +91,15 @@ class GeolocationAPI {
         Log.d(MainActivity.TAG, "Error.Response: " + error.getMessage());
     }
 
-    private void updateLngLatAcc(double lat, double lng, double acc, StateViewModel vm, Sms sms)
-            throws InterruptedException {
+    private void updateLngLatAcc(double lat, double lng, double acc, StateViewModel vm, Sms sms) {
         vm.insert(new State(
                 sms.getTimestamp(), State.KEY_LAT, lat,
                 "", State.STATUS_CONFIRMED, sms.getId())
         );
-        Thread.sleep(1);
         vm.insert(new State(
                 sms.getTimestamp(), State.KEY_LNG, lng,
                 "", State.STATUS_CONFIRMED, sms.getId())
         );
-        Thread.sleep(1);
         vm.insert(new State(
                 sms.getTimestamp(), State.KEY_ACC, acc,
                 "", State.STATUS_CONFIRMED, sms.getId())

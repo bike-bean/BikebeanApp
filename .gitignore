@@ -1,12 +1,14 @@
 *.iml
 .gradle
 local.properties
+.idea/bashsupport_project.xml
 .idea/caches
 .idea/libraries
 .idea/gradle.xml
 .idea/misc.xml
 .idea/modules.xml
 .idea/workspace.xml
+.idea/vcs.xml
 .idea/navEditor.xml
 .idea/assetWizardSettings.xml
 .DS_Store

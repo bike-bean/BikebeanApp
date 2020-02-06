@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
 
@@ -13,11 +14,19 @@ public class StateViewModel extends AndroidViewModel {
 
     private final StateRepository mRepository;
 
-    private final LiveData<List<State>> mStatus;
+    /*
+    LiveData
+     */
+    // Battery
     private final LiveData<List<State>> mStatusBattery;
+
+    // Status
+    private final LiveData<List<State>> mStatus;
     private final LiveData<List<State>> mStatusWarningNumber;
     private final LiveData<List<State>> mStatusInterval;
     private final LiveData<List<State>> mStatusWifi;
+
+    // Location
     private final LiveData<List<State>> mStatusLocationLat;
     private final LiveData<List<State>> mStatusLocationLng;
     private final LiveData<List<State>> mStatusLocationAcc;
@@ -26,19 +35,22 @@ public class StateViewModel extends AndroidViewModel {
 
     private final LiveData<List<State>> mPendingCellTowers;
     private final LiveData<List<State>> mPendingWifiAccessPoints;
-    private final LiveData<List<State>> mPendingInterval;
-    private final LiveData<List<State>> mPendingWifi;
+
+    // Other
+    private final MutableLiveData<Boolean> mIntervalAborted;
 
     public StateViewModel(Application application) {
         super(application);
 
         mRepository = new StateRepository(application);
 
-        mStatus = mRepository.getStatus();
         mStatusBattery = mRepository.getStatusBattery();
+
+        mStatus = mRepository.getStatus();
         mStatusWarningNumber = mRepository.getStatusWarningNumber();
         mStatusInterval = mRepository.getStatusInterval();
         mStatusWifi = mRepository.getStatusWifi();
+
         mStatusLocationLat = mRepository.getStatusLocationLat();
         mStatusLocationLng = mRepository.getStatusLocationLng();
         mStatusLocationAcc = mRepository.getStatusLocationAcc();
@@ -47,8 +59,8 @@ public class StateViewModel extends AndroidViewModel {
 
         mPendingCellTowers = mRepository.getPendingCellTowers();
         mPendingWifiAccessPoints = mRepository.getPendingWifiAccessPoints();
-        mPendingInterval = mRepository.getPendingInterval();
-        mPendingWifi = mRepository.getPendingWifi();
+
+        mIntervalAborted =  new MutableLiveData<>();
     }
 
     public LiveData<List<State>> getStatus() {
@@ -101,14 +113,6 @@ public class StateViewModel extends AndroidViewModel {
         return mPendingWifiAccessPoints;
     }
 
-    public LiveData<List<State>> getPendingInterval() {
-        return mPendingInterval;
-    }
-
-    public LiveData<List<State>> getPendingWifi() {
-        return mPendingWifi;
-    }
-
 
 
     public List<State> getConfirmedWifi() {
@@ -119,9 +123,11 @@ public class StateViewModel extends AndroidViewModel {
         return mRepository.getConfirmedInterval();
     }
 
+    /*
     public List<State> getWarningNumber() {
         return mRepository.getWarningNumber();
     }
+    */
 
     public List<State> getInterval() {
         return mRepository.getInterval();
@@ -132,7 +138,8 @@ public class StateViewModel extends AndroidViewModel {
     }
 
     public void insert(State state) {
-        mRepository.insert(state);
+        if (state != null)
+            mRepository.insert(state);
     }
 
     /*
@@ -145,6 +152,7 @@ public class StateViewModel extends AndroidViewModel {
         mRepository.confirmLocationKeys();
     }
 
+    /*
     public void confirmInterval() {
         mRepository.confirmInterval();
     }
@@ -157,15 +165,22 @@ public class StateViewModel extends AndroidViewModel {
         mRepository.pendWifi(smsId);
     }
 
-    /*
     public void deletePendingByKey(final String key) {
         mRepository.deletePendingByKey(key);
     }
-    */
 
     public void deleteUnsetByKey(String key) {
         mRepository.deleteUnsetByKey(key);
     }
+    */
+
+    public void notifyIntervalAbort(boolean b) {
+        mIntervalAborted.postValue(b);
+    }
 
 
+
+    public LiveData<Boolean> getIntervalAborted() {
+        return mIntervalAborted;
+    }
 }

@@ -17,9 +17,9 @@ import de.bikebean.app.ui.status.sms.parser.SmsParser;
 
 public class Conversation {
 
-    private StateViewModel stateViewModel;
+    private final StateViewModel stateViewModel;
 
-    private List<Setting> internalList = new ArrayList<>();
+    private final List<Setting> internalList = new ArrayList<>();
 
     public Conversation(StateViewModel stateViewModel) {
         this.stateViewModel = stateViewModel;
@@ -52,10 +52,8 @@ public class Conversation {
                 }
     }
 
-    public void updatePreferences() throws InterruptedException {
-        for(State state : internalList.get((0)).updatePreferences(internalList)) {
+    public void updatePreferences() {
+        for(State state : internalList.get((0)).updatePreferences(internalList))
             this.stateViewModel.insert(state);
-            Thread.sleep(10);
-        }
     }
 }

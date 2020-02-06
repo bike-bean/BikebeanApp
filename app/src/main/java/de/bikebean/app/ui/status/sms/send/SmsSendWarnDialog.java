@@ -14,31 +14,18 @@ import de.bikebean.app.R;
 
 public class SmsSendWarnDialog extends DialogFragment {
 
-    // Singleton stuff
-    private static SmsSendWarnDialog inst;
+    private final Activity act;
+    private final SmsSender smsSender;
 
-    static SmsSendWarnDialog getInstance(SmsSender smsSender, Activity act) {
-        if (inst == null)
-            synchronized (SmsSendWarnDialog.class) {
-                if (inst == null)
-                    inst = new SmsSendWarnDialog(smsSender, act);
-            }
-
-        return inst;
-    }
-
-    private WeakReference<Activity> activityWeakReference;
-    private SmsSender smsSender;
-
-    private SmsSendWarnDialog(SmsSender smsSender, Activity activity) {
+    SmsSendWarnDialog(SmsSender smsSender, Activity act) {
         this.smsSender = smsSender;
-        this.activityWeakReference = new WeakReference<>(activity);
+        this.act = act;
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activityWeakReference.get());
+        AlertDialog.Builder builder = new AlertDialog.Builder(act);
 
         builder.setMessage(R.string.sms_send_warning)
                 .setPositiveButton(R.string.continue_send_sms, (dialog, id) -> smsSender.reallySend())

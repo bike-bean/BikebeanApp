@@ -4,7 +4,7 @@ import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 
 public class WifiAccessPoints extends Setting {
-    private String wifiAccessPoints;
+    private final String wifiAccessPoints;
 
     public WifiAccessPoints(String wifiAccessPoints, Sms sms) {
         this.wifiAccessPoints = wifiAccessPoints;

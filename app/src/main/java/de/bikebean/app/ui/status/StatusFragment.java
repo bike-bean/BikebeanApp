@@ -13,7 +13,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.Navigation;
 
 import java.util.Objects;
@@ -32,20 +31,9 @@ public class StatusFragment extends Fragment {
         // init sub-fragments
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.include0, new LocationStatusFragment())
-                .addToBackStack(null)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
-
-        getChildFragmentManager().beginTransaction()
                 .replace(R.id.include1, new StatusStatusFragment())
-                .addToBackStack(null)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
-
-        getChildFragmentManager().beginTransaction()
                 .replace(R.id.include2, new BatteryStatusFragment())
-                .addToBackStack(null)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .disallowAddToBackStack()
                 .commit();
 
         setHasOptionsMenu(true);

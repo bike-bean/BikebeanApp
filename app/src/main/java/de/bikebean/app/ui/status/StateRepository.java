@@ -27,8 +27,6 @@ class StateRepository {
 
     private final LiveData<List<State>> mPendingCellTowers;
     private final LiveData<List<State>> mPendingWifiAccessPoints;
-    private final LiveData<List<State>> mPendingInterval;
-    private final LiveData<List<State>> mPendingWifi;
 
     StateRepository(Application application) {
         BikeBeanRoomDatabase db = BikeBeanRoomDatabase.getDatabase(application);
@@ -49,10 +47,6 @@ class StateRepository {
                 State.KEY_CELL_TOWERS, State.STATUS_PENDING);
         mPendingWifiAccessPoints = mStateDao.getByKeyAndState(
                 State.KEY_WIFI_ACCESS_POINTS, State.STATUS_PENDING);
-        mPendingInterval = mStateDao.getByKeyAndState(
-                State.KEY_INTERVAL, State.STATUS_PENDING);
-        mPendingWifi = mStateDao.getByKeyAndState(
-                State.KEY_WIFI, State.STATUS_PENDING);
     }
 
     LiveData<List<State>> getStatus() {
@@ -105,14 +99,6 @@ class StateRepository {
         return mPendingWifiAccessPoints;
     }
 
-    LiveData<List<State>> getPendingInterval() {
-        return mPendingInterval;
-    }
-
-    LiveData<List<State>> getPendingWifi() {
-        return mPendingWifi;
-    }
-
 
 
     List<State> getConfirmedWifi() {
@@ -124,10 +110,11 @@ class StateRepository {
     }
 
 
-
+    /*
     List<State> getWarningNumber() {
         return mStateDao.getByKey(State.KEY_WARNING_NUMBER);
     }
+    */
 
     List<State> getInterval() {
         return mStateDao.getByKey(State.KEY_INTERVAL);
@@ -142,19 +129,17 @@ class StateRepository {
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() -> mStateDao.insert(state));
     }
 
+    /*
     void deleteUnsetByKey(String key) {
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() ->
                 mStateDao.deleteByKeyAndState(key, State.STATUS_UNSET));
     }
 
-    /*
     void deletePendingByKey(final String key) {
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() ->
                 mStateDao.deleteByKeyAndState(key, State.STATUS_PENDING));
     }
-    */
 
-    /*
     void confirmBySmsId(final int smsId) {
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() ->
                 mStateDao.updateStateBySmsId(State.STATUS_CONFIRMED, smsId));
@@ -168,6 +153,7 @@ class StateRepository {
                 mStateDao.updateStateByKey(State.STATUS_CONFIRMED, State.KEY_WIFI_ACCESS_POINTS));
     }
 
+    /*
     void confirmInterval() {
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() ->
                 mStateDao.updateStateByKey(State.STATUS_CONFIRMED, State.KEY_INTERVAL));
@@ -182,4 +168,5 @@ class StateRepository {
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() ->
                 mStateDao.updateStateBySmsId(State.STATUS_PENDING, smsId));
     }
+    */
 }

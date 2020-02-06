@@ -109,8 +109,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         } else
             googleMap.setMyLocationEnabled(true);
 
-        currentPositionBike = new MutableLatLng(0.0, 0.0);
-        snippet = new Snippet(0, 0);
+        currentPositionBike = new MutableLatLng();
+        snippet = new Snippet();
 
         // Set a marker
         marker = googleMap.addMarker(new MarkerOptions()
@@ -247,9 +247,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         private int numberCellTowers;
         private int numberWifiAccessPoints;
 
-        Snippet(int a, int b) {
-            numberCellTowers = a;
-            numberWifiAccessPoints = b;
+        Snippet() {
+            numberCellTowers = 0;
+            numberWifiAccessPoints = 0;
         }
 
         @NonNull
@@ -276,8 +276,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         private LatLng latLng;
 
-        MutableLatLng(double lat, double lng) {
-            latLng = new LatLng(lat, lng);
+        MutableLatLng() {
+            latLng = new LatLng(0.0, 0.0);
         }
 
         double getLat() {

@@ -11,17 +11,17 @@ import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.status.StateViewModel;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 
-public class LocationUpdater extends AsyncTask<String, Void, Boolean> {
+class LocationUpdater extends AsyncTask<String, Void, Boolean> {
 
     private final WeakReference<Context> contextReference;
-    private StateViewModel mStateViewModel;
-    private SmsViewModel mSmsViewModel;
-    private AsyncResponse mDelegate;
+    private final StateViewModel mStateViewModel;
+    private final SmsViewModel mSmsViewModel;
+    private final AsyncResponse mDelegate;
 
     private volatile static boolean isCellTowersSet = false, isWifiAccessPointsSet = false;
     private volatile static String cellTowers, wifiAccessPoints;
 
-    private int mSmsId;
+    private final int mSmsId;
 
     public interface AsyncResponse {
         void onLocationUpdated(boolean isLocationUpdated);

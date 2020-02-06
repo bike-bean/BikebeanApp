@@ -125,7 +125,7 @@ public class LocationStatusFragment extends Fragment {
     }
 
     // Cached copy of parsed sms
-    private List<Integer> parsedSms = new ArrayList<>();
+    private final List<Integer> parsedSms = new ArrayList<>();
 
     private void updateLocation(StateViewModel st, SmsViewModel smsViewModel,
                                 Context ctx, List<State> states, String key) {

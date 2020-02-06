@@ -18,11 +18,11 @@ import de.bikebean.app.ui.status.sms.SmsViewModel;
 
 public class SmsSender {
 
-    private Context ctx;
-    private FragmentActivity act;
-    private SharedPreferences sharedPreferences;
-    private SmsViewModel smsViewModel;
-    private StateViewModel stateViewModel;
+    private final Context ctx;
+    private final FragmentActivity act;
+    private final SharedPreferences sharedPreferences;
+    private final SmsViewModel smsViewModel;
+    private final StateViewModel stateViewModel;
 
     public SmsSender(Context ctx, FragmentActivity act,
                      SmsViewModel smsViewModel, StateViewModel stateViewModel) {
@@ -46,7 +46,7 @@ public class SmsSender {
         if (phoneNumber.isEmpty())
             return;
 
-        SmsSendWarnDialog smsSendWarnDialog = SmsSendWarnDialog.getInstance(this, act);
+        SmsSendWarnDialog smsSendWarnDialog = new SmsSendWarnDialog(this, act);
         Dialog dialog = smsSendWarnDialog.getDialog();
 
         if (dialog == null)
@@ -63,6 +63,8 @@ public class SmsSender {
         The user decided to cancel, don't send an SMS and signal it to the user.
         */
         Toast.makeText(ctx, "Vorgang abgebrochen.", Toast.LENGTH_LONG).show();
+
+        stateViewModel.notifyIntervalAbort(true);
     }
 
     void reallySend() {

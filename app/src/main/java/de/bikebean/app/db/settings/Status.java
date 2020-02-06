@@ -4,7 +4,7 @@ import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 
 public class Status extends Setting {
-    private double status;
+    private final double status;
 
     public Status(double status, Sms sms) {
         this.status = status;
