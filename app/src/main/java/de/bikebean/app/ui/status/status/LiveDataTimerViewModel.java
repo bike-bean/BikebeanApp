@@ -81,7 +81,7 @@ public class LiveDataTimerViewModel extends AndroidViewModel {
         return mStopTime3;
     }
 
-    long startTimer4(long startTime, int interval) {
+    public long startTimer4(long startTime, int interval) {
         mStopTime4 = startTime + interval * 1000 * 60 * 60;
         timer4 = new Timer();
 
@@ -108,7 +108,7 @@ public class LiveDataTimerViewModel extends AndroidViewModel {
         return mResidualTime3;
     }
 
-    LiveData<Long> getResidualTime4() {
+    public LiveData<Long> getResidualTime4() {
         return mResidualTime4;
     }
 
@@ -124,7 +124,7 @@ public class LiveDataTimerViewModel extends AndroidViewModel {
         timer3.cancel();
     }
 
-    void cancelTimer4() {
+    public void cancelTimer4() {
         timer4.cancel();
     }
 

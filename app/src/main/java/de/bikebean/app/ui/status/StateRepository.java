@@ -101,72 +101,23 @@ class StateRepository {
 
 
 
-    List<State> getConfirmedWifi() {
-        return mStateDao.getByKeyAndStateSync(State.KEY_WIFI, State.STATUS_CONFIRMED);
+    List<State> getConfirmedByKeySync(String key) {
+        return mStateDao.getByKeyAndStateSync(key, State.STATUS_CONFIRMED);
     }
 
-    List<State> getConfirmedInterval() {
-        return mStateDao.getByKeyAndStateSync(State.KEY_INTERVAL, State.STATUS_CONFIRMED);
+    List<State> getByKeySync(String key) {
+        return mStateDao.getByKey(key);
     }
-
-
-    /*
-    List<State> getWarningNumber() {
-        return mStateDao.getByKey(State.KEY_WARNING_NUMBER);
-    }
-    */
-
-    List<State> getInterval() {
-        return mStateDao.getByKey(State.KEY_INTERVAL);
-    }
-
-    List<State> getWifi() {
-        return mStateDao.getByKey(State.KEY_WIFI);
-    }
-
 
     void insert(final State state) {
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() -> mStateDao.insert(state));
     }
 
-    /*
-    void deleteUnsetByKey(String key) {
-        BikeBeanRoomDatabase.databaseWriteExecutor.execute(() ->
-                mStateDao.deleteByKeyAndState(key, State.STATUS_UNSET));
-    }
-
-    void deletePendingByKey(final String key) {
-        BikeBeanRoomDatabase.databaseWriteExecutor.execute(() ->
-                mStateDao.deleteByKeyAndState(key, State.STATUS_PENDING));
-    }
-
-    void confirmBySmsId(final int smsId) {
-        BikeBeanRoomDatabase.databaseWriteExecutor.execute(() ->
-                mStateDao.updateStateBySmsId(State.STATUS_CONFIRMED, smsId));
-    }
-    */
-
+    // TODO: don't confirm but "overwrite" the keys with a newer entry
     void confirmLocationKeys() {
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() ->
                 mStateDao.updateStateByKey(State.STATUS_CONFIRMED, State.KEY_CELL_TOWERS));
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() ->
                 mStateDao.updateStateByKey(State.STATUS_CONFIRMED, State.KEY_WIFI_ACCESS_POINTS));
     }
-
-    /*
-    void confirmInterval() {
-        BikeBeanRoomDatabase.databaseWriteExecutor.execute(() ->
-                mStateDao.updateStateByKey(State.STATUS_CONFIRMED, State.KEY_INTERVAL));
-    }
-
-    void confirmWifi() {
-        BikeBeanRoomDatabase.databaseWriteExecutor.execute(() ->
-                mStateDao.updateStateByKey(State.STATUS_CONFIRMED, State.KEY_WIFI));
-    }
-
-    void pendWifi(int smsId) {
-        BikeBeanRoomDatabase.databaseWriteExecutor.execute(() ->
-                mStateDao.updateStateBySmsId(State.STATUS_PENDING, smsId));
-    }
-    */
 }

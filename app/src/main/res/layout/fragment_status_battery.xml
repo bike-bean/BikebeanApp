@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -51,16 +50,22 @@
             android:layout_weight="1" />
 
         <Button
-            android:id="@+id/button_get_battery"
+            android:id="@+id/statusButton"
             style="@style/Widget.AppTheme.SendButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:enabled="false"
             android:icon="@drawable/ic_send_white_24dp"
-            android:text="@string/button_get_status"
-            app:backgroundTint="#DEDEDE" />
+            android:text="@string/button_get_status" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/statusPendingStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:textAppearance="@style/TextAppearance.AppTheme.Error"
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"

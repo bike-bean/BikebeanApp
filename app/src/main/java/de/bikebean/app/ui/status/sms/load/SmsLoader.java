@@ -7,8 +7,6 @@ import android.os.AsyncTask;
 import android.provider.Telephony;
 import android.util.Log;
 
-import androidx.preference.PreferenceManager;
-
 import java.lang.ref.WeakReference;
 
 import de.bikebean.app.MainActivity;
@@ -18,85 +16,63 @@ import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.ui.status.StateViewModel;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 
-public class SmsLoader extends AsyncTask<String, Void, String> {
+public class SmsLoader extends AsyncTask<String, Void, Void> {
 
-    private final WeakReference<Context> activityReference;
+    private final WeakReference<Context> contextWeakReference;
     private final SmsViewModel smsViewModel;
     private final StateViewModel stateViewModel;
 
     public SmsLoader(Context context, SmsViewModel smsViewModel, StateViewModel stateViewModel) {
-        activityReference = new WeakReference<>(context);
+        contextWeakReference = new WeakReference<>(context);
         this.smsViewModel = smsViewModel;
         this.stateViewModel = stateViewModel;
     }
 
     @Override
-    public String doInBackground(String... args) {
+    public Void doInBackground(String... args) {
         String phoneNumber = args[0];
         String waitForNewMessage = args[1];
-        boolean initialLoading = Boolean.valueOf(args[2]);
         String[] argList = {phoneNumber};
 
-        Context context = activityReference.get();
+        ContentResolver contentResolver = contextWeakReference.get().getContentResolver();
+        Cursor inbox = getInbox(contentResolver, argList);
 
         int size = smsViewModel.getInboxCount();
 
-        ContentResolver contentResolver = context.getContentResolver();
+        Log.d(MainActivity.TAG, "There are " + inbox.getCount() + " messages in inbox.");
+        Log.d(MainActivity.TAG, "There are " + size + " messages already saved.");
 
-        Cursor inbox = getInbox(contentResolver, argList);
+        if (!waitForNewMessage.equals("")) {
+            // only search for the newly incoming message
+            // It may take a while until it can be retrieved from the content provider
+            Log.d(MainActivity.TAG, "Parsing inbox for new message...");
 
-        try {
-            if (!initialLoading) {
+            while (inbox.getCount() <= size) {
                 Log.d(MainActivity.TAG, "There are " + inbox.getCount() + " messages in inbox.");
                 Log.d(MainActivity.TAG, "There are " + size + " messages already saved.");
-
-                if (!waitForNewMessage.equals("")) {
-                    // only search for the newly incoming message
-                    // It may take a while until it can be retrieved from the content provider
-                    Log.d(MainActivity.TAG, "Parsing inbox for new message...");
-
-                    while (inbox.getCount() <= size) {
-                        Log.d(MainActivity.TAG, "There are " + inbox.getCount() + " messages in inbox.");
-                        Log.d(MainActivity.TAG, "There are " + size + " messages already saved.");
-                        inbox = getInbox(contentResolver, argList);
-                        try {
-                            Thread.sleep(10);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-
-                if (inbox.getCount() == size)
-                    return phoneNumber;
-
-                traverseInboxAndClose(inbox, smsViewModel);
-            } else {
-                Log.d(MainActivity.TAG, "Initial Loading");
-
-                if (traverseInboxAndCloseInitial(inbox, smsViewModel)) {
-                    Log.d(MainActivity.TAG, "Initial Loading completed");
-                    PreferenceManager.getDefaultSharedPreferences(context).edit()
-                            .putBoolean("initialLoading", false)
-                            .apply();
+                inbox = getInbox(contentResolver, argList);
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
         }
 
-        return phoneNumber;
+        traverseInboxAndClose(inbox);
+
+        return null;
     }
 
-    private void traverseInboxAndClose(Cursor inbox, SmsViewModel vm) {
+    private void traverseInboxAndClose(Cursor inbox) {
         if (inbox.moveToFirst()) {
             Log.d(MainActivity.TAG, "Loading " + inbox.getCount() + " SMS");
 
             for (int i=0; i < inbox.getCount(); i++) {
                 Sms sms = buildSms(inbox, Sms.STATUS_NEW);
 
-                if (vm.getSmsById(sms.getId()).size() == 0)
-                    vm.insert(sms);
+                if (smsViewModel.getSmsById(sms.getId()).size() == 0)
+                    smsViewModel.insert(sms);
                 else
                     Log.d(MainActivity.TAG, "SMS " + sms.getId() + " is already present");
 
@@ -107,7 +83,18 @@ public class SmsLoader extends AsyncTask<String, Void, String> {
         }
     }
 
-    private boolean traverseInboxAndCloseInitial(Cursor inbox, SmsViewModel smsViewModel) {
+    public void loadInitial(String phoneNumber) {
+        String[] argList = {phoneNumber};
+
+        ContentResolver contentResolver = contextWeakReference.get().getContentResolver();
+        Cursor inbox = getInbox(contentResolver, argList);
+
+        Log.d(MainActivity.TAG, "Initial Loading");
+        traverseInboxAndCloseInitial(inbox);
+        Log.d(MainActivity.TAG, "Initial Loading completed");
+    }
+
+    private void traverseInboxAndCloseInitial(Cursor inbox) {
         Conversation conversation = new Conversation(stateViewModel);
 
         if (inbox.moveToFirst()) {
@@ -123,11 +110,9 @@ public class SmsLoader extends AsyncTask<String, Void, String> {
 
             inbox.close();
         } else
-            return false;
+            return;
 
         conversation.updatePreferences();
-
-        return true;
     }
 
     private Sms buildSms(Cursor inbox, int smsState) {

@@ -12,7 +12,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -49,18 +48,26 @@ public class Utils {
         return formatter.format(date);
     }
 
-    public static String getEstimatedDaysText(StateViewModel stateViewModel,
-                                              double batteryStatus, long lastMeasurement) {
-        int remainingPercent = (int) batteryStatus - 10;
+    public static String getEstimatedDaysText(StateViewModel st) {
+        State lastBatteryState = st.getConfirmedBatterySync();
+        boolean isWifiOn = st.getConfirmedWifiSync();
+        int interval = st.getConfirmedIntervalSync();
+
+        return estimateBatteryDays(lastBatteryState, isWifiOn, interval);
+    }
+
+    private static String estimateBatteryDays(State lastBatteryState, boolean isWifiOn, int interval) {
+        if (lastBatteryState == null) {
+            return "";
+        }
+
+        int remainingPercent = lastBatteryState.getValue().intValue() - 10;
         Double days;
-        long timeSinceLastManagement = new Date().getTime() - lastMeasurement;
+        long timeSinceLastManagement = new Date().getTime() - lastBatteryState.getTimestamp();
         double daysSinceLastManagement = timeSinceLastManagement / 1000.0 / 60 / 60 / 24;
 
         if (remainingPercent < 10)
             return "Unter 10%, bitte umgehend aufladen!";
-
-        boolean isWifiOn = getConfirmedWifiSync(stateViewModel);
-        int interval = getConfirmedIntervalSync(stateViewModel);
 
         if (isWifiOn)
             days = 1.7;
@@ -74,13 +81,19 @@ public class Utils {
         double remainingDays = ((double) remainingPercent) / 100 * days;
         double remainingDaysFromNow = remainingDays - daysSinceLastManagement;
         double remainingHoursFromNow = remainingDaysFromNow * 24;
-        long chargeDateMs = lastMeasurement + ((long) remainingDays * 1000 * 60 * 60 * 24);
-        String chargeDate = new SimpleDateFormat("dd.MM.yy", Locale.GERMANY).format(new Date(chargeDateMs));
+        long chargeDateMs =
+                lastBatteryState.getTimestamp() + ((long) remainingDays * 1000 * 60 * 60 * 24);
+        Date chargeDateDate = new Date(chargeDateMs);
+        String chargeDate =
+                new SimpleDateFormat("dd.MM.yy", Locale.GERMANY).format(chargeDateDate);
 
         if (remainingDaysFromNow > 1)
             return "Noch ca. " + (int) remainingDaysFromNow + " Tage (" + chargeDate + ")";
 
-        return "Noch ca. " + (int) remainingHoursFromNow + " Stunden!";
+        if (remainingHoursFromNow > 0)
+            return "Noch ca. " + (int) remainingHoursFromNow + " Stunden!";
+
+        return "Unter 10%, bitte umgehend aufladen!";
     }
 
     public static String convertToDateHuman(long datetime) {
@@ -137,118 +150,10 @@ public class Utils {
             return ContextCompat.getDrawable(ctx, R.drawable.ic_battery_30_black_24dp);
         if (batteryStatus > 20.0)
             return ContextCompat.getDrawable(ctx, R.drawable.ic_battery_20_black_24dp);
+        if (batteryStatus > 0)
+            return ContextCompat.getDrawable(ctx, R.drawable.ic_battery_alert_red_24dp);
 
-        return ContextCompat.getDrawable(ctx, R.drawable.ic_battery_alert_red_24dp);
-    }
-
-    public static boolean getWifiStatusSync(StateViewModel st) {
-        final MutableString oldWifiValue = new MutableString();
-
-        new Thread(() -> {
-            List<State> wifiList = st.getWifi();
-
-            if (wifiList.size() > 0)
-                oldWifiValue.set(String.valueOf(wifiList.get(0).getValue() > 0));
-            else
-                oldWifiValue.set(String.valueOf(InitialConfigurationActivity.INITIAL_WIFI));
-        }).start();
-
-        while (oldWifiValue.get().isEmpty()) {
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return Boolean.valueOf(oldWifiValue.get());
-    }
-
-    private static boolean getConfirmedWifiSync(StateViewModel st) {
-        final MutableString oldWifiValue = new MutableString();
-
-        new Thread(() -> {
-            List<State> wifiList = st.getConfirmedWifi();
-
-            if (wifiList.size() > 0)
-                oldWifiValue.set(String.valueOf(wifiList.get(0).getValue() > 0));
-            else
-                oldWifiValue.set(String.valueOf(InitialConfigurationActivity.INITIAL_WIFI));
-        }).start();
-
-        while (oldWifiValue.get().isEmpty()) {
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return Boolean.valueOf(oldWifiValue.get());
-    }
-
-    public static int getIntervalStatusSync(StateViewModel st) {
-        final MutableString oldIntervalValue = new MutableString();
-
-        new Thread(() -> {
-            List<State> intervalList = st.getInterval();
-
-            if (intervalList.size() > 0)
-                oldIntervalValue.set(String.valueOf(intervalList.get(0).getValue().intValue()));
-            else
-                oldIntervalValue.set(String.valueOf((int) InitialConfigurationActivity.INITIAL_INTERVAL));
-        }).start();
-
-        while (oldIntervalValue.get().isEmpty()) {
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return Integer.valueOf(oldIntervalValue.get());
-    }
-
-    public static int getConfirmedIntervalSync(StateViewModel st) {
-        final MutableString intervalConfirmed = new MutableString();
-
-        new Thread(() -> {
-            List<State> intervalList = st.getIntervalConfirmed();
-
-            if (intervalList.size() > 0)
-                intervalConfirmed.set(String.valueOf(intervalList.get(0).getValue().intValue()));
-            else
-                intervalConfirmed.set(String.valueOf((int) InitialConfigurationActivity.INITIAL_INTERVAL));
-        }).start();
-
-        while (intervalConfirmed.get().isEmpty()) {
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return Integer.valueOf(intervalConfirmed.get());
-    }
-
-    static class MutableString {
-
-        private String string;
-        private volatile boolean is_set = false;
-
-        void set(String i) {
-            this.string = i;
-            is_set = true;
-        }
-
-        String get() {
-            if (is_set)
-                return string;
-            else
-                return "";
-        }
+        return ContextCompat.getDrawable(ctx, R.drawable.ic_battery_unknown_black_24dp);
     }
 }
 

@@ -39,40 +39,14 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/statusText"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_marginStart="@dimen/fragment_horizontal_margin"
-                android:gravity="bottom"
-                android:text="@string/status_text"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5" />
-
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <Button
-                android:id="@+id/statusButton"
-                style="@style/Widget.AppTheme.SendButton"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_gravity="bottom"
-                android:text="@string/button_get_status" />
-        </LinearLayout>
-
         <TextView
-            android:id="@+id/statusPendingStatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:textAppearance="@style/TextAppearance.AppTheme.Error" />
+            android:id="@+id/statusText"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginStart="@dimen/fragment_horizontal_margin"
+            android:gravity="bottom"
+            android:text="@string/status_text"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5" />
 
     </LinearLayout>
 
@@ -131,7 +105,8 @@
                 android:id="@+id/wlanPendingStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppTheme.Error" />
+                android:textAppearance="@style/TextAppearance.AppTheme.Error"
+                android:visibility="gone" />
 
         </LinearLayout>
 
@@ -193,7 +168,8 @@
                 android:id="@+id/intervalPendingStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppTheme.Error" />
+                android:textAppearance="@style/TextAppearance.AppTheme.Error"
+                android:visibility="gone" />
 
         </LinearLayout>
 
@@ -249,7 +225,8 @@
                 android:id="@+id/warningNumberPendingStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppTheme.Error" />
+                android:textAppearance="@style/TextAppearance.AppTheme.Error"
+                android:visibility="gone" />
 
         </LinearLayout>
 
