@@ -11,6 +11,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.EditTextPreference;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
@@ -59,10 +60,14 @@ public class PreferencesActivity extends AppCompatActivity {
             final FragmentActivity act = getActivity();
             ctx = Objects.requireNonNull(act).getApplicationContext();
 
+            String address = PreferenceManager.getDefaultSharedPreferences(ctx)
+                    .getString("number", "");
+            ResetDialog resetDialog = new ResetDialog(act, address, this);
+
             // Preferences
             final EditTextPreference numberPreference = findPreference("number");
+            final Preference resetPreference = findPreference("reset");
 
-            // Last Change Strings
             if (numberPreference != null) {
                 numberPreference.setOnBindEditTextListener(
                         editText -> editText.setInputType(InputType.TYPE_CLASS_PHONE));
@@ -75,21 +80,29 @@ public class PreferencesActivity extends AppCompatActivity {
                         Toast.makeText(ctx, R.string.number_subtitle, Toast.LENGTH_LONG).show();
                         return false;
                     } else {
-                        resetAll();
+                        resetAll(newValue.toString());
                         return true;
                     }
                 });
             }
+
+            if (resetPreference != null) {
+                resetPreference.setOnPreferenceClickListener(preference -> {
+                    resetDialog.show(act.getSupportFragmentManager(), "resetDialog");
+                    return true;
+                });
+            }
         }
 
-        void resetAll() {
-            String address = PreferenceManager.getDefaultSharedPreferences(ctx)
-                    .getString("number", "");
-
+        void resetAll(String address) {
             // reset DB and repopulate it
             BikeBeanRoomDatabase.resetAll();
             stateViewModel.insertInitialStates(ctx);
             smsViewModel.fetchSmsSync(ctx, stateViewModel, address);
+        }
+
+        void cancelReset() {
+            assert true;
         }
     }
 }

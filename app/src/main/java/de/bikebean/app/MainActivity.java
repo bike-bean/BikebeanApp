@@ -76,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void handleNewIncomingMessages(List<Sms> newSmsList) {
         for (Sms newSms : newSmsList)
-            new SmsParser(newSms, stateViewModel, isDatabaseUpdated ->
-                    smsViewModel.markParsed(newSms.getId())).execute();
+            new SmsParser(newSms, stateViewModel, smsViewModel).execute();
     }
 }

@@ -23,6 +23,7 @@ public class State {
     public static final String KEY_WARNING_NUMBER = "warningNumber";
     public static final String KEY_INTERVAL = "interval";
     public static final String KEY_WIFI = "wifi";
+    public static final String KEY_WAPP = "wapp";
     public static final String KEY_LAT = "lat";
     public static final String KEY_LNG = "lng";
     public static final String KEY_ACC = "acc";
@@ -30,30 +31,34 @@ public class State {
     public static final String KEY_NO_WIFI_ACCESS_POINTS = "noWifiAccessPoints";
     public static final String KEY_CELL_TOWERS = "cellTowers";
     public static final String KEY_WIFI_ACCESS_POINTS = "wifiAccessPoints";
+    public static final String KEY_LOCATION = "location";
+
+    public static final double WAPP_CELL_TOWERS = 0.0;
+    public static final double WAPP_WIFI_ACCESS_POINTS = 1.0;
 
     @PrimaryKey(autoGenerate = true)
     public int id;
 
     @ColumnInfo(name = "timestamp")
-    private long mTimestamp;
+    private final long mTimestamp;
 
     @NonNull
     @ColumnInfo(name = "_key")
-    private String mKey;
+    private final String mKey;
 
     @NonNull
     @ColumnInfo(name = "value")
-    private Double mValue;
+    private final Double mValue;
 
     @NonNull
     @ColumnInfo(name = "lvalue")
-    private String mLongValue;
+    private final String mLongValue;
 
     @ColumnInfo(name = "state")
-    private int mState;
+    private final int mState;
 
     @ColumnInfo(name = "sms_id")
-    private int mSmsId;
+    private final int mSmsId;
 
     public State(
             long timestamp,
@@ -83,6 +88,21 @@ public class State {
         this.mLongValue = "";
         this.mState = STATUS_PENDING;
         this.mSmsId = 0; // Maybe allow changing this in the future?
+    }
+
+    // For "PENDING" State
+    @Ignore
+    public State(
+            @NonNull String key,
+            double value,
+            long timestamp
+    ) {
+        this.mTimestamp = timestamp;
+        this.mKey = key;
+        this.mValue = value;
+        this.mLongValue = "";
+        this.mState = STATUS_PENDING;
+        this.mSmsId = 0;
     }
 
     public String getKey() {

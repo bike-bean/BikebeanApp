@@ -14,12 +14,14 @@ import de.bikebean.app.db.settings.Battery;
 import de.bikebean.app.db.settings.CellTowers;
 import de.bikebean.app.db.settings.Interval;
 import de.bikebean.app.db.settings.Setting;
+import de.bikebean.app.db.settings.Wapp;
 import de.bikebean.app.db.settings.WarningNumber;
 import de.bikebean.app.db.settings.Wifi;
 import de.bikebean.app.db.settings.WifiAccessPoints;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.status.StateViewModel;
+import de.bikebean.app.ui.status.sms.SmsViewModel;
 
 public class SmsParser extends AsyncTask<String, Void, Boolean> {
 
@@ -32,20 +34,16 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
     private final static int SMS_TYPE_WIFI_LIST = 51;  // wapp part 2
     private final static int SMS_TYPE_INT = 6;
 
-    public interface AsyncResponse {
-        void onDatabaseUpdated(boolean isDatabaseUpdated);
-    }
-
     private final WeakReference<StateViewModel> statusViewModelReference;
-    private final WeakReference<AsyncResponse> asyncResponseReference;
+    private final WeakReference<SmsViewModel> smsViewModelReference;
 
     private final Sms sms;
     private int type;
 
-    public SmsParser(Sms sms, StateViewModel stateViewModel, AsyncResponse delegate) {
+    public SmsParser(Sms sms, StateViewModel stateViewModel, SmsViewModel smsViewModel) {
         this.sms = sms;
         statusViewModelReference = new WeakReference<>(stateViewModel);
-        asyncResponseReference = new WeakReference<>(delegate);
+        smsViewModelReference = new WeakReference<>(smsViewModel);
 
         initMatchers(sms.getBody());
     }
@@ -53,7 +51,7 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
     public SmsParser(Sms sms) {
         this.sms = sms;
         statusViewModelReference = new WeakReference<>(null);
-        asyncResponseReference = new WeakReference<>(null);
+        smsViewModelReference = new WeakReference<>(null);
 
         initMatchers(sms.getBody());
 
@@ -82,7 +80,7 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
 
     @Override
     protected void onPostExecute(Boolean isDatabaseUpdated) {
-        asyncResponseReference.get().onDatabaseUpdated(isDatabaseUpdated);
+        smsViewModelReference.get().markParsed(sms.getId());
     }
 
     // MATCHERS
@@ -212,11 +210,13 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
             case SMS_TYPE_CELL_TOWERS:
                 // no battery entry in this special case
                 l.add(new CellTowers(getWappCellTowers(), sms));
+                l.add(new Wapp(State.WAPP_CELL_TOWERS, sms));
                 break;
             case SMS_TYPE_WIFI_LIST:
                 // battery value is encoded differently in this case
                 l.add(new Battery(getBattery(), sms));
                 l.add(new WifiAccessPoints(getWappWifi(), sms));
+                l.add(new Wapp(State.WAPP_WIFI_ACCESS_POINTS, sms));
                 break;
         }
 

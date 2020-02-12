@@ -18,13 +18,16 @@ public class SmsViewModel extends AndroidViewModel {
 
     private final LiveData<List<Sms>> mChat;
     private final LiveData<List<Sms>> mNewIncoming;
+    private final LiveData<List<Integer>> mAllIds;
 
     public SmsViewModel(Application application) {
         super(application);
 
         mRepository = new SmsRepository(application);
+
         mChat = mRepository.getChat();
         mNewIncoming = mRepository.getNewIncoming();
+        mAllIds = mRepository.getAllInboxIds();
     }
 
     LiveData<List<Sms>> getChat() {
@@ -33,6 +36,10 @@ public class SmsViewModel extends AndroidViewModel {
 
     public LiveData<List<Sms>> getNewIncoming() {
         return mNewIncoming;
+    }
+
+    public LiveData<List<Integer>> getAllIds() {
+        return mAllIds;
     }
 
     public int getInboxCount() {

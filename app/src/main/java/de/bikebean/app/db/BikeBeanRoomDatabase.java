@@ -65,7 +65,7 @@ public abstract class BikeBeanRoomDatabase extends RoomDatabase {
         });
 
         new Thread(() -> {
-            while (dao1.getAll().size() > 0) {
+            while (dao1.getAllSync().size() > 0) {
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
@@ -75,7 +75,6 @@ public abstract class BikeBeanRoomDatabase extends RoomDatabase {
 
             stateIsClearedFlag.set();
         }).start();
-
 
         new Thread(() -> {
             while (dao0.getAllSync().size() > 0) {

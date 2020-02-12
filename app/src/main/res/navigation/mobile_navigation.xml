@@ -40,13 +40,26 @@
             android:id="@+id/initial_configuration_action"
             app:destination="@id/navigation_initial_configuration" />
 
+        <action
+            android:id="@+id/history_action"
+            app:destination="@id/navigation_history"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+
     </fragment>
 
     <fragment
         android:id="@+id/navigation_map"
         android:name="de.bikebean.app.ui.map.MapFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_map" />
+        tools:layout="@layout/fragment_map" >
+
+        <action
+            android:id="@+id/back_action"
+            app:destination="@id/navigation_status" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_wifi"
@@ -71,5 +84,11 @@
         android:name="de.bikebean.app.InitialConfigurationActivity"
         android:label="activity_initial_configuration"
         tools:layout="@layout/activity_initial_configuration" />
+
+    <activity
+        android:id="@+id/navigation_history"
+        android:name="de.bikebean.app.ui.status.history.HistoryActivity"
+        android:label="@string/history"
+        tools:layout="@layout/activity_history" />
 
 </navigation>

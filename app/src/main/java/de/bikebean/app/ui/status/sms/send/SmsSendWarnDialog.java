@@ -8,8 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
-import java.lang.ref.WeakReference;
-
 import de.bikebean.app.R;
 
 public class SmsSendWarnDialog extends DialogFragment {

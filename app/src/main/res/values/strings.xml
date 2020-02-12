@@ -27,6 +27,8 @@
     <string name="title_activity_sms">SMS Historie</string>
     <string name="title_activity_settings">Einstellungen</string>
 
+    <string name="history">Historie</string>
+
     <!-- Preference Titles -->
     <string name="general_header">Bike Bean Einstellungen</string>
     <string name="ui_header">Design</string>
@@ -35,6 +37,7 @@
     <string name="internationalization_header">Sprache</string>
     <string name="interval_header">Intervall</string>
     <string name="wlan_header">Bike Bean WLAN</string>
+    <string name="db_reset">Datenbank zurücksetzen</string>
 
     <!-- General Preferences -->
     <string name="number_title">Telefonnummer der Bike Bean</string>
@@ -61,11 +64,14 @@
         Dies kann Kosten des Netzbetreibers verursachen!</string>
     <string name="number_subtitle">Bitte mit Ländercode (z.B. +49 für Deutschland) eingeben"</string>
     <string name="number_error">Nummer darf nicht leer sein!</string>
-    <string name="continue_send_sms">Verstanden!</string>
+    <string name="continue_send_sms">Senden</string>
+    <string name="continue_reset">Zurücksetzen</string>
     <string name="continue_general">Weiter</string>
     <string name="abort_send_sms">Abbrechen</string>
     <string name="overdue">Bestätigung überfällig! (%s)</string>
     <string name="no_data">Keine Daten vorhanden!</string>
+    <string name="db_reset_warning">Dadurch werden alle Daten zurückgesetzt und vom
+        bisherigen SMS-Verlauf neu eingelesen. Fortfahren?</string>
 
     <!-- WifiScan -->
     <string name="wifi_disabled">Bitte aktivieren Sie das WLAN</string>

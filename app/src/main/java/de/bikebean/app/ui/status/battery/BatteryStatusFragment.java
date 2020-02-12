@@ -34,6 +34,8 @@ public class BatteryStatusFragment extends Fragment {
     private Context ctx;
 
     private SmsSender smsSender;
+    
+    private final int t1 = LiveDataTimerViewModel.TIMER_FOUR;
 
     // UI Elements
     private Button statusButton;
@@ -69,9 +71,10 @@ public class BatteryStatusFragment extends Fragment {
 
         smsSender = new SmsSender(ctx, act, sm, st);
 
-        State statusState = new State(State.KEY_BATTERY, 0.0);
+        List<State> statusStates = new ArrayList<>();
+        statusStates.add(new State(State.KEY_BATTERY, 0.0));
 
-        statusButton.setOnClickListener(v -> smsSender.send("Status", statusState));
+        statusButton.setOnClickListener(v -> smsSender.send("Status", statusStates));
         st.getStatusBattery().observe(l, this::setElements);
     }
 
@@ -149,8 +152,8 @@ public class BatteryStatusFragment extends Fragment {
     }
 
     private void setBatteryElementsConfirmed(State state) {
-        tv.getResidualTime4().removeObservers(this);
-        tv.cancelTimer4();
+        tv.getResidualTime(t1).removeObservers(this);
+        tv.cancelTimer(t1);
 
         String batteryStatus = state.getValue() + " %";
         batteryStatusText.setText(batteryStatus);
@@ -169,14 +172,15 @@ public class BatteryStatusFragment extends Fragment {
 
     // pending
     private void setBatteryElementsPending(State state) {
-        long stopTime = tv.startTimer4(state.getTimestamp(), st.getConfirmedIntervalSync());
-        tv.getResidualTime4().observe(this, s ->
+        long stopTime = tv.startTimer(t1, state.getTimestamp(), st.getConfirmedIntervalSync());
+        tv.getResidualTime(t1).observe(this, s ->
                 updatePendingText(statusPendingStatus, stopTime, s)
         );
 
         State lastBatteryState = st.getConfirmedBatterySync();
         if (lastBatteryState != null) {
-            String batteryStatus = lastBatteryState.getValue() + " %";
+            double batteryValue = lastBatteryState.getValue();
+            String batteryStatus = batteryValue + " %";
 
             batteryLastChangedText.setText(
                     Utils.convertToDateHuman(lastBatteryState.getTimestamp()));
@@ -184,7 +188,7 @@ public class BatteryStatusFragment extends Fragment {
                     Utils.getEstimatedDaysText(st));
             batteryStatusText.setText(batteryStatus);
             batteryStatusText.setCompoundDrawablesWithIntrinsicBounds(
-                    Utils.getBatteryDrawable(ctx, lastBatteryState.getValue()), null, null, null
+                    Utils.getBatteryDrawable(ctx, batteryValue), null, null, null
             );
         } else {
             batteryStatusText.setText("");
@@ -202,8 +206,8 @@ public class BatteryStatusFragment extends Fragment {
 
     // unset
     private void setBatteryElementsUnset(State state) {
-        tv.getResidualTime4().removeObservers(this);
-        tv.cancelTimer4();
+        tv.getResidualTime(t1).removeObservers(this);
+        tv.cancelTimer(t1);
 
         batteryStatusText.setText("");
         batteryStatusText.setCompoundDrawablesWithIntrinsicBounds(

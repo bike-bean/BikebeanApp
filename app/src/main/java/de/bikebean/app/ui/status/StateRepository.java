@@ -24,9 +24,15 @@ class StateRepository {
     private final LiveData<List<State>> mStatusLocationAcc;
     private final LiveData<List<State>> mStatusNumberCellTowers;
     private final LiveData<List<State>> mStatusNumberWifiAccessPoints;
+    private final LiveData<List<State>> mWapp;
+    private final LiveData<List<State>> mLocation;
 
-    private final LiveData<List<State>> mPendingCellTowers;
-    private final LiveData<List<State>> mPendingWifiAccessPoints;
+    private final LiveData<List<State>> mConfirmedLocationLat;
+    private final LiveData<List<State>> mConfirmedLocationLng;
+    private final LiveData<List<State>> mConfirmedLocationAcc;
+
+    private final LiveData<List<State>> mCellTowers;
+    private final LiveData<List<State>> mWifiAccessPoints;
 
     StateRepository(Application application) {
         BikeBeanRoomDatabase db = BikeBeanRoomDatabase.getDatabase(application);
@@ -42,16 +48,21 @@ class StateRepository {
         mStatusLocationAcc = mStateDao.getAllByKey(State.KEY_ACC);
         mStatusNumberCellTowers = mStateDao.getAllByKey(State.KEY_NO_CELL_TOWERS);
         mStatusNumberWifiAccessPoints = mStateDao.getAllByKey(State.KEY_NO_WIFI_ACCESS_POINTS);
+        mWapp = mStateDao.getByKeyAndState(State.KEY_WAPP, State.STATUS_PENDING);
+        mLocation = mStateDao.getAllByKey(State.KEY_LOCATION);
 
-        mPendingCellTowers = mStateDao.getByKeyAndState(
-                State.KEY_CELL_TOWERS, State.STATUS_PENDING);
-        mPendingWifiAccessPoints = mStateDao.getByKeyAndState(
-                State.KEY_WIFI_ACCESS_POINTS, State.STATUS_PENDING);
+        mConfirmedLocationLat = mStateDao.getByKeyAndState(State.KEY_LAT, State.STATUS_CONFIRMED);
+        mConfirmedLocationLng = mStateDao.getByKeyAndState(State.KEY_LNG, State.STATUS_CONFIRMED);
+        mConfirmedLocationAcc = mStateDao.getByKeyAndState(State.KEY_ACC, State.STATUS_CONFIRMED);
+
+        mCellTowers = mStateDao.getAllByKey(State.KEY_CELL_TOWERS);
+        mWifiAccessPoints = mStateDao.getAllByKey(State.KEY_WIFI_ACCESS_POINTS);
     }
 
     LiveData<List<State>> getStatus() {
         return mStatus;
     }
+
 
     LiveData<List<State>> getStatusBattery() {
         return mStatusBattery;
@@ -89,35 +100,62 @@ class StateRepository {
         return mStatusNumberWifiAccessPoints;
     }
 
-
-
-    LiveData<List<State>> getPendingCellTowers() {
-        return mPendingCellTowers;
+    LiveData<List<State>> getWapp() {
+        return mWapp;
     }
 
-    LiveData<List<State>> getPendingWifiAccessPoints() {
-        return mPendingWifiAccessPoints;
+    LiveData<List<State>> getLocation() {
+        return mLocation;
     }
 
+    LiveData<List<State>> getCellTowers() {
+        return mCellTowers;
+    }
+
+    LiveData<List<State>> getWifiAccessPoints() {
+        return mWifiAccessPoints;
+    }
+
+    LiveData<List<State>> getConfirmedLocationLat() {
+        return mConfirmedLocationLat;
+    }
+
+    LiveData<List<State>> getConfirmedLocationLng() {
+        return mConfirmedLocationLng;
+    }
+
+    LiveData<List<State>> getConfirmedLocationAcc() {
+        return mConfirmedLocationAcc;
+    }
 
 
     List<State> getConfirmedByKeySync(String key) {
         return mStateDao.getByKeyAndStateSync(key, State.STATUS_CONFIRMED);
     }
 
+    List<State> getByKeyAndIdSync(String key, int smsId) {
+        return mStateDao.getByKeyAndIdSync(key, smsId);
+    }
+
     List<State> getByKeySync(String key) {
         return mStateDao.getByKey(key);
+    }
+
+    List<State> getAllLocationByIdSync(int smsId) {
+        return mStateDao.getAllById(smsId);
     }
 
     void insert(final State state) {
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() -> mStateDao.insert(state));
     }
 
-    // TODO: don't confirm but "overwrite" the keys with a newer entry
-    void confirmLocationKeys() {
+    void confirmWapp(State s1, State s2) {
+        confirmWapp(s1.getSmsId(), (double) s2.getSmsId());
+        confirmWapp(s2.getSmsId(), (double) s1.getSmsId());
+    }
+
+    private void confirmWapp(int smsId, double value) {
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() ->
-                mStateDao.updateStateByKey(State.STATUS_CONFIRMED, State.KEY_CELL_TOWERS));
-        BikeBeanRoomDatabase.databaseWriteExecutor.execute(() ->
-                mStateDao.updateStateByKey(State.STATUS_CONFIRMED, State.KEY_WIFI_ACCESS_POINTS));
+                mStateDao.updateStateByKeyAndSmsId(State.STATUS_CONFIRMED, value, State.KEY_WAPP, smsId));
     }
 }

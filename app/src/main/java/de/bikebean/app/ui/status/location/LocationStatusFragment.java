@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,33 +28,47 @@ import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.status.StateViewModel;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 import de.bikebean.app.ui.status.sms.send.SmsSender;
+import de.bikebean.app.ui.status.status.LiveDataTimerViewModel;
 
 public class LocationStatusFragment extends Fragment {
 
-    private static final int LOCATION_DEFAULT = 0;
-    private static final int LOCATION_PENDING = 1;
+    private LiveDataTimerViewModel tv;
+    private StateViewModel st;
+    private SmsViewModel sm;
 
-    private Button buttonGetLocation, buttonOpenMap;
-    private TextView latText, lngText, accText, locationLastChangedText;
-
-    private ProgressBar progressBar;
+    private Context ctx;
 
     private SmsSender smsSender;
+
+    private final int t1 = LiveDataTimerViewModel.TIMER_FIVE;
+
+    // UI Elements
+    private Button buttonGetLocation, buttonOpenMap;
+    private ProgressBar progressBar;
+    private TableLayout tableLayout;
+
+    private TextView latText, lngText, accText;
+    private TextView locationLastChangedText, locationPendingStatus, locationNoData;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_status_location, container, false);
 
-        latText = v.findViewById(R.id.lat);
-        lngText = v.findViewById(R.id.lng);
-        accText = v.findViewById(R.id.acc);
-        locationLastChangedText = v.findViewById(R.id.datetimeText1);
+        buttonGetLocation = v.findViewById(R.id.button_get_location);
+        buttonOpenMap = v.findViewById(R.id.button_open_map);
 
         progressBar = v.findViewById(R.id.progressBar);
 
-        buttonGetLocation = v.findViewById(R.id.button_get_location);
-        buttonOpenMap = v.findViewById(R.id.button_open_map);
+        tableLayout = v.findViewById(R.id.tableLayout);
+
+        locationPendingStatus = v.findViewById(R.id.locationPendingStatusText);
+        locationNoData = v.findViewById(R.id.locationNoData);
+        locationLastChangedText = v.findViewById(R.id.datetimeText1);
+
+        latText = v.findViewById(R.id.lat);
+        lngText = v.findViewById(R.id.lng);
+        accText = v.findViewById(R.id.acc);
 
         return v;
     }
@@ -62,90 +77,257 @@ public class LocationStatusFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        StateViewModel st = new ViewModelProvider(this).get(StateViewModel.class);
-        SmsViewModel sm = new ViewModelProvider(this).get(SmsViewModel.class);
+        st = new ViewModelProvider(this).get(StateViewModel.class);
+        tv = new ViewModelProvider(this).get(LiveDataTimerViewModel.class);
+        sm = new ViewModelProvider(this).get(SmsViewModel.class);
+
         LifecycleOwner l = getViewLifecycleOwner();
         FragmentActivity act = getActivity();
-        Context ctx = Objects.requireNonNull(act).getApplicationContext();
+        ctx = Objects.requireNonNull(act).getApplicationContext();
 
         smsSender = new SmsSender(ctx, act, sm, st);
 
+        setupListeners(l);
+        initUserInteractionElements();
+    }
+
+    private void setupListeners(LifecycleOwner l) {
         // Observe any changes to
         // lat, lng or acc in the database
         // (i.e. after the location updater has written
         // its stuff in there)
-        st.getStatusLocationLat().observe(l,
-                s -> updateLocTextViewsFromStatuses(s, latText, 7)
-        );
-        st.getStatusLocationLng().observe(l,
-                s -> updateLocTextViewsFromStatuses(s, lngText, 7)
-        );
-        st.getStatusLocationAcc().observe(l,
-                s -> updateLocTextViewsFromStatuses(s, accText, 1)
-        );
+        st.getStatusLocationLat().observe(l, this::setElements);
+        st.getStatusLocationLng().observe(l, this::setElements);
+        st.getStatusLocationAcc().observe(l, this::setElements);
+        st.getCellTowers().observe(l, this::setElements);
+        st.getWifiAccessPoints().observe(l, this::setElements);
+        st.getLocation().observe(l, this::setElements);
+        st.getWapp().observe(l, this::updateWapp);
+    }
 
-        // Pending
-        st.getPendingCellTowers().observe(l,
-                s -> updateLocation(st, sm, ctx, s, "cellTowers")
-        );
-        st.getPendingWifiAccessPoints().observe(l,
-                s -> updateLocation(st, sm, ctx, s, "wifiAccessPoints")
-        );
+    private void initUserInteractionElements() {
+        List<State> locationStates = new ArrayList<>();
+        locationStates.add(new State(State.KEY_CELL_TOWERS, 0.0));
+        locationStates.add(new State(State.KEY_WIFI_ACCESS_POINTS, 0.0));
 
         // Buttons
-        buttonGetLocation.setOnClickListener(v -> smsSender.send("Wapp", null));
+        buttonGetLocation.setOnClickListener(v -> smsSender.send("Wapp", locationStates));
         buttonOpenMap.setOnClickListener(this::navigateToNext);
-    }
-
-    private void setLocationArea(int state) {
-        if (state == LOCATION_PENDING) {
-            latText.setText("");
-            lngText.setText("");
-            accText.setText("");
-            progressBar.setVisibility(ProgressBar.VISIBLE);
-        } else if (state == LOCATION_DEFAULT)
-            progressBar.setVisibility(ProgressBar.GONE);
-    }
-
-    private void updateLocTextViewsFromStatuses(List<State> states, TextView tv, int precision) {
-        if (states.size() == 0)
-            return;
-
-        updateTextViewValueFromStatus(tv, states.get(0), precision);
-        updateTextViewTimeFromStatus(locationLastChangedText, states.get(0));
-    }
-
-    private void updateTextViewTimeFromStatus(TextView tv, State s) {
-        tv.setText(Utils.convertToDateHuman(s.getTimestamp()));
-    }
-
-    private void updateTextViewValueFromStatus(TextView tv, State s, int precision) {
-        final String formatStr = "%." + precision + "f";
-        tv.setText(String.format(Locale.GERMANY, formatStr, s.getValue()));
     }
 
     // Cached copy of parsed sms
     private final List<Integer> parsedSms = new ArrayList<>();
 
-    private void updateLocation(StateViewModel st, SmsViewModel smsViewModel,
-                                Context ctx, List<State> states, String key) {
-        if (states.size() == 0) return;
+    private void setElements(List<State> states) {
+        if (states.size() == 0)
+            return;
 
-        int smsId = states.get(0).getSmsId();
+        State state = states.get(0);
 
-        if (parsedSms.contains(smsId)) return;
+        int id = state.id;
 
-        String longValue = states.get(0).getLongValue();
-        parsedSms.add(smsId);
+        if (parsedSms.contains(id))
+            return;
 
-        setLocationArea(LOCATION_PENDING);
+        parsedSms.add(id);
 
-        new LocationUpdater(ctx, st, smsViewModel, smsId, isLocationUpdated -> {
-            if (isLocationUpdated) {
-                smsViewModel.markParsed(smsId);
-                setLocationArea(LOCATION_DEFAULT);
+        switch (state.getState()) {
+            case State.STATUS_UNSET:
+                switch (state.getKey()) {
+                    case State.KEY_LAT: // And
+                    case State.KEY_LNG: // And
+                    case State.KEY_ACC: // And
+                        break;
+                    case State.KEY_LOCATION:
+                        setLocationElementsUnset();
+                        break;
+                    case State.KEY_CELL_TOWERS: // And
+                    case State.KEY_WIFI_ACCESS_POINTS:
+                        setLocationElementsTempUnset();
+                        break;
+                }
+                break;
+            case State.STATUS_PENDING:
+                switch (state.getKey()) {
+                    case State.KEY_LAT: // And
+                    case State.KEY_LNG: // And
+                    case State.KEY_ACC: // And
+                        break;
+                    case State.KEY_LOCATION:
+                        setLocationElementsPending(state);
+                        break;
+                    case State.KEY_CELL_TOWERS: // And
+                    case State.KEY_WIFI_ACCESS_POINTS:
+                        setLocationElementsTempPending(state);
+                        break;
+                }
+                break;
+            case State.STATUS_CONFIRMED:
+                switch (state.getKey()) {
+                    case State.KEY_LAT:
+                        setLocationTableElementsConfirmed(state, latText, 7);
+                        break;
+                    case State.KEY_LNG:
+                        setLocationTableElementsConfirmed(state, lngText, 7);
+                        break;
+                    case State.KEY_ACC:
+                        setLocationTableElementsConfirmed(state, accText, 1);
+                        break;
+                    case State.KEY_LOCATION:
+                        setLocationElementsConfirmed(state);
+                    case State.KEY_CELL_TOWERS: // And
+                    case State.KEY_WIFI_ACCESS_POINTS:
+                        break;
+                }
+                break;
+        }
+    }
+
+    // confirmed
+    private void setLocationElementsConfirmed(State state) {
+        tableLayout.setVisibility(View.VISIBLE);
+        locationNoData.setVisibility(View.GONE);
+        locationNoData.setText("");
+
+        buttonOpenMap.setEnabled(true);
+
+        progressBar.setVisibility(ProgressBar.GONE);
+
+        locationLastChangedText.setText(Utils.convertToDateHuman(state.getTimestamp()));
+    }
+
+    private void setLocationTableElementsConfirmed(State state, TextView textView, int precision) {
+        final String formatStr = "%." + precision + "f";
+        textView.setText(String.format(Locale.GERMANY, formatStr, state.getValue()));
+    }
+
+    // pending
+    private void setLocationElementsPending(State state) {
+        // BB has responded, but not response from Google Maps API yet
+        tv.getResidualTime(t1).removeObservers(this);
+        tv.cancelTimer(t1);
+
+        locationPendingStatus.setText("");
+        locationPendingStatus.setVisibility(View.GONE);
+
+        buttonGetLocation.setEnabled(true);
+
+        tableLayout.setVisibility(View.GONE);
+        locationNoData.setVisibility(View.GONE);
+        locationNoData.setText("");
+
+        progressBar.setVisibility(ProgressBar.VISIBLE);
+
+        State lastLocationState = st.getConfirmedLocationSync(state);
+        if (lastLocationState != null) {
+            buttonOpenMap.setEnabled(true);
+            locationLastChangedText.setText(
+                    Utils.convertToDateHuman(lastLocationState.getTimestamp()));
+        } else {
+            buttonOpenMap.setEnabled(false);
+            locationLastChangedText.setText(R.string.no_data);
+        }
+    }
+
+    private void setLocationElementsTempPending(State state) {
+        // User has clicked the update button, but no response from BB yet
+        long stopTime = tv.startTimer(t1, state.getTimestamp(), st.getConfirmedIntervalSync());
+        tv.getResidualTime(t1).observe(this, s ->
+                updatePendingText(locationPendingStatus, stopTime, s)
+        );
+
+        locationPendingStatus.setVisibility(View.VISIBLE);
+
+        buttonGetLocation.setEnabled(false);
+    }
+
+    // unset
+    private void setLocationElementsUnset() {
+        tableLayout.setVisibility(View.GONE);
+        locationNoData.setVisibility(View.VISIBLE);
+        locationNoData.setText(R.string.no_data);
+
+        buttonOpenMap.setEnabled(false);
+
+        progressBar.setVisibility(ProgressBar.GONE);
+
+        locationLastChangedText.setText(R.string.no_data);
+    }
+
+    private void setLocationElementsTempUnset() {
+        tv.getResidualTime(t1).removeObservers(this);
+        tv.cancelTimer(t1);
+
+        locationPendingStatus.setText("");
+        locationPendingStatus.setVisibility(View.GONE);
+
+        buttonGetLocation.setEnabled(true);
+    }
+
+    private void updateWapp(List<State> states) {
+        if (states.size() == 0)
+            return;
+
+        State wappWifiAccessPoints = null;
+        State wappCellTowers = null;
+
+        if (states.size() > 1) {
+            for (State s : states)
+                if (s.getValue() == State.WAPP_CELL_TOWERS) {
+                    wappCellTowers = s;
+                    break;
+                }
+            for (State s : states)
+                if (s.getValue() == State.WAPP_WIFI_ACCESS_POINTS) {
+                    wappWifiAccessPoints = s;
+                    break;
+                }
+        }
+
+        if (wappCellTowers != null && wappWifiAccessPoints != null) {
+            State wifiAccessPointsState =
+                    st.getWifiAccessPointsBySmsIdSync(wappWifiAccessPoints.getSmsId());
+            State cellTowersState =
+                    st.getCellTowersBySmsIdSync(wappCellTowers.getSmsId());
+            State lastWifiAccessPointsState =
+                    st.getConfirmedLocationSync(wifiAccessPointsState);
+            State lastCellTowersState =
+                    st.getConfirmedLocationSync(cellTowersState);
+
+            st.confirmWapp(wappCellTowers, wappWifiAccessPoints);
+
+            new LocationUpdater(ctx, st, sm, wappCellTowers.getSmsId())
+                    .execute(wifiAccessPointsState.getLongValue(), cellTowersState.getLongValue());
+
+            if (lastWifiAccessPointsState == null || lastCellTowersState == null) {
+                st.insert(new State(State.KEY_LOCATION, 0.0, wappCellTowers.getTimestamp()));
+                return;
             }
-        }).execute(key, longValue);
+
+            if (lastWifiAccessPointsState.id == wifiAccessPointsState.id
+                    && lastCellTowersState.id == cellTowersState.id)
+                st.insert(new State(State.KEY_LOCATION, 0.0, wappCellTowers.getTimestamp()));
+        }
+    }
+
+    private void updatePendingText(TextView textView, long stopTime, long residualSeconds) {
+        if (residualSeconds < 0) {
+            textView.setText(getResources().getString(R.string.overdue,
+                    Utils.convertToDateHuman(stopTime))
+            );
+            return;
+        }
+
+        int hours = (int) residualSeconds / 60 / 60;
+        int minutes = (int) (residualSeconds / 60 ) - (hours * 60);
+
+        String hoursPadded = (hours < 10) ? "0" + hours : String.valueOf(hours);
+        String minutesPadded = (minutes < 10) ? "0" + minutes : String.valueOf(minutes);
+
+        textView.setText(getResources().getString(R.string.pending_text,
+                hoursPadded + ":" + minutesPadded,
+                Utils.convertToTime(stopTime))
+        );
     }
 
     private void navigateToNext(View v) {

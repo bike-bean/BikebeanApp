@@ -39,9 +39,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
     ChatAdapter(Context context, List<Sms> sms) {
         mInflater = LayoutInflater.from(context);
-//        if (sms == null)
-//            mSms = new ArrayList<>();
-//        else
         mSms = sms;
     }
 

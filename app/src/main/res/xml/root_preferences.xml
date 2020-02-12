@@ -52,9 +52,9 @@
             android:entryValues="@array/language_values"
             app:useSimpleSummaryProvider="true" />
 
-        <EditTextPreference
+        <Preference
             android:key="reset"
-            android:title="Datenbank zurücksetzen" />
+            android:title="@string/db_reset" />
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -10,6 +10,8 @@ import android.widget.Toast;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
 
+import java.util.List;
+
 import de.bikebean.app.Utils;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
@@ -36,12 +38,12 @@ public class SmsSender {
 
     private String phoneNumber;
     private String message;
-    private State update;
+    private List<State> updates;
 
-    public void send(String message, State update) {
+    public void send(String message, List<State> updates) {
         this.phoneNumber = sharedPreferences.getString("number","");
         this.message = message;
-        this.update = update;
+        this.updates = updates;
 
         if (phoneNumber.isEmpty())
             return;
@@ -88,6 +90,7 @@ public class SmsSender {
 
         Toast.makeText(ctx,"SMS an " + phoneNumber + " gesendet", Toast.LENGTH_LONG).show();
 
-        stateViewModel.insert(update);
+        for (State update : updates)
+            stateViewModel.insert(update);
     }
 }

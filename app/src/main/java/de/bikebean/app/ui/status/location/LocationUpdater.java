@@ -7,7 +7,6 @@ import android.util.Log;
 import java.lang.ref.WeakReference;
 
 import de.bikebean.app.MainActivity;
-import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.status.StateViewModel;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 
@@ -16,55 +15,43 @@ class LocationUpdater extends AsyncTask<String, Void, Boolean> {
     private final WeakReference<Context> contextReference;
     private final StateViewModel mStateViewModel;
     private final SmsViewModel mSmsViewModel;
-    private final AsyncResponse mDelegate;
-
-    private volatile static boolean isCellTowersSet = false, isWifiAccessPointsSet = false;
-    private volatile static String cellTowers, wifiAccessPoints;
 
     private final int mSmsId;
 
-    public interface AsyncResponse {
-        void onLocationUpdated(boolean isLocationUpdated);
-    }
-
-    LocationUpdater(Context context, StateViewModel stateViewModel, SmsViewModel smsViewModel,
-                    int smsId, AsyncResponse delegate) {
+    LocationUpdater(Context context, StateViewModel st, SmsViewModel sm, int smsId) {
         contextReference = new WeakReference<>(context);
-        mStateViewModel = stateViewModel;
-        mSmsViewModel = smsViewModel;
-        mDelegate = delegate;
+        mStateViewModel = st;
+        mSmsViewModel = sm;
         mSmsId = smsId;
     }
 
     @Override
     protected Boolean doInBackground(String... args) {
-        String key = args[0];
+        String wifiAccessPoints = args[0];
+        String cellTowers = args[1];
 
-        if (key.equals(State.KEY_CELL_TOWERS)) {
-            cellTowers = args[1];
-            isCellTowersSet = true;
-        } else if (key.equals(State.KEY_WIFI_ACCESS_POINTS)) {
-            wifiAccessPoints = args[1];
-            isWifiAccessPointsSet = true;
-        }
-
-        if (!(isCellTowersSet && isWifiAccessPointsSet))
+        if (checkAlreadyPresent())
             return false;
 
         GeolocationAPI geolocationAPI = new GeolocationAPI(contextReference.get(), mStateViewModel, mSmsViewModel);
         ApiParser apiParser = new ApiParser(mStateViewModel, mSmsViewModel);
 
-        Log.d(MainActivity.TAG, "Updating Lat/Lng...");
-
         String requestBody = apiParser.createJsonApiBody(cellTowers, wifiAccessPoints, mSmsId);
         if (requestBody.isEmpty())
             return false;
 
+        Log.d(MainActivity.TAG, "Updating Lat/Lng...");
+
         return geolocationAPI.httpPOST(requestBody, mSmsId);
+    }
+
+    private boolean checkAlreadyPresent() {
+        return mStateViewModel.getLocationByIdSync(mSmsId);
     }
 
     @Override
     protected void onPostExecute(Boolean isLocationUpdated) {
-        mDelegate.onLocationUpdated(isLocationUpdated);
+        if (isLocationUpdated)
+            mSmsViewModel.markParsed(mSmsId);
     }
 }

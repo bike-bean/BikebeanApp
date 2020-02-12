@@ -8,6 +8,7 @@
     <color name="secondaryVariant">#005900</color>
     <color name="primaryTextColor">#ffffff</color>
     <color name="secondaryTextColor">#ffffff</color>
+    <color name="onSurface">#000000</color>
 
     <color name="lightGreen">#558B2F</color>
     <color name="blue">#1565C0</color>

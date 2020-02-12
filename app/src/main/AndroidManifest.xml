@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
@@ -51,6 +51,13 @@
         <activity
             android:name=".ui.status.sms.SmsActivity"
             android:label="@string/title_activity_sms">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.bikebean.app.MainActivity" />
+        </activity>
+        <activity
+            android:name=".ui.status.history.HistoryActivity"
+            android:label="@string/history">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.bikebean.app.MainActivity" />

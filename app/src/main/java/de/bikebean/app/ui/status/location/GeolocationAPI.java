@@ -76,7 +76,7 @@ class GeolocationAPI {
         Log.d(MainActivity.TAG, "RESPONSE FROM SERVER: " + response.toString());
         try {
             JSONObject location = response.getJSONObject("location");
-            updateLngLatAcc(
+            updateLatLngAcc(
                     location.getDouble("lat"),
                     location.getDouble("lng"),
                     response.getDouble("accuracy"),
@@ -91,20 +91,22 @@ class GeolocationAPI {
         Log.d(MainActivity.TAG, "Error.Response: " + error.getMessage());
     }
 
-    private void updateLngLatAcc(double lat, double lng, double acc, StateViewModel vm, Sms sms) {
+    private void updateLatLngAcc(double lat, double lng, double acc, StateViewModel vm, Sms sms) {
         vm.insert(new State(
-                sms.getTimestamp(), State.KEY_LAT, lat,
+                sms.getTimestamp() + 1, State.KEY_LAT, lat,
                 "", State.STATUS_CONFIRMED, sms.getId())
         );
         vm.insert(new State(
-                sms.getTimestamp(), State.KEY_LNG, lng,
+                sms.getTimestamp() + 1, State.KEY_LNG, lng,
                 "", State.STATUS_CONFIRMED, sms.getId())
         );
         vm.insert(new State(
-                sms.getTimestamp(), State.KEY_ACC, acc,
+                sms.getTimestamp() + 1, State.KEY_ACC, acc,
                 "", State.STATUS_CONFIRMED, sms.getId())
         );
-
-        vm.confirmLocationKeys();
+        vm.insert(new State(
+                sms.getTimestamp() + 1, State.KEY_LOCATION, 0.0,
+                "", State.STATUS_CONFIRMED, sms.getId())
+        );
     }
 }
