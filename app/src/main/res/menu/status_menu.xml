@@ -4,4 +4,6 @@
         android:title="@string/title_activity_sms" />
     <item android:id="@+id/menu_item_settings"
         android:title="@string/title_activity_settings" />
+    <item android:id="@+id/menu_item_history"
+        android:title="@string/history" />
 </menu>

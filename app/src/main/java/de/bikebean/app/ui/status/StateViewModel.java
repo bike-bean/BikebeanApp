@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 import java.util.List;
 
 import de.bikebean.app.R;
+import de.bikebean.app.db.state.LocationState;
 import de.bikebean.app.db.state.State;
 
 public class StateViewModel extends AndroidViewModel {
@@ -37,12 +38,14 @@ public class StateViewModel extends AndroidViewModel {
     private final LiveData<List<State>> mStatusLocationAcc;
     private final LiveData<List<State>> mStatusNumberCellTowers;
     private final LiveData<List<State>> mStatusNumberWifiAccessPoints;
+    private final LiveData<List<State>> mLocation;
 
     private final LiveData<List<State>> mPendingCellTowers;
     private final LiveData<List<State>> mPendingWifiAccessPoints;
 
     // Other
     private final MutableLiveData<Boolean> mIntervalAborted;
+    private final MutableLiveData<List<LocationState>> mLocationStates;
 
     public StateViewModel(Application application) {
         super(application);
@@ -66,6 +69,7 @@ public class StateViewModel extends AndroidViewModel {
         mPendingWifiAccessPoints = mRepository.getPendingWifiAccessPoints();
 
         mIntervalAborted =  new MutableLiveData<>();
+        mLocationStates = new MutableLiveData<>();
     }
 
     public LiveData<List<State>> getStatus() {
@@ -135,11 +139,19 @@ public class StateViewModel extends AndroidViewModel {
         mIntervalAborted.postValue(b);
     }
 
-
-
     public LiveData<Boolean> getIntervalAborted() {
         return mIntervalAborted;
     }
+
+    public void setLocationsState(List<LocationState> locationStates) {
+        mLocationStates.postValue(locationStates);
+    }
+
+    public LiveData<List<LocationState>> getLocationStates() {
+        return mLocationStates;
+    }
+
+
 
     public void insertInitialStates(Context ctx) {
         insert(new State(

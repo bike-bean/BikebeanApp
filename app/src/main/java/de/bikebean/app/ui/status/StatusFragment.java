@@ -24,12 +24,14 @@ import de.bikebean.app.ui.status.status.StatusStatusFragment;
 
 public class StatusFragment extends Fragment {
 
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_status, container, false);
 
         // init sub-fragments
-        getChildFragmentManager().beginTransaction()
+        getChildFragmentManager()
+                .beginTransaction()
                 .replace(R.id.include0, new LocationStatusFragment())
                 .replace(R.id.include1, new BatteryStatusFragment())
                 .replace(R.id.include2, new StatusStatusFragment())
@@ -69,6 +71,8 @@ public class StatusFragment extends Fragment {
             case R.id.menu_item_settings:
                 Navigation.findNavController(Objects.requireNonNull(getView())).navigate(R.id.settings_action);
                 return true;
+            case R.id.menu_item_history:
+                Navigation.findNavController(Objects.requireNonNull(getView())).navigate(R.id.history_action);
             default:
                 return super.onOptionsItemSelected(item);
         }

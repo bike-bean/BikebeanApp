@@ -1,7 +1,7 @@
 package de.bikebean.app.ui.map;
 
+import android.Manifest;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
@@ -12,12 +12,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -33,11 +36,13 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.List;
 import java.util.Objects;
 
 import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
 import de.bikebean.app.Utils;
+import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.status.StateViewModel;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
@@ -58,11 +63,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private String bikeName;
     private boolean initializationDone;
 
+    private Bundle args;
+    private boolean showCurrentPosition;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
+
+        args = getArguments();
+        showCurrentPosition = (args == null || args.isEmpty());
 
         mMapView = v.findViewById(R.id.mapview);
         mMapView.onCreate(savedInstanceState);
@@ -70,10 +80,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         fab = v.findViewById(R.id.fab);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(
+        bikeName = PreferenceManager.getDefaultSharedPreferences(
                 Objects.requireNonNull(getActivity())
-        );
-        bikeName = sharedPreferences.getString("name", "bike");
+        ).getString("name", "bike");
 
         return v;
     }
@@ -88,13 +97,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         AppCompatActivity act = (AppCompatActivity) getActivity();
         ActionBar actionbar = Objects.requireNonNull(act).getSupportActionBar();
         Objects.requireNonNull(actionbar).hide();
+
+        act.getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (!showCurrentPosition)
+                    Navigation.findNavController(Objects.requireNonNull(getView()))
+                            .navigate(R.id.history_action);
+                else
+                    Navigation.findNavController(Objects.requireNonNull(getView()))
+                            .navigate(R.id.back_action);
+            }
+        });
     }
 
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
 
         String[] permissions = {
-                android.Manifest.permission.ACCESS_FINE_LOCATION
+                Manifest.permission.ACCESS_FINE_LOCATION
         };
 
         googleMap.getUiSettings().setZoomControlsEnabled(true);
@@ -109,8 +130,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         } else
             googleMap.setMyLocationEnabled(true);
 
-        currentPositionBike = new MutableLatLng();
-        snippet = new Snippet();
+        double radius = 0.0;
+
+        if (showCurrentPosition) {
+            currentPositionBike = new MutableLatLng();
+            snippet = new Snippet();
+        } else {
+            currentPositionBike = new MutableLatLng(
+                    args.getDouble("lat"),
+                    args.getDouble("lng")
+            );
+            snippet = new Snippet(
+                    args.getInt("noCellTowers"),
+                    args.getInt("noWifiAccessPoints")
+            );
+            radius = args.getDouble("acc");
+        }
 
         // Set a marker
         marker = googleMap.addMarker(new MarkerOptions()
@@ -123,7 +158,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         // Set a circle
         circle = googleMap.addCircle(new CircleOptions()
                 .center(currentPositionBike.get())
-                .radius(0.0)
+                .radius(radius)
                 .strokeWidth(10)
                 .strokeColor(Color.BLACK)
         );
@@ -141,39 +176,47 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             startActivity(mapIntent);
         });
 
+        if (showCurrentPosition)
+            setupObservers();
+        else
+            setCamera(false);
+    }
+
+    private void setupObservers() {
+        // Set up observer to adjust changes to the view
+        LifecycleOwner l = getViewLifecycleOwner();
+
         initializationDone = false;
 
-        // Set up observer to adjust changes to the view
-        stateViewModel.getStatusLocationLat().observe(getViewLifecycleOwner(), statuses -> {
-            if (statuses.size() == 0)
-                return;
-            marker.setPosition(currentPositionBike.setLat(statuses.get(0).getValue()));
-            circle.setCenter(currentPositionBike.get());
-            setCamera();
-        });
-        stateViewModel.getStatusLocationLng().observe(getViewLifecycleOwner(), statuses -> {
-            if (statuses.size() == 0)
-                return;
-            marker.setPosition(currentPositionBike.setLng(statuses.get(0).getValue()));
-            circle.setCenter(currentPositionBike.get());
-            setCamera();
-        });
-        stateViewModel.getStatusLocationAcc().observe(getViewLifecycleOwner(), statuses -> {
-            if (statuses.size() == 0)
-                return;
-            circle.setRadius(statuses.get(0).getValue());
-            setCamera();
-        });
-        stateViewModel.getStatusNumberCellTowers().observe(getViewLifecycleOwner(), statuses -> {
-            if (statuses.size() == 0)
-                return;
-            marker.setSnippet(snippet.setNumberCellTowers(statuses.get(0).getValue().intValue()));
-        });
-        stateViewModel.getStatusNumberWifiAccessPoints().observe(getViewLifecycleOwner(), statuses -> {
-            if (statuses.size() == 0)
-                return;
-            marker.setSnippet(snippet.setNumberWifiAccessPoints(statuses.get(0).getValue().intValue()));
-        });
+        stateViewModel.getConfirmedLocationLat().observe(l, this::setMapElements);
+        stateViewModel.getConfirmedLocationLng().observe(l, this::setMapElements);
+        stateViewModel.getConfirmedLocationAcc().observe(l, this::setMapElements);
+        stateViewModel.getStatusNumberCellTowers().observe(l, this::setMapElements);
+        stateViewModel.getStatusNumberWifiAccessPoints().observe(l, this::setMapElements);
+    }
+
+    private void setMapElements(List<State> statuses) {
+        if (statuses.size() == 0)
+            return;
+
+        switch (statuses.get(0).getKey()) {
+            case State.KEY_NO_CELL_TOWERS:
+                marker.setSnippet(snippet.setNumberCellTowers(statuses.get(0).getValue().intValue()));
+                break;
+            case State.KEY_NO_WIFI_ACCESS_POINTS:
+                marker.setSnippet(snippet.setNumberWifiAccessPoints(statuses.get(0).getValue().intValue()));
+                break;
+            case State.KEY_LAT: // And:
+            case State.KEY_LNG:
+                marker.setPosition(currentPositionBike.set(statuses.get(0)));
+                circle.setCenter(currentPositionBike.get());
+                setCamera(true);
+                break;
+            case State.KEY_ACC:
+                circle.setRadius(statuses.get(0).getValue());
+                setCamera(true);
+                break;
+        }
     }
 
     @Override
@@ -194,22 +237,29 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mMapView.onLowMemory();
     }
 
-    private void setCamera() {
-        if (initializationDone) {
+    private void setCamera(boolean showCurrentPosition) {
+        if (showCurrentPosition) {
+            if (initializationDone) {
+                try {
+                    mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(getLatLngBounds(), 0));
+                } catch (IllegalStateException e) {
+                    Log.d(MainActivity.TAG, "premature (skipped)");
+                }
+            } else {
+                try {
+                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(getLatLngBounds(), 0));
+                    initializationDone = true;
+                    fab.show();
+                } catch (IllegalStateException e) {
+                    Log.d(MainActivity.TAG, "permature (skipped)");
+                }
+            }
+        } else
             try {
                 mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(getLatLngBounds(), 0));
             } catch (IllegalStateException e) {
-                Log.d(MainActivity.TAG, "premature (skipped)");
+                Log.w(MainActivity.TAG, "Map is not ready yet!");
             }
-        } else {
-            try {
-                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(getLatLngBounds(), 0));
-                initializationDone = true;
-                fab.show();
-            } catch (IllegalStateException e) {
-                Log.d(MainActivity.TAG, "permature (skipped)");
-            }
-        }
     }
 
     private LatLngBounds getLatLngBounds() throws IllegalStateException {
@@ -252,6 +302,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             numberWifiAccessPoints = 0;
         }
 
+        Snippet(int noCellTowers, int noWifiAccessPoints) {
+            numberCellTowers = noCellTowers;
+            numberWifiAccessPoints = noWifiAccessPoints;
+        }
+
         @NonNull
         public String toString() {
             String descCellTowers = "Anzahl Funkmasten: ";
@@ -280,6 +335,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             latLng = new LatLng(0.0, 0.0);
         }
 
+        MutableLatLng(double lat, double lng) {
+            latLng = new LatLng(lat, lng);
+        }
+
         double getLat() {
             return latLng.latitude;
         }
@@ -288,13 +347,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             return latLng.longitude;
         }
 
-        LatLng setLat(double lat) {
-            latLng = new LatLng(lat, latLng.longitude);
-            return latLng;
-        }
+        LatLng set(State state) {
+            switch (state.getKey()) {
+                case State.KEY_LAT:
+                    latLng = new LatLng(state.getValue(), this.latLng.longitude);
+                    break;
+                case State.KEY_LNG:
+                    latLng = new LatLng(this.latLng.latitude, state.getValue());
+                    break;
+            }
 
-        LatLng setLng(double lng) {
-            latLng = new LatLng(latLng.latitude, lng);
             return latLng;
         }
 

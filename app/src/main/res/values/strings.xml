@@ -27,6 +27,8 @@
     <string name="title_activity_sms">SMS Historie</string>
     <string name="title_activity_settings">Einstellungen</string>
 
+    <string name="history">Historie</string>
+
     <!-- Preference Titles -->
     <string name="general_header">Bike Bean Einstellungen</string>
     <string name="ui_header">Design</string>

@@ -19,6 +19,7 @@ class SmsRepository {
 
     private final LiveData<List<Sms>> mChat;
     private final LiveData<List<Sms>> mNewIncoming;
+    private final LiveData<List<Integer>> mAllIds;
 
     SmsRepository(Application application) {
         BikeBeanRoomDatabase db = BikeBeanRoomDatabase.getDatabase(application);
@@ -26,6 +27,7 @@ class SmsRepository {
 
         mChat = mSmsDao.getAll();
         mNewIncoming = mSmsDao.getByStateAndType(Sms.STATUS_NEW, Telephony.Sms.MESSAGE_TYPE_INBOX);
+        mAllIds = mSmsDao.getAllIdsByType(Telephony.Sms.MESSAGE_TYPE_INBOX);
     }
 
     LiveData<List<Sms>> getChat() {
@@ -36,6 +38,9 @@ class SmsRepository {
         return mNewIncoming;
     }
 
+    LiveData<List<Integer>> getAllInboxIds() {
+        return mAllIds;
+    }
 
 
     int getInboxCount() {
