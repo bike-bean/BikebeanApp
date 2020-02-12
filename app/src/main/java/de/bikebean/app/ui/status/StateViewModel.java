@@ -38,10 +38,14 @@ public class StateViewModel extends AndroidViewModel {
     private final LiveData<List<State>> mStatusLocationAcc;
     private final LiveData<List<State>> mStatusNumberCellTowers;
     private final LiveData<List<State>> mStatusNumberWifiAccessPoints;
+    private final LiveData<List<State>> mCellTowers;
+    private final LiveData<List<State>> mWifiAccessPoints;
+    private final LiveData<List<State>> mWapp;
     private final LiveData<List<State>> mLocation;
 
-    private final LiveData<List<State>> mPendingCellTowers;
-    private final LiveData<List<State>> mPendingWifiAccessPoints;
+    private final LiveData<List<State>> mConfirmedLocationLat;
+    private final LiveData<List<State>> mConfirmedLocationLng;
+    private final LiveData<List<State>> mConfirmedLocationAcc;
 
     // Other
     private final MutableLiveData<Boolean> mIntervalAborted;
@@ -64,11 +68,16 @@ public class StateViewModel extends AndroidViewModel {
         mStatusLocationAcc = mRepository.getStatusLocationAcc();
         mStatusNumberCellTowers = mRepository.getStatusNumberCellTowers();
         mStatusNumberWifiAccessPoints = mRepository.getStatusNumberWifiAccessPoints();
+        mCellTowers = mRepository.getCellTowers();
+        mWifiAccessPoints = mRepository.getWifiAccessPoints();
+        mWapp = mRepository.getWapp();
+        mLocation = mRepository.getLocation();
 
-        mPendingCellTowers = mRepository.getPendingCellTowers();
-        mPendingWifiAccessPoints = mRepository.getPendingWifiAccessPoints();
+        mConfirmedLocationLat = mRepository.getConfirmedLocationLat();
+        mConfirmedLocationLng = mRepository.getConfirmedLocationLng();
+        mConfirmedLocationAcc = mRepository.getConfirmedLocationAcc();
 
-        mIntervalAborted =  new MutableLiveData<>();
+        mIntervalAborted = new MutableLiveData<>();
         mLocationStates = new MutableLiveData<>();
     }
 
@@ -112,25 +121,45 @@ public class StateViewModel extends AndroidViewModel {
         return mStatusNumberCellTowers;
     }
 
-
-
-    public LiveData<List<State>> getPendingCellTowers() {
-        return mPendingCellTowers;
+    public LiveData<List<State>> getCellTowers() {
+        return mCellTowers;
     }
 
-    public LiveData<List<State>> getPendingWifiAccessPoints() {
-        return mPendingWifiAccessPoints;
+    public LiveData<List<State>> getWifiAccessPoints() {
+        return mWifiAccessPoints;
     }
 
+    public LiveData<List<State>> getWapp() {
+        return mWapp;
+    }
+
+    public LiveData<List<State>> getLocation() {
+        return mLocation;
+    }
+
+    public LiveData<List<State>> getConfirmedLocationLat() {
+        return mConfirmedLocationLat;
+    }
+
+    public LiveData<List<State>> getConfirmedLocationLng() {
+        return mConfirmedLocationLng;
+    }
+
+    public LiveData<List<State>> getConfirmedLocationAcc() {
+        return mConfirmedLocationAcc;
+    }
+
+    public List<State> getAllLocation(int smsId) {
+        return mRepository.getAllLocationByIdSync(smsId);
+    }
 
     public void insert(State state) {
         if (state != null)
             mRepository.insert(state);
     }
 
-
-    public void confirmLocationKeys() {
-        mRepository.confirmLocationKeys();
+    public void confirmWapp(State cellTowerState, State wifiAccessPointsState) {
+        mRepository.confirmWapp(cellTowerState, wifiAccessPointsState);
     }
 
 
@@ -181,6 +210,24 @@ public class StateViewModel extends AndroidViewModel {
         insert(new State(
                 1, State.KEY_BATTERY,
                 -1.0, "",
+                State.STATUS_UNSET, 0)
+        );
+
+        insert(new State(
+                1, State.KEY_LOCATION,
+                0.0, "",
+                State.STATUS_UNSET, 0)
+        );
+
+        insert(new State(
+                1, State.KEY_CELL_TOWERS,
+                0.0, "",
+                State.STATUS_UNSET, 0)
+        );
+
+        insert(new State(
+                1, State.KEY_WIFI_ACCESS_POINTS,
+                0.0, "",
                 State.STATUS_UNSET, 0)
         );
     }
@@ -248,6 +295,54 @@ public class StateViewModel extends AndroidViewModel {
 
     public State getConfirmedBatterySync() {
         return getConfirmedStateSync(State.KEY_BATTERY);
+    }
+
+    public State getConfirmedLocationSync(State state) {
+        return getConfirmedStateSync(state.getKey());
+    }
+
+    public String getWifiAccessPointsSync() {
+        State wifiAccessPoints = getConfirmedStateSync(State.KEY_WIFI_ACCESS_POINTS);
+
+        if (wifiAccessPoints != null)
+            return wifiAccessPoints.getLongValue();
+        else
+            return "";
+    }
+
+    public boolean getLocationByIdSync(int smsId) {
+        return getStateByIdSync(State.KEY_LAT, smsId) != null;
+    }
+
+    public State getWifiAccessPointsBySmsIdSync(int smsId) {
+        return getStateByIdSync(State.KEY_WIFI_ACCESS_POINTS, smsId);
+    }
+
+    public State getCellTowersBySmsIdSync(int smsId) {
+        return getStateByIdSync(State.KEY_CELL_TOWERS, smsId);
+    }
+
+    private State getStateByIdSync(String key, int smsId) {
+        final MutableState idState = new MutableState();
+
+        new Thread(() -> {
+            List<State> stateList = mRepository.getByKeyAndIdSync(key, smsId);
+
+            if (stateList.size() > 0)
+                idState.set(stateList.get(0));
+            else
+                idState.set(null);
+        }).start();
+
+        while (idState.get() == idState.getNullState()) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return idState.get();
     }
 
     private State getConfirmedStateSync(String key) {

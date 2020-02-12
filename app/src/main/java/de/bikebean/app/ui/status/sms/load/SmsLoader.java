@@ -95,14 +95,12 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
     }
 
     private void traverseInboxAndCloseInitial(Cursor inbox) {
-        Conversation conversation = new Conversation(stateViewModel);
+        Conversation conversation = new Conversation(stateViewModel, smsViewModel);
 
         if (inbox.moveToFirst()) {
             Log.d(MainActivity.TAG, "Loading " + inbox.getCount() + " SMS");
             for (int i = 0; i < inbox.getCount(); i++) {
                 Sms sms = buildSms(inbox, Sms.STATUS_PARSED);
-
-                smsViewModel.insert(sms);
                 conversation.add(sms);
 
                 inbox.moveToNext();

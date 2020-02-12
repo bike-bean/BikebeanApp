@@ -1,6 +1,8 @@
 package de.bikebean.app.ui.status.status;
 
 import android.app.Application;
+import android.util.SparseArray;
+import android.util.SparseLongArray;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -11,129 +13,59 @@ import java.util.TimerTask;
 
 public class LiveDataTimerViewModel extends AndroidViewModel {
 
+    static final int TIMER_ONE = 0;
+    static final int TIMER_TWO = 1;
+    static final int TIMER_THREE = 2;
+    public static final int TIMER_FOUR = 3;
+    public static final int TIMER_FIVE = 4;
+
+    private static final int N_TIMERS = 5;
+
     private static final int ONE_SECOND = 1000;
 
-    private final MutableLiveData<Long> mResidualTime1 = new MutableLiveData<>();
-    private final MutableLiveData<Long> mResidualTime2 = new MutableLiveData<>();
-    private final MutableLiveData<Long> mResidualTime3 = new MutableLiveData<>();
-    private final MutableLiveData<Long> mResidualTime4 = new MutableLiveData<>();
+    private final SparseArray<MutableLiveData<Long>> residualTimes = new SparseArray<>();
 
-    private long mStopTime1;
-    private long mStopTime2;
-    private long mStopTime3;
-    private long mStopTime4;
-    private Timer timer1;
-    private Timer timer2;
-    private Timer timer3;
-    private Timer timer4;
+    private final SparseLongArray stopTimes = new SparseLongArray();
+    private final SparseArray<Timer> timers = new SparseArray<>();
 
     public LiveDataTimerViewModel(Application application) {
         super(application);
 
-        timer1 = new Timer();
-        timer2 = new Timer();
-        timer3 = new Timer();
-        timer4 = new Timer();
+        for (int i=0; i<N_TIMERS; i++) {
+            timers.put(i, new Timer());
+            residualTimes.put(i, new MutableLiveData<>());
+        }
     }
 
-    long startTimer1(long startTime, int interval) {
-        mStopTime1 = startTime + interval * 1000 * 60 * 60;
-        timer1 = new Timer();
+    public long startTimer(final int which, long startTime, int interval) {
+        timers.put(which, new Timer());
+        stopTimes.put(which, startTime + interval * 1000 * 60 * 60);
 
-        timer1.scheduleAtFixedRate(new TimerTask() {
+        timers.get(which).scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                final long newValueSeconds = (mStopTime1 - System.currentTimeMillis()) / (1000);
-                mResidualTime1.postValue(newValueSeconds);
+                final long newValueSeconds =
+                        (stopTimes.get(which) - System.currentTimeMillis()) / (1000);
+                residualTimes.get(which).postValue(newValueSeconds);
             }
         }, ONE_SECOND, ONE_SECOND);
 
-        return mStopTime1;
+        return stopTimes.get(which);
     }
 
-    long startTimer2(long startTime, int interval) {
-        mStopTime2 = startTime + interval * 1000 * 60 * 60;
-        timer2 = new Timer();
-
-        timer2.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                final long newValueSeconds = (mStopTime2 - System.currentTimeMillis()) / (1000);
-                mResidualTime2.postValue(newValueSeconds);
-            }
-        }, ONE_SECOND, ONE_SECOND);
-
-        return mStopTime2;
+    public LiveData<Long> getResidualTime(final int which) {
+        return residualTimes.get(which);
     }
 
-    long startTimer3(long startTime, int interval) {
-        mStopTime3 = startTime + interval * 1000 * 60 * 60;
-        timer3 = new Timer();
-
-        timer3.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                final long newValueSeconds = (mStopTime3 - System.currentTimeMillis()) / (1000);
-                mResidualTime3.postValue(newValueSeconds);
-            }
-        }, ONE_SECOND, ONE_SECOND);
-
-        return mStopTime3;
-    }
-
-    public long startTimer4(long startTime, int interval) {
-        mStopTime4 = startTime + interval * 1000 * 60 * 60;
-        timer4 = new Timer();
-
-        timer4.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                final long newValueSeconds = (mStopTime4 - System.currentTimeMillis()) / (1000);
-                mResidualTime4.postValue(newValueSeconds);
-            }
-        }, ONE_SECOND, ONE_SECOND);
-
-        return mStopTime4;
-    }
-
-    LiveData<Long> getResidualTime1() {
-        return mResidualTime1;
-    }
-
-    LiveData<Long> getResidualTime2() {
-        return mResidualTime2;
-    }
-
-    LiveData<Long> getResidualTime3() {
-        return mResidualTime3;
-    }
-
-    public LiveData<Long> getResidualTime4() {
-        return mResidualTime4;
-    }
-
-    void cancelTimer1() {
-        timer1.cancel();
-    }
-
-    void cancelTimer2() {
-        timer2.cancel();
-    }
-
-    void cancelTimer3() {
-        timer3.cancel();
-    }
-
-    public void cancelTimer4() {
-        timer4.cancel();
+    public void cancelTimer(final int which) {
+        timers.get(which).cancel();
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
-        timer1.cancel();
-        timer2.cancel();
-        timer3.cancel();
-        timer4.cancel();
+
+        for(int i=0; i<N_TIMERS; i++)
+            timers.get(i).cancel();
     }
 }

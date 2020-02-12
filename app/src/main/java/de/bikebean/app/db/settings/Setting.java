@@ -35,9 +35,11 @@ public abstract class Setting {
 
         for (Setting setting : settingList)
             if (setting.getDate() != 0)
-                if (setting.getKey().equals(State.KEY_CELL_TOWERS) || setting.getKey().equals(State.KEY_WIFI_ACCESS_POINTS))
+                if (setting.getKey().equals(State.KEY_WAPP))
                     setting.addStatusEntryPending(newStateEntries);
-                else if (setting.getKey().equals(State.KEY_WARNING_NUMBER))
+                else if (setting.getKey().equals(State.KEY_WARNING_NUMBER)
+                        || setting.getKey().equals(State.KEY_CELL_TOWERS)
+                        || setting.getKey().equals(State.KEY_WIFI_ACCESS_POINTS))
                     setting.addStatusEntryConfirmed(newStateEntries, true);
                 else
                     setting.addStatusEntryConfirmed(newStateEntries, false);
@@ -60,7 +62,7 @@ public abstract class Setting {
 
     private void addStatusEntryPending(List<State> entries) {
         entries.add(new State(
-                getDate(), getKey(), 0.0, (String) get(), State.STATUS_PENDING, getId())
+                getDate(), getKey(), (Double) get(), "", State.STATUS_PENDING, getId())
         );
     }
 }

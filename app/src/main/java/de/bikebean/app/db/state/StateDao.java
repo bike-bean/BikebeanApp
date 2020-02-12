@@ -41,11 +41,9 @@ public interface StateDao {
     @Query("SELECT * FROM state_table WHERE _key = :key AND state = :state ORDER BY timestamp DESC")
     List<State> getByKeyAndStateSync(String key, int state);
 
-    /*
-    @Query("UPDATE state_table SET state = :state WHERE sms_id = :smsId")
-    void updateStateBySmsId(int state, int smsId);
-    */
+    @Query("SELECT * FROM state_table WHERE _key = :key AND sms_id = :smsId ORDER BY timestamp DESC")
+    List<State> getByKeyAndIdSync(String key, int smsId);
 
-    @Query("UPDATE state_table SET state = :state WHERE _key = :key")
-    void updateStateByKey(int state, String key);
+    @Query("UPDATE state_table SET state = :state, value = :value WHERE _key = :key AND sms_id = :smsId")
+    void updateStateByKeyAndSmsId(int state, double value, String key, int smsId);
 }
