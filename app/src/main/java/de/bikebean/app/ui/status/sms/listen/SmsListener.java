@@ -38,9 +38,6 @@ public class SmsListener extends BroadcastReceiver {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         final String address = sharedPreferences.getString("number", "");
-        boolean initialLoading = sharedPreferences.getBoolean(
-                "initialLoading", true
-        );
 
         if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION.equals(intent.getAction())) {
             boolean isMessageFromBikeBean = false;
@@ -60,8 +57,7 @@ public class SmsListener extends BroadcastReceiver {
                         context,
                         mStateViewModel,
                         address,
-                        "true",
-                        String.valueOf(initialLoading)
+                        "true"
                 );
         }
     }

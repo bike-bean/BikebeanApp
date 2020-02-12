@@ -28,7 +28,11 @@
     <string name="title_activity_settings">Einstellungen</string>
 
     <!-- Preference Titles -->
-    <string name="general_header">Allgemein</string>
+    <string name="general_header">Bike Bean Einstellungen</string>
+    <string name="ui_header">Design</string>
+    <string name="theme_header">Thema</string>
+    <string name="app_general_header">App Einstellungen</string>
+    <string name="internationalization_header">Sprache</string>
     <string name="interval_header">Intervall</string>
     <string name="wlan_header">Bike Bean WLAN</string>
 

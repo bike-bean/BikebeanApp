@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -18,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +40,7 @@ public class StatusStatusFragment extends Fragment {
     private SmsSender smsSender;
 
     // UI Elements
-    private Button statusButton;
-    private TextView statusPendingStatus, statusLastChangedText;
+    private TextView statusLastChangedText;
 
     private Spinner intervalDropdown;
     private TextView intervalPendingStatus, intervalSummary;
@@ -67,9 +66,7 @@ public class StatusStatusFragment extends Fragment {
         warningNumberSummary = v.findViewById(R.id.warningNumberSummary);
         warningNumberPendingStatus = v.findViewById(R.id.warningNumberPendingStatus);
 
-        statusButton = v.findViewById(R.id.statusButton);
         statusLastChangedText = v.findViewById(R.id.datetimeText2);
-        statusPendingStatus = v.findViewById(R.id.statusPendingStatus);
 
         return v;
     }
@@ -113,9 +110,6 @@ public class StatusStatusFragment extends Fragment {
 
     private void initUserInteractionElements() {
         // React to user interactions
-        State statusState = new State(State.KEY_STATUS, 0.0);
-
-        statusButton.setOnClickListener(v -> sendSms("Status", statusState));
         intervalDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -130,7 +124,7 @@ public class StatusStatusFragment extends Fragment {
                 // Get the last confirmed interval status and
                 // see if the value has changed from then.
                 // If it has not changed, return
-                String oldValue = String.valueOf(Utils.getIntervalStatusSync(st));
+                String oldValue = String.valueOf(st.getIntervalStatusSync());
                 if (newValue.equals(oldValue))
                     return;
 
@@ -148,7 +142,7 @@ public class StatusStatusFragment extends Fragment {
         wlanSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             // get the last confirmed wlan status and see if the value has changed from then
             // if it has not changed, return
-            if (isChecked == Utils.getWifiStatusSync(st))
+            if (isChecked == st.getWifiStatusSync())
                 return;
 
             // if it has changed, create a new pending state and fire it into the db
@@ -223,7 +217,6 @@ public class StatusStatusFragment extends Fragment {
                         setWarningNumberElementsPending(state);
                         break;
                     case State.KEY_STATUS:
-                        setStatusElementsPending(state);
                         break;
                 }
                 break;
@@ -240,10 +233,11 @@ public class StatusStatusFragment extends Fragment {
         tv.getResidualTime2().removeObservers(this);
         tv.cancelTimer2();
 
-        String oldValue = String.valueOf(Utils.getIntervalStatusSync(st));
+        String oldValue = String.valueOf(st.getIntervalStatusSync());
 
         intervalSummary.setText(String.format(intervalSummaryString, oldValue));
         intervalPendingStatus.setText("");
+        intervalPendingStatus.setVisibility(View.GONE);
     }
 
     private void setWifiElementsConfirmed(State state) {
@@ -259,6 +253,7 @@ public class StatusStatusFragment extends Fragment {
         }
 
         wlanPendingStatus.setText("");
+        wlanPendingStatus.setVisibility(View.GONE);
     }
 
     private void setWarningNumberElementsConfirmed(State state) {
@@ -270,15 +265,11 @@ public class StatusStatusFragment extends Fragment {
                 state.getLongValue())
         );
         warningNumberPendingStatus.setText("");
+        warningNumberPendingStatus.setVisibility(View.GONE);
     }
 
     private void setStatusElementsConfirmed(State state) {
-        tv.getResidualTime4().removeObservers(this);
-        tv.cancelTimer4();
-
         statusLastChangedText.setText(Utils.convertToDateHuman(state.getTimestamp()));
-        statusPendingStatus.setText("");
-        statusButton.setEnabled(true);
     }
 
     // pending
@@ -286,7 +277,7 @@ public class StatusStatusFragment extends Fragment {
         String intervalTransitionString =
                 getResources().getString(R.string.interval_switch_transition);
 
-        long stopTime = tv.startTimer2(state.getTimestamp(), Utils.getConfirmedIntervalSync(st));
+        long stopTime = tv.startTimer2(state.getTimestamp(), st.getConfirmedIntervalSync());
         tv.getResidualTime2().observe(this, s ->
                 updatePendingText(intervalPendingStatus, stopTime, s)
         );
@@ -294,10 +285,11 @@ public class StatusStatusFragment extends Fragment {
         intervalSummary.setText(
                 String.format(intervalTransitionString, state.getValue().intValue())
         );
+        intervalPendingStatus.setVisibility(View.VISIBLE);
     }
 
     private void setWifiElementsPending(State state) {
-        long stopTime = tv.startTimer1(state.getTimestamp(), Utils.getConfirmedIntervalSync(st));
+        long stopTime = tv.startTimer1(state.getTimestamp(), st.getConfirmedIntervalSync());
         tv.getResidualTime1().observe(this, s ->
                 updatePendingText(wlanPendingStatus, stopTime, s)
         );
@@ -309,25 +301,18 @@ public class StatusStatusFragment extends Fragment {
             wlanSummary.setText(R.string.wifi_switch_off_transition);
             wlanSwitch.setChecked(false);
         }
+
+        wlanPendingStatus.setVisibility(View.VISIBLE);
     }
 
     private void setWarningNumberElementsPending(State state) {
-        long stopTime = tv.startTimer3(state.getTimestamp(), Utils.getConfirmedIntervalSync(st));
+        long stopTime = tv.startTimer3(state.getTimestamp(), st.getConfirmedIntervalSync());
         tv.getResidualTime3().observe(this, s ->
                 updatePendingText(warningNumberPendingStatus, stopTime, s)
         );
 
         warningNumberSummary.setText(R.string.warning_number_pending_text);
-    }
-
-    private void setStatusElementsPending(State state) {
-        long stopTime = tv.startTimer4(state.getTimestamp(), Utils.getConfirmedIntervalSync(st));
-        tv.getResidualTime4().observe(this, s ->
-                updatePendingText(statusPendingStatus, stopTime, s)
-        );
-
-        // Don't change the statusLastChangedText here!
-        statusButton.setEnabled(false);
+        warningNumberPendingStatus.setVisibility(View.VISIBLE);
     }
 
     // unset
@@ -336,19 +321,16 @@ public class StatusStatusFragment extends Fragment {
         tv.cancelTimer3();
 
         sendSms("Warningnumber", new State(State.KEY_WARNING_NUMBER, 0.0));
+
         warningNumberSummary.setText(state.getLongValue());
         warningNumberPendingStatus.setText("");
+        warningNumberPendingStatus.setVisibility(View.GONE);
     }
 
     private void setStatusElementsUnset(State state) {
-        tv.getResidualTime4().removeObservers(this);
-        tv.cancelTimer4();
-
         assert state != null;
 
         statusLastChangedText.setText(R.string.no_data);
-        statusPendingStatus.setText("");
-        statusButton.setEnabled(true);
     }
 
     private void updatePendingText(TextView textView, long stopTime, long residualSeconds) {

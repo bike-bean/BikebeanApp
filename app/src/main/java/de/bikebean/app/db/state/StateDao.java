@@ -34,6 +34,9 @@ public interface StateDao {
     /*
     Sync
      */
+    @Query("SELECT * FROM state_table")
+    List<State> getAll();
+
     @Query("SELECT * FROM state_table WHERE _key LIKE :key ORDER BY timestamp DESC LIMIT 1")
     List<State> getByKey(String key);
 

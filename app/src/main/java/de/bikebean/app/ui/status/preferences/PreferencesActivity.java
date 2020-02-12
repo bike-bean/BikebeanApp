@@ -9,14 +9,17 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.EditTextPreference;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.SwitchPreference;
+import androidx.preference.PreferenceManager;
 
 import java.util.Objects;
 
 import de.bikebean.app.R;
 import de.bikebean.app.db.BikeBeanRoomDatabase;
+import de.bikebean.app.ui.status.StateViewModel;
+import de.bikebean.app.ui.status.sms.SmsViewModel;
 
 public class PreferencesActivity extends AppCompatActivity {
 
@@ -41,13 +44,20 @@ public class PreferencesActivity extends AppCompatActivity {
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
+        StateViewModel stateViewModel;
+        SmsViewModel smsViewModel;
+        Context ctx;
+
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
+            stateViewModel = new ViewModelProvider(this).get(StateViewModel.class);
+            smsViewModel = new ViewModelProvider(this).get(SmsViewModel.class);
+
             // act and ctx
             final FragmentActivity act = getActivity();
-            final Context ctx = Objects.requireNonNull(act).getApplicationContext();
+            ctx = Objects.requireNonNull(act).getApplicationContext();
 
             // Preferences
             final EditTextPreference numberPreference = findPreference("number");
@@ -73,12 +83,13 @@ public class PreferencesActivity extends AppCompatActivity {
         }
 
         void resetAll() {
-            // Preferences
-            final SwitchPreference initialLoading = findPreference("initialLoading");
+            String address = PreferenceManager.getDefaultSharedPreferences(ctx)
+                    .getString("number", "");
 
-            Objects.requireNonNull(initialLoading).setChecked(true);
-
+            // reset DB and repopulate it
             BikeBeanRoomDatabase.resetAll();
+            stateViewModel.insertInitialStates(ctx);
+            smsViewModel.fetchSmsSync(ctx, stateViewModel, address);
         }
     }
 }

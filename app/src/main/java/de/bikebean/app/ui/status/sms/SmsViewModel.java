@@ -48,11 +48,14 @@ public class SmsViewModel extends AndroidViewModel {
     }
 
     public void fetchSms(Context context, StateViewModel stateViewModel,
-                         String address, String timestamp, String initialLoading) {
+                         String address, String timestamp) {
         // load the sms list in background
-        new SmsLoader(
-                context, this, stateViewModel
-        ).execute(address, timestamp, initialLoading);
+        new SmsLoader(context, this, stateViewModel).execute(address, timestamp);
+    }
+
+    public void fetchSmsSync(Context context, StateViewModel stateViewModel, String address) {
+        // load the sms list in foreground
+        new SmsLoader(context, this, stateViewModel).loadInitial(address);
     }
 
     public void insert(Sms sms) {

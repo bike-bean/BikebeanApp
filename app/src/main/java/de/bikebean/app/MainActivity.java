@@ -1,6 +1,5 @@
 package de.bikebean.app;
 
-import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 
@@ -15,6 +14,7 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.List;
 import java.util.Objects;
 
 import de.bikebean.app.db.sms.Sms;
@@ -38,21 +38,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setupNavViewAndActionBar();
 
-        initPreferences();
-
         // init the ViewModels
         smsViewModel = new ViewModelProvider(this).get(SmsViewModel.class);
         stateViewModel = new ViewModelProvider(this).get(StateViewModel.class);
 
-        setupObservers();
-        setupSmsListener();
+        smsViewModel.getNewIncoming().observe(this, this::handleNewIncomingMessages);
+
+        SmsListener.setSmsViewModel(smsViewModel);
+        SmsListener.setStatusViewModel(stateViewModel);
+
+        String address = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString("number", "");
 
         if (address.equals(""))
             // Navigate to the initial configuration screen
             Navigation.findNavController(this, R.id.nav_host_fragment)
                 .navigate(R.id.initial_configuration_action);
         else
-            fetchSms();
+            smsViewModel.fetchSms(this, stateViewModel, address, "");
     }
 
     private void setupNavViewAndActionBar() {
@@ -71,62 +74,9 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
-    // These fields represent Preferences:
-    // - phone number of Bike Bean -> address
-    private String address;
-    // - If the app gets started for the first time -> initialLoading
-    //   (This is for avoiding an overhaul of new messages at the start of the app,
-    //    which happens if the user has some older messages from the bike bean)
-    private boolean initialLoading;
-
-    private void fetchSms() {
-        /*
-        Load the messages from the phone's message storage into the App-internal DB.
-        */
-        initPreferences();
-
-        smsViewModel.fetchSms(
-                this,
-                stateViewModel,
-                address,
-                "",
-                String.valueOf(initialLoading)
-        );
-    }
-
-    private void initPreferences() {
-        SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        address = sharedPreferences.getString(
-                "number", ""
-        );
-        initialLoading = sharedPreferences.getBoolean(
-                "initialLoading", true
-        );
-    }
-
-    private void setupObservers() {
-        /*
-        Setup the listeners on our ViewModels
-
-        (Only check for new incoming messages here)
-         */
-
-        // Listen for new incoming messages and react to their content
-        smsViewModel.getNewIncoming().observe(this, newSmsList -> {
-            for (Sms newSms : newSmsList)
-                new SmsParser(newSms, stateViewModel, isDatabaseUpdated ->
-                        smsViewModel.markParsed(newSms.getId())).execute();
-        });
-    }
-
-    private void setupSmsListener() {
-        /*
-        Setup the Sms Listener
-        (it needs references to our ViewModels
-        so that it can save the newly arrived message(s))
-         */
-        SmsListener.setSmsViewModel(smsViewModel);
-        SmsListener.setStatusViewModel(stateViewModel);
+    private void handleNewIncomingMessages(List<Sms> newSmsList) {
+        for (Sms newSms : newSmsList)
+            new SmsParser(newSms, stateViewModel, isDatabaseUpdated ->
+                    smsViewModel.markParsed(newSms.getId())).execute();
     }
 }

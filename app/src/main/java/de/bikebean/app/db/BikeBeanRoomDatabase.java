@@ -53,12 +53,69 @@ public abstract class BikeBeanRoomDatabase extends RoomDatabase {
     };
 
     public static void resetAll() {
-        databaseWriteExecutor.execute(() -> {
-            SmsDao dao0 = INSTANCE.smsDao();
-            dao0.deleteAll();
+        SmsDao dao0 = INSTANCE.smsDao();
+        StateDao dao1 = INSTANCE.stateDao();
 
-            StateDao dao1 = INSTANCE.stateDao();
+        final MutableBoolean smsIsClearedFlag = new MutableBoolean();
+        final MutableBoolean stateIsClearedFlag = new MutableBoolean();
+
+        databaseWriteExecutor.execute(() -> {
+            dao0.deleteAll();
             dao1.deleteAll();
         });
+
+        new Thread(() -> {
+            while (dao1.getAll().size() > 0) {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            stateIsClearedFlag.set();
+        }).start();
+
+
+        new Thread(() -> {
+            while (dao0.getAllSync().size() > 0) {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            smsIsClearedFlag.set();
+        }).start();
+
+        while (stateIsClearedFlag.get()) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        while (smsIsClearedFlag.get()) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    static class MutableBoolean {
+
+        private volatile boolean is_set = false;
+
+        void set() {
+            is_set = true;
+        }
+
+        boolean get() {
+            return !is_set;
+        }
     }
 }

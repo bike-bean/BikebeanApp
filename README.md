@@ -25,15 +25,7 @@ Alternatively, you can download a prebuilt version (apk) in the
 
 ## Todos
 
-- Internationalization
-  - Translation to different languages
-  - Setting for changing the language
-- Add capability to add more than one bike bean number
-- Add initial configuration process
-- Make interpolation for estimating the battery duration
-- Add some buttons (donation, contact, settings?)
-- revisit UI (make it more pretty)
-- Add wifi localization feature
+See [Github Project](https://github.com/Ludwigmair1986/BikebeanApp/projects/1)
 
 ## References
 

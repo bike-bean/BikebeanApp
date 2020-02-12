@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<PreferenceScreen
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
@@ -33,8 +33,28 @@
 
     </PreferenceCategory>
 
-    <SwitchPreference
-        app:key="initialLoading"
-        app:isPreferenceVisible="false" />
+    <PreferenceCategory android:title="@string/ui_header">
+
+        <ListPreference
+            android:key="theme"
+            android:title="@string/theme_header"
+            android:entries="@array/theme_entries"
+            android:entryValues="@array/theme_values"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/app_general_header">
+
+        <ListPreference
+            android:key="@string/internationalization_header"
+            android:title="@string/internationalization_header"
+            android:entries="@array/language_entries"
+            android:entryValues="@array/language_values"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            android:key="reset"
+            android:title="Datenbank zurücksetzen" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

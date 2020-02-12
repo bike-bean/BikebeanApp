@@ -23,6 +23,9 @@ public interface SmsDao {
     @Query("SELECT * FROM sms_table WHERE state = :state AND type = :type ORDER BY timestamp DESC")
     LiveData<List<Sms>> getByStateAndType(int state, int type);
 
+    @Query("SELECT * FROM sms_table")
+    List<Sms> getAllSync();
+
     @Query("SELECT COUNT(*) FROM sms_table WHERE type LIKE :type")
     int getCountByType(int type);
 

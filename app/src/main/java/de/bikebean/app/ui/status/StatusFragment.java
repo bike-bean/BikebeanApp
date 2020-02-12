@@ -31,8 +31,8 @@ public class StatusFragment extends Fragment {
         // init sub-fragments
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.include0, new LocationStatusFragment())
-                .replace(R.id.include1, new StatusStatusFragment())
-                .replace(R.id.include2, new BatteryStatusFragment())
+                .replace(R.id.include1, new BatteryStatusFragment())
+                .replace(R.id.include2, new StatusStatusFragment())
                 .disallowAddToBackStack()
                 .commit();
 

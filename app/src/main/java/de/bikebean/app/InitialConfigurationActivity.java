@@ -17,14 +17,10 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
 
-import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.status.StateViewModel;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 
 public class InitialConfigurationActivity extends AppCompatActivity {
-
-    public static final double INITIAL_WIFI = 0.0;
-    public static final double INITIAL_INTERVAL = 1.0;
 
     private StateViewModel stateViewModel;
     private SmsViewModel smsViewModel;
@@ -52,19 +48,12 @@ public class InitialConfigurationActivity extends AppCompatActivity {
 
         continueButton.setOnClickListener(v -> onButtonClicked());
 
-        resetAll();
+        stateViewModel.insertInitialStates(getApplicationContext());
     }
 
     @Override
     public void onBackPressed() {
         assert true;
-    }
-
-    private void resetAll() {
-        // Preferences
-        sharedPreferences.edit()
-                .putBoolean("initialLoading", true)
-                .apply();
     }
 
     private void onButtonClicked() {
@@ -83,32 +72,9 @@ public class InitialConfigurationActivity extends AppCompatActivity {
                         .putString("number", number)
                         .apply();
 
-                stateViewModel.insert(new State(
-                        1, State.KEY_WARNING_NUMBER,
-                        0.0, getString(R.string.warning_number_default),
-                        State.STATUS_UNSET, 0)
-                );
-
-                stateViewModel.insert(new State(
-                        1, State.KEY_INTERVAL,
-                        INITIAL_INTERVAL, "",
-                        State.STATUS_CONFIRMED, 0)
-                );
-
-                stateViewModel.insert(new State(
-                        1, State.KEY_WIFI,
-                        INITIAL_WIFI, "",
-                        State.STATUS_CONFIRMED, 0)
-                );
-
-                stateViewModel.insert(new State(
-                        1, State.KEY_STATUS,
-                        0.0, "",
-                        State.STATUS_UNSET, 0)
-                );
-
                 progressBar.setVisibility(View.VISIBLE);
                 fetchSms();
+                progressBar.setVisibility(View.GONE);
             }
         }
     }
@@ -132,10 +98,7 @@ public class InitialConfigurationActivity extends AppCompatActivity {
         if (Utils.hasNoPermissions(this, permissions))
             ActivityCompat.requestPermissions(this, permissions, REQUEST_PERMISSION_KEY);
         else {
-            smsViewModel.fetchSms(
-                    this, stateViewModel,
-                    address, "", "true"
-            );
+            smsViewModel.fetchSmsSync(this, stateViewModel, address);
             finish();
         }
     }
