@@ -18,11 +18,6 @@ public interface StateDao {
     void deleteAll();
 
     /*
-    @Query("DELETE FROM state_table WHERE _key LIKE :key AND state = :state")
-    void deleteByKeyAndState(String key, int state);
-    */
-
-    /*
     Async
      */
     @Query("SELECT * FROM state_table WHERE _key LIKE :key ORDER BY timestamp DESC")
@@ -35,7 +30,10 @@ public interface StateDao {
     Sync
      */
     @Query("SELECT * FROM state_table")
-    List<State> getAll();
+    List<State> getAllSync();
+
+    @Query("SELECT * FROM state_table WHERE sms_id = :smsId ORDER BY timestamp DESC")
+    List<State> getAllById(int smsId);
 
     @Query("SELECT * FROM state_table WHERE _key LIKE :key ORDER BY timestamp DESC LIMIT 1")
     List<State> getByKey(String key);
