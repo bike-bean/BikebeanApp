@@ -29,6 +29,10 @@
 
     <string name="history">Historie</string>
 
+    <string name="menu_satellite">Satellit</string>
+    <string name="menu_hybrid">Hybrid</string>
+    <string name="menu_normal">Normal</string>
+
     <!-- Preference Titles -->
     <string name="general_header">Bike Bean Einstellungen</string>
     <string name="ui_header">Design</string>

@@ -4,10 +4,12 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -16,7 +18,9 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
@@ -52,7 +56,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private MapView mMapView;
     private GoogleMap mGoogleMap;
-    private FloatingActionButton fab;
+    private FloatingActionButton fab, fab2;
 
     // Map elements
     private Marker marker;
@@ -79,6 +83,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mMapView.getMapAsync(this); // this is important
 
         fab = v.findViewById(R.id.fab);
+        fab2 = v.findViewById(R.id.fab2);
 
         bikeName = PreferenceManager.getDefaultSharedPreferences(
                 Objects.requireNonNull(getActivity())
@@ -120,7 +125,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         googleMap.getUiSettings().setZoomControlsEnabled(true);
         googleMap.getUiSettings().setMapToolbarEnabled(false); // disable map toolbar
-        // googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         if (Utils.hasNoPermissions(getActivity(), permissions)) {
             Toast.makeText(getActivity(),
                     "Berechtigung für Standort vergeben",
@@ -175,6 +179,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             // Attempt to start an activity that can handle the Intent
             startActivity(mapIntent);
         });
+        int color = ContextCompat.getColor(Objects.requireNonNull(getContext()), R.color.grey);
+        fab2.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
+        fab2.setOnClickListener(this::showPopup);
 
         if (showCurrentPosition)
             setupObservers();
@@ -216,6 +223,30 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 circle.setRadius(statuses.get(0).getValue());
                 setCamera(true);
                 break;
+        }
+    }
+
+    private void showPopup(View v) {
+        PopupMenu popup = new PopupMenu(Objects.requireNonNull(getContext()), v);
+
+        popup.setOnMenuItemClickListener(this::handleMenuClick);
+        popup.inflate(R.menu.map_type_menu);
+        popup.show();
+    }
+
+    private boolean handleMenuClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_normal:
+                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                return true;
+            case R.id.menu_satellite:
+                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                return true;
+            case R.id.menu_hybrid:
+                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                return true;
+            default:
+                return false;
         }
     }
 

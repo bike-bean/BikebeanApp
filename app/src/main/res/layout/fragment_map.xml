@@ -37,4 +37,19 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/fab_margin"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:alpha="0.75"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_layers_black_24dp"
+        app:backgroundTint="@color/white"
+        app:fabCustomSize="48dp"
+        app:layout_constraintStart_toStartOf="@+id/mapview"
+        app:layout_constraintTop_toTopOf="@+id/mapview" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
