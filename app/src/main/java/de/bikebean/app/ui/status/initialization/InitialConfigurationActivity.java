@@ -83,7 +83,7 @@ public class InitialConfigurationActivity extends AppCompatActivity {
         if (Utils.getPermissions(this, Utils.PERMISSION_KEY_SMS, () ->
                 new PermissionsRationaleDialog(this, Utils.PERMISSION_KEY_SMS).show(
                         getSupportFragmentManager(),
-                        "mapsRationaleDialog"
+                        "smsRationaleDialog"
                 )
         ))
             fetchSms();

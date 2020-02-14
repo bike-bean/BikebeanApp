@@ -83,10 +83,16 @@
         Es werden nur SMS von und an Bike Bean gelesen.\nBitte
         vergeben Sie die Berechtigungen für SMS.
     </string>
+    <string name="no_sms_permission_error">Achtung!</string>
+    <string name="no_sms_permission_error_2">Die App hat keine Berechtigungen für Sms.
+        Diese Informationen sind eventuell veraltet oder falsch.
+        Aktivieren Sie die Berechtigungen in den App-Einstellungen.
+    </string>
     <string name="no_map_permission">Standort-Berechtigungen</string>
     <string name="no_map_permission_warning">Die App benötigt Berechtigungen um Ihren eigenen
         Standort auf der Karte anzuzeigen.</string>
     <string name="warning_sms_permission">Bitte Berechtigungen für SMS vergeben!</string>
+    <string name="to_settings">Zu den Einstellungen</string>
 
     <!-- WifiScan -->
     <string name="wifi_disabled">Bitte aktivieren Sie das WLAN</string>

@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="de.bikebean.app">
-
     <!--
     For Permission protection levels (whether runtime permission request is needed),
     see https://developer.android.com/reference/android/Manifest.permission.html.
@@ -10,15 +9,15 @@
     For Information about Permissions and permission requests,
     see https://developer.android.com/guide/topics/permissions/overview.
     -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />  <!-- normal -->
-    <uses-permission android:name="android.permission.INTERNET" />  <!-- normal -->
-    <uses-permission android:name="android.permission.SEND_SMS" />  <!-- dangerous -->
-    <uses-permission android:name="android.permission.READ_SMS" />  <!-- dangerous -->
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />  <!-- dangerous -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />  <!-- dangerous -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />  <!-- dangerous -->
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />  <!-- normal -->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />  <!-- normal -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- normal -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- normal -->
+    <uses-permission android:name="android.permission.SEND_SMS" /> <!-- dangerous -->
+    <uses-permission android:name="android.permission.READ_SMS" /> <!-- dangerous -->
+    <uses-permission android:name="android.permission.RECEIVE_SMS" /> <!-- dangerous -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- dangerous -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- dangerous -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" /> <!-- normal -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:allowBackup="false"

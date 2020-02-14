@@ -16,8 +16,7 @@
         <item name="android:textSize">14sp</item>
     </style>
 
-    <style name="TextAppearance.AppTheme.Button" parent="TextAppearance.AppCompat.Widget.Button">
-    </style>
+    <style name="TextAppearance.AppTheme.Button" parent="TextAppearance.AppCompat.Widget.Button" />
 
     <style name="TextAppearance.AppTheme.Error" parent="TextAppearance.MaterialComponents.Caption">
         <item name="android:textSize">14sp</item>

@@ -3,7 +3,6 @@ package de.bikebean.app;
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,7 +12,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
-import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -22,7 +20,7 @@ import java.util.Objects;
 
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.ui.status.StateViewModel;
-import de.bikebean.app.ui.status.PermissionsRationaleDialog;
+import de.bikebean.app.ui.status.StatusFragment;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 import de.bikebean.app.ui.status.sms.listen.SmsListener;
 import de.bikebean.app.ui.status.sms.parser.SmsParser;
@@ -50,26 +48,6 @@ public class MainActivity extends AppCompatActivity {
 
         SmsListener.setSmsViewModel(smsViewModel);
         SmsListener.setStatusViewModel(stateViewModel);
-
-        String address = PreferenceManager.getDefaultSharedPreferences(this)
-                .getString("number", "");
-
-        if (address.equals(""))
-            // Navigate to the initial configuration screen
-            Navigation.findNavController(this, R.id.nav_host_fragment)
-                .navigate(R.id.initial_configuration_action);
-        else
-            getPermissions();
-    }
-
-    private void getPermissions() {
-        if (Utils.getPermissions(this, Utils.PERMISSION_KEY_SMS, () ->
-                new PermissionsRationaleDialog(this, Utils.PERMISSION_KEY_SMS).show(
-                        getSupportFragmentManager(),
-                        "mapsRationaleDialog"
-                )
-        ))
-            fetchSms();
     }
 
     private void setupNavViewAndActionBar() {
@@ -93,12 +71,6 @@ public class MainActivity extends AppCompatActivity {
             new SmsParser(newSms, stateViewModel, smsViewModel).execute();
     }
 
-    private void fetchSms() {
-        smsViewModel.fetchSms(this, stateViewModel,
-                PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-                        .getString("number", ""), ""
-        );
-    }
 
     @Override
     public void onRequestPermissionsResult(
@@ -107,13 +79,10 @@ public class MainActivity extends AppCompatActivity {
             @NonNull int[] grantResults) {
         if (requestCode == Utils.PERMISSION_KEY_SMS) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                fetchSms();
-            } else {
-                Toast.makeText(this,
-                        getString(R.string.warning_sms_permission),
-                        Toast.LENGTH_LONG
-                ).show();
-            }
+                StatusFragment.permissionGrantedHandler.continueWithPermission();
+                StatusFragment.permissionDeniedHandler.continueWithoutPermission(false);
+            } else
+                StatusFragment.permissionDeniedHandler.continueWithoutPermission(true);
         }
     }
 }
