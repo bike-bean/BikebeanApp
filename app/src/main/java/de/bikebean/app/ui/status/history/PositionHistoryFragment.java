@@ -26,12 +26,12 @@ import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.status.StateViewModel;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 
-public class HistoryFragment extends Fragment {
+public class PositionHistoryFragment extends Fragment {
 
     private StateViewModel stateViewModel;
     private Context ctx;
 
-    private HistoryAdapter adapter;
+    private PositionHistoryAdapter adapter;
 
     // UI Elements
     private RecyclerView recyclerView;
@@ -40,7 +40,7 @@ public class HistoryFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_history, container, false);
+        View v = inflater.inflate(R.layout.fragment_position_history, container, false);
 
         recyclerView = v.findViewById(R.id.recyclerView2);
         noDataText = v.findViewById(R.id.noDataText);
@@ -75,7 +75,7 @@ public class HistoryFragment extends Fragment {
     }
 
     private void initRecyclerView() {
-        adapter = new HistoryAdapter(ctx, stateViewModel.getLocationStates().getValue());
+        adapter = new PositionHistoryAdapter(ctx, stateViewModel.getLocationStates().getValue());
         recyclerView.setAdapter(adapter);
 
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ctx);
