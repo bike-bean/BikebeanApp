@@ -1,8 +1,7 @@
-package de.bikebean.app;
+package de.bikebean.app.ui.status.initialization;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
@@ -17,6 +16,9 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
 
+import de.bikebean.app.R;
+import de.bikebean.app.Utils;
+import de.bikebean.app.ui.status.PermissionsRationaleDialog;
 import de.bikebean.app.ui.status.StateViewModel;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 
@@ -65,42 +67,33 @@ public class InitialConfigurationActivity extends AppCompatActivity {
             else if (!number.substring(0, 1).equals("+"))
                 input.setError(getString(R.string.number_subtitle));
             else {
-                // TODO: display friendly message explaining the need for SMS
-                // reading etc.
-                // Also warn the user for the warningNumber SMS which is to be sent.
+                // TODO: warn the user for the warningNumber SMS which is to be sent.
                 sharedPreferences.edit()
                         .putString("number", number)
                         .apply();
 
                 progressBar.setVisibility(View.VISIBLE);
-                fetchSms();
+                getPermissions();
                 progressBar.setVisibility(View.GONE);
             }
         }
     }
 
-    private static final int REQUEST_PERMISSION_KEY = 1;
+    private void getPermissions() {
+        if (Utils.getPermissions(this, Utils.PERMISSION_KEY_SMS, () ->
+                new PermissionsRationaleDialog(this, Utils.PERMISSION_KEY_SMS).show(
+                        getSupportFragmentManager(),
+                        "smsRationaleDialog"
+                )
+        ))
+            fetchSms();
+    }
 
     private void fetchSms() {
-        /*
-        Load the messages from the phone's message storage into the App-internal DB.
-
-        Before that, make sure the user has granted the necessary permissions.
-         */
-        String[] permissions = {
-                android.Manifest.permission.READ_SMS,
-                android.Manifest.permission.SEND_SMS,
-                android.Manifest.permission.RECEIVE_SMS
-        };
-
-        String address = sharedPreferences.getString("number", "");
-
-        if (Utils.hasNoPermissions(this, permissions))
-            ActivityCompat.requestPermissions(this, permissions, REQUEST_PERMISSION_KEY);
-        else {
-            smsViewModel.fetchSmsSync(this, stateViewModel, address);
-            finish();
-        }
+        smsViewModel.fetchSmsSync(this, stateViewModel,
+                sharedPreferences.getString("number", "")
+        );
+        finish();
     }
 
     @Override
@@ -108,21 +101,14 @@ public class InitialConfigurationActivity extends AppCompatActivity {
             int requestCode,
             @NonNull String[] permissions,
             @NonNull int[] grantResults) {
-        /*
-        This is executed after the user has decided if he wants to grant permissions to the App.
-
-        If successful, start with fetching the messages.
-        If not, display a toast noting the user needs to accept. Then prompt the user again!
-        TODO: make the prompt translatable!
-         */
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        // final String prompt = "You must accept permissions!";
-        final String prompt = "Die App wird ohne Berechtigung nicht funktionieren!";
-
-        if (requestCode == REQUEST_PERMISSION_KEY) {
-            if (grantResults.length <= 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED)
-                Toast.makeText(this, prompt, Toast.LENGTH_LONG).show();
-            fetchSms();
+        if (requestCode == Utils.PERMISSION_KEY_SMS) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                fetchSms();
+            else
+                Toast.makeText(this,
+                        getString(R.string.warning_sms_permission),
+                        Toast.LENGTH_LONG
+                ).show();
         }
     }
 }

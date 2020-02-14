@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menu_normal"
+        android:title="@string/menu_normal" />
+    <item android:id="@+id/menu_satellite"
+        android:title="@string/menu_satellite" />
+    <item android:id="@+id/menu_hybrid"
+        android:title="@string/menu_hybrid" />
+</menu>

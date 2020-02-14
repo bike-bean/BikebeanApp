@@ -2,25 +2,22 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="de.bikebean.app">
+    <!--
+    For Permission protection levels (whether runtime permission request is needed),
+    see https://developer.android.com/reference/android/Manifest.permission.html.
 
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-    <uses-permission android:name="android.permission.SEND_SMS" />
-    <uses-permission android:name="android.permission.READ_SMS" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    For Information about Permissions and permission requests,
+    see https://developer.android.com/guide/topics/permissions/overview.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- normal -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- normal -->
+    <uses-permission android:name="android.permission.SEND_SMS" /> <!-- dangerous -->
+    <uses-permission android:name="android.permission.READ_SMS" /> <!-- dangerous -->
+    <uses-permission android:name="android.permission.RECEIVE_SMS" /> <!-- dangerous -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- dangerous -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- dangerous -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" /> <!-- normal -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-
-    <permission
-        android:name="de.bikebean.app.permission.MAPS_RECEIVE"
-        android:protectionLevel="signature" />
-
-    <uses-permission android:name="de.bikebean.app.permission.MAPS_RECEIVE" />
 
     <application
         android:allowBackup="false"
@@ -62,7 +59,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.bikebean.app.MainActivity" />
         </activity>
-        <activity android:name=".InitialConfigurationActivity" />
+        <activity android:name=".ui.status.initialization.InitialConfigurationActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

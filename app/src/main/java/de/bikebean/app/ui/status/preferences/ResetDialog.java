@@ -13,15 +13,27 @@ import de.bikebean.app.R;
 public class ResetDialog extends DialogFragment {
 
     private final Activity act;
-    private final PreferencesActivity.SettingsFragment settingsFragment;
+
+    private final ResetHandler resetHandler;
+    private final ResetCanceller resetCanceller;
 
     private final String address;
 
-    ResetDialog(Activity act, String address,
-                PreferencesActivity.SettingsFragment settingsFragment) {
+    public interface ResetHandler {
+        void reset(String address);
+    }
+
+    public interface ResetCanceller {
+        void cancel();
+    }
+
+    ResetDialog(Activity act, String address, ResetHandler r1, ResetCanceller r2) {
         this.act = act;
+
+        this.resetHandler = r1;
+        this.resetCanceller = r2;
+
         this.address = address;
-        this.settingsFragment = settingsFragment;
     }
 
     @NonNull
@@ -32,9 +44,9 @@ public class ResetDialog extends DialogFragment {
         builder.setTitle(R.string.db_reset)
                 .setMessage(R.string.db_reset_warning)
                 .setPositiveButton(R.string.continue_reset, (dialog, id) ->
-                        settingsFragment.resetAll(address))
+                        resetHandler.reset(address))
                 .setNegativeButton(R.string.abort_send_sms, (dialog, id) ->
-                        settingsFragment.cancelReset() );
+                        resetCanceller.cancel());
 
         return builder.create();
     }

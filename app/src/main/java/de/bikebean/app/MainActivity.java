@@ -1,8 +1,10 @@
 package de.bikebean.app;
 
+import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -10,7 +12,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
-import androidx.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -19,6 +20,7 @@ import java.util.Objects;
 
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.ui.status.StateViewModel;
+import de.bikebean.app.ui.status.StatusFragment;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 import de.bikebean.app.ui.status.sms.listen.SmsListener;
 import de.bikebean.app.ui.status.sms.parser.SmsParser;
@@ -46,16 +48,6 @@ public class MainActivity extends AppCompatActivity {
 
         SmsListener.setSmsViewModel(smsViewModel);
         SmsListener.setStatusViewModel(stateViewModel);
-
-        String address = PreferenceManager.getDefaultSharedPreferences(this)
-                .getString("number", "");
-
-        if (address.equals(""))
-            // Navigate to the initial configuration screen
-            Navigation.findNavController(this, R.id.nav_host_fragment)
-                .navigate(R.id.initial_configuration_action);
-        else
-            smsViewModel.fetchSms(this, stateViewModel, address, "");
     }
 
     private void setupNavViewAndActionBar() {
@@ -77,5 +69,20 @@ public class MainActivity extends AppCompatActivity {
     private void handleNewIncomingMessages(List<Sms> newSmsList) {
         for (Sms newSms : newSmsList)
             new SmsParser(newSms, stateViewModel, smsViewModel).execute();
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode,
+            @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
+        if (requestCode == Utils.PERMISSION_KEY_SMS) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                StatusFragment.permissionGrantedHandler.continueWithPermission();
+                StatusFragment.permissionDeniedHandler.continueWithoutPermission(false);
+            } else
+                StatusFragment.permissionDeniedHandler.continueWithoutPermission(true);
+        }
     }
 }

@@ -29,6 +29,10 @@
 
     <string name="history">Historie</string>
 
+    <string name="menu_satellite">Satellit</string>
+    <string name="menu_hybrid">Hybrid</string>
+    <string name="menu_normal">Normal</string>
+
     <!-- Preference Titles -->
     <string name="general_header">Bike Bean Einstellungen</string>
     <string name="ui_header">Design</string>
@@ -67,11 +71,28 @@
     <string name="continue_send_sms">Senden</string>
     <string name="continue_reset">Zurücksetzen</string>
     <string name="continue_general">Weiter</string>
+    <string name="continue_ok">OK</string>
     <string name="abort_send_sms">Abbrechen</string>
     <string name="overdue">Bestätigung überfällig! (%s)</string>
     <string name="no_data">Keine Daten vorhanden!</string>
     <string name="db_reset_warning">Dadurch werden alle Daten zurückgesetzt und vom
         bisherigen SMS-Verlauf neu eingelesen. Fortfahren?</string>
+    <string name="no_sms_permission">SMS Berechtigungen</string>
+    <string name="no_sms_permission_warning">Damit diese App richtig funktioniert, muss sie SMS
+        an Bike Bean lesen und versenden können.
+        Es werden nur SMS von und an Bike Bean gelesen.\nBitte
+        vergeben Sie die Berechtigungen für SMS.
+    </string>
+    <string name="no_sms_permission_error">Achtung!</string>
+    <string name="no_sms_permission_error_2">Die App hat keine Berechtigungen für Sms.
+        Diese Informationen sind eventuell veraltet oder falsch.
+        Aktivieren Sie die Berechtigungen in den App-Einstellungen.
+    </string>
+    <string name="no_map_permission">Standort-Berechtigungen</string>
+    <string name="no_map_permission_warning">Die App benötigt Berechtigungen um Ihren eigenen
+        Standort auf der Karte anzuzeigen.</string>
+    <string name="warning_sms_permission">Bitte Berechtigungen für SMS vergeben!</string>
+    <string name="to_settings">Zu den Einstellungen</string>
 
     <!-- WifiScan -->
     <string name="wifi_disabled">Bitte aktivieren Sie das WLAN</string>

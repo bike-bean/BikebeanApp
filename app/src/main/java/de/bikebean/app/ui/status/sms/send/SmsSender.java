@@ -15,7 +15,9 @@ import java.util.List;
 import de.bikebean.app.Utils;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
+import de.bikebean.app.ui.status.PermissionsRationaleDialog;
 import de.bikebean.app.ui.status.StateViewModel;
+import de.bikebean.app.ui.status.StatusFragment;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 
 public class SmsSender {
@@ -48,7 +50,8 @@ public class SmsSender {
         if (phoneNumber.isEmpty())
             return;
 
-        SmsSendWarnDialog smsSendWarnDialog = new SmsSendWarnDialog(this, act);
+        SmsSendWarnDialog smsSendWarnDialog =
+                new SmsSendWarnDialog(act, message, this::getPermissions, this::cancelSend);
         Dialog dialog = smsSendWarnDialog.getDialog();
 
         if (dialog == null)
@@ -60,16 +63,21 @@ public class SmsSender {
         smsSendWarnDialog.show(act.getSupportFragmentManager(), "smsWarning");
     }
 
-    void cancelSend() {
-        /*
-        The user decided to cancel, don't send an SMS and signal it to the user.
-        */
-        Toast.makeText(ctx, "Vorgang abgebrochen.", Toast.LENGTH_LONG).show();
+    private void getPermissions() {
+        StatusFragment.permissionGrantedHandler = this::reallySend;
 
-        stateViewModel.notifyIntervalAbort(true);
+        if (Utils.getPermissions(act, Utils.PERMISSION_KEY_SMS, () ->
+                new PermissionsRationaleDialog(act, Utils.PERMISSION_KEY_SMS).show(
+                        act.getSupportFragmentManager(),
+                        "smsRationaleDialog"
+                )
+        )) {
+            StatusFragment.permissionDeniedHandler.continueWithoutPermission(false);
+            StatusFragment.permissionGrantedHandler.continueWithPermission();
+        }
     }
 
-    void reallySend() {
+    private void reallySend() {
         /*
         The user decided to send the SMS, so actually send it!
         */
@@ -92,5 +100,14 @@ public class SmsSender {
 
         for (State update : updates)
             stateViewModel.insert(update);
+    }
+
+    private void cancelSend() {
+        /*
+        The user decided to cancel, don't send an SMS and signal it to the user.
+        */
+        Toast.makeText(ctx, "Vorgang abgebrochen.", Toast.LENGTH_LONG).show();
+
+        stateViewModel.notifyIntervalAbort(true);
     }
 }
