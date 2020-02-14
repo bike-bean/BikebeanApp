@@ -4,13 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@id/navigation_history_fragment" >
+    app:startDestination="@id/navigation_position_history_fragment" >
 
     <fragment
-        android:id="@+id/navigation_history_fragment"
-        android:name="de.bikebean.app.ui.status.history.HistoryFragment"
+        android:id="@+id/navigation_position_history_fragment"
+        android:name="de.bikebean.app.ui.status.history.PositionHistoryFragment"
         android:label="@string/history"
-        tools:layout="@layout/fragment_history" >
+        tools:layout="@layout/fragment_position_history" >
 
         <action
             android:id="@+id/map_action"
@@ -19,6 +19,28 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+
+        <action
+            android:id="@+id/battery_action"
+            app:destination="@id/navigation_battery_history_fragment" />
+
+        <action
+            android:id="@+id/position_action"
+            app:destination="@id/navigation_position_history_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_battery_history_fragment"
+        android:name="de.bikebean.app.ui.status.history.BatteryHistoryFragment"
+        android:label="@string/history"
+        tools:layout="@layout/fragment_battery_history" >
+
+        <action
+            android:id="@+id/battery_action"
+            app:destination="@id/navigation_battery_history_fragment" />
+        <action
+            android:id="@+id/position_action"
+            app:destination="@id/navigation_position_history_fragment" />
     </fragment>
 
     <fragment
@@ -29,7 +51,7 @@
 
         <action
             android:id="@+id/history_action"
-            app:destination="@id/navigation_history_fragment" />
+            app:destination="@id/navigation_position_history_fragment" />
     </fragment>
 
 </navigation>

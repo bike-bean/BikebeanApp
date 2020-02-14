@@ -20,7 +20,8 @@ import de.bikebean.app.R;
 import de.bikebean.app.Utils;
 import de.bikebean.app.db.state.LocationState;
 
-public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder> {
+public class PositionHistoryAdapter
+        extends RecyclerView.Adapter<PositionHistoryAdapter.HistoryViewHolder> {
 
     class HistoryViewHolder extends RecyclerView.ViewHolder {
         private final TableLayout table;
@@ -43,7 +44,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     private final LayoutInflater mInflater;
     private List<LocationState> mStates;  // cached copy of sms
 
-    HistoryAdapter(Context context, List<LocationState> states) {
+    PositionHistoryAdapter(Context context, List<LocationState> states) {
         mInflater = LayoutInflater.from(context);
         mStates = states;
     }
@@ -51,7 +52,10 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     @NonNull
     @Override
     public HistoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.recyclerview_item_history, parent, false);
+        View itemView = mInflater.inflate(
+                R.layout.recyclerview_item_position_history,
+                parent, false
+        );
         return new HistoryViewHolder(itemView);
     }
 
@@ -72,7 +76,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             holder.lng.setText(String.format(Locale.GERMANY, "%.7f", current.getLng()));
             holder.acc.setText(String.format(Locale.GERMANY, "%.1f", current.getAcc()));
             holder.dateTimeText.setText(Utils.convertToDateHuman(current.getTimestamp()));
-            holder.smsIdText.setText(String.format(Locale.GERMANY, "SmsId: %d", current.getSmsId()));
+            holder.smsIdText.setText(
+                    String.format(Locale.GERMANY, "SmsId: %d", current.getSmsId())
+            );
 
             holder.buttonOpenMap.setOnClickListener(v ->
                     Navigation.findNavController(v).navigate(R.id.map_action, bundle));

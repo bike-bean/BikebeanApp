@@ -3,12 +3,17 @@ package de.bikebean.app.ui.status.history;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.navigation.Navigation;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import de.bikebean.app.R;
 
 public class HistoryActivity extends AppCompatActivity {
+
+    private Button positionHistoryButton, batteryHistoryButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,5 +27,24 @@ public class HistoryActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        positionHistoryButton = findViewById(R.id.positionButton);
+        batteryHistoryButton = findViewById(R.id.batteryButton);
+
+        initUserElements();
+    }
+
+    private void initUserElements() {
+        positionHistoryButton.setOnClickListener(this::navigateToTab);
+        batteryHistoryButton.setOnClickListener(this::navigateToTab);
+    }
+
+    private void navigateToTab(View v) {
+        if (v.getId() == R.id.positionButton)
+            Navigation.findNavController(this, R.id.history)
+                    .navigate(R.id.position_action);
+        else
+            Navigation.findNavController(this, R.id.history)
+                    .navigate(R.id.battery_action);
     }
 }
