@@ -62,7 +62,8 @@ public class PreferencesActivity extends AppCompatActivity {
 
             String address = PreferenceManager.getDefaultSharedPreferences(ctx)
                     .getString("number", "");
-            ResetDialog resetDialog = new ResetDialog(act, address, this);
+            ResetDialog resetDialog =
+                    new ResetDialog(act, address, this::resetAll, this::cancelReset);
 
             // Preferences
             final EditTextPreference numberPreference = findPreference("number");

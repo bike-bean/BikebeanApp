@@ -81,7 +81,7 @@
 
     <activity
         android:id="@+id/navigation_initial_configuration"
-        android:name="de.bikebean.app.InitialConfigurationActivity"
+        android:name="de.bikebean.app.ui.status.initialization.InitialConfigurationActivity"
         android:label="activity_initial_configuration"
         tools:layout="@layout/activity_initial_configuration" />
 

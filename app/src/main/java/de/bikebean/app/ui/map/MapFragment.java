@@ -1,6 +1,5 @@
 package de.bikebean.app.ui.map;
 
-import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -19,7 +18,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
@@ -47,12 +45,14 @@ import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
 import de.bikebean.app.Utils;
 import de.bikebean.app.db.state.State;
+import de.bikebean.app.ui.status.PermissionsRationaleDialog;
 import de.bikebean.app.ui.status.StateViewModel;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private StateViewModel stateViewModel;
-    private static final int REQUEST_PERMISSION_KEY = 1;
+
+    private AppCompatActivity act;
 
     private MapView mMapView;
     private GoogleMap mGoogleMap;
@@ -85,10 +85,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         fab = v.findViewById(R.id.fab);
         fab2 = v.findViewById(R.id.fab2);
 
-        bikeName = PreferenceManager.getDefaultSharedPreferences(
-                Objects.requireNonNull(getActivity())
-        ).getString("name", "bike");
-
         return v;
     }
 
@@ -99,7 +95,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         stateViewModel = new ViewModelProvider(this).get(StateViewModel.class);
 
         // hide the toolbar for this fragment
-        AppCompatActivity act = (AppCompatActivity) getActivity();
+        act = (AppCompatActivity) getActivity();
         ActionBar actionbar = Objects.requireNonNull(act).getSupportActionBar();
         Objects.requireNonNull(actionbar).hide();
 
@@ -114,25 +110,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                             .navigate(R.id.back_action);
             }
         });
+
+        bikeName = PreferenceManager.getDefaultSharedPreferences(act)
+                .getString("name", "bike");
+    }
+
+    private void setLocationEnabled() {
+        mGoogleMap.setMyLocationEnabled(true);
     }
 
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
 
-        String[] permissions = {
-                Manifest.permission.ACCESS_FINE_LOCATION
-        };
-
         googleMap.getUiSettings().setZoomControlsEnabled(true);
         googleMap.getUiSettings().setMapToolbarEnabled(false); // disable map toolbar
-        if (Utils.hasNoPermissions(getActivity(), permissions)) {
-            Toast.makeText(getActivity(),
-                    "Berechtigung für Standort vergeben",
-                    Toast.LENGTH_LONG
-            ).show();
-            ActivityCompat.requestPermissions(getActivity(), permissions, REQUEST_PERMISSION_KEY);
-        } else
-            googleMap.setMyLocationEnabled(true);
+
+        if (Utils.getPermissions(act, Utils.PERMISSION_KEY_MAPS, () ->
+                new PermissionsRationaleDialog(act, Utils.PERMISSION_KEY_MAPS).show(
+                        act.getSupportFragmentManager(),
+                        "mapsRationaleDialog"
+                )
+        ))
+            setLocationEnabled();
 
         double radius = 0.0;
 
@@ -169,7 +168,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         fab.setOnClickListener(v -> {
             String uriString = "geo:0,0?q=" + currentPositionBike.getLat() +
-                    "," + currentPositionBike.getLng() + "( " + bikeName + ")";
+                    "," + currentPositionBike.getLng() + "(" + bikeName + ")";
             Log.d(MainActivity.TAG, uriString);
             Uri gmmIntentUri = Uri.parse(uriString);
             // Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW
@@ -309,19 +308,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_PERMISSION_KEY)
-            if (permissions.length == 1 &&
-                    permissions[0].equals(android.Manifest.permission.ACCESS_FINE_LOCATION) &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                mGoogleMap.setMyLocationEnabled(true);
+    public void onRequestPermissionsResult(
+            int requestCode,
+            @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
+        if (requestCode == Utils.PERMISSION_KEY_MAPS) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                setLocationEnabled();
             else
-                Toast.makeText(getActivity(),
+                Toast.makeText(act,
                         "Eigener Standort nicht verfügbar",
                         Toast.LENGTH_LONG
                 ).show();
+        }
     }
 
     class Snippet {

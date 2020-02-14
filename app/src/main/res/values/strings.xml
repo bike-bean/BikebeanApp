@@ -71,11 +71,22 @@
     <string name="continue_send_sms">Senden</string>
     <string name="continue_reset">Zurücksetzen</string>
     <string name="continue_general">Weiter</string>
+    <string name="continue_ok">OK</string>
     <string name="abort_send_sms">Abbrechen</string>
     <string name="overdue">Bestätigung überfällig! (%s)</string>
     <string name="no_data">Keine Daten vorhanden!</string>
     <string name="db_reset_warning">Dadurch werden alle Daten zurückgesetzt und vom
         bisherigen SMS-Verlauf neu eingelesen. Fortfahren?</string>
+    <string name="no_sms_permission">SMS Berechtigungen</string>
+    <string name="no_sms_permission_warning">Damit diese App richtig funktioniert, muss sie SMS
+        an Bike Bean lesen und versenden können.
+        Es werden nur SMS von und an Bike Bean gelesen.\nBitte
+        vergeben Sie die Berechtigungen für SMS.
+    </string>
+    <string name="no_map_permission">Standort-Berechtigungen</string>
+    <string name="no_map_permission_warning">Die App benötigt Berechtigungen um Ihren eigenen
+        Standort auf der Karte anzuzeigen.</string>
+    <string name="warning_sms_permission">Bitte Berechtigungen für SMS vergeben!</string>
 
     <!-- WifiScan -->
     <string name="wifi_disabled">Bitte aktivieren Sie das WLAN</string>

@@ -1,5 +1,6 @@
 package de.bikebean.app;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -20,26 +21,66 @@ import de.bikebean.app.ui.status.StateViewModel;
 
 public class Utils {
 
+    public static final int PERMISSION_KEY_SMS = 1;
+    public static final int PERMISSION_KEY_MAPS = 2;
+
     private static final Map<Integer, Double> batteryRuntimeByInterval =
             new HashMap<Integer, Double>() {{
-        put(1, 175.0);
-        put(2, 260.0);
-        put(4, 346.0);
-        put(8, 415.0);
-        put(12, 444.0);
-        put(24, 477.0);
+                put(1, 175.0);
+                put(2, 260.0);
+                put(4, 346.0);
+                put(8, 415.0);
+                put(12, 444.0);
+                put(24, 477.0);
     }};
 
-    public static boolean hasNoPermissions(Activity activity, String... permissions) {
-        if (activity != null && permissions != null) {
-            for (String permission : permissions) {
-                if (ActivityCompat.checkSelfPermission(activity, permission)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    return true;
+    private static final String[] smsPermissions = {
+            android.Manifest.permission.READ_SMS,
+            android.Manifest.permission.SEND_SMS,
+            android.Manifest.permission.RECEIVE_SMS
+    };
+
+    private static final String[] mapsPermissions = {
+            Manifest.permission.ACCESS_FINE_LOCATION
+    };
+
+    private static final Map<Integer, String[]> permissionMap =
+            new HashMap<Integer, String[]>() {{
+                put(PERMISSION_KEY_SMS, smsPermissions);
+                put(PERMISSION_KEY_MAPS, mapsPermissions);
+    }};
+
+    public interface RationaleShower {
+        void showRationaleDialog();
+    }
+
+    public static boolean getPermissions(Activity activity, int permissionKey, RationaleShower r) {
+        String[] permissions = permissionMap.get(permissionKey);
+
+        if (activity == null || permissions == null)
+            return false;
+
+        for (String permission : permissions)
+            if (ContextCompat.checkSelfPermission(activity, permission)
+                    != PackageManager.PERMISSION_GRANTED)
+                if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
+                    r.showRationaleDialog();
+                    return false;
+                } else {
+                    askForPermissions(activity, permissionKey);
+                    return false;
                 }
-            }
-        }
-        return false;
+
+        return true;
+    }
+
+    public static void askForPermissions(Activity activity, int permissionKey) {
+        String[] permissions = permissionMap.get(permissionKey);
+
+        if (activity == null || permissions == null)
+            return;
+
+        ActivityCompat.requestPermissions(activity, permissions, permissionKey);
     }
 
     public static String convertToTime(long datetime) {
