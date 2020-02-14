@@ -48,7 +48,8 @@ public class SmsSender {
         if (phoneNumber.isEmpty())
             return;
 
-        SmsSendWarnDialog smsSendWarnDialog = new SmsSendWarnDialog(this, act);
+        SmsSendWarnDialog smsSendWarnDialog =
+                new SmsSendWarnDialog(act, message, this::reallySend, this::cancelSend);
         Dialog dialog = smsSendWarnDialog.getDialog();
 
         if (dialog == null)
@@ -60,16 +61,7 @@ public class SmsSender {
         smsSendWarnDialog.show(act.getSupportFragmentManager(), "smsWarning");
     }
 
-    void cancelSend() {
-        /*
-        The user decided to cancel, don't send an SMS and signal it to the user.
-        */
-        Toast.makeText(ctx, "Vorgang abgebrochen.", Toast.LENGTH_LONG).show();
-
-        stateViewModel.notifyIntervalAbort(true);
-    }
-
-    void reallySend() {
+    private void reallySend() {
         /*
         The user decided to send the SMS, so actually send it!
         */
@@ -92,5 +84,14 @@ public class SmsSender {
 
         for (State update : updates)
             stateViewModel.insert(update);
+    }
+
+    private void cancelSend() {
+        /*
+        The user decided to cancel, don't send an SMS and signal it to the user.
+        */
+        Toast.makeText(ctx, "Vorgang abgebrochen.", Toast.LENGTH_LONG).show();
+
+        stateViewModel.notifyIntervalAbort(true);
     }
 }
