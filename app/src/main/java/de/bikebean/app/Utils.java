@@ -17,7 +17,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.status.StateViewModel;
 
 public class Utils {
 
@@ -89,15 +88,7 @@ public class Utils {
         return formatter.format(date);
     }
 
-    public static String getEstimatedDaysText(StateViewModel st) {
-        State lastBatteryState = st.getConfirmedBatterySync();
-        boolean isWifiOn = st.getConfirmedWifiSync();
-        int interval = st.getConfirmedIntervalSync();
-
-        return estimateBatteryDays(lastBatteryState, isWifiOn, interval);
-    }
-
-    private static String estimateBatteryDays(State lastBatteryState, boolean isWifiOn, int interval) {
+    public static String estimateBatteryDays(State lastBatteryState, boolean isWifiOn, int interval) {
         if (lastBatteryState == null) {
             return "";
         }

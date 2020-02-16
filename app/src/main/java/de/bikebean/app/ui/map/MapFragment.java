@@ -46,11 +46,10 @@ import de.bikebean.app.R;
 import de.bikebean.app.Utils;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.status.PermissionsRationaleDialog;
-import de.bikebean.app.ui.status.StateViewModel;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
-    private StateViewModel stateViewModel;
+    private MapFragmentViewModel mapFragmentViewModel;
 
     private AppCompatActivity act;
 
@@ -92,7 +91,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        stateViewModel = new ViewModelProvider(this).get(StateViewModel.class);
+        mapFragmentViewModel = new ViewModelProvider(this).get(MapFragmentViewModel.class);
 
         // hide the toolbar for this fragment
         act = (AppCompatActivity) getActivity();
@@ -194,11 +193,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         initializationDone = false;
 
-        stateViewModel.getConfirmedLocationLat().observe(l, this::setMapElements);
-        stateViewModel.getConfirmedLocationLng().observe(l, this::setMapElements);
-        stateViewModel.getConfirmedLocationAcc().observe(l, this::setMapElements);
-        stateViewModel.getStatusNumberCellTowers().observe(l, this::setMapElements);
-        stateViewModel.getStatusNumberWifiAccessPoints().observe(l, this::setMapElements);
+        mapFragmentViewModel.getConfirmedLocationLat().observe(l, this::setMapElements);
+        mapFragmentViewModel.getConfirmedLocationLng().observe(l, this::setMapElements);
+        mapFragmentViewModel.getConfirmedLocationAcc().observe(l, this::setMapElements);
+        mapFragmentViewModel.getStatusNumberCellTowers().observe(l, this::setMapElements);
+        mapFragmentViewModel.getStatusNumberWifiAccessPoints().observe(l, this::setMapElements);
     }
 
     private void setMapElements(List<State> statuses) {

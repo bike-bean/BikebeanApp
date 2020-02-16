@@ -23,12 +23,11 @@ import java.util.Objects;
 import de.bikebean.app.R;
 import de.bikebean.app.db.state.LocationState;
 import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.status.StateViewModel;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 
 public class PositionHistoryFragment extends Fragment {
 
-    private StateViewModel stateViewModel;
+    private HistoryStateViewModel stateViewModel;
     private Context ctx;
 
     private PositionHistoryAdapter adapter;
@@ -54,7 +53,7 @@ public class PositionHistoryFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        stateViewModel = new ViewModelProvider(this).get(StateViewModel.class);
+        stateViewModel = new ViewModelProvider(this).get(HistoryStateViewModel.class);
         SmsViewModel smsViewModel = new ViewModelProvider(this).get(SmsViewModel.class);
         smsViewModel.getAllIds().observe(getViewLifecycleOwner(), this::updateStates);
 

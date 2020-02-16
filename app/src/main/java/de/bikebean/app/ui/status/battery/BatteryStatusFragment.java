@@ -21,7 +21,6 @@ import java.util.Objects;
 import de.bikebean.app.R;
 import de.bikebean.app.Utils;
 import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.status.StateViewModel;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 import de.bikebean.app.ui.status.sms.send.SmsSender;
 import de.bikebean.app.ui.status.status.LiveDataTimerViewModel;
@@ -29,7 +28,7 @@ import de.bikebean.app.ui.status.status.LiveDataTimerViewModel;
 public class BatteryStatusFragment extends Fragment {
 
     private LiveDataTimerViewModel tv;
-    private StateViewModel st;
+    private BatteryStateViewModel st;
 
     private Context ctx;
 
@@ -61,7 +60,7 @@ public class BatteryStatusFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        st = new ViewModelProvider(this).get(StateViewModel.class);
+        st = new ViewModelProvider(this).get(BatteryStateViewModel.class);
         tv = new ViewModelProvider(this).get(LiveDataTimerViewModel.class);
         SmsViewModel sm  = new ViewModelProvider(this).get(SmsViewModel.class);
 
@@ -142,13 +141,13 @@ public class BatteryStatusFragment extends Fragment {
     private void setIntervalElementsConfirmed(State state) {
         assert state != null;
 
-        batteryEstimatedDaysText.setText(Utils.getEstimatedDaysText(st));
+        batteryEstimatedDaysText.setText(BatteryStateViewModel.getEstimatedDaysText(st));
     }
 
     private void setWifiElementsConfirmed(State state) {
         assert state != null;
 
-        batteryEstimatedDaysText.setText(Utils.getEstimatedDaysText(st));
+        batteryEstimatedDaysText.setText(BatteryStateViewModel.getEstimatedDaysText(st));
     }
 
     private void setBatteryElementsConfirmed(State state) {
@@ -162,7 +161,7 @@ public class BatteryStatusFragment extends Fragment {
         );
 
         batteryLastChangedText.setText(Utils.convertToDateHuman(state.getTimestamp()));
-        batteryEstimatedDaysText.setText(Utils.getEstimatedDaysText(st));
+        batteryEstimatedDaysText.setText(BatteryStateViewModel.getEstimatedDaysText(st));
 
         statusButton.setEnabled(true);
 
@@ -185,7 +184,7 @@ public class BatteryStatusFragment extends Fragment {
             batteryLastChangedText.setText(
                     Utils.convertToDateHuman(lastBatteryState.getTimestamp()));
             batteryEstimatedDaysText.setText(
-                    Utils.getEstimatedDaysText(st));
+                    BatteryStateViewModel.getEstimatedDaysText(st));
             batteryStatusText.setText(batteryStatus);
             batteryStatusText.setCompoundDrawablesWithIntrinsicBounds(
                     Utils.getBatteryDrawable(ctx, batteryValue), null, null, null

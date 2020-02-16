@@ -25,7 +25,6 @@ import java.util.Objects;
 import de.bikebean.app.R;
 import de.bikebean.app.Utils;
 import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.status.StateViewModel;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 import de.bikebean.app.ui.status.sms.send.SmsSender;
 import de.bikebean.app.ui.status.status.LiveDataTimerViewModel;
@@ -33,7 +32,7 @@ import de.bikebean.app.ui.status.status.LiveDataTimerViewModel;
 public class LocationStatusFragment extends Fragment {
 
     private LiveDataTimerViewModel tv;
-    private StateViewModel st;
+    private LocationStateViewModel st;
     private SmsViewModel sm;
 
     private Context ctx;
@@ -77,7 +76,7 @@ public class LocationStatusFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        st = new ViewModelProvider(this).get(StateViewModel.class);
+        st = new ViewModelProvider(this).get(LocationStateViewModel.class);
         tv = new ViewModelProvider(this).get(LiveDataTimerViewModel.class);
         sm = new ViewModelProvider(this).get(SmsViewModel.class);
 

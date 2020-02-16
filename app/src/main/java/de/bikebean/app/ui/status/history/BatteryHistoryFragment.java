@@ -21,11 +21,11 @@ import java.util.Objects;
 
 import de.bikebean.app.R;
 import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.status.StateViewModel;
+import de.bikebean.app.ui.status.battery.BatteryStateViewModel;
 
 public class BatteryHistoryFragment extends Fragment {
 
-    private StateViewModel stateViewModel;
+    private BatteryStateViewModel stateViewModel;
     private Context ctx;
 
     private BatteryHistoryAdapter adapter;
@@ -51,7 +51,7 @@ public class BatteryHistoryFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        stateViewModel = new ViewModelProvider(this).get(StateViewModel.class);
+        stateViewModel = new ViewModelProvider(this).get(BatteryStateViewModel.class);
         stateViewModel.getStatusBattery().observe(getViewLifecycleOwner(), this::setStatesToAdapter);
 
         FragmentActivity act = Objects.requireNonNull(getActivity());

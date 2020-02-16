@@ -7,18 +7,17 @@ import android.util.Log;
 import java.lang.ref.WeakReference;
 
 import de.bikebean.app.MainActivity;
-import de.bikebean.app.ui.status.StateViewModel;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 
 class LocationUpdater extends AsyncTask<String, Void, Boolean> {
 
     private final WeakReference<Context> contextReference;
-    private final StateViewModel mStateViewModel;
+    private final LocationStateViewModel mStateViewModel;
     private final SmsViewModel mSmsViewModel;
 
     private final int mSmsId;
 
-    LocationUpdater(Context context, StateViewModel st, SmsViewModel sm, int smsId) {
+    LocationUpdater(Context context, LocationStateViewModel st, SmsViewModel sm, int smsId) {
         contextReference = new WeakReference<>(context);
         mStateViewModel = st;
         mSmsViewModel = sm;

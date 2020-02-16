@@ -42,6 +42,10 @@ class SmsRepository {
         return mAllIds;
     }
 
+    List<Sms> getAllSinceDate(String timestamp, int smsId) {
+        discard(smsId);
+        return mSmsDao.getAllSinceDate(Long.parseLong(timestamp), Telephony.Sms.MESSAGE_TYPE_INBOX);
+    }
 
     int getInboxCount() {
         return mSmsDao.getCountByType(Telephony.Sms.MESSAGE_TYPE_INBOX);
@@ -68,5 +72,12 @@ class SmsRepository {
     void markParsed(int id) {
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() ->
                 mSmsDao.updateStateById(Sms.STATUS_PARSED, id));
+    }
+
+    private void discard(int smsId) {
+        if (smsId == 0)
+            assert true;
+        else
+            assert true;
     }
 }

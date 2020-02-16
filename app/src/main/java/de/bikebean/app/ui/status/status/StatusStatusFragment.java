@@ -25,15 +25,16 @@ import java.util.Objects;
 import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
 import de.bikebean.app.Utils;
+import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.status.StateViewModel;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 import de.bikebean.app.ui.status.sms.send.SmsSender;
 
 public class StatusStatusFragment extends Fragment {
 
-    private StateViewModel st;
+    private StatusStateViewModel st;
     private LiveDataTimerViewModel tv;
+    private SmsViewModel sm;
     private FragmentActivity act;
 
     private SmsSender smsSender;
@@ -46,7 +47,7 @@ public class StatusStatusFragment extends Fragment {
     private TextView statusLastChangedText;
 
     private Spinner intervalDropdown;
-    private TextView intervalPendingStatus, intervalSummary;
+    private TextView intervalPendingStatus, intervalSummary, nextUpdateEstimation;
 
     private Switch wlanSwitch;
     private TextView wlanPendingStatus, wlanSummary;
@@ -65,6 +66,7 @@ public class StatusStatusFragment extends Fragment {
         intervalDropdown = v.findViewById(R.id.intervalDropdown);
         intervalSummary = v.findViewById(R.id.intervalSummary);
         intervalPendingStatus = v.findViewById(R.id.intervalPendingStatus);
+        nextUpdateEstimation = v.findViewById(R.id.nextUpdateEstimation);
 
         warningNumberSummary = v.findViewById(R.id.warningNumberSummary);
         warningNumberPendingStatus = v.findViewById(R.id.warningNumberPendingStatus);
@@ -78,9 +80,9 @@ public class StatusStatusFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        st = new ViewModelProvider(this).get(StateViewModel.class);
+        st = new ViewModelProvider(this).get(StatusStateViewModel.class);
         tv = new ViewModelProvider(this).get(LiveDataTimerViewModel.class);
-        SmsViewModel sm  = new ViewModelProvider(this).get(SmsViewModel.class);
+        sm = new ViewModelProvider(this).get(SmsViewModel.class);
 
         act = Objects.requireNonNull(getActivity());
         Context ctx = Objects.requireNonNull(act).getApplicationContext();
@@ -245,6 +247,24 @@ public class StatusStatusFragment extends Fragment {
         intervalSummary.setText(String.format(intervalSummaryString, oldValue));
         intervalPendingStatus.setText("");
         intervalPendingStatus.setVisibility(View.GONE);
+        long dt = st.getIntervalLastChangeDate();
+        List<Sms> ls = sm.getAllSinceDate(dt);
+
+        List<Integer> n = new ArrayList<>();
+        List<Integer> e = new ArrayList<>();
+
+        final int I = st.getConfirmedIntervalSync() * 60; // Interval in min
+
+        for (int i=1; i<ls.size(); i++) {
+            long t = ls.get(i-1).getTimestamp() - ls.get(ls.size()-1).getTimestamp();
+            double h = t / 1000.0 / 60;
+            double j = h / (double) I;
+            int _n = (int) Math.round(j);
+            n.add(_n);
+            e.add(30 + (int) (t / 1000.0 / 60) - ((_n) * I));
+        }
+
+        nextUpdateEstimation.setText("Nächstes Aufwachen ca." + Utils.convertToTime(dt) + "  " + getStringInt(n) + " " + getStringInt(e));
     }
 
     private void setWifiElementsConfirmed(State state) {
@@ -293,6 +313,36 @@ public class StatusStatusFragment extends Fragment {
                 String.format(intervalTransitionString, state.getValue().intValue())
         );
         intervalPendingStatus.setVisibility(View.VISIBLE);
+
+        long dt = st.getIntervalLastChangeDate();
+        List<Sms> ls = sm.getAllSinceDate(dt);
+
+        List<Integer> n = new ArrayList<>();
+        List<Integer> e = new ArrayList<>();
+
+        final int I = st.getConfirmedIntervalSync() * 60; // Interval in min
+
+        for (int i=1; i<ls.size(); i++) {
+            long t = ls.get(i-1).getTimestamp() - ls.get(ls.size()-1).getTimestamp();
+            double h = t / 1000.0 / 60;
+            double j = h / (double) I;
+            int _n = (int) Math.round(j);
+            n.add(_n);
+            e.add(30 + (int) (t / 1000.0 / 60) - ((_n) * I));
+        }
+
+        nextUpdateEstimation.setText("Nächstes Aufwachen ca." + Utils.convertToTime(dt) + "  " + getStringInt(n) + " " + getStringInt(e));
+    }
+
+    private String getStringInt(List<Integer> l) {
+        StringBuilder s = new StringBuilder();
+
+        for (int d : l) {
+            s.append(d);
+            s.append("\n");
+        }
+
+        return s.toString();
     }
 
     private void setWifiElementsPending(State state) {

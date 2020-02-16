@@ -5,8 +5,10 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import de.bikebean.app.db.DatabaseEntity;
+
 @Entity(tableName = "sms_table")
-public class Sms {
+public class Sms extends DatabaseEntity {
 
     public static final int STATUS_NEW = 0;
     public static final int STATUS_PARSED = 1;
@@ -80,5 +82,10 @@ public class Sms {
 
     public long getTimestamp() {
         return this.mTimestamp;
+    }
+
+    @Override
+    public DatabaseEntity getNullType() {
+        return new Sms(0, "", "", 0, 0, "", 0);
     }
 }

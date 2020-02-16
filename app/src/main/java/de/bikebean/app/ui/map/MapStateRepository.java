@@ -7,9 +7,9 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.status.StateViewModel;
+import de.bikebean.app.ui.status.StateRepository;
 
-public class MapFragmentViewModel extends StateViewModel {
+class MapStateRepository extends StateRepository {
 
     private final LiveData<List<State>> mStatusNumberCellTowers;
     private final LiveData<List<State>> mStatusNumberWifiAccessPoints;
@@ -17,16 +17,15 @@ public class MapFragmentViewModel extends StateViewModel {
     private final LiveData<List<State>> mConfirmedLocationLng;
     private final LiveData<List<State>> mConfirmedLocationAcc;
 
-    public MapFragmentViewModel(Application application) {
+    MapStateRepository(Application application) {
         super(application);
 
-        MapStateRepository mRepository = new MapStateRepository(application);
+        mStatusNumberCellTowers = mStateDao.getAllByKey(State.KEY_NO_CELL_TOWERS);
+        mStatusNumberWifiAccessPoints = mStateDao.getAllByKey(State.KEY_NO_WIFI_ACCESS_POINTS);
 
-        mStatusNumberCellTowers = mRepository.getStatusNumberCellTowers();
-        mStatusNumberWifiAccessPoints = mRepository.getStatusNumberWifiAccessPoints();
-        mConfirmedLocationLat = mRepository.getConfirmedLocationLat();
-        mConfirmedLocationLng = mRepository.getConfirmedLocationLng();
-        mConfirmedLocationAcc = mRepository.getConfirmedLocationAcc();
+        mConfirmedLocationLat = mStateDao.getByKeyAndState(State.KEY_LAT, State.STATUS_CONFIRMED);
+        mConfirmedLocationLng = mStateDao.getByKeyAndState(State.KEY_LNG, State.STATUS_CONFIRMED);
+        mConfirmedLocationAcc = mStateDao.getByKeyAndState(State.KEY_ACC, State.STATUS_CONFIRMED);
     }
 
     LiveData<List<State>> getConfirmedLocationLat() {
@@ -41,12 +40,11 @@ public class MapFragmentViewModel extends StateViewModel {
         return mConfirmedLocationAcc;
     }
 
-    LiveData<List<State>> getStatusNumberWifiAccessPoints() {
-        return mStatusNumberWifiAccessPoints;
-    }
-
     LiveData<List<State>> getStatusNumberCellTowers() {
         return mStatusNumberCellTowers;
     }
 
+    LiveData<List<State>> getStatusNumberWifiAccessPoints() {
+        return mStatusNumberWifiAccessPoints;
+    }
 }

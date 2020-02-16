@@ -6,8 +6,10 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import de.bikebean.app.db.DatabaseEntity;
+
 @Entity(tableName = "state_table")
-public class State {
+public class State extends DatabaseEntity {
 
     // Confirmed through SMS with newest data (default state)
     public static final int STATUS_CONFIRMED = 0;
@@ -127,5 +129,10 @@ public class State {
 
     public int getSmsId() {
         return this.mSmsId;
+    }
+
+    @Override
+    public DatabaseEntity getNullType() {
+        return new State(KEY_BATTERY, 0.0);
     }
 }
