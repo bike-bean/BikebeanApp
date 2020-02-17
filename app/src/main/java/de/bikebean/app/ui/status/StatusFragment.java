@@ -2,7 +2,6 @@ package de.bikebean.app.ui.status;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -144,6 +143,8 @@ public class StatusFragment extends Fragment {
                 Navigation.findNavController(Objects.requireNonNull(getView()))
                         .navigate(R.id.history_action);
                 return true;
+            // case R.id.menu_item_licenses:
+                // startActivity(new Intent(this, OssLicensesMenuActivity.class));
             default:
                 return super.onOptionsItemSelected(item);
         }
