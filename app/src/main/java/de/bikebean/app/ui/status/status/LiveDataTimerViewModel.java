@@ -13,11 +13,9 @@ import java.util.TimerTask;
 
 public class LiveDataTimerViewModel extends AndroidViewModel {
 
-    static final int TIMER_ONE = 0;
-    static final int TIMER_TWO = 1;
-    static final int TIMER_THREE = 2;
-    public static final int TIMER_FOUR = 3;
-    public static final int TIMER_FIVE = 4;
+    public enum TIMER {
+        ONE, TWO, THREE, FOUR, FIVE
+    }
 
     private static final int N_TIMERS = 5;
 
@@ -37,28 +35,28 @@ public class LiveDataTimerViewModel extends AndroidViewModel {
         }
     }
 
-    public long startTimer(final int which, long startTime, int interval) {
-        timers.put(which, new Timer());
-        stopTimes.put(which, startTime + interval * 1000 * 60 * 60);
+    public long startTimer(final TIMER which, long startTime, int interval) {
+        timers.put(which.ordinal(), new Timer());
+        stopTimes.put(which.ordinal(), startTime + interval * 1000 * 60 * 60);
 
-        timers.get(which).scheduleAtFixedRate(new TimerTask() {
+        timers.get(which.ordinal()).scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 final long newValueSeconds =
-                        (stopTimes.get(which) - System.currentTimeMillis()) / (1000);
-                residualTimes.get(which).postValue(newValueSeconds);
+                        (stopTimes.get(which.ordinal()) - System.currentTimeMillis()) / (1000);
+                residualTimes.get(which.ordinal()).postValue(newValueSeconds);
             }
         }, ONE_SECOND, ONE_SECOND);
 
-        return stopTimes.get(which);
+        return stopTimes.get(which.ordinal());
     }
 
-    public LiveData<Long> getResidualTime(final int which) {
-        return residualTimes.get(which);
+    public LiveData<Long> getResidualTime(final TIMER which) {
+        return residualTimes.get(which.ordinal());
     }
 
-    public void cancelTimer(final int which) {
-        timers.get(which).cancel();
+    public void cancelTimer(final TIMER which) {
+        timers.get(which.ordinal()).cancel();
     }
 
     @Override

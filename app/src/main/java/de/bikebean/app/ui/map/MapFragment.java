@@ -124,8 +124,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         googleMap.getUiSettings().setZoomControlsEnabled(true);
         googleMap.getUiSettings().setMapToolbarEnabled(false); // disable map toolbar
 
-        if (Utils.getPermissions(act, Utils.PERMISSION_KEY_MAPS, () ->
-                new PermissionsRationaleDialog(act, Utils.PERMISSION_KEY_MAPS).show(
+        if (Utils.getPermissions(act, Utils.PERMISSION_KEY.MAPS, () ->
+                new PermissionsRationaleDialog(act, Utils.PERMISSION_KEY.MAPS).show(
                         act.getSupportFragmentManager(),
                         "mapsRationaleDialog"
                 )
@@ -204,20 +204,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         if (statuses.size() == 0)
             return;
 
-        switch (statuses.get(0).getKey()) {
-            case State.KEY_NO_CELL_TOWERS:
+        switch (State.KEY.getValue(statuses.get(0).getKey())) {
+            case NO_CELL_TOWERS:
                 marker.setSnippet(snippet.setNumberCellTowers(statuses.get(0).getValue().intValue()));
                 break;
-            case State.KEY_NO_WIFI_ACCESS_POINTS:
+            case NO_WIFI_ACCESS_POINTS:
                 marker.setSnippet(snippet.setNumberWifiAccessPoints(statuses.get(0).getValue().intValue()));
                 break;
-            case State.KEY_LAT: // And:
-            case State.KEY_LNG:
+            case LAT: // And:
+            case LNG:
                 marker.setPosition(currentPositionBike.set(statuses.get(0)));
                 circle.setCenter(currentPositionBike.get());
                 setCamera(true);
                 break;
-            case State.KEY_ACC:
+            case ACC:
                 circle.setRadius(statuses.get(0).getValue());
                 setCamera(true);
                 break;
@@ -311,7 +311,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             int requestCode,
             @NonNull String[] permissions,
             @NonNull int[] grantResults) {
-        if (requestCode == Utils.PERMISSION_KEY_MAPS) {
+        if (requestCode == Utils.PERMISSION_KEY.MAPS.ordinal()) {
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 setLocationEnabled();
@@ -378,11 +378,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
 
         LatLng set(State state) {
-            switch (state.getKey()) {
-                case State.KEY_LAT:
+            switch (State.KEY.getValue(state.getKey())) {
+                case LAT:
                     latLng = new LatLng(state.getValue(), this.latLng.longitude);
                     break;
-                case State.KEY_LNG:
+                case LNG:
                     latLng = new LatLng(this.latLng.latitude, state.getValue());
                     break;
             }

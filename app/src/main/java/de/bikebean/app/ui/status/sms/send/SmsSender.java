@@ -66,8 +66,8 @@ public class SmsSender {
     private void getPermissions() {
         StatusFragment.permissionGrantedHandler = this::reallySend;
 
-        if (Utils.getPermissions(act, Utils.PERMISSION_KEY_SMS, () ->
-                new PermissionsRationaleDialog(act, Utils.PERMISSION_KEY_SMS).show(
+        if (Utils.getPermissions(act, Utils.PERMISSION_KEY.SMS, () ->
+                new PermissionsRationaleDialog(act, Utils.PERMISSION_KEY.SMS).show(
                         act.getSupportFragmentManager(),
                         "smsRationaleDialog"
                 )
@@ -87,7 +87,7 @@ public class SmsSender {
         synchronized (this) {
             new SmsSendIdGetter(smsViewModel, smsId -> smsViewModel.insert(new Sms(
                     smsId - 1, phoneNumber, message, Telephony.Sms.MESSAGE_TYPE_SENT,
-                    Sms.STATUS_NEW, Utils.convertToTime(timestamp), timestamp))
+                    Sms.STATUS.NEW, Utils.convertToTime(timestamp), timestamp))
             ).execute();
         }
 

@@ -39,10 +39,10 @@ public class Conversation {
         // update the internal list, checking if the information from the SMS
         // is newer than already stored information.
         for (Setting smsSetting : smsSettingList) {
-            if (smsSetting.getKey().equals(State.KEY_WAPP)
-                    || smsSetting.getKey().equals(State.KEY_BATTERY)
-                    || smsSetting.getKey().equals(State.KEY_WIFI_ACCESS_POINTS)
-                    || smsSetting.getKey().equals(State.KEY_CELL_TOWERS)) {
+            if (smsSetting.getKey().equals(State.KEY.WAPP)
+                    || smsSetting.getKey().equals(State.KEY.BATTERY)
+                    || smsSetting.getKey().equals(State.KEY.WIFI_ACCESS_POINTS)
+                    || smsSetting.getKey().equals(State.KEY.CELL_TOWERS)) {
                 internalList.add(smsSetting);
             } else {
                 for (Setting internalListItem : internalList)

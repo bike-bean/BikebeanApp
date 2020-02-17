@@ -34,51 +34,43 @@ public class StateViewModel extends AndroidViewModel {
 
     public void insertInitialStates(Context ctx) {
         insert(new State(
-                1, State.KEY_WARNING_NUMBER,
-                0.0, ctx.getString(R.string.warning_number_default),
-                State.STATUS_UNSET, 0)
+                1, State.KEY.WARNING_NUMBER, 0.0, ctx.getString(R.string.warning_number_default),
+                State.STATUS.UNSET, 0)
         );
 
         insert(new State(
-                1, State.KEY_INTERVAL,
-                INITIAL_INTERVAL, "",
-                State.STATUS_CONFIRMED, 0)
+                1, State.KEY.INTERVAL, INITIAL_INTERVAL, "",
+                State.STATUS.CONFIRMED, 0)
         );
 
         insert(new State(
-                1, State.KEY_WIFI,
-                INITIAL_WIFI, "",
-                State.STATUS_CONFIRMED, 0)
+                1, State.KEY.WIFI, INITIAL_WIFI, "",
+                State.STATUS.CONFIRMED, 0)
         );
 
         insert(new State(
-                1, State.KEY_STATUS,
-                0.0, "",
-                State.STATUS_UNSET, 0)
+                1, State.KEY._STATUS, 0.0, "",
+                State.STATUS.UNSET, 0)
         );
 
         insert(new State(
-                1, State.KEY_BATTERY,
-                -1.0, "",
-                State.STATUS_UNSET, 0)
+                1, State.KEY.BATTERY, -1.0, "",
+                State.STATUS.UNSET, 0)
         );
 
         insert(new State(
-                1, State.KEY_LOCATION,
-                0.0, "",
-                State.STATUS_UNSET, 0)
+                1, State.KEY.LOCATION, 0.0, "",
+                State.STATUS.UNSET, 0)
         );
 
         insert(new State(
-                1, State.KEY_CELL_TOWERS,
-                0.0, "",
-                State.STATUS_UNSET, 0)
+                1, State.KEY.CELL_TOWERS, 0.0, "",
+                State.STATUS.UNSET, 0)
         );
 
         insert(new State(
-                1, State.KEY_WIFI_ACCESS_POINTS,
-                0.0, "",
-                State.STATUS_UNSET, 0)
+                1, State.KEY.WIFI_ACCESS_POINTS, 0.0, "",
+                State.STATUS.UNSET, 0)
         );
     }
 
@@ -87,7 +79,7 @@ public class StateViewModel extends AndroidViewModel {
     }
 
     public int getConfirmedIntervalSync() {
-        State intervalConfirmed = getConfirmedStateSync(State.KEY_INTERVAL);
+        State intervalConfirmed = getConfirmedStateSync(State.KEY.INTERVAL);
 
         if (intervalConfirmed != null)
             return intervalConfirmed.getValue().intValue();
@@ -96,7 +88,7 @@ public class StateViewModel extends AndroidViewModel {
     }
 
     public String getWifiAccessPointsSync() {
-        State wifiAccessPoints = getConfirmedStateSync(State.KEY_WIFI_ACCESS_POINTS);
+        State wifiAccessPoints = getConfirmedStateSync(State.KEY.WIFI_ACCESS_POINTS);
 
         if (wifiAccessPoints != null)
             return wifiAccessPoints.getLongValue();
@@ -104,22 +96,22 @@ public class StateViewModel extends AndroidViewModel {
             return "";
     }
 
-    protected State getConfirmedStateSync(String key) {
+    protected State getConfirmedStateSync(State.KEY key) {
         return getStateSync(mRepository::getConfirmedStateSync, key, 0);
     }
 
-    protected State getLastStateSync(String key) {
+    protected State getLastStateSync(State.KEY key) {
         return getStateSync(mRepository::getLastStateSync, key, 0);
     }
 
-    protected State getStateByIdSync(String key, int smsId) {
+    protected State getStateByIdSync(State.KEY key, int smsId) {
         return getStateSync(mRepository::getStateByIdSync, key, smsId);
     }
 
-    private State getStateSync(MutableObject.ListGetter stateGetter, String key, int smsId) {
+    private State getStateSync(MutableObject.ListGetter stateGetter, State.KEY key, int smsId) {
         final MutableObject<State> state =
-                new MutableObject<>(new State(State.KEY_BATTERY, 0.0));
+                new MutableObject<>(new State(State.KEY.BATTERY, 0.0));
 
-        return (State) state.getDbEntitySync(stateGetter, key, smsId);
+        return (State) state.getDbEntitySync(stateGetter, key.get(), smsId);
     }
 }

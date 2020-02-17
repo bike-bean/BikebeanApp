@@ -3,6 +3,7 @@ package de.bikebean.app.db.sms;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import de.bikebean.app.db.DatabaseEntity;
@@ -10,8 +11,9 @@ import de.bikebean.app.db.DatabaseEntity;
 @Entity(tableName = "sms_table")
 public class Sms extends DatabaseEntity {
 
-    public static final int STATUS_NEW = 0;
-    public static final int STATUS_PARSED = 1;
+    public enum STATUS {
+        NEW, PARSED
+    }
 
     @PrimaryKey
     @ColumnInfo(name = "_id")
@@ -52,6 +54,25 @@ public class Sms extends DatabaseEntity {
         this.mBody = body;
         this.mType = type;
         this.mState = state;
+        this.mDate = date;
+        this.mTimestamp = timestamp;
+    }
+
+    @Ignore
+    public Sms(
+            int id,
+            @NonNull String address,
+            @NonNull String body,
+            int type,
+            STATUS state,
+            @NonNull String date,
+            long timestamp
+    ) {
+        this.mId = id;
+        this.mAddress = address;
+        this.mBody = body;
+        this.mType = type;
+        this.mState = state.ordinal();
         this.mDate = date;
         this.mTimestamp = timestamp;
     }

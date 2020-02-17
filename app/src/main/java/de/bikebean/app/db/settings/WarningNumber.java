@@ -9,7 +9,7 @@ public class WarningNumber extends Setting {
     public WarningNumber(String warningNumber, Sms sms) {
         this.warningNumber = warningNumber;
         this.sms = sms;
-        this.key = State.KEY_WARNING_NUMBER;
+        this.key = State.KEY.WARNING_NUMBER;
     }
 
     public String get() {

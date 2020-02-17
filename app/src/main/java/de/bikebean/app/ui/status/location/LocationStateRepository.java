@@ -24,13 +24,13 @@ class LocationStateRepository extends StateRepository {
     LocationStateRepository(Application application) {
         super(application);
 
-        mStatusLocationLat = mStateDao.getAllByKey(State.KEY_LAT);
-        mStatusLocationLng = mStateDao.getAllByKey(State.KEY_LNG);
-        mStatusLocationAcc = mStateDao.getAllByKey(State.KEY_ACC);
-        mWapp = mStateDao.getByKeyAndState(State.KEY_WAPP, State.STATUS_PENDING);
-        mLocation = mStateDao.getAllByKey(State.KEY_LOCATION);
-        mCellTowers = mStateDao.getAllByKey(State.KEY_CELL_TOWERS);
-        mWifiAccessPoints = mStateDao.getAllByKey(State.KEY_WIFI_ACCESS_POINTS);
+        mStatusLocationLat = mStateDao.getAllByKey(State.KEY.LAT.get());
+        mStatusLocationLng = mStateDao.getAllByKey(State.KEY.LNG.get());
+        mStatusLocationAcc = mStateDao.getAllByKey(State.KEY.ACC.get());
+        mWapp = mStateDao.getByKeyAndState(State.KEY.WAPP.get(), State.STATUS.PENDING.ordinal());
+        mLocation = mStateDao.getAllByKey(State.KEY.LOCATION.get());
+        mCellTowers = mStateDao.getAllByKey(State.KEY.CELL_TOWERS.get());
+        mWifiAccessPoints = mStateDao.getAllByKey(State.KEY.WIFI_ACCESS_POINTS.get());
     }
 
     LiveData<List<State>> getStatusLocationLat() {
@@ -68,6 +68,9 @@ class LocationStateRepository extends StateRepository {
 
     private void confirmWapp(int smsId, double value) {
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() ->
-                mStateDao.updateStateByKeyAndSmsId(State.STATUS_CONFIRMED, value, State.KEY_WAPP, smsId));
+                mStateDao.updateStateByKeyAndSmsId(
+                        State.STATUS.CONFIRMED.ordinal(), value, State.KEY.WAPP.get(), smsId
+                )
+        );
     }
 }

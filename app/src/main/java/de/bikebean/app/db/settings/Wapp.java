@@ -10,7 +10,7 @@ public class Wapp extends Setting {
     public Wapp(double wapp, Sms sms) {
         this.wapp= wapp;
         this.sms = sms;
-        this.key = State.KEY_WAPP;
+        this.key = State.KEY.WAPP;
     }
 
     public Double get() {

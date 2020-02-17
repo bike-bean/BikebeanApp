@@ -68,18 +68,18 @@ public class LocationStateViewModel extends StateViewModel {
     }
 
     State getConfirmedLocationSync(State state) {
-        return getConfirmedStateSync(state.getKey());
+        return getConfirmedStateSync(State.KEY.getValue(state.getKey()));
     }
 
     boolean getLocationByIdSync(int smsId) {
-        return getStateByIdSync(State.KEY_LAT, smsId) != null;
+        return getStateByIdSync(State.KEY.LAT, smsId) != null;
     }
 
     State getWifiAccessPointsBySmsIdSync(int smsId) {
-        return getStateByIdSync(State.KEY_WIFI_ACCESS_POINTS, smsId);
+        return getStateByIdSync(State.KEY.WIFI_ACCESS_POINTS, smsId);
     }
 
     State getCellTowersBySmsIdSync(int smsId) {
-        return getStateByIdSync(State.KEY_CELL_TOWERS, smsId);
+        return getStateByIdSync(State.KEY.CELL_TOWERS, smsId);
     }
 }

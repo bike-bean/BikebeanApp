@@ -80,8 +80,8 @@ public class InitialConfigurationActivity extends AppCompatActivity {
     }
 
     private void getPermissions() {
-        if (Utils.getPermissions(this, Utils.PERMISSION_KEY_SMS, () ->
-                new PermissionsRationaleDialog(this, Utils.PERMISSION_KEY_SMS).show(
+        if (Utils.getPermissions(this, Utils.PERMISSION_KEY.SMS, () ->
+                new PermissionsRationaleDialog(this, Utils.PERMISSION_KEY.SMS).show(
                         getSupportFragmentManager(),
                         "smsRationaleDialog"
                 )
@@ -101,7 +101,7 @@ public class InitialConfigurationActivity extends AppCompatActivity {
             int requestCode,
             @NonNull String[] permissions,
             @NonNull int[] grantResults) {
-        if (requestCode == Utils.PERMISSION_KEY_SMS) {
+        if (requestCode == Utils.PERMISSION_KEY.SMS.ordinal()) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 fetchSms();
             else

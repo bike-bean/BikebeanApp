@@ -9,7 +9,7 @@ public class CellTowers extends Setting {
     public CellTowers(String cellTowers, Sms sms) {
         this.cellTowers = cellTowers;
         this.sms = sms;
-        this.key = State.KEY_CELL_TOWERS;
+        this.key = State.KEY.CELL_TOWERS;
     }
 
     public String get() {

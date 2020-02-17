@@ -112,8 +112,8 @@ public class StatusFragment extends Fragment {
 
         FragmentActivity act = requireActivity();
 
-        if (Utils.getPermissions(act, Utils.PERMISSION_KEY_SMS, () ->
-                new PermissionsRationaleDialog(act, Utils.PERMISSION_KEY_SMS).show(
+        if (Utils.getPermissions(act, Utils.PERMISSION_KEY.SMS, () ->
+                new PermissionsRationaleDialog(act, Utils.PERMISSION_KEY.SMS).show(
                         act.getSupportFragmentManager(),
                         "smsRationaleDialog"
                 )

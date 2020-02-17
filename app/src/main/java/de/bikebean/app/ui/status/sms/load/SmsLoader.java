@@ -69,7 +69,7 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
             Log.d(MainActivity.TAG, "Loading " + inbox.getCount() + " SMS");
 
             for (int i=0; i < inbox.getCount(); i++) {
-                Sms sms = buildSms(inbox, Sms.STATUS_NEW);
+                Sms sms = buildSms(inbox, Sms.STATUS.NEW);
 
                 if (smsViewModel.getSmsById(sms.getId()).size() == 0)
                     smsViewModel.insert(sms);
@@ -100,7 +100,7 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
         if (inbox.moveToFirst()) {
             Log.d(MainActivity.TAG, "Loading " + inbox.getCount() + " SMS");
             for (int i = 0; i < inbox.getCount(); i++) {
-                Sms sms = buildSms(inbox, Sms.STATUS_PARSED);
+                Sms sms = buildSms(inbox, Sms.STATUS.PARSED);
                 conversation.add(sms);
 
                 inbox.moveToNext();
@@ -113,7 +113,7 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
         conversation.updatePreferences();
     }
 
-    private Sms buildSms(Cursor inbox, int smsState) {
+    private Sms buildSms(Cursor inbox, Sms.STATUS smsState) {
         String address = inbox.getString(inbox.getColumnIndexOrThrow("address"));
         String id = inbox.getString(inbox.getColumnIndexOrThrow("_id"));
         String body = inbox.getString(inbox.getColumnIndexOrThrow("body"));

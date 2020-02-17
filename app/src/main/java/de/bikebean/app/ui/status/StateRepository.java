@@ -23,7 +23,7 @@ public class StateRepository {
 
     List<State> getConfirmedStateSync(String key, int smsId) {
         discard(smsId);
-        return mStateDao.getByKeyAndStateSync(key, State.STATUS_CONFIRMED);
+        return mStateDao.getByKeyAndStateSync(key, State.STATUS.CONFIRMED.ordinal());
     }
 
     List<State> getLastStateSync(String key, int smsId) {

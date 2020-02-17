@@ -39,7 +39,7 @@ public class LocationStatusFragment extends Fragment {
 
     private SmsSender smsSender;
 
-    private final int t1 = LiveDataTimerViewModel.TIMER_FIVE;
+    private final LiveDataTimerViewModel.TIMER t1 = LiveDataTimerViewModel.TIMER.FIVE;
 
     // UI Elements
     private Button buttonGetLocation, buttonOpenMap;
@@ -106,8 +106,8 @@ public class LocationStatusFragment extends Fragment {
 
     private void initUserInteractionElements() {
         List<State> locationStates = new ArrayList<>();
-        locationStates.add(new State(State.KEY_CELL_TOWERS, 0.0));
-        locationStates.add(new State(State.KEY_WIFI_ACCESS_POINTS, 0.0));
+        locationStates.add(new State(State.KEY.CELL_TOWERS, 0.0));
+        locationStates.add(new State(State.KEY.WIFI_ACCESS_POINTS, 0.0));
 
         // Buttons
         buttonGetLocation.setOnClickListener(v -> smsSender.send("Wapp", locationStates));
@@ -130,52 +130,53 @@ public class LocationStatusFragment extends Fragment {
 
         parsedSms.add(id);
 
-        switch (state.getState()) {
-            case State.STATUS_UNSET:
-                switch (state.getKey()) {
-                    case State.KEY_LAT: // And
-                    case State.KEY_LNG: // And
-                    case State.KEY_ACC: // And
+        State.KEY key = State.KEY.getValue(state.getKey());
+        switch (State.STATUS.values()[state.getState()]) {
+            case UNSET:
+                switch (key) {
+                    case LAT: // And
+                    case LNG: // And
+                    case ACC: // And
                         break;
-                    case State.KEY_LOCATION:
+                    case LOCATION:
                         setLocationElementsUnset();
                         break;
-                    case State.KEY_CELL_TOWERS: // And
-                    case State.KEY_WIFI_ACCESS_POINTS:
+                    case CELL_TOWERS: // And
+                    case WIFI_ACCESS_POINTS:
                         setLocationElementsTempUnset();
                         break;
                 }
                 break;
-            case State.STATUS_PENDING:
-                switch (state.getKey()) {
-                    case State.KEY_LAT: // And
-                    case State.KEY_LNG: // And
-                    case State.KEY_ACC: // And
+            case PENDING:
+                switch (key) {
+                    case LAT: // And
+                    case LNG: // And
+                    case ACC: // And
                         break;
-                    case State.KEY_LOCATION:
+                    case LOCATION:
                         setLocationElementsPending(state);
                         break;
-                    case State.KEY_CELL_TOWERS: // And
-                    case State.KEY_WIFI_ACCESS_POINTS:
+                    case CELL_TOWERS: // And
+                    case WIFI_ACCESS_POINTS:
                         setLocationElementsTempPending(state);
                         break;
                 }
                 break;
-            case State.STATUS_CONFIRMED:
-                switch (state.getKey()) {
-                    case State.KEY_LAT:
+            case CONFIRMED:
+                switch (key) {
+                    case LAT:
                         setLocationTableElementsConfirmed(state, latText, 7);
                         break;
-                    case State.KEY_LNG:
+                    case LNG:
                         setLocationTableElementsConfirmed(state, lngText, 7);
                         break;
-                    case State.KEY_ACC:
+                    case ACC:
                         setLocationTableElementsConfirmed(state, accText, 1);
                         break;
-                    case State.KEY_LOCATION:
+                    case LOCATION:
                         setLocationElementsConfirmed(state);
-                    case State.KEY_CELL_TOWERS: // And
-                    case State.KEY_WIFI_ACCESS_POINTS:
+                    case CELL_TOWERS: // And
+                    case WIFI_ACCESS_POINTS:
                         break;
                 }
                 break;
@@ -299,13 +300,13 @@ public class LocationStatusFragment extends Fragment {
                     .execute(wifiAccessPointsState.getLongValue(), cellTowersState.getLongValue());
 
             if (lastWifiAccessPointsState == null || lastCellTowersState == null) {
-                st.insert(new State(State.KEY_LOCATION, 0.0, wappCellTowers.getTimestamp()));
+                st.insert(new State(State.KEY.LOCATION, 0.0, wappCellTowers.getTimestamp()));
                 return;
             }
 
             if (lastWifiAccessPointsState.id == wifiAccessPointsState.id
                     && lastCellTowersState.id == cellTowersState.id)
-                st.insert(new State(State.KEY_LOCATION, 0.0, wappCellTowers.getTimestamp()));
+                st.insert(new State(State.KEY.LOCATION, 0.0, wappCellTowers.getTimestamp()));
         }
     }
 

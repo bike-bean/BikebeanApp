@@ -9,7 +9,7 @@ public class WifiAccessPoints extends Setting {
     public WifiAccessPoints(String wifiAccessPoints, Sms sms) {
         this.wifiAccessPoints = wifiAccessPoints;
         this.sms = sms;
-        this.key = State.KEY_WIFI_ACCESS_POINTS;
+        this.key = State.KEY.WIFI_ACCESS_POINTS;
     }
 
     public String get() {

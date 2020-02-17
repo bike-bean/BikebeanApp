@@ -8,13 +8,13 @@ import de.bikebean.app.db.state.State;
 
 public abstract class Setting {
     Sms sms;
-    String key;
+    State.KEY key;
 
     public long getDate() {
         return sms.getTimestamp();
     }
 
-    public String getKey() {
+    public State.KEY getKey() {
         return key;
     }
 
@@ -35,11 +35,11 @@ public abstract class Setting {
 
         for (Setting setting : settingList)
             if (setting.getDate() != 0)
-                if (setting.getKey().equals(State.KEY_WAPP))
+                if (setting.getKey().equals(State.KEY.WAPP))
                     setting.addStatusEntryPending(newStateEntries);
-                else if (setting.getKey().equals(State.KEY_WARNING_NUMBER)
-                        || setting.getKey().equals(State.KEY_CELL_TOWERS)
-                        || setting.getKey().equals(State.KEY_WIFI_ACCESS_POINTS))
+                else if (setting.getKey().equals(State.KEY.WARNING_NUMBER)
+                        || setting.getKey().equals(State.KEY.CELL_TOWERS)
+                        || setting.getKey().equals(State.KEY.WIFI_ACCESS_POINTS))
                     setting.addStatusEntryConfirmed(newStateEntries, true);
                 else
                     setting.addStatusEntryConfirmed(newStateEntries, false);
@@ -50,19 +50,17 @@ public abstract class Setting {
     private void addStatusEntryConfirmed(List<State> entries, boolean takeLong) {
         if (takeLong)
             entries.add(new State(
-                    getDate(), getKey(), 0.0, (String) get(),
-                    State.STATUS_CONFIRMED, getId())
+                    getDate(), getKey(), 0.0, (String) get(), State.STATUS.CONFIRMED, getId())
             );
         else
             entries.add(new State(
-                    getDate(), getKey(), (double) get(), "",
-                    State.STATUS_CONFIRMED, getId())
+                    getDate(), getKey(), (double) get(), "", State.STATUS.CONFIRMED, getId())
             );
     }
 
     private void addStatusEntryPending(List<State> entries) {
         entries.add(new State(
-                getDate(), getKey(), (Double) get(), "", State.STATUS_PENDING, getId())
+                getDate(), getKey(), (Double) get(), "", State.STATUS.PENDING, getId())
         );
     }
 }

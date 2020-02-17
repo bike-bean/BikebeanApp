@@ -93,20 +93,20 @@ class GeolocationAPI {
 
     private void updateLatLngAcc(double lat, double lng, double acc, StateViewModel vm, Sms sms) {
         vm.insert(new State(
-                sms.getTimestamp() + 1, State.KEY_LAT, lat,
-                "", State.STATUS_CONFIRMED, sms.getId())
+                sms.getTimestamp() + 1, State.KEY.LAT, lat,
+                "", State.STATUS.CONFIRMED, sms.getId())
         );
         vm.insert(new State(
-                sms.getTimestamp() + 1, State.KEY_LNG, lng,
-                "", State.STATUS_CONFIRMED, sms.getId())
+                sms.getTimestamp() + 1, State.KEY.LNG, lng,
+                "", State.STATUS.CONFIRMED, sms.getId())
         );
         vm.insert(new State(
-                sms.getTimestamp() + 1, State.KEY_ACC, acc,
-                "", State.STATUS_CONFIRMED, sms.getId())
+                sms.getTimestamp() + 1, State.KEY.ACC, acc,
+                "", State.STATUS.CONFIRMED, sms.getId())
         );
         vm.insert(new State(
-                sms.getTimestamp() + 1, State.KEY_LOCATION, 0.0,
-                "", State.STATUS_CONFIRMED, sms.getId())
+                sms.getTimestamp() + 1, State.KEY.LOCATION, 0.0,
+                "", State.STATUS.CONFIRMED, sms.getId())
         );
     }
 }

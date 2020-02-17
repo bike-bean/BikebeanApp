@@ -26,7 +26,10 @@ class SmsRepository {
         mSmsDao = db.smsDao();
 
         mChat = mSmsDao.getAll();
-        mNewIncoming = mSmsDao.getByStateAndType(Sms.STATUS_NEW, Telephony.Sms.MESSAGE_TYPE_INBOX);
+        mNewIncoming = mSmsDao.getByStateAndType(
+                Sms.STATUS.NEW.ordinal(),
+                Telephony.Sms.MESSAGE_TYPE_INBOX
+        );
         mAllIds = mSmsDao.getAllIdsByType(Telephony.Sms.MESSAGE_TYPE_INBOX);
     }
 
@@ -71,7 +74,7 @@ class SmsRepository {
 
     void markParsed(int id) {
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() ->
-                mSmsDao.updateStateById(Sms.STATUS_PARSED, id));
+                mSmsDao.updateStateById(Sms.STATUS.PARSED.ordinal(), id));
     }
 
     private void discard(int smsId) {

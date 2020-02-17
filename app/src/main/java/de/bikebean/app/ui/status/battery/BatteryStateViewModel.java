@@ -34,11 +34,11 @@ public class BatteryStateViewModel extends StateViewModel {
     }
 
     State getConfirmedBatterySync() {
-        return getConfirmedStateSync(State.KEY_BATTERY);
+        return getConfirmedStateSync(State.KEY.BATTERY);
     }
 
     private boolean getConfirmedWifiSync() {
-        State wifiConfirmed = getConfirmedStateSync(State.KEY_WIFI);
+        State wifiConfirmed = getConfirmedStateSync(State.KEY.WIFI);
 
         if (wifiConfirmed != null)
             return wifiConfirmed.getValue() > 0;

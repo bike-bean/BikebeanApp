@@ -19,10 +19,10 @@ class StatusStateRepository extends StateRepository {
     StatusStateRepository(Application application) {
         super(application);
 
-        mStatus = mStateDao.getAllByKey(State.KEY_STATUS);
-        mStatusWarningNumber = mStateDao.getAllByKey(State.KEY_WARNING_NUMBER);
-        mStatusInterval = mStateDao.getAllByKey(State.KEY_INTERVAL);
-        mStatusWifi = mStateDao.getAllByKey(State.KEY_WIFI);
+        mStatus = mStateDao.getAllByKey(State.KEY._STATUS.get());
+        mStatusWarningNumber = mStateDao.getAllByKey(State.KEY.WARNING_NUMBER.get());
+        mStatusInterval = mStateDao.getAllByKey(State.KEY.INTERVAL.get());
+        mStatusWifi = mStateDao.getAllByKey(State.KEY.WIFI.get());
     }
 
     LiveData<List<State>> getStatus() {

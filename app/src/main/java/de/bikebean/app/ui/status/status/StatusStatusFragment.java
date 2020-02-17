@@ -25,7 +25,6 @@ import java.util.Objects;
 import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
 import de.bikebean.app.Utils;
-import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 import de.bikebean.app.ui.status.sms.send.SmsSender;
@@ -34,14 +33,13 @@ public class StatusStatusFragment extends Fragment {
 
     private StatusStateViewModel st;
     private LiveDataTimerViewModel tv;
-    private SmsViewModel sm;
     private FragmentActivity act;
 
     private SmsSender smsSender;
     
-    private final int t1 = LiveDataTimerViewModel.TIMER_ONE;
-    private final int t2 = LiveDataTimerViewModel.TIMER_TWO;
-    private final int t3 = LiveDataTimerViewModel.TIMER_THREE;
+    private final LiveDataTimerViewModel.TIMER t1 = LiveDataTimerViewModel.TIMER.ONE;
+    private final LiveDataTimerViewModel.TIMER t2 = LiveDataTimerViewModel.TIMER.TWO;
+    private final LiveDataTimerViewModel.TIMER t3 = LiveDataTimerViewModel.TIMER.THREE;
 
     // UI Elements
     private TextView statusLastChangedText;
@@ -82,7 +80,7 @@ public class StatusStatusFragment extends Fragment {
 
         st = new ViewModelProvider(this).get(StatusStateViewModel.class);
         tv = new ViewModelProvider(this).get(LiveDataTimerViewModel.class);
-        sm = new ViewModelProvider(this).get(SmsViewModel.class);
+        SmsViewModel sm = new ViewModelProvider(this).get(SmsViewModel.class);
 
         act = Objects.requireNonNull(getActivity());
         Context ctx = Objects.requireNonNull(act).getApplicationContext();
@@ -137,7 +135,7 @@ public class StatusStatusFragment extends Fragment {
                 Log.d(MainActivity.TAG, "Setting Interval about to be changed to " + newValue);
                 String msg = "Int " + newValue;
                 List<State> statusStates = new ArrayList<>();
-                statusStates.add(new State(State.KEY_INTERVAL, Double.valueOf(newValue)));
+                statusStates.add(new State(State.KEY.INTERVAL, Double.valueOf(newValue)));
                 sendSms(msg, statusStates);
             }
 
@@ -156,7 +154,7 @@ public class StatusStatusFragment extends Fragment {
             Log.d(MainActivity.TAG, "Setting Wifi about to be changed to " + isChecked);
             String msg = "Wifi " + (isChecked ? "on" : "off");
             List<State> statusStates = new ArrayList<>();
-            statusStates.add(new State(State.KEY_WIFI, isChecked ? 1.0 : 0.0));
+            statusStates.add(new State(State.KEY.WIFI, isChecked ? 1.0 : 0.0));
             sendSms(msg, statusStates);
         });
     }
@@ -181,51 +179,52 @@ public class StatusStatusFragment extends Fragment {
 
         parsedSms.add(id);
 
-        switch (state.getState()) {
-            case State.STATUS_UNSET:
-                switch (state.getKey()) {
-                    case State.KEY_INTERVAL:
+        State.KEY key = State.KEY.getValue(state.getKey());
+        switch (State.STATUS.values()[state.getState()]) {
+            case UNSET:
+                switch (key) {
+                    case INTERVAL:
                         setIntervalElementsConfirmed(state);
                         break;
-                    case State.KEY_WIFI:
+                    case WIFI:
                         setWifiElementsConfirmed(state);
                         break;
-                    case State.KEY_WARNING_NUMBER:
+                    case WARNING_NUMBER:
                         setWarningNumberElementsUnset(state);
                         break;
-                    case State.KEY_STATUS:
+                    case _STATUS:
                         setStatusElementsUnset(state);
                         break;
                 }
                 break;
-            case State.STATUS_CONFIRMED:
-                switch (state.getKey()) {
-                    case State.KEY_INTERVAL:
+            case CONFIRMED:
+                switch (key) {
+                    case INTERVAL:
                         setIntervalElementsConfirmed(state);
                         break;
-                    case State.KEY_WIFI:
+                    case WIFI:
                         setWifiElementsConfirmed(state);
                         break;
-                    case State.KEY_WARNING_NUMBER:
+                    case WARNING_NUMBER:
                         setWarningNumberElementsConfirmed(state);
                         break;
-                    case State.KEY_STATUS:
+                    case _STATUS:
                         setStatusElementsConfirmed(state);
                         break;
                 }
                 break;
-            case State.STATUS_PENDING:
-                switch (state.getKey()) {
-                    case State.KEY_INTERVAL:
+            case PENDING:
+                switch (key) {
+                    case INTERVAL:
                         setIntervalElementsPending(state);
                         break;
-                    case State.KEY_WIFI:
+                    case WIFI:
                         setWifiElementsPending(state);
                         break;
-                    case State.KEY_WARNING_NUMBER:
+                    case WARNING_NUMBER:
                         setWarningNumberElementsPending(state);
                         break;
-                    case State.KEY_STATUS:
+                    case _STATUS:
                         break;
                 }
                 break;
@@ -247,6 +246,8 @@ public class StatusStatusFragment extends Fragment {
         intervalSummary.setText(String.format(intervalSummaryString, oldValue));
         intervalPendingStatus.setText("");
         intervalPendingStatus.setVisibility(View.GONE);
+
+        /*
         long dt = st.getIntervalLastChangeDate();
         List<Sms> ls = sm.getAllSinceDate(dt);
 
@@ -257,14 +258,15 @@ public class StatusStatusFragment extends Fragment {
 
         for (int i=1; i<ls.size(); i++) {
             long t = ls.get(i-1).getTimestamp() - ls.get(ls.size()-1).getTimestamp();
-            double h = t / 1000.0 / 60;
+            double h = t / 1000.0 / 60 / 10;
             double j = h / (double) I;
             int _n = (int) Math.round(j);
             n.add(_n);
-            e.add(30 + (int) (t / 1000.0 / 60) - ((_n) * I));
+            e.add(30 + (int) (t / 1000.0 / 60 / 10) - ((_n) * I));
         }
 
         nextUpdateEstimation.setText("Nächstes Aufwachen ca." + Utils.convertToTime(dt) + "  " + getStringInt(n) + " " + getStringInt(e));
+        */
     }
 
     private void setWifiElementsConfirmed(State state) {
@@ -314,26 +316,93 @@ public class StatusStatusFragment extends Fragment {
         );
         intervalPendingStatus.setVisibility(View.VISIBLE);
 
+        /*
         long dt = st.getIntervalLastChangeDate();
         List<Sms> ls = sm.getAllSinceDate(dt);
 
         List<Integer> n = new ArrayList<>();
         List<Integer> e = new ArrayList<>();
 
-        final int I = st.getConfirmedIntervalSync() * 60; // Interval in min
+        final int I = st.getConfirmedIntervalSync() * 6; // Interval in 6min
 
         for (int i=1; i<ls.size(); i++) {
             long t = ls.get(i-1).getTimestamp() - ls.get(ls.size()-1).getTimestamp();
-            double h = t / 1000.0 / 60;
+            double h = t / 1000.0 / 60 / 10;
             double j = h / (double) I;
             int _n = (int) Math.round(j);
             n.add(_n);
-            e.add(30 + (int) (t / 1000.0 / 60) - ((_n) * I));
+            e.add(5 + (int) (t / 1000.0 / 60 / 10) - ((_n) * I));
         }
+        */
 
-        nextUpdateEstimation.setText("Nächstes Aufwachen ca." + Utils.convertToTime(dt) + "  " + getStringInt(n) + " " + getStringInt(e));
+        // List<Integer> s = new ArrayList<>();
+
+        // CrossProduct crossProduct = new CrossProduct(new int[]{125, 5, 5, 5, 5}, e);
+
+        /*
+        for (int i=0; i<crossProduct.getMax(); i++)
+            if (a + b == e.get(0) && a + c == e.get(1)
+                    && a + d == e.get(2) && a + f == e.get(3))
+                s.add(a);
+         */
+
+        // nextUpdateEstimation.setText("Nächstes Aufwachen ca." + Utils.convertToTime(dt) + "  " + getStringInt(n) + " " + getStringInt(e));
+        nextUpdateEstimation.setVisibility(View.GONE);
     }
 
+    /*
+    class CrossProduct {
+
+        int[] bases;
+        long max;
+        List<Integer> e;
+
+        long current;
+        String sCurrent;
+
+        CrossProduct(int[] bases, List<Integer> e) {
+            this.bases = bases;
+
+            long j = 1;
+            StringBuilder s = new StringBuilder();
+
+            for (int i : bases) {
+                j *= i;
+                s.append("0");
+            }
+
+            this.sCurrent = s.toString();
+            this.max = j;
+            this.e = e;
+        }
+
+        long start() {
+            this.current = 0;
+            return this.current;
+        }
+
+        long getNext() {
+            for (char c : sCurrent) {
+
+            }
+            return this.current + 1;
+        }
+
+        long getMax() {
+            return this.max;
+        }
+
+        boolean checkConstraints(long current) {
+
+        }
+
+        int decode() {
+
+        }
+    }
+    */
+
+    /*
     private String getStringInt(List<Integer> l) {
         StringBuilder s = new StringBuilder();
 
@@ -344,6 +413,7 @@ public class StatusStatusFragment extends Fragment {
 
         return s.toString();
     }
+    */
 
     private void setWifiElementsPending(State state) {
         long stopTime = tv.startTimer(t1, state.getTimestamp(), st.getConfirmedIntervalSync());
@@ -378,7 +448,7 @@ public class StatusStatusFragment extends Fragment {
         tv.cancelTimer(t3);
 
         List<State> statusStates = new ArrayList<>();
-        statusStates.add(new State(State.KEY_WARNING_NUMBER, 0.0));
+        statusStates.add(new State(State.KEY.WARNING_NUMBER, 0.0));
 
         sendSms("Warningnumber", statusStates);
 

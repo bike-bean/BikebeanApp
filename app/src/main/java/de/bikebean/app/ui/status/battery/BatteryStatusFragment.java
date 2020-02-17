@@ -34,7 +34,7 @@ public class BatteryStatusFragment extends Fragment {
 
     private SmsSender smsSender;
     
-    private final int t1 = LiveDataTimerViewModel.TIMER_FOUR;
+    private final LiveDataTimerViewModel.TIMER t1 = LiveDataTimerViewModel.TIMER.FOUR;
 
     // UI Elements
     private Button statusButton;
@@ -71,7 +71,7 @@ public class BatteryStatusFragment extends Fragment {
         smsSender = new SmsSender(ctx, act, sm, st);
 
         List<State> statusStates = new ArrayList<>();
-        statusStates.add(new State(State.KEY_BATTERY, 0.0));
+        statusStates.add(new State(State.KEY.BATTERY, 0.0));
 
         statusButton.setOnClickListener(v -> smsSender.send("Status", statusStates));
         st.getStatusBattery().observe(l, this::setElements);
@@ -97,39 +97,40 @@ public class BatteryStatusFragment extends Fragment {
 
         parsedSms.add(id);
 
-        switch (state.getState()) {
-            case State.STATUS_UNSET:
-                switch (state.getKey()) {
-                    case State.KEY_INTERVAL:
+        State.KEY key = State.KEY.getValue(state.getKey());
+        switch (State.STATUS.values()[state.getState()]) {
+            case UNSET:
+                switch (key) {
+                    case INTERVAL:
                         setIntervalElementsConfirmed(state);
                         break;
-                    case State.KEY_WIFI:
+                    case WIFI:
                         setWifiElementsConfirmed(state);
                         break;
-                    case State.KEY_BATTERY:
+                    case BATTERY:
                         setBatteryElementsUnset(state);
                         break;
                 }
                 break;
-            case State.STATUS_CONFIRMED:
-                switch (state.getKey()) {
-                    case State.KEY_INTERVAL:
+            case CONFIRMED:
+                switch (key) {
+                    case INTERVAL:
                         setIntervalElementsConfirmed(state);
                         break;
-                    case State.KEY_WIFI:
+                    case WIFI:
                         setWifiElementsConfirmed(state);
                         break;
-                    case State.KEY_BATTERY:
+                    case BATTERY:
                         setBatteryElementsConfirmed(state);
                         break;
                 }
                 break;
-            case State.STATUS_PENDING:
-                switch (state.getKey()) {
-                    case State.KEY_INTERVAL: // And
-                    case State.KEY_WIFI:
+            case PENDING:
+                switch (key) {
+                    case INTERVAL: // And
+                    case WIFI:
                         break;
-                    case State.KEY_BATTERY:
+                    case BATTERY:
                         setBatteryElementsPending(state);
                         break;
                 }

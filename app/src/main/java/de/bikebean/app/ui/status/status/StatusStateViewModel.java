@@ -48,7 +48,7 @@ public class StatusStateViewModel extends StateViewModel {
     }
 
     long getIntervalLastChangeDate() {
-        State intervalConfirmed = getConfirmedStateSync(State.KEY_INTERVAL);
+        State intervalConfirmed = getConfirmedStateSync(State.KEY.INTERVAL);
 
         if (intervalConfirmed != null)
             return intervalConfirmed.getTimestamp();
@@ -58,7 +58,7 @@ public class StatusStateViewModel extends StateViewModel {
 
     boolean getWifiStatusSync() {
         // TODO: really not the confirmed, but any state???
-        State wifiConfirmed = getLastStateSync(State.KEY_WIFI);
+        State wifiConfirmed = getLastStateSync(State.KEY.WIFI);
 
         if (wifiConfirmed != null)
             return wifiConfirmed.getValue() > 0;
@@ -68,7 +68,7 @@ public class StatusStateViewModel extends StateViewModel {
 
     int getIntervalStatusSync() {
         // TODO: really not the confirmed, but any state???
-        State intervalState = getLastStateSync(State.KEY_INTERVAL);
+        State intervalState = getLastStateSync(State.KEY.INTERVAL);
 
         if (intervalState != null)
             return intervalState.getValue().intValue();

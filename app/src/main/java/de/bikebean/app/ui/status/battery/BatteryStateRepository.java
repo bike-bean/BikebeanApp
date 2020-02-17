@@ -16,7 +16,7 @@ class BatteryStateRepository extends StateRepository {
     BatteryStateRepository(Application application) {
         super(application);
 
-        mStatusBattery = mStateDao.getAllByKey(State.KEY_BATTERY);
+        mStatusBattery = mStateDao.getAllByKey(State.KEY.BATTERY.get());
     }
 
     LiveData<List<State>> getStatusBattery() {

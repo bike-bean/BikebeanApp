@@ -20,12 +20,18 @@ class MapStateRepository extends StateRepository {
     MapStateRepository(Application application) {
         super(application);
 
-        mStatusNumberCellTowers = mStateDao.getAllByKey(State.KEY_NO_CELL_TOWERS);
-        mStatusNumberWifiAccessPoints = mStateDao.getAllByKey(State.KEY_NO_WIFI_ACCESS_POINTS);
+        mStatusNumberCellTowers = mStateDao.getAllByKey(State.KEY.NO_CELL_TOWERS.get());
+        mStatusNumberWifiAccessPoints = mStateDao.getAllByKey(State.KEY.NO_WIFI_ACCESS_POINTS.get());
 
-        mConfirmedLocationLat = mStateDao.getByKeyAndState(State.KEY_LAT, State.STATUS_CONFIRMED);
-        mConfirmedLocationLng = mStateDao.getByKeyAndState(State.KEY_LNG, State.STATUS_CONFIRMED);
-        mConfirmedLocationAcc = mStateDao.getByKeyAndState(State.KEY_ACC, State.STATUS_CONFIRMED);
+        mConfirmedLocationLat = mStateDao.getByKeyAndState(
+                State.KEY.LAT.get(), State.STATUS.CONFIRMED.ordinal()
+        );
+        mConfirmedLocationLng = mStateDao.getByKeyAndState(
+                State.KEY.LNG.get(), State.STATUS.CONFIRMED.ordinal()
+        );
+        mConfirmedLocationAcc = mStateDao.getByKeyAndState(
+                State.KEY.ACC.get(), State.STATUS.CONFIRMED.ordinal()
+        );
     }
 
     LiveData<List<State>> getConfirmedLocationLat() {

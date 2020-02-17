@@ -20,8 +20,9 @@ import de.bikebean.app.db.state.State;
 
 public class Utils {
 
-    public static final int PERMISSION_KEY_SMS = 1;
-    public static final int PERMISSION_KEY_MAPS = 2;
+    public enum PERMISSION_KEY {
+        SMS, MAPS
+    }
 
     private static final Map<Integer, Double> batteryRuntimeByInterval =
             new HashMap<Integer, Double>() {{
@@ -43,18 +44,18 @@ public class Utils {
             Manifest.permission.ACCESS_FINE_LOCATION
     };
 
-    private static final Map<Integer, String[]> permissionMap =
-            new HashMap<Integer, String[]>() {{
-                put(PERMISSION_KEY_SMS, smsPermissions);
-                put(PERMISSION_KEY_MAPS, mapsPermissions);
+    private static final Map<PERMISSION_KEY, String[]> permissionMap =
+            new HashMap<PERMISSION_KEY, String[]>() {{
+                put(PERMISSION_KEY.SMS, smsPermissions);
+                put(PERMISSION_KEY.MAPS, mapsPermissions);
     }};
 
     public interface RationaleShower {
         void showRationaleDialog();
     }
 
-    public static boolean getPermissions(Activity activity, int permissionKey, RationaleShower r) {
-        String[] permissions = permissionMap.get(permissionKey);
+    public static boolean getPermissions(Activity activity, PERMISSION_KEY p, RationaleShower r) {
+        String[] permissions = permissionMap.get(p);
 
         if (activity == null || permissions == null)
             return false;
@@ -66,20 +67,20 @@ public class Utils {
                     r.showRationaleDialog();
                     return false;
                 } else {
-                    askForPermissions(activity, permissionKey);
+                    askForPermissions(activity, p);
                     return false;
                 }
 
         return true;
     }
 
-    public static void askForPermissions(Activity activity, int permissionKey) {
-        String[] permissions = permissionMap.get(permissionKey);
+    public static void askForPermissions(Activity activity, PERMISSION_KEY p) {
+        String[] permissions = permissionMap.get(p);
 
         if (activity == null || permissions == null)
             return;
 
-        ActivityCompat.requestPermissions(activity, permissions, permissionKey);
+        ActivityCompat.requestPermissions(activity, permissions, p.ordinal());
     }
 
     public static String convertToTime(long datetime) {

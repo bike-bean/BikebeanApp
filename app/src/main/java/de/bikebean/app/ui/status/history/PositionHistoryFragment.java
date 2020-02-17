@@ -110,20 +110,20 @@ public class PositionHistoryFragment extends Fragment {
             return null;
 
         for (State s : states)
-            switch (s.getKey()) {
-                case State.KEY_LAT:
+            switch (State.KEY.getValue(s.getKey())) {
+                case LAT:
                     latState = s;
                     break;
-                case State.KEY_LNG:
+                case LNG:
                     lngState = s;
                     break;
-                case State.KEY_ACC:
+                case ACC:
                     accState = s;
                     break;
-                case State.KEY_NO_CELL_TOWERS:
+                case NO_CELL_TOWERS:
                     noCellTowersState = s;
                     break;
-                case State.KEY_NO_WIFI_ACCESS_POINTS:
+                case NO_WIFI_ACCESS_POINTS:
                     noWifiAccessPointsState = s;
                     break;
             }

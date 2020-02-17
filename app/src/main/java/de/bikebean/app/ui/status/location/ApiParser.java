@@ -46,13 +46,14 @@ class ApiParser {
         Log.d(MainActivity.TAG, "numberCellTowers: " + numberCellTowers);
 
         mStateViewModel.insert(new State(
-                sms.getTimestamp(), State.KEY_NO_WIFI_ACCESS_POINTS,
-                (double) numberWifiAccessPoints, "", State.STATUS_CONFIRMED, sms.getId())
+                sms.getTimestamp(), State.KEY.NO_WIFI_ACCESS_POINTS,
+                (double) numberWifiAccessPoints, "",
+                State.STATUS.CONFIRMED, sms.getId())
         );
 
         mStateViewModel.insert(new State(
-                sms.getTimestamp(), State.KEY_NO_CELL_TOWERS,
-                (double) numberCellTowers, "", State.STATUS_CONFIRMED, sms.getId())
+                sms.getTimestamp(), State.KEY.NO_CELL_TOWERS, (double) numberCellTowers,
+                "", State.STATUS.CONFIRMED, sms.getId())
         );
 
         // Create final json string

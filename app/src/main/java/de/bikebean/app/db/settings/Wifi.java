@@ -9,7 +9,7 @@ public class Wifi extends Setting {
     public Wifi(boolean wifi, Sms sms) {
         this.wifi = wifi;
         this.sms = sms;
-        this.key = State.KEY_WIFI;
+        this.key = State.KEY.WIFI;
     }
 
     public Double get() {
