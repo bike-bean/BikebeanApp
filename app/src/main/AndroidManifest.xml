@@ -27,9 +27,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
-
         <activity
-            android:name=".ui.status.preferences.PreferencesActivity"
+            android:name=".ui.status.menu.log.LogActivity"
+            android:label="@string/log">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.bikebean.app.MainActivity" />
+        </activity>
+        <activity
+            android:name=".ui.status.menu.preferences.PreferencesActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".MainActivity">
             <meta-data
@@ -46,14 +52,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.status.sms.SmsActivity"
+            android:name=".ui.status.menu.sms_history.SmsActivity"
             android:label="@string/title_activity_sms">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.bikebean.app.MainActivity" />
         </activity>
         <activity
-            android:name=".ui.status.history.HistoryActivity"
+            android:name=".ui.status.menu.history.HistoryActivity"
             android:label="@string/history">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -66,7 +72,7 @@
             android:value="@string/google_maps_api_key" />
 
         <receiver
-            android:name=".ui.status.sms.listen.SmsListener"
+            android:name=".ui.status.sms_utils.listen.SmsListener"
             android:permission="android.permission.BROADCAST_SMS">
             <intent-filter android:priority="1000">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />

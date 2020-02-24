@@ -1,6 +1,5 @@
 package de.bikebean.app;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -17,6 +16,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import de.bikebean.app.db.state.State;
+import de.bikebean.app.ui.map.MapFragment;
+import de.bikebean.app.ui.status.StatusFragment;
 
 public class Utils {
 
@@ -34,20 +35,10 @@ public class Utils {
                 put(24, 477.0);
     }};
 
-    private static final String[] smsPermissions = {
-            android.Manifest.permission.READ_SMS,
-            android.Manifest.permission.SEND_SMS,
-            android.Manifest.permission.RECEIVE_SMS
-    };
-
-    private static final String[] mapsPermissions = {
-            Manifest.permission.ACCESS_FINE_LOCATION
-    };
-
     private static final Map<PERMISSION_KEY, String[]> permissionMap =
             new HashMap<PERMISSION_KEY, String[]>() {{
-                put(PERMISSION_KEY.SMS, smsPermissions);
-                put(PERMISSION_KEY.MAPS, mapsPermissions);
+                put(PERMISSION_KEY.SMS, StatusFragment.smsPermissions);
+                put(PERMISSION_KEY.MAPS, MapFragment.mapsPermissions);
     }};
 
     public interface RationaleShower {
@@ -99,7 +90,7 @@ public class Utils {
         long timeSinceLastManagement = new Date().getTime() - lastBatteryState.getTimestamp();
         double daysSinceLastManagement = timeSinceLastManagement / 1000.0 / 60 / 60 / 24;
 
-        if (remainingPercent < 10)
+        if (remainingPercent < 0)
             return "Unter 10%, bitte umgehend aufladen!";
 
         if (isWifiOn)

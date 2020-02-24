@@ -19,9 +19,9 @@ import de.bikebean.app.R;
 import de.bikebean.app.Utils;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.status.sms.SmsViewModel;
-import de.bikebean.app.ui.status.sms.send.SmsSendIdGetter;
-import de.bikebean.app.ui.status.sms.send.SmsSender;
+import de.bikebean.app.ui.status.menu.sms_history.SmsViewModel;
+import de.bikebean.app.ui.status.sms_utils.send.SmsSendIdGetter;
+import de.bikebean.app.ui.status.sms_utils.send.SmsSender;
 import de.bikebean.app.ui.status.status.LiveDataTimerViewModel;
 
 public abstract class SubStatusFragment extends Fragment {

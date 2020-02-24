@@ -20,12 +20,14 @@ import de.bikebean.app.R;
 import de.bikebean.app.Utils;
 import de.bikebean.app.ui.status.PermissionsRationaleDialog;
 import de.bikebean.app.ui.status.StateViewModel;
-import de.bikebean.app.ui.status.sms.SmsViewModel;
+import de.bikebean.app.ui.status.menu.log.LogViewModel;
+import de.bikebean.app.ui.status.menu.sms_history.SmsViewModel;
 
 public class InitialConfigurationActivity extends AppCompatActivity {
 
     private StateViewModel stateViewModel;
     private SmsViewModel smsViewModel;
+    private LogViewModel logViewModel;
     private SharedPreferences sharedPreferences;
 
     // UI elements
@@ -39,6 +41,7 @@ public class InitialConfigurationActivity extends AppCompatActivity {
 
         stateViewModel = new ViewModelProvider(this).get(StateViewModel.class);
         smsViewModel = new ViewModelProvider(this).get(SmsViewModel.class);
+        logViewModel = new ViewModelProvider(this).get(LogViewModel.class);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
@@ -90,7 +93,7 @@ public class InitialConfigurationActivity extends AppCompatActivity {
     }
 
     private void fetchSms() {
-        smsViewModel.fetchSmsSync(this, stateViewModel,
+        smsViewModel.fetchSmsSync(this, stateViewModel, logViewModel,
                 sharedPreferences.getString("number", "")
         );
         finish();

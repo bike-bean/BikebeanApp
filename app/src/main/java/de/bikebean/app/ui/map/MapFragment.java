@@ -1,5 +1,6 @@
 package de.bikebean.app.ui.map;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -46,9 +47,14 @@ import de.bikebean.app.R;
 import de.bikebean.app.Utils;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.status.PermissionsRationaleDialog;
-import de.bikebean.app.ui.status.history.HistoryActivity;
+import de.bikebean.app.ui.status.menu.history.HistoryActivity;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
+
+    public static final String[] mapsPermissions = {
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION
+    };
 
     private MapFragmentViewModel mapFragmentViewModel;
 
@@ -169,6 +175,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 .snippet(snippet.toString())
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
         );
+        marker.setVisible(false);
 
         // Set a circle
         circle = googleMap.addCircle(new CircleOptions()
@@ -235,6 +242,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 setCamera(true);
                 break;
         }
+
+        marker.setVisible(true);
     }
 
     private void showPopup(View v) {

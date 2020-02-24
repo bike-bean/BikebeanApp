@@ -99,6 +99,18 @@ public class Sms extends DatabaseEntity {
         this.mTimestamp = timestamp;
     }
 
+    // nullType
+    @Ignore
+    public Sms() {
+        this.mId = 0;
+        this.mAddress = "";
+        this.mBody = "";
+        this.mType = 0;
+        this.mState = 0;
+        this.mDate = "";
+        this.mTimestamp = 0;
+    }
+
     public int getId() {
         return this.mId;
     }
@@ -129,6 +141,6 @@ public class Sms extends DatabaseEntity {
 
     @Override
     public DatabaseEntity getNullType() {
-        return new Sms(0, "", "", 0, 0, "", 0);
+        return new Sms();
     }
 }

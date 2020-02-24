@@ -10,19 +10,23 @@ import de.bikebean.app.db.settings.WarningNumber;
 import de.bikebean.app.db.settings.Wifi;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.status.StateViewModel;
-import de.bikebean.app.ui.status.sms.SmsViewModel;
-import de.bikebean.app.ui.status.sms.parser.SmsParser;
+import de.bikebean.app.ui.status.menu.log.LogViewModel;
+import de.bikebean.app.ui.status.menu.sms_history.SmsViewModel;
+import de.bikebean.app.ui.status.sms_utils.parser.SmsParser;
 
 public class Conversation {
 
     private final StateViewModel stateViewModel;
     private final SmsViewModel smsViewModel;
+    private final LogViewModel logViewModel;
 
     private final List<Setting> internalList = new ArrayList<>();
 
-    public Conversation(StateViewModel stateViewModel, SmsViewModel smsViewModel) {
+    public Conversation(StateViewModel stateViewModel, SmsViewModel smsViewModel,
+                        LogViewModel logViewModel) {
         this.stateViewModel = stateViewModel;
         this.smsViewModel = smsViewModel;
+        this.logViewModel = logViewModel;
 
         Sms nullSms = new Sms(0, "", "", 0, 0, "", 0);
 
@@ -33,8 +37,8 @@ public class Conversation {
     }
 
     public void add(Sms sms) {
-        SmsParser smsParser = new SmsParser(sms);
-        List<Setting> smsSettingList = smsParser.getSettingList();
+        SmsParser smsParser = new SmsParser(sms, logViewModel);
+        Setting[] smsSettingList = smsParser.getSettingList();
 
         // update the internal list, checking if the information from the SMS
         // is newer than already stored information.
@@ -58,6 +62,7 @@ public class Conversation {
     }
 
     public void updatePreferences() {
-        this.stateViewModel.insert(internalList.get((0)).updatePreferences(internalList));
+        this.stateViewModel.insert(internalList.get((0))
+                .updatePreferences(internalList.toArray(new Setting[]{})));
     }
 }

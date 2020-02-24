@@ -280,12 +280,7 @@ public class LocationStatusFragment extends SubStatusFragment {
     }
 
     private void updateNumbers(int numberCellTowers, int numberWifiAccessPoints, int smsId) {
-        List<Sms> l = sm.getSmsById(smsId);
-
-        if (l.size() == 0)
-            return;
-
-        Sms sms = l.get(0);
+        Sms sms = sm.getSmsByIdSync(smsId);
 
         st.insert(new State(
                 sms.getTimestamp(), State.KEY.NO_WIFI_ACCESS_POINTS,
@@ -301,12 +296,7 @@ public class LocationStatusFragment extends SubStatusFragment {
 
     private void updateLatLngAcc(double lat, double lng, double acc, int smsId,
                                  State finalWappCellTowers, State finalWappWifiAccessPoints) {
-        List<Sms> l = sm.getSmsById(smsId);
-
-        if (l.size() == 0)
-            return;
-
-        Sms sms = l.get(0);
+        Sms sms = sm.getSmsByIdSync(smsId);
 
         sm.markParsed(smsId);
         st.confirmWapp(finalWappCellTowers, finalWappWifiAccessPoints);

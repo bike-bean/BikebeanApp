@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/navigation_position_history_fragment"
-        android:name="de.bikebean.app.ui.status.history.position.PositionHistoryFragment"
+        android:name="de.bikebean.app.ui.status.menu.history.position.PositionHistoryFragment"
         android:label="@string/history"
         tools:layout="@layout/fragment_position_history" >
 
@@ -31,7 +31,7 @@
 
     <fragment
         android:id="@+id/navigation_battery_history_fragment"
-        android:name="de.bikebean.app.ui.status.history.battery.BatteryHistoryFragment"
+        android:name="de.bikebean.app.ui.status.menu.history.battery.BatteryHistoryFragment"
         android:label="@string/history"
         tools:layout="@layout/fragment_battery_history" >
 

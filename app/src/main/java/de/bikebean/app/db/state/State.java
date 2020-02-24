@@ -143,6 +143,17 @@ public class State extends DatabaseEntity {
         this.mSmsId = 0;
     }
 
+    // nullType
+    @Ignore
+    public State() {
+        this.mTimestamp = 0;
+        this.mKey = "";
+        this.mValue = 0.0;
+        this.mLongValue = "";
+        this.mState = 0;
+        this.mSmsId = 0;
+    }
+
     public String getKey() {
         return this.mKey;
     }
@@ -169,6 +180,6 @@ public class State extends DatabaseEntity {
 
     @Override
     public DatabaseEntity getNullType() {
-        return new State(KEY.BATTERY, 0.0);
+        return new State();
     }
 }

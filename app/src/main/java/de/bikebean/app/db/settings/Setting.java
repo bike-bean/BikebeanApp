@@ -24,7 +24,7 @@ public abstract class Setting {
 
     protected abstract Object get();
 
-    public State[] updatePreferences(List<Setting> settingList) {
+    public State[] updatePreferences(Setting[] settingList) {
         /*
         Basically takes a list of Settings and converts them into a list of State's.
 
@@ -35,14 +35,28 @@ public abstract class Setting {
 
         for (Setting setting : settingList)
             if (setting.getDate() != 0)
-                if (setting.getKey().equals(State.KEY.WAPP))
-                    setting.addStatusEntryPending(newStateEntries);
-                else if (setting.getKey().equals(State.KEY.WARNING_NUMBER)
-                        || setting.getKey().equals(State.KEY.CELL_TOWERS)
-                        || setting.getKey().equals(State.KEY.WIFI_ACCESS_POINTS))
-                    setting.addStatusEntryConfirmed(newStateEntries, true);
-                else
-                    setting.addStatusEntryConfirmed(newStateEntries, false);
+                switch (setting.getKey()) {
+                    case WAPP:
+                        setting.addStatusEntryPending(newStateEntries);
+                        break;
+                    case WARNING_NUMBER:
+                    case CELL_TOWERS:
+                    case WIFI_ACCESS_POINTS:
+                        setting.addStatusEntryConfirmed(newStateEntries, true);
+                        break;
+                    case _STATUS:
+                    case BATTERY:
+                    case INTERVAL:
+                    case WIFI:
+                    case LOCATION:
+                    case LAT:
+                    case LNG:
+                    case ACC:
+                    case NO_CELL_TOWERS:
+                    case NO_WIFI_ACCESS_POINTS:
+                        setting.addStatusEntryConfirmed(newStateEntries, false);
+                        break;
+                }
 
         return newStateEntries.toArray(new State[]{});
     }

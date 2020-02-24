@@ -29,6 +29,7 @@
 
     <string name="history">Historie</string>
     <string name="licenses">Lizenzen</string>
+    <string name="log">Fehlerprotokoll</string>
 
     <string name="menu_satellite">Satellit</string>
     <string name="menu_hybrid">Hybrid</string>

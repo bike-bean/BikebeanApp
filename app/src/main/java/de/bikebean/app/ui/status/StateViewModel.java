@@ -106,8 +106,7 @@ public class StateViewModel extends AndroidViewModel {
     }
 
     private State getStateSync(MutableObject.ListGetter stateGetter, State.KEY key, int smsId) {
-        final MutableObject<State> state =
-                new MutableObject<>(new State(State.KEY.BATTERY, 0.0));
+        final MutableObject<State> state = new MutableObject<>(new State());
 
         return (State) state.getDbEntitySync(stateGetter, key.get(), smsId);
     }

@@ -13,6 +13,10 @@ public class MutableObject<T extends DatabaseEntity> {
         List<? extends DatabaseEntity> getList(String sArg, int iArg);
     }
 
+    public interface DeleteChecker {
+        List<? extends DatabaseEntity> checkDelete();
+    }
+
     public MutableObject(T value) {
         nullT = value.getNullType();
         position = 0;
@@ -21,6 +25,22 @@ public class MutableObject<T extends DatabaseEntity> {
     public MutableObject(T value, int position) {
         nullT = value.getNullType();
         this.position = position;
+    }
+
+    void waitForDelete(DeleteChecker deleteChecker) {
+        new Thread(() -> {
+            while (deleteChecker.checkDelete().size() > 0) {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            set(null);
+        }).start();
+
+        waitForStateChange();
     }
 
     public DatabaseEntity getDbEntitySync(ListGetter listGetter, String sArg, int iArg) {
@@ -33,14 +53,17 @@ public class MutableObject<T extends DatabaseEntity> {
                 set(null);
         }).start();
 
+        waitForStateChange();
+        return get();
+    }
+
+    private void waitForStateChange() {
         while (get() == getNullState())
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
-        return get();
     }
 
     private void set(DatabaseEntity i) {
