@@ -19,21 +19,21 @@ public class PermissionsRationaleDialog extends DialogFragment {
 
     private final Activity act;
 
-    private static final Map<Integer, Integer[]> permissionMap =
-            new HashMap<Integer, Integer[]>() {{
-                put(Utils.PERMISSION_KEY_SMS, new Integer[]{
+    private static final Map<Utils.PERMISSION_KEY, Integer[]> permissionMap =
+            new HashMap<Utils.PERMISSION_KEY, Integer[]>() {{
+                put(Utils.PERMISSION_KEY.SMS, new Integer[]{
                         R.string.no_sms_permission,
                         R.string.no_sms_permission_warning
                 });
-                put(Utils.PERMISSION_KEY_MAPS, new Integer[]{
+                put(Utils.PERMISSION_KEY.MAPS, new Integer[]{
                         R.string.no_map_permission,
                         R.string.no_map_permission_warning
                 });
     }};
 
-    private int permissionKey;
+    private Utils.PERMISSION_KEY permissionKey;
 
-    public PermissionsRationaleDialog(Activity act, int permissionKey) {
+    public PermissionsRationaleDialog(Activity act, Utils.PERMISSION_KEY permissionKey) {
         this.act = act;
         this.permissionKey = permissionKey;
     }

@@ -9,7 +9,7 @@ public class Battery extends Setting {
     public Battery(double battery, Sms sms) {
         this.battery = battery;
         this.sms = sms;
-        this.key = State.KEY_BATTERY;
+        this.key = State.KEY.BATTERY;
     }
 
     public Double get() {

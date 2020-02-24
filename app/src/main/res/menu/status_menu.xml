@@ -6,4 +6,10 @@
         android:title="@string/title_activity_settings" />
     <item android:id="@+id/menu_item_history"
         android:title="@string/history" />
+    <item android:id="@+id/menu_item_log"
+        android:title="@string/log" />
+    <!--
+    <item android:id="@+id/menu_item_licenses"
+        android:title="@string/licenses" />
+        -->
 </menu>

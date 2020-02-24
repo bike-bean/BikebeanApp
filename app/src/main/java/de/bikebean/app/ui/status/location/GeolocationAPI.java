@@ -14,30 +14,38 @@ import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
-import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.status.StateViewModel;
-import de.bikebean.app.ui.status.sms.SmsViewModel;
 
 class GeolocationAPI {
 
-    private final String url;
+    public interface PostResponseHandler {
+        void onPostResponse(
+                double lat, double lng, double acc, int smsId,
+                State wappCellTowers, State wappWifiAccessPoints
+        );
+    }
 
     private final RequestQueue queue;
+    private final PostResponseHandler mPostResponseHandler;
 
-    private final StateViewModel vm;
-    private final SmsViewModel sm;
-    private Sms sms;
+    private State finalWappCellTowers;
+    private State finalWappWifiAccessPoints;
 
-    GeolocationAPI(Context ctx, StateViewModel stateViewModel, SmsViewModel sm) {
+    private final String url;
+
+    private int mSmsId;
+
+    GeolocationAPI(Context ctx, PostResponseHandler postResponseHandler,
+                   State wappCellTowers, State wappWifiAccessPoints) {
         queue = Volley.newRequestQueue(ctx);
-        vm = stateViewModel;
-        this.sm = sm;
+        mPostResponseHandler = postResponseHandler;
+
+        finalWappCellTowers = wappCellTowers;
+        finalWappWifiAccessPoints = wappWifiAccessPoints;
 
         String googleMapsAPIKey = ctx.getResources().getString(R.string.google_maps_api_key);
         String baseUrl = "https://www.googleapis.com/geolocation/v1/geolocate?key=";
@@ -46,12 +54,7 @@ class GeolocationAPI {
 
     //POST Request Geolocation API
     boolean httpPOST(final String requestBody, int smsId) {
-        List<Sms> l = sm.getSmsById(smsId);
-
-        if (l.size() == 0)
-            return false;
-
-        this.sms = l.get(0);
+        mSmsId = smsId;
 
         queue.add(new JsonObjectRequest(Request.Method.POST, url, null,
                 this::responseListener, this::errorListener) {
@@ -76,11 +79,12 @@ class GeolocationAPI {
         Log.d(MainActivity.TAG, "RESPONSE FROM SERVER: " + response.toString());
         try {
             JSONObject location = response.getJSONObject("location");
-            updateLatLngAcc(
+            mPostResponseHandler.onPostResponse(
                     location.getDouble("lat"),
                     location.getDouble("lng"),
                     response.getDouble("accuracy"),
-                    vm, sms
+                    mSmsId, finalWappCellTowers, finalWappWifiAccessPoints
+
             );
         } catch (JSONException e) {
             assert true;
@@ -89,24 +93,5 @@ class GeolocationAPI {
 
     private void errorListener(VolleyError error) {
         Log.d(MainActivity.TAG, "Error.Response: " + error.getMessage());
-    }
-
-    private void updateLatLngAcc(double lat, double lng, double acc, StateViewModel vm, Sms sms) {
-        vm.insert(new State(
-                sms.getTimestamp() + 1, State.KEY_LAT, lat,
-                "", State.STATUS_CONFIRMED, sms.getId())
-        );
-        vm.insert(new State(
-                sms.getTimestamp() + 1, State.KEY_LNG, lng,
-                "", State.STATUS_CONFIRMED, sms.getId())
-        );
-        vm.insert(new State(
-                sms.getTimestamp() + 1, State.KEY_ACC, acc,
-                "", State.STATUS_CONFIRMED, sms.getId())
-        );
-        vm.insert(new State(
-                sms.getTimestamp() + 1, State.KEY_LOCATION, 0.0,
-                "", State.STATUS_CONFIRMED, sms.getId())
-        );
     }
 }

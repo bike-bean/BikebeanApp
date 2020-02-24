@@ -165,6 +165,12 @@
                 android:textAppearance="@style/TextAppearance.AppTheme.Unemphasized" />
 
             <TextView
+                android:id="@+id/nextUpdateEstimation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppTheme.Unemphasized" />
+
+            <TextView
                 android:id="@+id/intervalPendingStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

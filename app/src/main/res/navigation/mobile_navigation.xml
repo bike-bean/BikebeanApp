@@ -48,6 +48,10 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
 
+        <action
+            android:id="@+id/log_action"
+            app:destination="@id/navigation_log" />
+
     </fragment>
 
     <fragment
@@ -69,13 +73,13 @@
 
     <activity
         android:id="@+id/navigation_settings"
-        android:name="de.bikebean.app.ui.status.preferences.PreferencesActivity"
+        android:name="de.bikebean.app.ui.status.menu.preferences.PreferencesActivity"
         android:label="@string/title_activity_settings"
         tools:layout="@layout/activity_settings" />
 
     <activity
         android:id="@+id/navigation_sms_history"
-        android:name="de.bikebean.app.ui.status.sms.SmsActivity"
+        android:name="de.bikebean.app.ui.status.menu.sms_history.SmsActivity"
         android:label="@string/title_activity_sms"
         tools:layout="@layout/activity_sms" />
 
@@ -87,8 +91,14 @@
 
     <activity
         android:id="@+id/navigation_history"
-        android:name="de.bikebean.app.ui.status.history.HistoryActivity"
+        android:name="de.bikebean.app.ui.status.menu.history.HistoryActivity"
         android:label="@string/history"
         tools:layout="@layout/activity_history" />
+
+    <activity
+        android:id="@+id/navigation_log"
+        android:name="de.bikebean.app.ui.status.menu.log.LogActivity"
+        android:label="activity_log"
+        tools:layout="@layout/activity_log" />
 
 </navigation>

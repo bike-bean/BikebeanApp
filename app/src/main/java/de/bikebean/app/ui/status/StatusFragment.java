@@ -2,7 +2,6 @@ package de.bikebean.app.ui.status;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -15,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,14 +31,22 @@ import de.bikebean.app.R;
 import de.bikebean.app.Utils;
 import de.bikebean.app.ui.status.battery.BatteryStatusFragment;
 import de.bikebean.app.ui.status.location.LocationStatusFragment;
-import de.bikebean.app.ui.status.sms.SmsViewModel;
+import de.bikebean.app.ui.status.menu.log.LogViewModel;
+import de.bikebean.app.ui.status.menu.sms_history.SmsViewModel;
 import de.bikebean.app.ui.status.status.StatusStatusFragment;
 
 public class StatusFragment extends Fragment {
 
+    public static final String[] smsPermissions = {
+            android.Manifest.permission.READ_SMS,
+            android.Manifest.permission.SEND_SMS,
+            android.Manifest.permission.RECEIVE_SMS
+    };
+
     // These are ViewModels
     private SmsViewModel smsViewModel;
     private StateViewModel stateViewModel;
+    private LogViewModel logViewModel;
 
     public interface PermissionGrantedHandler {
         void continueWithPermission();
@@ -85,6 +93,7 @@ public class StatusFragment extends Fragment {
         // init the ViewModels
         smsViewModel = new ViewModelProvider(this).get(SmsViewModel.class);
         stateViewModel = new ViewModelProvider(this).get(StateViewModel.class);
+        logViewModel = new ViewModelProvider(this).get(LogViewModel.class);
 
         // Get Activity
         FragmentActivity act = requireActivity();
@@ -95,6 +104,13 @@ public class StatusFragment extends Fragment {
         actionbar.setTitle(R.string.status_text);
 
         permissionDeniedHandler = this::showErrorView;
+
+        act.getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                act.finish();
+            }
+        });
 
         String address = PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getString("number", "");
@@ -112,8 +128,8 @@ public class StatusFragment extends Fragment {
 
         FragmentActivity act = requireActivity();
 
-        if (Utils.getPermissions(act, Utils.PERMISSION_KEY_SMS, () ->
-                new PermissionsRationaleDialog(act, Utils.PERMISSION_KEY_SMS).show(
+        if (Utils.getPermissions(act, Utils.PERMISSION_KEY.SMS, () ->
+                new PermissionsRationaleDialog(act, Utils.PERMISSION_KEY.SMS).show(
                         act.getSupportFragmentManager(),
                         "smsRationaleDialog"
                 )
@@ -144,6 +160,12 @@ public class StatusFragment extends Fragment {
                 Navigation.findNavController(Objects.requireNonNull(getView()))
                         .navigate(R.id.history_action);
                 return true;
+            case R.id.menu_item_log:
+                Navigation.findNavController(Objects.requireNonNull(getView()))
+                        .navigate(R.id.log_action);
+                return true;
+            // case R.id.menu_item_licenses:
+                // startActivity(new Intent(this, OssLicensesMenuActivity.class));
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -173,7 +195,7 @@ public class StatusFragment extends Fragment {
     private void fetchSms() {
         Context ctx = requireContext();
 
-        smsViewModel.fetchSms(ctx, stateViewModel,
+        smsViewModel.fetchSms(ctx, stateViewModel, logViewModel,
                 PreferenceManager.getDefaultSharedPreferences(ctx)
                         .getString("number", ""), ""
         );

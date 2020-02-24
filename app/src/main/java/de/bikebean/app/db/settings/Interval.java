@@ -9,7 +9,7 @@ public class Interval extends Setting {
     public Interval(int interval, Sms sms) {
         this.interval = interval;
         this.sms = sms;
-        this.key = State.KEY_INTERVAL;
+        this.key = State.KEY.INTERVAL;
     }
 
     public Double get() {

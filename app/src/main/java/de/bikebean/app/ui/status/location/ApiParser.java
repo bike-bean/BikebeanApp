@@ -5,38 +5,26 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import de.bikebean.app.MainActivity;
-import de.bikebean.app.db.sms.Sms;
-import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.status.StateViewModel;
-import de.bikebean.app.ui.status.sms.SmsViewModel;
 
 class ApiParser {
 
-    private final StateViewModel mStateViewModel;
-    private final SmsViewModel mSmsViewModel;
+    public interface PostJsonCreateHandler {
+        void onPostJsonCreate(int numberCellTowers, int numberWifiAccessPoints, int smsId);
+    }
 
+    private final PostJsonCreateHandler mPostJsonCreateHandler;
     private final LocationAPIBody locationAPIBody;
 
     private final Gson gson = new Gson();
 
-    ApiParser(StateViewModel stateViewModel, SmsViewModel smsViewModel) {
-        mStateViewModel = stateViewModel;
-        mSmsViewModel = smsViewModel;
-
+    ApiParser(PostJsonCreateHandler postJsonCreateHandler) {
+        mPostJsonCreateHandler = postJsonCreateHandler;
         locationAPIBody = new LocationAPIBody();
     }
 
     String createJsonApiBody(String cellTowers, String wifiAccessPoints, int smsId) {
-        List<Sms> l = mSmsViewModel.getSmsById(smsId);
-
-        if (l.size() == 0)
-            return "";
-
-        Sms sms = l.get(0);
-
         int numberWifiAccessPoints = parseWifiAccessPoints(wifiAccessPoints, locationAPIBody);
         int numberCellTowers = parseCellTowers(cellTowers, locationAPIBody);
 
@@ -45,25 +33,20 @@ class ApiParser {
         Log.d(MainActivity.TAG, "cellTowers_JsonArray: " + gson.toJson(locationAPIBody.cellTowers));
         Log.d(MainActivity.TAG, "numberCellTowers: " + numberCellTowers);
 
-        mStateViewModel.insert(new State(
-                sms.getTimestamp(), State.KEY_NO_WIFI_ACCESS_POINTS,
-                (double) numberWifiAccessPoints, "", State.STATUS_CONFIRMED, sms.getId())
-        );
-
-        mStateViewModel.insert(new State(
-                sms.getTimestamp(), State.KEY_NO_CELL_TOWERS,
-                (double) numberCellTowers, "", State.STATUS_CONFIRMED, sms.getId())
-        );
+        mPostJsonCreateHandler.onPostJsonCreate(numberCellTowers, numberWifiAccessPoints, smsId);
 
         // Create final json string
         return gson.toJson(locationAPIBody);
     }
 
     private int parseWifiAccessPoints(String wifiAccessPoints, LocationAPIBody locationAPIBody) {
+        if (wifiAccessPoints.equals(""))
+            return 0;
+
         String[] stringArrayWapp = wifiAccessPoints.split("\n");
         int numberWifiAccessPoints = stringArrayWapp.length;
 
-        for (String s : stringArrayWapp) {
+        for (String s : stringArrayWapp)
             if (!s.equals("    ")) {
                 // Länge des Substrings ist Unterscheidungskriterium
                 WifiAccessPoint wap = new WifiAccessPoint();
@@ -73,7 +56,6 @@ class ApiParser {
 
                 locationAPIBody.wifiAccessPoints.add(wap);
             }
-        }
 
         return numberWifiAccessPoints;
     }
@@ -82,7 +64,7 @@ class ApiParser {
         String[] stringArrayWapp = cellTowers.split("\n");
         int numberCellTowers = stringArrayWapp.length;
 
-        for (String s : stringArrayWapp) {
+        for (String s : stringArrayWapp)
             if (!s.equals("    ")) {
                 String[] stringArray_gsm_towers = s.split(",");
                 CellTower c = new CellTower();
@@ -95,7 +77,6 @@ class ApiParser {
 
                 locationAPIBody.cellTowers.add(c);
             }
-        }
 
         return numberCellTowers;
     }
@@ -109,12 +90,11 @@ class ApiParser {
             StringBuilder tmp = new StringBuilder();
             final int divisor = 2;
 
-            while(str.length() > 0) {
+            while (str.length() > 0) {
                 String nextChunk = str.substring(0, divisor);
                 tmp.append(nextChunk);
-                if (str.length() > 2) {
+                if (str.length() > 2)
                     tmp.append(":");
-                }
 
                 str = str.substring(divisor);
             }

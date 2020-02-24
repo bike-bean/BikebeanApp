@@ -26,47 +26,47 @@
             android:layout_marginStart="@dimen/fragment_horizontal_margin"
             android:layout_marginTop="@dimen/fragment_vertical_margin"
             android:layout_marginEnd="@dimen/fragment_horizontal_margin"
-            android:visibility="visible"
+            android:visibility="gone"
             app:cardElevation="3dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/design_default_color_error"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingStart="@dimen/fragment_horizontal_margin"
-                    android:paddingEnd="@dimen/fragment_horizontal_margin"
-                    android:paddingTop="@dimen/fragment_horizontal_margin"
                     android:background="@color/design_default_color_error"
                     android:drawableStart="@drawable/ic_warning_white_24dp"
                     android:drawablePadding="@dimen/activity_horizontal_margin"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                    android:textStyle="bold"
+                    android:paddingStart="@dimen/fragment_horizontal_margin"
+                    android:paddingTop="@dimen/fragment_horizontal_margin"
+                    android:paddingEnd="@dimen/fragment_horizontal_margin"
                     android:text="@string/no_sms_permission_error"
-                    android:textColor="@color/white" />
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/fragment_horizontal_margin"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                     android:text="@string/no_sms_permission_error_2"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                     android:textColor="@color/white" />
 
                 <Button
                     android:id="@+id/errorViewButton"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_gravity="end"
                     android:layout_marginEnd="@dimen/activity_horizontal_margin"
                     android:layout_marginBottom="@dimen/fragment_vertical_margin"
-                    android:textColor="@color/white"
-                    android:text="@string/to_settings" />
+                    android:text="@string/to_settings"
+                    android:textColor="@color/white" />
 
             </LinearLayout>
 

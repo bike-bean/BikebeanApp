@@ -3,13 +3,39 @@ package de.bikebean.app.db.sms;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "sms_table")
-public class Sms {
+import de.bikebean.app.db.DatabaseEntity;
 
-    public static final int STATUS_NEW = 0;
-    public static final int STATUS_PARSED = 1;
+@Entity(tableName = "sms_table")
+public class Sms extends DatabaseEntity {
+
+    public enum STATUS {
+        NEW, PARSED
+    }
+
+    public enum MESSAGE {
+        _STATUS("Status"),
+        WAPP("Wapp"),
+        INT("Int "),
+        WIFI("Wifi "),
+        WARNING_NUMBER("Warningnumber");
+
+        private String msg;
+
+        MESSAGE(String msg) {
+            this.msg = msg;
+        }
+
+        public String getMsg() {
+            return msg;
+        }
+
+        public void setValue(String msg) {
+            this.msg += msg;
+        }
+    }
 
     @PrimaryKey
     @ColumnInfo(name = "_id")
@@ -54,6 +80,37 @@ public class Sms {
         this.mTimestamp = timestamp;
     }
 
+    @Ignore
+    public Sms(
+            int id,
+            @NonNull String address,
+            @NonNull String body,
+            int type,
+            STATUS state,
+            @NonNull String date,
+            long timestamp
+    ) {
+        this.mId = id;
+        this.mAddress = address;
+        this.mBody = body;
+        this.mType = type;
+        this.mState = state.ordinal();
+        this.mDate = date;
+        this.mTimestamp = timestamp;
+    }
+
+    // nullType
+    @Ignore
+    public Sms() {
+        this.mId = 0;
+        this.mAddress = "";
+        this.mBody = "";
+        this.mType = 0;
+        this.mState = 0;
+        this.mDate = "";
+        this.mTimestamp = 0;
+    }
+
     public int getId() {
         return this.mId;
     }
@@ -80,5 +137,10 @@ public class Sms {
 
     public long getTimestamp() {
         return this.mTimestamp;
+    }
+
+    @Override
+    public DatabaseEntity getNullType() {
+        return new Sms();
     }
 }

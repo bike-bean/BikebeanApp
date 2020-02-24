@@ -19,11 +19,12 @@ import java.util.List;
 import java.util.Objects;
 
 import de.bikebean.app.db.sms.Sms;
+import de.bikebean.app.ui.status.menu.log.LogViewModel;
 import de.bikebean.app.ui.status.StateViewModel;
 import de.bikebean.app.ui.status.StatusFragment;
-import de.bikebean.app.ui.status.sms.SmsViewModel;
-import de.bikebean.app.ui.status.sms.listen.SmsListener;
-import de.bikebean.app.ui.status.sms.parser.SmsParser;
+import de.bikebean.app.ui.status.menu.sms_history.SmsViewModel;
+import de.bikebean.app.ui.status.sms_utils.listen.SmsListener;
+import de.bikebean.app.ui.status.sms_utils.parser.SmsParser;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     // These are ViewModels
     private SmsViewModel smsViewModel;
     private StateViewModel stateViewModel;
+    private LogViewModel logViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +45,11 @@ public class MainActivity extends AppCompatActivity {
         // init the ViewModels
         smsViewModel = new ViewModelProvider(this).get(SmsViewModel.class);
         stateViewModel = new ViewModelProvider(this).get(StateViewModel.class);
+        logViewModel = new ViewModelProvider(this).get(LogViewModel.class);
 
         smsViewModel.getNewIncoming().observe(this, this::handleNewIncomingMessages);
 
-        SmsListener.setSmsViewModel(smsViewModel);
-        SmsListener.setStatusViewModel(stateViewModel);
+        SmsListener.setViewModels(stateViewModel, smsViewModel, logViewModel);
     }
 
     private void setupNavViewAndActionBar() {
@@ -68,16 +70,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void handleNewIncomingMessages(List<Sms> newSmsList) {
         for (Sms newSms : newSmsList)
-            new SmsParser(newSms, stateViewModel, smsViewModel).execute();
+            new SmsParser(newSms, stateViewModel, smsViewModel, logViewModel).execute();
     }
-
 
     @Override
     public void onRequestPermissionsResult(
             int requestCode,
             @NonNull String[] permissions,
             @NonNull int[] grantResults) {
-        if (requestCode == Utils.PERMISSION_KEY_SMS) {
+        if (requestCode == Utils.PERMISSION_KEY.SMS.ordinal()) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 StatusFragment.permissionGrantedHandler.continueWithPermission();
                 StatusFragment.permissionDeniedHandler.continueWithoutPermission(false);

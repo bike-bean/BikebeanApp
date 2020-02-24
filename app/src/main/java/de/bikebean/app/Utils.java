@@ -1,6 +1,5 @@
 package de.bikebean.app;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -17,12 +16,14 @@ import java.util.Locale;
 import java.util.Map;
 
 import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.status.StateViewModel;
+import de.bikebean.app.ui.map.MapFragment;
+import de.bikebean.app.ui.status.StatusFragment;
 
 public class Utils {
 
-    public static final int PERMISSION_KEY_SMS = 1;
-    public static final int PERMISSION_KEY_MAPS = 2;
+    public enum PERMISSION_KEY {
+        SMS, MAPS
+    }
 
     private static final Map<Integer, Double> batteryRuntimeByInterval =
             new HashMap<Integer, Double>() {{
@@ -34,28 +35,18 @@ public class Utils {
                 put(24, 477.0);
     }};
 
-    private static final String[] smsPermissions = {
-            android.Manifest.permission.READ_SMS,
-            android.Manifest.permission.SEND_SMS,
-            android.Manifest.permission.RECEIVE_SMS
-    };
-
-    private static final String[] mapsPermissions = {
-            Manifest.permission.ACCESS_FINE_LOCATION
-    };
-
-    private static final Map<Integer, String[]> permissionMap =
-            new HashMap<Integer, String[]>() {{
-                put(PERMISSION_KEY_SMS, smsPermissions);
-                put(PERMISSION_KEY_MAPS, mapsPermissions);
+    private static final Map<PERMISSION_KEY, String[]> permissionMap =
+            new HashMap<PERMISSION_KEY, String[]>() {{
+                put(PERMISSION_KEY.SMS, StatusFragment.smsPermissions);
+                put(PERMISSION_KEY.MAPS, MapFragment.mapsPermissions);
     }};
 
     public interface RationaleShower {
         void showRationaleDialog();
     }
 
-    public static boolean getPermissions(Activity activity, int permissionKey, RationaleShower r) {
-        String[] permissions = permissionMap.get(permissionKey);
+    public static boolean getPermissions(Activity activity, PERMISSION_KEY p, RationaleShower r) {
+        String[] permissions = permissionMap.get(p);
 
         if (activity == null || permissions == null)
             return false;
@@ -67,20 +58,20 @@ public class Utils {
                     r.showRationaleDialog();
                     return false;
                 } else {
-                    askForPermissions(activity, permissionKey);
+                    askForPermissions(activity, p);
                     return false;
                 }
 
         return true;
     }
 
-    public static void askForPermissions(Activity activity, int permissionKey) {
-        String[] permissions = permissionMap.get(permissionKey);
+    public static void askForPermissions(Activity activity, PERMISSION_KEY p) {
+        String[] permissions = permissionMap.get(p);
 
         if (activity == null || permissions == null)
             return;
 
-        ActivityCompat.requestPermissions(activity, permissions, permissionKey);
+        ActivityCompat.requestPermissions(activity, permissions, p.ordinal());
     }
 
     public static String convertToTime(long datetime) {
@@ -89,15 +80,7 @@ public class Utils {
         return formatter.format(date);
     }
 
-    public static String getEstimatedDaysText(StateViewModel st) {
-        State lastBatteryState = st.getConfirmedBatterySync();
-        boolean isWifiOn = st.getConfirmedWifiSync();
-        int interval = st.getConfirmedIntervalSync();
-
-        return estimateBatteryDays(lastBatteryState, isWifiOn, interval);
-    }
-
-    private static String estimateBatteryDays(State lastBatteryState, boolean isWifiOn, int interval) {
+    public static String estimateBatteryDays(State lastBatteryState, boolean isWifiOn, int interval) {
         if (lastBatteryState == null) {
             return "";
         }
@@ -107,7 +90,7 @@ public class Utils {
         long timeSinceLastManagement = new Date().getTime() - lastBatteryState.getTimestamp();
         double daysSinceLastManagement = timeSinceLastManagement / 1000.0 / 60 / 60 / 24;
 
-        if (remainingPercent < 10)
+        if (remainingPercent < 0)
             return "Unter 10%, bitte umgehend aufladen!";
 
         if (isWifiOn)

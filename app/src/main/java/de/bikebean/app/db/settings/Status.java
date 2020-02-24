@@ -9,7 +9,7 @@ public class Status extends Setting {
     public Status(double status, Sms sms) {
         this.status = status;
         this.sms = sms;
-        this.key = State.KEY_STATUS;
+        this.key = State.KEY._STATUS;
     }
 
     public Double get() {
