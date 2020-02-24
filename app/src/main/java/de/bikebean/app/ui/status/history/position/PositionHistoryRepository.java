@@ -1,15 +1,15 @@
-package de.bikebean.app.ui.status.history;
+package de.bikebean.app.ui.status.history.position;
 
 import android.app.Application;
 
 import java.util.List;
 
 import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.status.StateRepository;
+import de.bikebean.app.ui.status.history.HistoryRepository;
 
-class HistoryStateRepository extends StateRepository {
+class PositionHistoryRepository extends HistoryRepository {
 
-    HistoryStateRepository(Application application) {
+    PositionHistoryRepository(Application application) {
         super(application);
     }
 

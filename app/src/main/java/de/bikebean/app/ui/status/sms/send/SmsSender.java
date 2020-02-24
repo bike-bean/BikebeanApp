@@ -1,54 +1,48 @@
 package de.bikebean.app.ui.status.sms.send;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.provider.Telephony;
 import android.telephony.SmsManager;
-import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
-
-import java.util.List;
 
 import de.bikebean.app.Utils;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.status.PermissionsRationaleDialog;
-import de.bikebean.app.ui.status.StateViewModel;
 import de.bikebean.app.ui.status.StatusFragment;
-import de.bikebean.app.ui.status.sms.SmsViewModel;
 
 public class SmsSender {
 
-    private final Context ctx;
+    public interface PostSmsSendHandler {
+        void onPostSend(boolean sent, String phoneNumber, String message, State[] updates);
+    }
+
     private final FragmentActivity act;
     private final SharedPreferences sharedPreferences;
-    private final SmsViewModel smsViewModel;
-    private final StateViewModel stateViewModel;
+    private PostSmsSendHandler postSmsSendHandler;
 
-    public SmsSender(Context ctx, FragmentActivity act,
-                     SmsViewModel smsViewModel, StateViewModel stateViewModel) {
-        this.ctx = ctx;
+    public SmsSender(FragmentActivity act, PostSmsSendHandler postSmsSendHandler) {
         this.act = act;
-        this.smsViewModel = smsViewModel;
-        this.stateViewModel = stateViewModel;
+        this.postSmsSendHandler = postSmsSendHandler;
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(act);
     }
 
-    private String phoneNumber;
+    private String address;
     private String message;
-    private List<State> updates;
+    private State[] updates;
 
-    public void send(String message, List<State> updates) {
-        this.phoneNumber = sharedPreferences.getString("number","");
-        this.message = message;
+    public void send(Sms.MESSAGE message, State[] updates) {
+        this.address = sharedPreferences.getString("number","");
+        this.message = message.getMsg();
         this.updates = updates;
 
-        if (phoneNumber.isEmpty())
+        if (address.isEmpty()) {
+            cancelSend();
             return;
+        }
 
         SmsSendWarnDialog smsSendWarnDialog =
                 new SmsSendWarnDialog(act, message, this::getPermissions, this::cancelSend);
@@ -57,8 +51,10 @@ public class SmsSender {
         if (dialog == null)
             dialog = smsSendWarnDialog.onCreateDialog(null);
 
-        if (dialog.isShowing())
+        if (dialog.isShowing()) {
+            cancelSend();
             return;
+        }
 
         smsSendWarnDialog.show(act.getSupportFragmentManager(), "smsWarning");
     }
@@ -74,7 +70,8 @@ public class SmsSender {
         )) {
             StatusFragment.permissionDeniedHandler.continueWithoutPermission(false);
             StatusFragment.permissionGrantedHandler.continueWithPermission();
-        }
+        } else
+            cancelSend();
     }
 
     private void reallySend() {
@@ -82,32 +79,15 @@ public class SmsSender {
         The user decided to send the SMS, so actually send it!
         */
         SmsManager smsManager = SmsManager.getDefault();
-        long timestamp = System.currentTimeMillis();
+        smsManager.sendTextMessage(address,null, message,null,null);
 
-        synchronized (this) {
-            new SmsSendIdGetter(smsViewModel, smsId -> smsViewModel.insert(new Sms(
-                    smsId - 1, phoneNumber, message, Telephony.Sms.MESSAGE_TYPE_SENT,
-                    Sms.STATUS.NEW, Utils.convertToTime(timestamp), timestamp))
-            ).execute();
-        }
-
-        smsManager.sendTextMessage(
-                phoneNumber,null,
-                message,null,null
-        );
-
-        Toast.makeText(ctx,"SMS an " + phoneNumber + " gesendet", Toast.LENGTH_LONG).show();
-
-        for (State update : updates)
-            stateViewModel.insert(update);
+        postSmsSendHandler.onPostSend(true, address, message, updates);
     }
 
     private void cancelSend() {
         /*
         The user decided to cancel, don't send an SMS and signal it to the user.
         */
-        Toast.makeText(ctx, "Vorgang abgebrochen.", Toast.LENGTH_LONG).show();
-
-        stateViewModel.notifyIntervalAbort(true);
+        postSmsSendHandler.onPostSend(false, address, message, updates);
     }
 }

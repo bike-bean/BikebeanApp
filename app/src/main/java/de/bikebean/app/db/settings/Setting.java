@@ -24,7 +24,7 @@ public abstract class Setting {
 
     protected abstract Object get();
 
-    public List<State> updatePreferences(List<Setting> settingList) {
+    public State[] updatePreferences(List<Setting> settingList) {
         /*
         Basically takes a list of Settings and converts them into a list of State's.
 
@@ -44,7 +44,7 @@ public abstract class Setting {
                 else
                     setting.addStatusEntryConfirmed(newStateEntries, false);
 
-        return newStateEntries;
+        return newStateEntries.toArray(new State[]{});
     }
 
     private void addStatusEntryConfirmed(List<State> entries, boolean takeLong) {

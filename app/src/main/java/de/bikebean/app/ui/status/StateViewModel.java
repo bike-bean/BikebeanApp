@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.MutableLiveData;
 
 import de.bikebean.app.R;
 import de.bikebean.app.db.MutableObject;
@@ -17,19 +16,21 @@ public class StateViewModel extends AndroidViewModel {
 
     private final StateRepository mRepository;
 
-    protected final MutableLiveData<Boolean> mIntervalAborted;
-
     public StateViewModel(Application application) {
         super(application);
 
         mRepository = new StateRepository(application);
-
-        mIntervalAborted = new MutableLiveData<>();
     }
 
     public void insert(State state) {
         if (state != null)
             mRepository.insert(state);
+    }
+
+    public void insert(State[] states) {
+        for (State state : states)
+            if (state != null)
+                mRepository.insert(state);
     }
 
     public void insertInitialStates(Context ctx) {
@@ -72,10 +73,6 @@ public class StateViewModel extends AndroidViewModel {
                 1, State.KEY.WIFI_ACCESS_POINTS, 0.0, "",
                 State.STATUS.UNSET, 0)
         );
-    }
-
-    public void notifyIntervalAbort(boolean b) {
-        mIntervalAborted.postValue(b);
     }
 
     public int getConfirmedIntervalSync() {

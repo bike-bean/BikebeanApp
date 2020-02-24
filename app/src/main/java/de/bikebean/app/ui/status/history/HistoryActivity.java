@@ -8,12 +8,15 @@ import androidx.navigation.Navigation;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import de.bikebean.app.R;
 
 public class HistoryActivity extends AppCompatActivity {
 
     private Button positionHistoryButton, batteryHistoryButton;
+
+    private LinearLayout tabs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +34,16 @@ public class HistoryActivity extends AppCompatActivity {
         positionHistoryButton = findViewById(R.id.positionButton);
         batteryHistoryButton = findViewById(R.id.batteryButton);
 
+        tabs = findViewById(R.id.tabs);
+
         initUserElements();
+    }
+
+    public void showButtons(boolean show) {
+        if (show)
+            tabs.setVisibility(View.VISIBLE);
+        else
+            tabs.setVisibility(View.GONE);
     }
 
     private void initUserElements() {

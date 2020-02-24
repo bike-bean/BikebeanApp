@@ -38,13 +38,13 @@ public class Conversation {
 
         // update the internal list, checking if the information from the SMS
         // is newer than already stored information.
-        for (Setting smsSetting : smsSettingList) {
+        for (Setting smsSetting : smsSettingList)
             if (smsSetting.getKey().equals(State.KEY.WAPP)
                     || smsSetting.getKey().equals(State.KEY.BATTERY)
                     || smsSetting.getKey().equals(State.KEY.WIFI_ACCESS_POINTS)
-                    || smsSetting.getKey().equals(State.KEY.CELL_TOWERS)) {
+                    || smsSetting.getKey().equals(State.KEY.CELL_TOWERS))
                 internalList.add(smsSetting);
-            } else {
+            else
                 for (Setting internalListItem : internalList)
                     if (internalListItem.getKey().equals(smsSetting.getKey())) {
                         if (smsSetting.getDate() > internalListItem.getDate()) {
@@ -53,14 +53,11 @@ public class Conversation {
                         }
                         break;
                     }
-            }
-        }
 
         smsViewModel.insert(sms);
     }
 
     public void updatePreferences() {
-        for(State state : internalList.get((0)).updatePreferences(internalList))
-            this.stateViewModel.insert(state);
+        this.stateViewModel.insert(internalList.get((0)).updatePreferences(internalList));
     }
 }

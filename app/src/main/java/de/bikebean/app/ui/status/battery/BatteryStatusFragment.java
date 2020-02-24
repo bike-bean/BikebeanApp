@@ -1,6 +1,5 @@
 package de.bikebean.app.ui.status.battery;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,31 +8,20 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import de.bikebean.app.R;
 import de.bikebean.app.Utils;
+import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.status.sms.SmsViewModel;
-import de.bikebean.app.ui.status.sms.send.SmsSender;
+import de.bikebean.app.ui.status.SubStatusFragment;
 import de.bikebean.app.ui.status.status.LiveDataTimerViewModel;
 
-public class BatteryStatusFragment extends Fragment {
+public class BatteryStatusFragment extends SubStatusFragment {
 
-    private LiveDataTimerViewModel tv;
     private BatteryStateViewModel st;
 
-    private Context ctx;
-
-    private SmsSender smsSender;
-    
     private final LiveDataTimerViewModel.TIMER t1 = LiveDataTimerViewModel.TIMER.FOUR;
 
     // UI Elements
@@ -57,101 +45,59 @@ public class BatteryStatusFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
+    protected void setupListeners(LifecycleOwner l) {
         st = new ViewModelProvider(this).get(BatteryStateViewModel.class);
-        tv = new ViewModelProvider(this).get(LiveDataTimerViewModel.class);
-        SmsViewModel sm  = new ViewModelProvider(this).get(SmsViewModel.class);
-
-        LifecycleOwner l = getViewLifecycleOwner();
-        FragmentActivity act = getActivity();
-        ctx = Objects.requireNonNull(act).getApplicationContext();
-
-        smsSender = new SmsSender(ctx, act, sm, st);
-
-        List<State> statusStates = new ArrayList<>();
-        statusStates.add(new State(State.KEY.BATTERY, 0.0));
-
-        statusButton.setOnClickListener(v -> smsSender.send("Status", statusStates));
         st.getStatusBattery().observe(l, this::setElements);
     }
 
-    /*
-     * Change the Text Views, Switches etc. (UI elements)
-     * according to the states from the viewModel.
-     * */
-    // Cached copy of parsed sms
-    private final List<Integer> parsedSms = new ArrayList<>();
+    @Override
+    protected void initUserInteractionElements() {
+        statusButton.setOnClickListener(v ->
+                sendSms(Sms.MESSAGE._STATUS, new State[]{new State(State.KEY.BATTERY, 0.0)})
+        );
+    }
 
-    private void setElements(List<State> states) {
-        if (states.size() == 0)
-            return;
+    @Override
+    protected void resetElements() {
+        assert true;
+    }
 
-        State state = states.get(0);
+    // unset
+    @Override
+    protected void setBatteryElementsUnset(State state) {
+        tv.getResidualTime(t1).removeObservers(this);
+        tv.cancelTimer(t1);
 
-        int id = state.id;
+        batteryStatusText.setText("");
+        batteryStatusText.setCompoundDrawablesWithIntrinsicBounds(
+                Utils.getBatteryDrawable(ctx, state.getValue()), null, null, null
+        );
 
-        if (parsedSms.contains(id))
-            return;
+        batteryLastChangedText.setText(R.string.no_data);
+        batteryEstimatedDaysText.setText(R.string.no_data);
 
-        parsedSms.add(id);
+        statusButton.setEnabled(true);
 
-        State.KEY key = State.KEY.getValue(state.getKey());
-        switch (State.STATUS.values()[state.getState()]) {
-            case UNSET:
-                switch (key) {
-                    case INTERVAL:
-                        setIntervalElementsConfirmed(state);
-                        break;
-                    case WIFI:
-                        setWifiElementsConfirmed(state);
-                        break;
-                    case BATTERY:
-                        setBatteryElementsUnset(state);
-                        break;
-                }
-                break;
-            case CONFIRMED:
-                switch (key) {
-                    case INTERVAL:
-                        setIntervalElementsConfirmed(state);
-                        break;
-                    case WIFI:
-                        setWifiElementsConfirmed(state);
-                        break;
-                    case BATTERY:
-                        setBatteryElementsConfirmed(state);
-                        break;
-                }
-                break;
-            case PENDING:
-                switch (key) {
-                    case INTERVAL: // And
-                    case WIFI:
-                        break;
-                    case BATTERY:
-                        setBatteryElementsPending(state);
-                        break;
-                }
-                break;
-        }
+        statusPendingStatus.setText("");
+        statusPendingStatus.setVisibility(View.GONE);
+    }
+
+    protected void setWarningNumberElementsUnset(State state) {
+
+    }
+    protected void setStatusElementsUnset(State state) {
+
+    }
+    protected void setLocationElementsUnset() {
+
+    }
+    protected void setLocationElementsTempUnset() {
+
     }
 
     // confirmed
-    private void setIntervalElementsConfirmed(State state) {
-        assert state != null;
-
-        batteryEstimatedDaysText.setText(BatteryStateViewModel.getEstimatedDaysText(st));
-    }
-
-    private void setWifiElementsConfirmed(State state) {
-        assert state != null;
-
-        batteryEstimatedDaysText.setText(BatteryStateViewModel.getEstimatedDaysText(st));
-    }
-
-    private void setBatteryElementsConfirmed(State state) {
+    @Override
+    protected void setBatteryElementsConfirmed(State state) {
         tv.getResidualTime(t1).removeObservers(this);
         tv.cancelTimer(t1);
 
@@ -170,8 +116,43 @@ public class BatteryStatusFragment extends Fragment {
         statusPendingStatus.setVisibility(View.GONE);
     }
 
+    @Override
+    protected void setIntervalElementsConfirmed(State state) {
+        assert state != null;
+
+        batteryEstimatedDaysText.setText(BatteryStateViewModel.getEstimatedDaysText(st));
+    }
+
+    @Override
+    protected void setWifiElementsConfirmed(State state) {
+        assert state != null;
+
+        batteryEstimatedDaysText.setText(
+                BatteryStateViewModel.getEstimatedDaysText(st));
+    }
+
+    protected void setWarningNumberElementsConfirmed(State state) {
+
+    }
+    protected void setStatusElementsConfirmed(State state) {
+
+    }
+    protected void setLocationElementsConfirmed(State state) {
+
+    }
+    protected void setLatConfirmed(State state) {
+
+    }
+    protected void setLngConfirmed(State state) {
+
+    }
+    protected void setAccConfirmed(State state) {
+
+    }
+
     // pending
-    private void setBatteryElementsPending(State state) {
+    @Override
+    protected void setBatteryElementsPending(State state) {
         long stopTime = tv.startTimer(t1, state.getTimestamp(), st.getConfirmedIntervalSync());
         tv.getResidualTime(t1).observe(this, s ->
                 updatePendingText(statusPendingStatus, stopTime, s)
@@ -184,8 +165,7 @@ public class BatteryStatusFragment extends Fragment {
 
             batteryLastChangedText.setText(
                     Utils.convertToDateHuman(lastBatteryState.getTimestamp()));
-            batteryEstimatedDaysText.setText(
-                    BatteryStateViewModel.getEstimatedDaysText(st));
+            batteryEstimatedDaysText.setText(BatteryStateViewModel.getEstimatedDaysText(st));
             batteryStatusText.setText(batteryStatus);
             batteryStatusText.setCompoundDrawablesWithIntrinsicBounds(
                     Utils.getBatteryDrawable(ctx, batteryValue), null, null, null
@@ -204,42 +184,19 @@ public class BatteryStatusFragment extends Fragment {
         statusPendingStatus.setVisibility(View.VISIBLE);
     }
 
-    // unset
-    private void setBatteryElementsUnset(State state) {
-        tv.getResidualTime(t1).removeObservers(this);
-        tv.cancelTimer(t1);
+    protected void setIntervalElementsPending(State state) {
 
-        batteryStatusText.setText("");
-        batteryStatusText.setCompoundDrawablesWithIntrinsicBounds(
-                Utils.getBatteryDrawable(ctx, state.getValue()), null, null, null
-        );
-
-        batteryLastChangedText.setText(R.string.no_data);
-        batteryEstimatedDaysText.setText(R.string.no_data);
-
-        statusButton.setEnabled(true);
-
-        statusPendingStatus.setText("");
-        statusPendingStatus.setVisibility(View.GONE);
     }
+    protected void setWifiElementsPending(State state) {
 
-    private void updatePendingText(TextView textView, long stopTime, long residualSeconds) {
-        if (residualSeconds < 0) {
-            textView.setText(getResources().getString(R.string.overdue,
-                    Utils.convertToDateHuman(stopTime))
-            );
-            return;
-        }
+    }
+    protected void setWarningNumberElementsPending(State state) {
 
-        int hours = (int) residualSeconds / 60 / 60;
-        int minutes = (int) (residualSeconds / 60 ) - (hours * 60);
+    }
+    protected void setLocationElementsPending(State state) {
 
-        String hoursPadded = (hours < 10) ? "0" + hours : String.valueOf(hours);
-        String minutesPadded = (minutes < 10) ? "0" + minutes : String.valueOf(minutes);
+    }
+    protected void setLocationElementsTempPending(State state) {
 
-        textView.setText(getResources().getString(R.string.pending_text,
-                hoursPadded + ":" + minutesPadded,
-                Utils.convertToTime(stopTime))
-        );
     }
 }

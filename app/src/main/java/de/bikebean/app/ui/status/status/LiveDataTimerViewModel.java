@@ -63,7 +63,7 @@ public class LiveDataTimerViewModel extends AndroidViewModel {
     protected void onCleared() {
         super.onCleared();
 
-        for(int i=0; i<N_TIMERS; i++)
+        for (int i=0; i<N_TIMERS; i++)
             timers.get(i).cancel();
     }
 }

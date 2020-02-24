@@ -38,7 +38,7 @@ public interface SmsDao {
     @Query("SELECT * FROM sms_table WHERE _id = :id")
     List<Sms> getSmsById(int id);
 
-    @Query("SELECT * FROM sms_table WHERE type = :type ORDER BY timestamp LIMIT 1")
+    @Query("SELECT * FROM sms_table WHERE type = :type ORDER BY timestamp DESC LIMIT 1")
     List<Sms> getLatestId(int type);
 
     @Query("UPDATE sms_table SET state = :state WHERE _id = :id")

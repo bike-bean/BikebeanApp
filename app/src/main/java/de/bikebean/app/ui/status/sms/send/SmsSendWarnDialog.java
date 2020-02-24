@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
 import de.bikebean.app.R;
+import de.bikebean.app.db.sms.Sms;
 
 public class SmsSendWarnDialog extends DialogFragment {
 
@@ -30,12 +31,13 @@ public class SmsSendWarnDialog extends DialogFragment {
         void cancel();
     }
 
-    SmsSendWarnDialog(Activity act, String message, iSmsSender smsSender, iSmsCanceler smsCanceler) {
+    SmsSendWarnDialog(Activity act, Sms.MESSAGE message,
+                      iSmsSender smsSender, iSmsCanceler smsCanceler) {
         this.smsSender = smsSender;
         this.smsCanceler = smsCanceler;
         this.act = act;
 
-        this.message = message;
+        this.message = message.getMsg();
     }
 
     @NonNull

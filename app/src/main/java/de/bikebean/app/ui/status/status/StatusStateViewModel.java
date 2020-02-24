@@ -43,10 +43,6 @@ public class StatusStateViewModel extends StateViewModel {
         return mStatusWifi;
     }
 
-    LiveData<Boolean> getIntervalAborted() {
-        return mIntervalAborted;
-    }
-
     long getIntervalLastChangeDate() {
         State intervalConfirmed = getConfirmedStateSync(State.KEY.INTERVAL);
 
@@ -56,9 +52,8 @@ public class StatusStateViewModel extends StateViewModel {
         return 0;
     }
 
-    boolean getWifiStatusSync() {
-        // TODO: really not the confirmed, but any state???
-        State wifiConfirmed = getLastStateSync(State.KEY.WIFI);
+    boolean getConfirmedWifiSync() {
+        State wifiConfirmed = getConfirmedStateSync(State.KEY.WIFI);
 
         if (wifiConfirmed != null)
             return wifiConfirmed.getValue() > 0;
@@ -66,8 +61,16 @@ public class StatusStateViewModel extends StateViewModel {
         return Boolean.valueOf(String.valueOf(INITIAL_WIFI));
     }
 
+    boolean getWifiStatusSync() {
+        State wifi = getLastStateSync(State.KEY.WIFI);
+
+        if (wifi != null)
+            return wifi.getValue() > 0;
+
+        return Boolean.valueOf(String.valueOf(INITIAL_WIFI));
+    }
+
     int getIntervalStatusSync() {
-        // TODO: really not the confirmed, but any state???
         State intervalState = getLastStateSync(State.KEY.INTERVAL);
 
         if (intervalState != null)

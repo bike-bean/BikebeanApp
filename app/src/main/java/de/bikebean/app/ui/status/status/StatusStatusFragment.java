@@ -1,6 +1,5 @@
 package de.bikebean.app.ui.status.status;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,30 +12,20 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
 import de.bikebean.app.Utils;
+import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.status.sms.SmsViewModel;
-import de.bikebean.app.ui.status.sms.send.SmsSender;
+import de.bikebean.app.ui.status.SubStatusFragment;
 
-public class StatusStatusFragment extends Fragment {
+public class StatusStatusFragment extends SubStatusFragment {
 
     private StatusStateViewModel st;
-    private LiveDataTimerViewModel tv;
-    private FragmentActivity act;
 
-    private SmsSender smsSender;
-    
     private final LiveDataTimerViewModel.TIMER t1 = LiveDataTimerViewModel.TIMER.ONE;
     private final LiveDataTimerViewModel.TIMER t2 = LiveDataTimerViewModel.TIMER.TWO;
     private final LiveDataTimerViewModel.TIMER t3 = LiveDataTimerViewModel.TIMER.THREE;
@@ -78,20 +67,7 @@ public class StatusStatusFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        st = new ViewModelProvider(this).get(StatusStateViewModel.class);
-        tv = new ViewModelProvider(this).get(LiveDataTimerViewModel.class);
-        SmsViewModel sm = new ViewModelProvider(this).get(SmsViewModel.class);
-
-        act = Objects.requireNonNull(getActivity());
-        Context ctx = Objects.requireNonNull(act).getApplicationContext();
-
-        LifecycleOwner l = getViewLifecycleOwner();
-
-        smsSender = new SmsSender(ctx, act, sm, st);
-
         initIntervalDropdown();
-        setupListeners(l);
-        initUserInteractionElements();
     }
 
     private void initIntervalDropdown() {
@@ -102,41 +78,42 @@ public class StatusStatusFragment extends Fragment {
         intervalDropdown.setAdapter(adapter);
     }
 
-    private void setupListeners(LifecycleOwner l) {
+    @Override
+    protected void setupListeners(LifecycleOwner l) {
+        st = new ViewModelProvider(this).get(StatusStateViewModel.class);
+
         st.getStatusWifi().observe(l, this::setElements);
         st.getStatus().observe(l, this::setElements);
         st.getStatusWarningNumber().observe(l, this::setElements);
         st.getStatusInterval().observe(l, this::setElements);
-
-        st.getIntervalAborted().observe(l, this::handleIntervalAborted);
     }
 
-    private void initUserInteractionElements() {
+    @Override
+    protected void initUserInteractionElements() {
         // React to user interactions
         intervalDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String[] items = getResources().getStringArray(R.array.interval_values);
-                String newValue = items[position];
+                String newValue = getIntervalString(position);
 
                 // See if the "new" value is actually just the placeholder.
                 // In that case, set the text underneath to reflect the last known status
-                if (newValue.equals("0"))
+                if (newValue.equals("0")) {
                     return;
+                }
 
                 // Get the last confirmed interval status and
                 // see if the value has changed from then.
                 // If it has not changed, return
-                String oldValue = String.valueOf(st.getIntervalStatusSync());
-                if (newValue.equals(oldValue))
+                if (position == getIntervalPosition(st.getIntervalStatusSync()))
                     return;
 
                 // if it has changed, create a new pending state and fire it into the db
                 Log.d(MainActivity.TAG, "Setting Interval about to be changed to " + newValue);
-                String msg = "Int " + newValue;
-                List<State> statusStates = new ArrayList<>();
-                statusStates.add(new State(State.KEY.INTERVAL, Double.valueOf(newValue)));
-                sendSms(msg, statusStates);
+                Sms.MESSAGE msg = Sms.MESSAGE.INT;
+                msg.setValue(newValue);
+
+                sendSms(msg, new State[]{new State(State.KEY.INTERVAL, Double.valueOf(newValue))});
             }
 
             @Override
@@ -152,87 +129,72 @@ public class StatusStatusFragment extends Fragment {
 
             // if it has changed, create a new pending state and fire it into the db
             Log.d(MainActivity.TAG, "Setting Wifi about to be changed to " + isChecked);
-            String msg = "Wifi " + (isChecked ? "on" : "off");
-            List<State> statusStates = new ArrayList<>();
-            statusStates.add(new State(State.KEY.WIFI, isChecked ? 1.0 : 0.0));
-            sendSms(msg, statusStates);
+            Sms.MESSAGE msg = Sms.MESSAGE.WIFI;
+            msg.setValue(isChecked ? "on" : "off");
+
+            sendSms(msg, new State[]{new State(State.KEY.WIFI, isChecked ? 1.0 : 0.0)});
         });
     }
 
-    /*
-    * Change the Text Views, Switches etc. (UI elements)
-    * according to the states from the viewModel.
-    * */
-    // Cached copy of parsed sms
-    private final List<Integer> parsedSms = new ArrayList<>();
+    private String getIntervalString(int position) {
+        String[] items = getResources().getStringArray(R.array.interval_values);
+        return items[position];
+    }
 
-    private void setElements(List<State> states) {
-        if (states.size() == 0)
-            return;
+    private int getIntervalPosition(int intervalValue) {
+        String[] items = getResources().getStringArray(R.array.interval_values);
 
-        State state = states.get(0);
+        for (int i=0; i<items.length; i++)
+            if (items[i].equals(String.valueOf(intervalValue)))
+                return i;
 
-        int id = state.id;
+        return 0;
+    }
 
-        if (parsedSms.contains(id))
-            return;
+    @Override
+    protected void resetElements() {
+        wlanSwitch.setChecked(st.getWifiStatusSync());
+        intervalDropdown.setSelection(getIntervalPosition(st.getIntervalStatusSync()));
+    }
 
-        parsedSms.add(id);
+    // unset
+    protected void setBatteryElementsUnset(State state) {
 
-        State.KEY key = State.KEY.getValue(state.getKey());
-        switch (State.STATUS.values()[state.getState()]) {
-            case UNSET:
-                switch (key) {
-                    case INTERVAL:
-                        setIntervalElementsConfirmed(state);
-                        break;
-                    case WIFI:
-                        setWifiElementsConfirmed(state);
-                        break;
-                    case WARNING_NUMBER:
-                        setWarningNumberElementsUnset(state);
-                        break;
-                    case _STATUS:
-                        setStatusElementsUnset(state);
-                        break;
-                }
-                break;
-            case CONFIRMED:
-                switch (key) {
-                    case INTERVAL:
-                        setIntervalElementsConfirmed(state);
-                        break;
-                    case WIFI:
-                        setWifiElementsConfirmed(state);
-                        break;
-                    case WARNING_NUMBER:
-                        setWarningNumberElementsConfirmed(state);
-                        break;
-                    case _STATUS:
-                        setStatusElementsConfirmed(state);
-                        break;
-                }
-                break;
-            case PENDING:
-                switch (key) {
-                    case INTERVAL:
-                        setIntervalElementsPending(state);
-                        break;
-                    case WIFI:
-                        setWifiElementsPending(state);
-                        break;
-                    case WARNING_NUMBER:
-                        setWarningNumberElementsPending(state);
-                        break;
-                    case _STATUS:
-                        break;
-                }
-                break;
-        }
+    }
+
+    @Override
+    protected void setWarningNumberElementsUnset(State state) {
+        tv.getResidualTime(t3).removeObservers(this);
+        tv.cancelTimer(t3);
+
+        sendSms(Sms.MESSAGE.WARNING_NUMBER, new State[]{new State(State.KEY.WARNING_NUMBER, 0.0)});
+
+        warningNumberSummary.setText(state.getLongValue());
+        warningNumberPendingStatus.setText("");
+        warningNumberPendingStatus.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void setStatusElementsUnset(State state) {
+        assert state != null;
+
+        statusLastChangedText.setText(R.string.no_data);
+    }
+
+    protected void setLocationElementsUnset() {
+
+    }
+    protected void setLocationElementsTempUnset() {
+
     }
 
     // confirmed
-    private void setIntervalElementsConfirmed(State state) {
+    protected void setBatteryElementsConfirmed(State state) {
+
+    }
+
+    @Override
+    protected void setIntervalElementsConfirmed(State state) {
         String intervalSummaryString =
                 getResources().getString(R.string.interval_summary);
 
@@ -269,7 +231,8 @@ public class StatusStatusFragment extends Fragment {
         */
     }
 
-    private void setWifiElementsConfirmed(State state) {
+    @Override
+    protected void setWifiElementsConfirmed(State state) {
         tv.getResidualTime(t1).removeObservers(this);
         tv.cancelTimer(t1);
 
@@ -285,7 +248,8 @@ public class StatusStatusFragment extends Fragment {
         wlanPendingStatus.setVisibility(View.GONE);
     }
 
-    private void setWarningNumberElementsConfirmed(State state) {
+    @Override
+    protected void setWarningNumberElementsConfirmed(State state) {
         tv.getResidualTime(t3).removeObservers(this);
         tv.cancelTimer(t3);
 
@@ -297,12 +261,31 @@ public class StatusStatusFragment extends Fragment {
         warningNumberPendingStatus.setVisibility(View.GONE);
     }
 
-    private void setStatusElementsConfirmed(State state) {
+    @Override
+    protected void setStatusElementsConfirmed(State state) {
         statusLastChangedText.setText(Utils.convertToDateHuman(state.getTimestamp()));
     }
 
+    protected void setLocationElementsConfirmed(State state) {
+
+    }
+    protected void setLatConfirmed(State state) {
+
+    }
+    protected void setLngConfirmed(State state) {
+
+    }
+    protected void setAccConfirmed(State state) {
+
+    }
+
     // pending
-    private void setIntervalElementsPending(State state) {
+    protected void setBatteryElementsPending(State state) {
+
+    }
+
+    @Override
+    protected void setIntervalElementsPending(State state) {
         String intervalTransitionString =
                 getResources().getString(R.string.interval_switch_transition);
 
@@ -415,7 +398,8 @@ public class StatusStatusFragment extends Fragment {
     }
     */
 
-    private void setWifiElementsPending(State state) {
+    @Override
+    protected void setWifiElementsPending(State state) {
         long stopTime = tv.startTimer(t1, state.getTimestamp(), st.getConfirmedIntervalSync());
         tv.getResidualTime(t1).observe(this, s ->
                 updatePendingText(wlanPendingStatus, stopTime, s)
@@ -432,7 +416,8 @@ public class StatusStatusFragment extends Fragment {
         wlanPendingStatus.setVisibility(View.VISIBLE);
     }
 
-    private void setWarningNumberElementsPending(State state) {
+    @Override
+    protected void setWarningNumberElementsPending(State state) {
         long stopTime = tv.startTimer(t3, state.getTimestamp(), st.getConfirmedIntervalSync());
         tv.getResidualTime(t3).observe(this, s ->
                 updatePendingText(warningNumberPendingStatus, stopTime, s)
@@ -442,56 +427,11 @@ public class StatusStatusFragment extends Fragment {
         warningNumberPendingStatus.setVisibility(View.VISIBLE);
     }
 
-    // unset
-    private void setWarningNumberElementsUnset(State state) {
-        tv.getResidualTime(t3).removeObservers(this);
-        tv.cancelTimer(t3);
+    protected void setLocationElementsPending(State state) {
 
-        List<State> statusStates = new ArrayList<>();
-        statusStates.add(new State(State.KEY.WARNING_NUMBER, 0.0));
-
-        sendSms("Warningnumber", statusStates);
-
-        warningNumberSummary.setText(state.getLongValue());
-        warningNumberPendingStatus.setText("");
-        warningNumberPendingStatus.setVisibility(View.GONE);
     }
+    protected void setLocationElementsTempPending(State state) {
 
-    private void setStatusElementsUnset(State state) {
-        assert state != null;
-
-        statusLastChangedText.setText(R.string.no_data);
-    }
-
-    private void updatePendingText(TextView textView, long stopTime, long residualSeconds) {
-        if (residualSeconds < 0) {
-            textView.setText(getResources().getString(R.string.overdue,
-                    Utils.convertToDateHuman(stopTime))
-            );
-            return;
-        }
-
-        int hours = (int) residualSeconds / 60 / 60;
-        int minutes = (int) (residualSeconds / 60 ) - (hours * 60);
-
-        String hoursPadded = (hours < 10) ? "0" + hours : String.valueOf(hours);
-        String minutesPadded = (minutes < 10) ? "0" + minutes : String.valueOf(minutes);
-
-        textView.setText(getResources().getString(R.string.pending_text,
-                hoursPadded + ":" + minutesPadded,
-                Utils.convertToTime(stopTime))
-        );
-    }
-
-    private void handleIntervalAborted(boolean b) {
-        if (b) {
-            intervalDropdown.setSelection(0);
-            st.notifyIntervalAbort(false);
-        }
-    }
-
-    private void sendSms(String message, List<State> updates) {
-        smsSender.send(message, updates);
     }
 }
 

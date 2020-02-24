@@ -21,20 +21,20 @@ public class BatteryStateViewModel extends StateViewModel {
         mStatusBattery = mRepository.getStatusBattery();
     }
 
+    LiveData<List<State>> getStatusBattery() {
+        return mStatusBattery;
+    }
+
+    State getConfirmedBatterySync() {
+        return getConfirmedStateSync(State.KEY.BATTERY);
+    }
+
     static String getEstimatedDaysText(BatteryStateViewModel st) {
         State lastBatteryState = st.getConfirmedBatterySync();
         boolean isWifiOn = st.getConfirmedWifiSync();
         int interval = st.getConfirmedIntervalSync();
 
         return Utils.estimateBatteryDays(lastBatteryState, isWifiOn, interval);
-    }
-
-    public LiveData<List<State>> getStatusBattery() {
-        return mStatusBattery;
-    }
-
-    State getConfirmedBatterySync() {
-        return getConfirmedStateSync(State.KEY.BATTERY);
     }
 
     private boolean getConfirmedWifiSync() {

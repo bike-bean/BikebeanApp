@@ -46,6 +46,7 @@ import de.bikebean.app.R;
 import de.bikebean.app.Utils;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.status.PermissionsRationaleDialog;
+import de.bikebean.app.ui.status.history.HistoryActivity;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
@@ -112,6 +113,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         bikeName = PreferenceManager.getDefaultSharedPreferences(act)
                 .getString("name", "bike");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        if (!showCurrentPosition) {
+            HistoryActivity historyActivity = (HistoryActivity) getActivity();
+            if (historyActivity != null) {
+                historyActivity.showButtons(false);
+            }
+        }
     }
 
     private void setLocationEnabled() {

@@ -1,84 +1,54 @@
-package de.bikebean.app.ui.status.history;
+package de.bikebean.app.ui.status.history.position;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import de.bikebean.app.R;
 import de.bikebean.app.db.state.LocationState;
 import de.bikebean.app.db.state.State;
+import de.bikebean.app.ui.status.history.HistoryAdapter;
+import de.bikebean.app.ui.status.history.HistoryFragment;
+import de.bikebean.app.ui.status.history.HistoryViewModel;
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 
-public class PositionHistoryFragment extends Fragment {
-
-    private HistoryStateViewModel stateViewModel;
-    private Context ctx;
-
-    private PositionHistoryAdapter adapter;
-
-    // UI Elements
-    private RecyclerView recyclerView;
-    private TextView noDataText;
+public class PositionHistoryFragment extends HistoryFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.fragment_position_history, container, false);
 
         recyclerView = v.findViewById(R.id.recyclerView2);
         noDataText = v.findViewById(R.id.noDataText);
 
-        setHasOptionsMenu(false);
-        
         return v;
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        stateViewModel = new ViewModelProvider(this).get(HistoryStateViewModel.class);
-        SmsViewModel smsViewModel = new ViewModelProvider(this).get(SmsViewModel.class);
-        smsViewModel.getAllIds().observe(getViewLifecycleOwner(), this::updateStates);
-
-        FragmentActivity act = Objects.requireNonNull(getActivity());
-        ctx = Objects.requireNonNull(act).getApplicationContext();
-
-        initRecyclerView();
+    protected HistoryViewModel getNewStateViewModel() {
+        return new ViewModelProvider(this).get(PositionHistoryViewModel.class);
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-        // show the toolbar for this fragment
-        AppCompatActivity act = (AppCompatActivity) getActivity();
-        ActionBar actionbar = Objects.requireNonNull(act).getSupportActionBar();
-        Objects.requireNonNull(actionbar).show();
+    protected void setupListeners() {
+        SmsViewModel smsViewModel = new ViewModelProvider(this).get(SmsViewModel.class);
+        smsViewModel.getAllIds().observe(this, this::updateStates);
     }
 
-    private void initRecyclerView() {
-        adapter = new PositionHistoryAdapter(ctx, stateViewModel.getLocationStates().getValue());
-        recyclerView.setAdapter(adapter);
-
-        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ctx);
-        recyclerView.setLayoutManager(linearLayoutManager);
+    @Override
+    protected HistoryAdapter getNewAdapter(Context ctx) {
+        return new PositionHistoryAdapter(ctx,
+                ((PositionHistoryViewModel) st).getLocationStates().getValue());
     }
 
     private void updateStates(List<Integer> smsIdList) {
@@ -87,16 +57,16 @@ public class PositionHistoryFragment extends Fragment {
         new Thread(() -> {
             for (int smsId : smsIdList) {
                 LocationState locationState =
-                        updateLocationStates(stateViewModel.getAllLocation(smsId));
+                        updateLocationStates(((PositionHistoryViewModel) st).getAllLocation(smsId));
                 if (locationState != null)
                     locationStates.add(locationState);
             }
 
-            stateViewModel.setLocationsState(locationStates);
+            ((PositionHistoryViewModel) st).setLocationsState(locationStates);
         }).start();
 
-        stateViewModel.getLocationStates().removeObservers(this);
-        stateViewModel.getLocationStates().observe(this, this::setStatesToAdapter);
+        ((PositionHistoryViewModel) st).getLocationStates().removeObservers(this);
+        ((PositionHistoryViewModel) st).getLocationStates().observe(this, this::setStatesToAdapter);
     }
 
     private LocationState updateLocationStates(List<State> states) {
@@ -136,13 +106,5 @@ public class PositionHistoryFragment extends Fragment {
             );
 
         return null;
-    }
-
-    private void setStatesToAdapter(List<LocationState> ls) {
-        if (ls.size() != 0) {
-            adapter.setStates(ls);
-            noDataText.setVisibility(View.GONE);
-        } else
-            noDataText.setVisibility(View.VISIBLE);
     }
 }

@@ -15,6 +15,28 @@ public class Sms extends DatabaseEntity {
         NEW, PARSED
     }
 
+    public enum MESSAGE {
+        _STATUS("Status"),
+        WAPP("Wapp"),
+        INT("Int "),
+        WIFI("Wifi "),
+        WARNING_NUMBER("Warningnumber");
+
+        private String msg;
+
+        MESSAGE(String msg) {
+            this.msg = msg;
+        }
+
+        public String getMsg() {
+            return msg;
+        }
+
+        public void setValue(String msg) {
+            this.msg += msg;
+        }
+    }
+
     @PrimaryKey
     @ColumnInfo(name = "_id")
     private final int mId;

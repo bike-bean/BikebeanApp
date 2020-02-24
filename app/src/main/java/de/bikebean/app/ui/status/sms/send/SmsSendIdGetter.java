@@ -6,7 +6,7 @@ import java.lang.ref.WeakReference;
 
 import de.bikebean.app.ui.status.sms.SmsViewModel;
 
-class SmsSendIdGetter extends AsyncTask<String, Void, Integer> {
+public class SmsSendIdGetter extends AsyncTask<String, Void, Integer> {
 
     private final WeakReference<SmsViewModel> smsViewModelReference;
     private final WeakReference<AsyncResponse> asyncResponseReference;
@@ -15,7 +15,7 @@ class SmsSendIdGetter extends AsyncTask<String, Void, Integer> {
         void onIdRetrieved(int id);
     }
 
-    SmsSendIdGetter(SmsViewModel smsViewModel, AsyncResponse delegate) {
+    public SmsSendIdGetter(SmsViewModel smsViewModel, AsyncResponse delegate) {
         smsViewModelReference = new WeakReference<>(smsViewModel);
         asyncResponseReference = new WeakReference<>(delegate);
     }

@@ -1,6 +1,8 @@
 package de.bikebean.app.db.state;
 
-public class LocationState {
+import de.bikebean.app.db.DatabaseEntity;
+
+public class LocationState extends DatabaseEntity {
 
     private final int smsId;
     private final long timestamp;
@@ -51,5 +53,10 @@ public class LocationState {
 
     public int getSmsId() {
         return smsId;
+    }
+
+    @Override
+    public DatabaseEntity getNullType() {
+        return null;
     }
 }

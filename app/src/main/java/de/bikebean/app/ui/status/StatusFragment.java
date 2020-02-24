@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -94,6 +95,13 @@ public class StatusFragment extends Fragment {
         actionbar.setTitle(R.string.status_text);
 
         permissionDeniedHandler = this::showErrorView;
+
+        act.getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                act.finish();
+            }
+        });
 
         String address = PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getString("number", "");

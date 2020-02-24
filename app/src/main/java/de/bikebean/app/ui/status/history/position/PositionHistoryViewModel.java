@@ -1,4 +1,4 @@
-package de.bikebean.app.ui.status.history;
+package de.bikebean.app.ui.status.history.position;
 
 import android.app.Application;
 
@@ -9,19 +9,18 @@ import java.util.List;
 
 import de.bikebean.app.db.state.LocationState;
 import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.status.StateViewModel;
+import de.bikebean.app.ui.status.history.HistoryViewModel;
 
-public class HistoryStateViewModel extends StateViewModel {
+public class PositionHistoryViewModel extends HistoryViewModel {
 
-    private final HistoryStateRepository mRepository;
+    private final PositionHistoryRepository mRepository;
 
     private final MutableLiveData<List<LocationState>> mLocationStates;
 
-    public HistoryStateViewModel(Application application) {
+    public PositionHistoryViewModel(Application application) {
         super(application);
 
-        mRepository = new HistoryStateRepository(application);
-
+        mRepository = new PositionHistoryRepository(application);
         mLocationStates = new MutableLiveData<>();
     }
 

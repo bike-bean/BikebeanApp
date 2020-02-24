@@ -11,52 +11,39 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 import java.util.Objects;
 
-import de.bikebean.app.R;
-import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.status.battery.BatteryStateViewModel;
+import de.bikebean.app.db.DatabaseEntity;
 
-public class BatteryHistoryFragment extends Fragment {
+public abstract class HistoryFragment extends Fragment {
 
-    private BatteryStateViewModel stateViewModel;
-    private Context ctx;
+    protected HistoryViewModel st;
 
-    private BatteryHistoryAdapter adapter;
+    private HistoryAdapter adapter;
 
     // UI Elements
-    private RecyclerView recyclerView;
-    private TextView noDataText;
+    protected RecyclerView recyclerView;
+    protected TextView noDataText;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_battery_history, container, false);
-
-        recyclerView = v.findViewById(R.id.recyclerView3);
-        noDataText = v.findViewById(R.id.noDataText3);
-
         setHasOptionsMenu(false);
-        
-        return v;
+
+        return null;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        stateViewModel = new ViewModelProvider(this).get(BatteryStateViewModel.class);
-        stateViewModel.getStatusBattery().observe(getViewLifecycleOwner(), this::setStatesToAdapter);
+        st = getNewStateViewModel();
 
-        FragmentActivity act = Objects.requireNonNull(getActivity());
-        ctx = Objects.requireNonNull(act).getApplicationContext();
-
+        setupListeners();
         initRecyclerView();
     }
 
@@ -70,15 +57,34 @@ public class BatteryHistoryFragment extends Fragment {
         Objects.requireNonNull(actionbar).show();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // show the tab area
+        HistoryActivity historyActivity = (HistoryActivity) getActivity();
+        if (historyActivity != null) {
+            historyActivity.showButtons(true);
+        }
+    }
+
+    protected abstract HistoryViewModel getNewStateViewModel();
+
+    protected abstract void setupListeners();
+
     private void initRecyclerView() {
-        adapter = new BatteryHistoryAdapter(ctx, stateViewModel.getStatusBattery().getValue());
+        Context ctx = requireContext();
+
+        adapter = getNewAdapter(ctx);
         recyclerView.setAdapter(adapter);
 
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ctx);
         recyclerView.setLayoutManager(linearLayoutManager);
     }
 
-    private void setStatesToAdapter(List<State> ls) {
+    protected abstract HistoryAdapter getNewAdapter(Context ctx);
+
+    protected void setStatesToAdapter(List<? extends DatabaseEntity> ls) {
         if (ls.size() != 0) {
             adapter.setStates(ls);
             noDataText.setVisibility(View.GONE);
