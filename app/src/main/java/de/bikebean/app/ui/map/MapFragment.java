@@ -62,7 +62,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private MapView mMapView;
     private GoogleMap mGoogleMap;
-    private FloatingActionButton fab, fab2;
+    private FloatingActionButton fab, fab2, fab3;
 
     // Map elements
     private Marker marker;
@@ -90,6 +90,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         fab = v.findViewById(R.id.fab);
         fab2 = v.findViewById(R.id.fab2);
+        fab3 = v.findViewById(R.id.fab3);
 
         return v;
     }
@@ -199,7 +200,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         });
         int color = ContextCompat.getColor(Objects.requireNonNull(getContext()), R.color.grey);
         fab2.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
+        fab3.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
         fab2.setOnClickListener(this::showPopup);
+        fab3.setOnClickListener(this::showShare);
 
         if (showCurrentPosition)
             setupObservers();
@@ -254,6 +257,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         popup.show();
     }
 
+    private void showShare(View v) {
+        Utils.share(requireActivity());
+    }
+
     private boolean handleMenuClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_normal:
@@ -300,7 +307,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 try {
                     mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(getLatLngBounds(), 0));
                     initializationDone = true;
-                    fab.show();
+                    fab.show(); fab3.show();
                 } catch (IllegalStateException e) {
                     Log.d(MainActivity.TAG, "permature (skipped)");
                 }

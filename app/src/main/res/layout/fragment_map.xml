@@ -52,4 +52,20 @@
         app:layout_constraintStart_toStartOf="@+id/mapview"
         app:layout_constraintTop_toTopOf="@+id/mapview" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/fab_margin"
+        android:layout_marginTop="80dp"
+        android:alpha="0.75"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_share_black_24dp"
+        android:visibility="gone"
+        app:backgroundTint="@color/white"
+        app:fabCustomSize="48dp"
+        app:layout_constraintStart_toStartOf="@id/mapview"
+        app:layout_constraintTop_toTopOf="@id/mapview" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

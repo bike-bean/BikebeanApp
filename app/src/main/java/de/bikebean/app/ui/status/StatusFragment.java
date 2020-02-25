@@ -164,6 +164,10 @@ public class StatusFragment extends Fragment {
                 Navigation.findNavController(Objects.requireNonNull(getView()))
                         .navigate(R.id.log_action);
                 return true;
+            case R.id.menu_item_share:
+                // code to share goes here!
+                Utils.share(requireActivity());
+                return true;
             // case R.id.menu_item_licenses:
                 // startActivity(new Intent(this, OssLicensesMenuActivity.class));
             default:

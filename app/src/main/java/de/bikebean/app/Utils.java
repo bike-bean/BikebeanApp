@@ -2,6 +2,7 @@ package de.bikebean.app;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 
@@ -178,6 +179,18 @@ public class Utils {
             return ContextCompat.getDrawable(ctx, R.drawable.ic_battery_alert_red_24dp);
 
         return ContextCompat.getDrawable(ctx, R.drawable.ic_battery_unknown_black_24dp);
+    }
+
+    public static void share(Activity act) {
+        // See: https://developers.google.com/maps/documentation/urls/guide#search-action
+        // and: https://developer.android.com/training/sharing/send#java
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
+        sendIntent.setType("text/plain");
+
+        Intent shareIntent = Intent.createChooser(sendIntent, null);
+        act.startActivity(shareIntent);
     }
 }
 
