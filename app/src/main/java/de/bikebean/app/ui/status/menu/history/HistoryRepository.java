@@ -6,7 +6,7 @@ import de.bikebean.app.ui.status.StateRepository;
 
 public class HistoryRepository extends StateRepository {
 
-    public HistoryRepository(Application application) {
+    protected HistoryRepository(Application application) {
         super(application);
     }
 }

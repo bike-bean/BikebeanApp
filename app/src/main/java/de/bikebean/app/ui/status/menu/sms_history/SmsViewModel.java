@@ -11,7 +11,6 @@ import java.util.List;
 
 import de.bikebean.app.db.MutableObject;
 import de.bikebean.app.db.sms.Sms;
-import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.status.StateViewModel;
 import de.bikebean.app.ui.status.menu.log.LogViewModel;
 import de.bikebean.app.ui.status.sms_utils.load.SmsLoader;

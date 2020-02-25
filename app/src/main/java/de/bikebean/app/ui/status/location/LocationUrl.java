@@ -11,7 +11,7 @@ import de.bikebean.app.db.state.State;
 
 public class LocationUrl {
 
-    private MutableLiveData<String> url = new MutableLiveData<>();
+    private final MutableLiveData<String> url = new MutableLiveData<>();
     private static final String baseUrl = "https://maps.app.goo.gl/?link=";
     private static final String mapBaseUrl = "https://www.google.com/maps/search/?api=1&query=";
 

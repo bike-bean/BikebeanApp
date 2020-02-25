@@ -17,7 +17,7 @@ import de.bikebean.app.db.log.Log;
 
 public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
 
-    private Context mContext;
+    private final Context mContext;
 
     class LogViewHolder extends RecyclerView.ViewHolder {
         private final TextView dateTimeText, messageText;

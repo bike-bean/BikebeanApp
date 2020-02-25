@@ -14,8 +14,8 @@ class LocationUpdater extends AsyncTask<String, Void, Boolean> {
     private final WeakReference<Context> contextReference;
     private final LocationStateViewModel mStateViewModel;
 
-    private State finalWappCellTowers;
-    private State finalWappWifiAccessPoints;
+    private final State finalWappCellTowers;
+    private final State finalWappWifiAccessPoints;
 
     private final int mSmsId;
 
@@ -57,7 +57,8 @@ class LocationUpdater extends AsyncTask<String, Void, Boolean> {
 
         Log.d(MainActivity.TAG, "Updating Lat/Lng...");
 
-        return geolocationAPI.httpPOST(requestBody, mSmsId);
+        geolocationAPI.httpPOST(requestBody, mSmsId);
+        return true;
     }
 
     private boolean checkAlreadyPresent() {

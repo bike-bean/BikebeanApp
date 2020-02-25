@@ -32,8 +32,8 @@ class GeolocationAPI {
     private final RequestQueue queue;
     private final PostResponseHandler mPostResponseHandler;
 
-    private State finalWappCellTowers;
-    private State finalWappWifiAccessPoints;
+    private final State finalWappCellTowers;
+    private final State finalWappWifiAccessPoints;
 
     private final String url;
 
@@ -53,7 +53,7 @@ class GeolocationAPI {
     }
 
     //POST Request Geolocation API
-    boolean httpPOST(final String requestBody, int smsId) {
+    void httpPOST(final String requestBody, int smsId) {
         mSmsId = smsId;
 
         queue.add(new JsonObjectRequest(Request.Method.POST, url, null,
@@ -71,8 +71,6 @@ class GeolocationAPI {
                 return requestBody.getBytes(StandardCharsets.UTF_8);
             }
         });
-
-        return true;
     }
 
     private void responseListener(JSONObject response) {
