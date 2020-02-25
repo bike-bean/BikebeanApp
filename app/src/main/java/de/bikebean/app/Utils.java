@@ -181,17 +181,15 @@ public class Utils {
         return ContextCompat.getDrawable(ctx, R.drawable.ic_battery_unknown_black_24dp);
     }
 
-    public static void share(Activity act) {
-        // See: https://developers.google.com/maps/documentation/urls/guide#search-action
-        // and: https://developer.android.com/training/sharing/send#java
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
-        sendIntent.setType("text/plain");
+    public static Intent getShareIntent(String string) {
+        if (string == null || string.isEmpty())
+            return null;
 
-        Intent shareIntent = Intent.createChooser(sendIntent, null);
-        act.startActivity(shareIntent);
+        Intent sendIntent = new Intent()
+                .setAction(Intent.ACTION_SEND)
+                .putExtra(Intent.EXTRA_TEXT, string)
+                .setType("text/plain");
+
+        return Intent.createChooser(sendIntent, null);
     }
 }
-
-

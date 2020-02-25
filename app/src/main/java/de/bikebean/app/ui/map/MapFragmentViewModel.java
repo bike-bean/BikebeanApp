@@ -2,12 +2,14 @@ package de.bikebean.app.ui.map;
 
 import android.app.Application;
 
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.status.StateViewModel;
+import de.bikebean.app.ui.status.location.LocationUrl;
 
 public class MapFragmentViewModel extends StateViewModel {
 
@@ -49,4 +51,15 @@ public class MapFragmentViewModel extends StateViewModel {
         return mStatusNumberCellTowers;
     }
 
+    public interface Sharer {
+        void share(String url);
+    }
+
+    public void newShareIntent(Fragment fragment, Sharer sharer) {
+        LocationUrl locationUrl = new LocationUrl();
+
+        getConfirmedLocationLat().observe(fragment.getViewLifecycleOwner(), locationUrl::setLat);
+        getConfirmedLocationLng().observe(fragment.getViewLifecycleOwner(), locationUrl::setLng);
+        locationUrl.getUrl().observe(fragment.getViewLifecycleOwner(), sharer::share);
+    }
 }

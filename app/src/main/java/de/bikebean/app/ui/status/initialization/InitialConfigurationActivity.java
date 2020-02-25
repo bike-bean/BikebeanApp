@@ -65,7 +65,7 @@ public class InitialConfigurationActivity extends AppCompatActivity {
         if (editText != null) {
             String number = editText.getText().toString();
 
-            if (number.equals(""))
+            if (number.isEmpty())
                 input.setError(getString(R.string.number_error));
             else if (!number.substring(0, 1).equals("+"))
                 input.setError(getString(R.string.number_subtitle));

@@ -227,21 +227,23 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         if (statuses.size() == 0)
             return;
 
-        switch (State.KEY.getValue(statuses.get(0).getKey())) {
+        State state = statuses.get(0);
+
+        switch (State.KEY.getValue(state.getKey())) {
             case NO_CELL_TOWERS:
-                marker.setSnippet(snippet.setNumberCellTowers(statuses.get(0).getValue().intValue()));
+                marker.setSnippet(snippet.setNumberCellTowers(state.getValue().intValue()));
                 break;
             case NO_WIFI_ACCESS_POINTS:
-                marker.setSnippet(snippet.setNumberWifiAccessPoints(statuses.get(0).getValue().intValue()));
+                marker.setSnippet(snippet.setNumberWifiAccessPoints(state.getValue().intValue()));
                 break;
-            case LAT: // And:
+            case LAT:
             case LNG:
-                marker.setPosition(currentPositionBike.set(statuses.get(0)));
+                marker.setPosition(currentPositionBike.set(state));
                 circle.setCenter(currentPositionBike.get());
                 setCamera(true);
                 break;
             case ACC:
-                circle.setRadius(statuses.get(0).getValue());
+                circle.setRadius(state.getValue());
                 setCamera(true);
                 break;
         }
@@ -258,7 +260,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void showShare(View v) {
-        Utils.share(requireActivity());
+        if (v.isEnabled())
+            mapFragmentViewModel.newShareIntent(this, this::share);
+        else
+            mapFragmentViewModel.newShareIntent(this, this::share);
+    }
+
+    private void share(String string) {
+        Intent shareIntent = Utils.getShareIntent(string);
+
+        if (shareIntent != null)
+            startActivity(shareIntent);
     }
 
     private boolean handleMenuClick(MenuItem item) {

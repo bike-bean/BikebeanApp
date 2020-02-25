@@ -29,6 +29,7 @@ import java.util.Objects;
 
 import de.bikebean.app.R;
 import de.bikebean.app.Utils;
+import de.bikebean.app.ui.map.MapFragmentViewModel;
 import de.bikebean.app.ui.status.battery.BatteryStatusFragment;
 import de.bikebean.app.ui.status.location.LocationStatusFragment;
 import de.bikebean.app.ui.status.menu.log.LogViewModel;
@@ -115,7 +116,7 @@ public class StatusFragment extends Fragment {
         String address = PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getString("number", "");
 
-        if (address.equals(""))
+        if (address.isEmpty())
             // Navigate to the initial configuration screen
             Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
                     .navigate(R.id.initial_configuration_action);
@@ -165,8 +166,8 @@ public class StatusFragment extends Fragment {
                         .navigate(R.id.log_action);
                 return true;
             case R.id.menu_item_share:
-                // code to share goes here!
-                Utils.share(requireActivity());
+                new ViewModelProvider(this).get(MapFragmentViewModel.class)
+                        .newShareIntent(this, this::share);
                 return true;
             // case R.id.menu_item_licenses:
                 // startActivity(new Intent(this, OssLicensesMenuActivity.class));
@@ -194,6 +195,13 @@ public class StatusFragment extends Fragment {
         Uri uri = Uri.fromParts("package", requireActivity().getPackageName(), null);
         intent.setData(uri);
         startActivity(intent);
+    }
+
+    private void share(String string) {
+        Intent shareIntent = Utils.getShareIntent(string);
+
+        if (shareIntent != null)
+            startActivity(shareIntent);
     }
 
     private void fetchSms() {
