@@ -18,8 +18,8 @@ public class Sms extends DatabaseEntity {
     public enum MESSAGE {
         _STATUS("Status"),
         WAPP("Wapp"),
-        INT("Int "),
-        WIFI("Wifi "),
+        INT(""),
+        WIFI(""),
         WARNING_NUMBER("Warningnumber");
 
         private String msg;
@@ -33,7 +33,7 @@ public class Sms extends DatabaseEntity {
         }
 
         public void setValue(String msg) {
-            this.msg += msg;
+            this.msg = msg;
         }
     }
 

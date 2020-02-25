@@ -23,7 +23,18 @@ class LogRepository {
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() -> mLogDao.insert(log));
     }
 
-    LiveData<List<Log>> getAll() {
-        return mLogDao.getAll();
+    LiveData<List<Log>> getHigherThanLevel(Log.LEVEL level) {
+        return mLogDao.getHigherThanLevel(level);
+    }
+
+    LiveData<List<Log>> getLastLevel() {
+        return mLogDao.getByLevel(Log.LEVEL.INTERNAL);
+    }
+
+    List<Log> getLastLevelSync(String s, int i) {
+        if (i == 0 && s.equals(""))
+            return mLogDao.getByLevelSync(Log.LEVEL.INTERNAL);
+        else
+            return mLogDao.getByLevelSync(Log.LEVEL.INTERNAL);
     }
 }

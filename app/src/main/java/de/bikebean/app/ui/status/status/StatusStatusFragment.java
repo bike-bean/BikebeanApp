@@ -98,9 +98,8 @@ public class StatusStatusFragment extends SubStatusFragment {
 
                 // See if the "new" value is actually just the placeholder.
                 // In that case, set the text underneath to reflect the last known status
-                if (newValue.equals("0")) {
+                if (newValue.equals("0"))
                     return;
-                }
 
                 // Get the last confirmed interval status and
                 // see if the value has changed from then.
@@ -111,7 +110,7 @@ public class StatusStatusFragment extends SubStatusFragment {
                 // if it has changed, create a new pending state and fire it into the db
                 Log.d(MainActivity.TAG, "Setting Interval about to be changed to " + newValue);
                 Sms.MESSAGE msg = Sms.MESSAGE.INT;
-                msg.setValue(newValue);
+                msg.setValue("Int " + newValue);
 
                 sendSms(msg, new State[]{new State(State.KEY.INTERVAL, Double.valueOf(newValue))});
             }
@@ -130,7 +129,7 @@ public class StatusStatusFragment extends SubStatusFragment {
             // if it has changed, create a new pending state and fire it into the db
             Log.d(MainActivity.TAG, "Setting Wifi about to be changed to " + isChecked);
             Sms.MESSAGE msg = Sms.MESSAGE.WIFI;
-            msg.setValue(isChecked ? "on" : "off");
+            msg.setValue("Wifi " + (isChecked ? "on" : "off"));
 
             sendSms(msg, new State[]{new State(State.KEY.WIFI, isChecked ? 1.0 : 0.0)});
         });

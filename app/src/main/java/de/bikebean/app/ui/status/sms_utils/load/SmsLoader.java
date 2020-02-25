@@ -93,9 +93,9 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
         ContentResolver contentResolver = contextWeakReference.get().getContentResolver();
         Cursor inbox = getInbox(contentResolver, argList);
 
-        Log.d(MainActivity.TAG, "Initial Loading");
+        logViewModel.d("Initial Loading");
         traverseInboxAndCloseInitial(inbox);
-        Log.d(MainActivity.TAG, "Initial Loading completed");
+        logViewModel.d("Initial Loading completed");
     }
 
     private void traverseInboxAndCloseInitial(Cursor inbox) {

@@ -12,7 +12,7 @@ import de.bikebean.app.db.DatabaseEntity;
 public class Log extends DatabaseEntity {
 
     public enum LEVEL {
-        DEBUG, INFO, WARNING, ERROR
+        INTERNAL, DEBUG, INFO, WARNING, ERROR
     }
 
     @PrimaryKey(autoGenerate = true)

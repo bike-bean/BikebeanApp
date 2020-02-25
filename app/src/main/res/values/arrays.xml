@@ -19,6 +19,30 @@
         <item>24</item>
     </string-array>
 
+    <string-array name="log_entries">
+        <item>Level setzen</item>
+        <item>Debug</item>
+        <item>Info</item>
+        <item>Warnung</item>
+        <item>Fehler</item>
+    </string-array>
+
+    <string-array name="log_entries_internal">
+        <item>Level setzen</item>
+        <item>DEBUG</item>
+        <item>INFO</item>
+        <item>WARNING</item>
+        <item>ERROR</item>
+    </string-array>
+
+    <string-array name="log_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
     <string-array name="theme_entries">
         <item>Theme 1</item>
         <item>Theme 2</item>

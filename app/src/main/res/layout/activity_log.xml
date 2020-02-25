@@ -18,6 +18,12 @@
         app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
         app:titleTextColor="@color/secondaryTextColor" />
 
+    <Spinner
+        android:id="@+id/spinner2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end" />
+
     <TextView
         android:id="@+id/noDataText4"
         android:layout_width="match_parent"

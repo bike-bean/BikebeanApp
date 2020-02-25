@@ -17,9 +17,15 @@ public interface LogDao {
     @Query("DELETE FROM log_table")
     void deleteAll();
 
-    @Query("SELECT * FROM log_table ORDER BY timestamp DESC")
-    LiveData<List<Log>> getAll();
+    @Query("SELECT * FROM log_table WHERE level >= :level ORDER BY timestamp DESC")
+    LiveData<List<Log>> getHigherThanLevel(Log.LEVEL level);
+
+    @Query("SELECT * FROM log_table WHERE level = :level ORDER BY timestamp DESC LIMIT 1")
+    LiveData<List<Log>> getByLevel(Log.LEVEL level);
 
     @Query("SELECT * FROM log_table")
     List<Log> getAllSync();
+
+    @Query("SELECT * FROM log_table WHERE level =  :level ORDER BY timestamp DESC LIMIT 1")
+    List<Log> getByLevelSync(Log.LEVEL level);
 }
