@@ -236,7 +236,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             case NO_WIFI_ACCESS_POINTS:
                 marker.setSnippet(snippet.setNumberWifiAccessPoints(state.getValue().intValue()));
                 break;
-            case LAT: // And:
+            case LAT:
             case LNG:
                 marker.setPosition(currentPositionBike.set(state));
                 circle.setCenter(currentPositionBike.get());
