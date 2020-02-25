@@ -176,7 +176,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 .snippet(snippet.toString())
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
         );
-        marker.setVisible(false);
+        if (showCurrentPosition)
+            marker.setVisible(false);
 
         // Set a circle
         circle = googleMap.addCircle(new CircleOptions()
