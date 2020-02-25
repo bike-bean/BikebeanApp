@@ -32,7 +32,7 @@ class LogRepository {
     }
 
     List<Log> getLastLevelSync(String s, int i) {
-        if (i == 0 && s.equals(""))
+        if (i == 0 && s.isEmpty())
             return mLogDao.getByLevelSync(Log.LEVEL.INTERNAL);
         else
             return mLogDao.getByLevelSync(Log.LEVEL.INTERNAL);

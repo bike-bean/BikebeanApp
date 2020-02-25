@@ -77,7 +77,7 @@ public class PreferencesActivity extends AppCompatActivity {
                         editText -> editText.setInputType(InputType.TYPE_CLASS_PHONE));
                 numberPreference.setDialogMessage(R.string.number_subtitle);
                 numberPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                    if (newValue.toString().equals("")) {
+                    if (newValue.toString().isEmpty()) {
                         Toast.makeText(ctx, R.string.number_error, Toast.LENGTH_LONG).show();
                         return false;
                     } else if (!newValue.toString().substring(0, 1).equals("+")) {

@@ -59,7 +59,7 @@ class SmsRepository {
     }
 
     List<Sms> getSmsById(String s, int id) {
-        if (s.equals(""))
+        if (s.isEmpty())
             return mSmsDao.getSmsById(id);
         else
             return mSmsDao.getSmsById(id);
