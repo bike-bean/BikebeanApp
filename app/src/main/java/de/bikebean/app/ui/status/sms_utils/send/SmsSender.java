@@ -21,7 +21,7 @@ public class SmsSender {
 
     private final FragmentActivity act;
     private final SharedPreferences sharedPreferences;
-    private PostSmsSendHandler postSmsSendHandler;
+    private final PostSmsSendHandler postSmsSendHandler;
 
     public SmsSender(FragmentActivity act, PostSmsSendHandler postSmsSendHandler) {
         this.act = act;

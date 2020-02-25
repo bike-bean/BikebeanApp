@@ -18,11 +18,11 @@ public abstract class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter
         }
     }
 
-    protected Context ctx;
+    protected final Context ctx;
     protected final LayoutInflater mInflater;
     protected List<? extends DatabaseEntity> mStates;
 
-    public HistoryAdapter(Context context, List<? extends DatabaseEntity> states) {
+    protected HistoryAdapter(Context context, List<? extends DatabaseEntity> states) {
         ctx = context;
 
         mInflater = LayoutInflater.from(context);

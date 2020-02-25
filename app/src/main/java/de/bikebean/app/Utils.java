@@ -2,6 +2,7 @@ package de.bikebean.app;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 
@@ -179,6 +180,16 @@ public class Utils {
 
         return ContextCompat.getDrawable(ctx, R.drawable.ic_battery_unknown_black_24dp);
     }
+
+    public static Intent getShareIntent(String string) {
+        if (string == null || string.isEmpty())
+            return null;
+
+        Intent sendIntent = new Intent()
+                .setAction(Intent.ACTION_SEND)
+                .putExtra(Intent.EXTRA_TEXT, string)
+                .setType("text/plain");
+
+        return Intent.createChooser(sendIntent, null);
+    }
 }
-
-

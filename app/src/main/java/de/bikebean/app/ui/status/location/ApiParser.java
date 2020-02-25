@@ -40,7 +40,7 @@ class ApiParser {
     }
 
     private int parseWifiAccessPoints(String wifiAccessPoints, LocationAPIBody locationAPIBody) {
-        if (wifiAccessPoints.equals(""))
+        if (wifiAccessPoints.isEmpty())
             return 0;
 
         String[] stringArrayWapp = wifiAccessPoints.split("\n");

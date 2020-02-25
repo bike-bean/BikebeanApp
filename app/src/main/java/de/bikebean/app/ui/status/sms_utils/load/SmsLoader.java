@@ -46,7 +46,7 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
         Log.d(MainActivity.TAG, "There are " + inbox.getCount() + " messages in inbox.");
         Log.d(MainActivity.TAG, "There are " + size + " messages already saved.");
 
-        if (!waitForNewMessage.equals("")) {
+        if (!waitForNewMessage.isEmpty()) {
             // only search for the newly incoming message
             // It may take a while until it can be retrieved from the content provider
             Log.d(MainActivity.TAG, "Parsing inbox for new message...");

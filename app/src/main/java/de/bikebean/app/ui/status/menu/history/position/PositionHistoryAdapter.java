@@ -35,7 +35,7 @@ class PositionHistoryAdapter extends HistoryAdapter {
             lat = v.findViewById(R.id.lat2);
             lng = v.findViewById(R.id.lng2);
             acc = v.findViewById(R.id.acc2);
-            dateTimeText = v.findViewById(R.id.dateTimeText5);
+            dateTimeText = v.findViewById(R.id.dateTimeText6);
             smsIdText = v.findViewById(R.id.smsIdText);
         }
     }

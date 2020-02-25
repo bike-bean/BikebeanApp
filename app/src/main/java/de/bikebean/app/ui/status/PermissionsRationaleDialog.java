@@ -31,7 +31,7 @@ public class PermissionsRationaleDialog extends DialogFragment {
                 });
     }};
 
-    private Utils.PERMISSION_KEY permissionKey;
+    private final Utils.PERMISSION_KEY permissionKey;
 
     public PermissionsRationaleDialog(Activity act, Utils.PERMISSION_KEY permissionKey) {
         this.act = act;

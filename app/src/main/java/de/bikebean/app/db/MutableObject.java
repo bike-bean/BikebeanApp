@@ -7,7 +7,7 @@ public class MutableObject<T extends DatabaseEntity> {
     private DatabaseEntity t;
     private volatile boolean is_set = false;
     private final DatabaseEntity nullT;
-    private int position;
+    private final int position;
 
     public interface ListGetter {
         List<? extends DatabaseEntity> getList(String sArg, int iArg);

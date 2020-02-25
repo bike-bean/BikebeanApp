@@ -62,7 +62,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private MapView mMapView;
     private GoogleMap mGoogleMap;
-    private FloatingActionButton fab, fab2;
+    private FloatingActionButton fab, fab2, fab3;
 
     // Map elements
     private Marker marker;
@@ -90,6 +90,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         fab = v.findViewById(R.id.fab);
         fab2 = v.findViewById(R.id.fab2);
+        fab3 = v.findViewById(R.id.fab3);
 
         return v;
     }
@@ -175,7 +176,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 .snippet(snippet.toString())
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
         );
-        marker.setVisible(false);
+        if (showCurrentPosition)
+            marker.setVisible(false);
 
         // Set a circle
         circle = googleMap.addCircle(new CircleOptions()
@@ -199,7 +201,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         });
         int color = ContextCompat.getColor(Objects.requireNonNull(getContext()), R.color.grey);
         fab2.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
+        fab3.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
         fab2.setOnClickListener(this::showPopup);
+        fab3.setOnClickListener(this::showShare);
 
         if (showCurrentPosition)
             setupObservers();
@@ -224,21 +228,23 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         if (statuses.size() == 0)
             return;
 
-        switch (State.KEY.getValue(statuses.get(0).getKey())) {
+        State state = statuses.get(0);
+
+        switch (State.KEY.getValue(state.getKey())) {
             case NO_CELL_TOWERS:
-                marker.setSnippet(snippet.setNumberCellTowers(statuses.get(0).getValue().intValue()));
+                marker.setSnippet(snippet.setNumberCellTowers(state.getValue().intValue()));
                 break;
             case NO_WIFI_ACCESS_POINTS:
-                marker.setSnippet(snippet.setNumberWifiAccessPoints(statuses.get(0).getValue().intValue()));
+                marker.setSnippet(snippet.setNumberWifiAccessPoints(state.getValue().intValue()));
                 break;
             case LAT: // And:
             case LNG:
-                marker.setPosition(currentPositionBike.set(statuses.get(0)));
+                marker.setPosition(currentPositionBike.set(state));
                 circle.setCenter(currentPositionBike.get());
                 setCamera(true);
                 break;
             case ACC:
-                circle.setRadius(statuses.get(0).getValue());
+                circle.setRadius(state.getValue());
                 setCamera(true);
                 break;
         }
@@ -252,6 +258,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         popup.setOnMenuItemClickListener(this::handleMenuClick);
         popup.inflate(R.menu.map_type_menu);
         popup.show();
+    }
+
+    private void showShare(View v) {
+        if (v.isEnabled())
+            mapFragmentViewModel.newShareIntent(this, this::share);
+        else
+            mapFragmentViewModel.newShareIntent(this, this::share);
+    }
+
+    private void share(String string) {
+        Intent shareIntent = Utils.getShareIntent(string);
+
+        if (shareIntent != null)
+            startActivity(shareIntent);
     }
 
     private boolean handleMenuClick(MenuItem item) {
@@ -300,7 +320,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 try {
                     mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(getLatLngBounds(), 0));
                     initializationDone = true;
-                    fab.show();
+                    fab.show(); fab3.show();
                 } catch (IllegalStateException e) {
                     Log.d(MainActivity.TAG, "permature (skipped)");
                 }
