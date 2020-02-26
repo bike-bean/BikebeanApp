@@ -18,13 +18,14 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.List;
 import java.util.Objects;
 
+import de.bikebean.app.ui.utils.Utils;
 import de.bikebean.app.db.sms.Sms;
-import de.bikebean.app.ui.status.menu.log.LogViewModel;
-import de.bikebean.app.ui.status.StateViewModel;
-import de.bikebean.app.ui.status.StatusFragment;
-import de.bikebean.app.ui.status.menu.sms_history.SmsViewModel;
-import de.bikebean.app.ui.status.sms_utils.listen.SmsListener;
-import de.bikebean.app.ui.status.sms_utils.parser.SmsParser;
+import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
+import de.bikebean.app.ui.main.status.StateViewModel;
+import de.bikebean.app.ui.main.status.StatusFragment;
+import de.bikebean.app.ui.main.status.menu.sms_history.SmsViewModel;
+import de.bikebean.app.ui.utils.sms.listen.SmsListener;
+import de.bikebean.app.ui.utils.sms.parser.SmsParser;
 
 public class MainActivity extends AppCompatActivity {
 
