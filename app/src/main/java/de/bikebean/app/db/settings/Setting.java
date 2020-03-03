@@ -2,27 +2,114 @@ package de.bikebean.app.db.settings;
 
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
-import de.bikebean.app.db.state.StateList;
+import de.bikebean.app.ui.initialization.SettingsList;
 
 public abstract class Setting {
-    Sms sms;
-    State.KEY key;
+
+    protected interface ConversationListAdder {
+        void addToConversationList(SettingsList conversationList);
+    }
+
+    protected interface StateGetter {
+        State getState();
+    }
+
+    protected ConversationListAdder conversationListAdder;
+    protected StateGetter stateGetter;
+
+    private Sms sms;
+    private State.KEY key;
+
+    public Setting(Sms sms, State.KEY key) {
+        this.sms = sms;
+        this.key = key;
+    }
+
+    public State getState() {
+        return stateGetter.getState();
+    }
+
+    public void addToConversationList(SettingsList conversationList) {
+        conversationListAdder.addToConversationList(conversationList);
+    }
+
+    // simple getters. BEWARE: get() yields no value when called from the Settings-constructor!
+    protected abstract Object get();
 
     private State.KEY getKey() {
         return key;
     }
 
-    long getDate() {
+    public long getDate() {
         return sms.getTimestamp();
     }
 
-    private int getId() {
+    protected int getId() {
         return sms.getId();
     }
 
-    abstract Object get();
+    protected Sms getSms() {
+        return sms;
+    }
 
-    abstract void addStatusEntry(StateList newStateEntries);
+    protected void setSms(Sms sms) {
+        this.sms = sms;
+    }
+
+    // methods called as interface methods
+    public State getStateConfirmedLong() {
+        return new State(
+                getDate(), getKey(), 0.0, (String) get(),
+                State.STATUS.CONFIRMED, getId()
+        );
+    }
+
+    public State getStateConfirmed() {
+        return new State(
+                getDate(), getKey(), (double) get(), "",
+                State.STATUS.CONFIRMED, getId()
+        );
+    }
+
+    public State getStateConfirmedNewer() {
+        return new State(
+                getDate() + 1, getKey(), (double) get(), "",
+                State.STATUS.CONFIRMED, getId()
+        );
+    }
+
+    public State getStatePending() {
+        return new State(
+                getDate(), getKey(), (Double) get(), "",
+                State.STATUS.PENDING, getId()
+        );
+    }
+
+    public State getStateUnsetLong() {
+        return new State(
+                getDate(), getKey(), 0.0, (String) get(),
+                State.STATUS.UNSET, getId()
+        );
+    }
+
+    public State getStateUnset() {
+        return new State(
+                getDate(), getKey(), (Double) get(), "",
+                State.STATUS.UNSET, getId()
+        );
+    }
+
+    public void addToList(SettingsList conversationList) {
+        conversationList.add(this);
+    }
+
+    public void replaceIfNewer(SettingsList conversationList) {
+        for (Setting intListItem : conversationList)
+            if (equalsKey(intListItem) && isNewer(intListItem)) {
+                conversationList._add(this).remove(intListItem);
+                break;
+            }
+    }
 
     private boolean equalsKey(Setting other) {
         return this.getKey().equals(other.getKey());
@@ -30,30 +117,5 @@ public abstract class Setting {
 
     private boolean isNewer(Setting other) {
         return this.getDate() > other.getDate();
-    }
-
-    void addStatusEntryConfirmed(StateList entries, boolean takeLong) {
-        if (takeLong)
-            entries.add(new State(
-                    getDate(), getKey(), 0.0, (String) get(), State.STATUS.CONFIRMED, getId())
-            );
-        else
-            entries.add(new State(
-                    getDate(), getKey(), (double) get(), "", State.STATUS.CONFIRMED, getId())
-            );
-    }
-
-    void addStatusEntryPending(StateList entries) {
-        entries.add(new State(
-                getDate(), getKey(), (Double) get(), "", State.STATUS.PENDING, getId())
-        );
-    }
-
-    void addToConversationList(SettingsList conversationList) {
-        for (Setting intListItem : conversationList)
-            if (equalsKey(intListItem) && isNewer(intListItem)) {
-                conversationList._add(this).remove(intListItem);
-                break;
-            }
     }
 }

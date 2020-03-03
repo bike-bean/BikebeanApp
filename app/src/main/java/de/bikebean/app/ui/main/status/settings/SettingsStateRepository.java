@@ -1,4 +1,4 @@
-package de.bikebean.app.ui.main.status.status;
+package de.bikebean.app.ui.main.status.settings;
 
 import android.app.Application;
 
@@ -9,14 +9,14 @@ import java.util.List;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.main.status.StateRepository;
 
-class StatusStateRepository extends StateRepository {
+class SettingsStateRepository extends StateRepository {
 
     private final LiveData<List<State>> mStatus;
     private final LiveData<List<State>> mStatusWarningNumber;
     private final LiveData<List<State>> mStatusInterval;
     private final LiveData<List<State>> mStatusWifi;
 
-    StatusStateRepository(Application application) {
+    SettingsStateRepository(Application application) {
         super(application);
 
         mStatus = mStateDao.getAllByKey(State.KEY._STATUS.get());

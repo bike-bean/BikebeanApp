@@ -7,6 +7,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import de.bikebean.app.db.DatabaseEntity;
+import de.bikebean.app.db.settings.settings.Wapp;
 
 @Entity(tableName = "state_table")
 public class State extends DatabaseEntity {
@@ -14,7 +15,7 @@ public class State extends DatabaseEntity {
     public enum STATUS {
         // Confirmed through SMS with newest data (default state)
         CONFIRMED,
-        // CellTowers and WifiAccessPoints that have not yet been used for calculation of the location
+        // CellTower and WifiAccessPoints that have not yet been used for calculation of the location
         // Also Settings that have not yet been confirmed.
         PENDING,
         // Settings that have yet not even been set
@@ -128,21 +129,6 @@ public class State extends DatabaseEntity {
         this.mSmsId = 0; // Maybe allow changing this in the future?
     }
 
-    // For "PENDING" State
-    @Ignore
-    public State(
-            State.KEY key,
-            double value,
-            long timestamp
-    ) {
-        this.mTimestamp = timestamp;
-        this.mKey = key.get();
-        this.mValue = value;
-        this.mLongValue = "";
-        this.mState = STATUS.PENDING.ordinal();
-        this.mSmsId = 0;
-    }
-
     // nullType
     @Ignore
     public State() {
@@ -152,6 +138,12 @@ public class State extends DatabaseEntity {
         this.mLongValue = "";
         this.mState = 0;
         this.mSmsId = 0;
+    }
+
+    public boolean equals(State other) {
+        if (other != null)
+            return this.id == other.id;
+        else return false;
     }
 
     public String getKey() {

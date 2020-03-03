@@ -25,7 +25,8 @@ Alternatively, you can download a prebuilt version (apk) in the
 
 ## Todos
 
-See [Github Project](https://github.com/Ludwigmair1986/BikebeanApp/projects/1)
+- Initial Release (must-have's): See [Initial Release Board](https://github.com/Ludwigmair1986/BikebeanApp/projects/2)
+- Generic (nice-to-have's): See [App Progress Board](https://github.com/Ludwigmair1986/BikebeanApp/projects/1).
 
 ## References
 

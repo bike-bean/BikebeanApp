@@ -1,15 +1,19 @@
 package de.bikebean.app.ui.main.map;
 
 import android.app.Application;
+import android.content.Intent;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.main.status.StateViewModel;
 import de.bikebean.app.ui.main.status.location.LocationUrl;
+import de.bikebean.app.ui.utils.Utils;
 
 public class MapFragmentViewModel extends StateViewModel {
 
@@ -51,15 +55,22 @@ public class MapFragmentViewModel extends StateViewModel {
         return mStatusNumberCellTowers;
     }
 
-    public interface Sharer {
-        void share(String url);
-    }
-
-    public void newShareIntent(Fragment fragment, Sharer sharer) {
+    public void newShareIntent(Fragment fragment) {
         LocationUrl locationUrl = new LocationUrl();
 
         getConfirmedLocationLat().observe(fragment.getViewLifecycleOwner(), locationUrl::setLat);
         getConfirmedLocationLng().observe(fragment.getViewLifecycleOwner(), locationUrl::setLng);
-        locationUrl.getUrl().observe(fragment.getViewLifecycleOwner(), sharer::share);
+        locationUrl.getUrl().observe(fragment.getViewLifecycleOwner(), string -> {
+            Intent shareIntent = Utils.getShareIntent(string);
+
+            if (shareIntent != null)
+                fragment.startActivity(shareIntent);
+            else
+                Snackbar.make(
+                        fragment.requireView(),
+                        "Keine Position vorhanden!",
+                        Snackbar.LENGTH_LONG
+                ).show();
+        });
     }
 }

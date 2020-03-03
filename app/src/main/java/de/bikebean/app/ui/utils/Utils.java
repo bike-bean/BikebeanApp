@@ -5,9 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.view.View;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -192,5 +195,11 @@ public class Utils {
                 .setType("text/plain");
 
         return Intent.createChooser(sendIntent, null);
+    }
+
+    public static void onHelpClick(View v) {
+        Snackbar.make(v, R.string.help, Snackbar.LENGTH_LONG)
+                .setAction(R.string.history, (v1 -> {}))
+                .show();
     }
 }

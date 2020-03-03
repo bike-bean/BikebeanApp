@@ -14,6 +14,9 @@ public interface StateDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(State state);
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    long insertSync(State state);
+
     @Query("DELETE FROM state_table")
     void deleteAll();
 

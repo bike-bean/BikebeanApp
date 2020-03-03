@@ -8,15 +8,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.bikebean.app.MainActivity;
-import de.bikebean.app.db.settings.Battery;
-import de.bikebean.app.db.settings.CellTowers;
-import de.bikebean.app.db.settings.Interval;
-import de.bikebean.app.db.settings.LowBattery;
-import de.bikebean.app.db.settings.SettingsList;
-import de.bikebean.app.db.settings.Wapp;
-import de.bikebean.app.db.settings.WarningNumber;
-import de.bikebean.app.db.settings.Wifi;
-import de.bikebean.app.db.settings.WifiAccessPoints;
+import de.bikebean.app.db.settings.settings.Battery;
+import de.bikebean.app.db.settings.settings.number_settings.CellTowers;
+import de.bikebean.app.db.settings.settings.Interval;
+import de.bikebean.app.db.settings.settings.LowBattery;
+import de.bikebean.app.ui.initialization.SettingsList;
+import de.bikebean.app.db.settings.settings.Wapp;
+import de.bikebean.app.db.settings.settings.WarningNumber;
+import de.bikebean.app.db.settings.settings.Wifi;
+import de.bikebean.app.db.settings.settings.number_settings.WifiAccessPoints;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
@@ -68,11 +68,11 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
         Log.d(MainActivity.TAG, String.format("Detected Type %d", type.ordinal()));
 
         // Update the status entries for the status db and the user preferences
-        SettingsList l = getSettingList();
+        SettingsList settings = getSettingList();
 
-        if (l.size() > 0)
+        if (settings.size() > 0)
             // add each status entry to the status viewModel ( -> database )
-            statusViewModelReference.get().insert(l.updatePreferences());
+            statusViewModelReference.get().insert(settings);
         else
             logViewModelReference.get().e("Could not parse SMS: " + sms.getBody());
 
@@ -82,7 +82,7 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
     @Override
     protected void onPostExecute(Boolean isDatabaseUpdated) {
         if (isDatabaseUpdated)
-            smsViewModelReference.get().markParsed(sms.getId());
+            smsViewModelReference.get().markParsed(sms);
     }
 
     // MATCHERS
@@ -192,27 +192,27 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
                         ._add(new Interval(getStatusInterval(), sms))
                         ._add(new Wifi(getStatusWifi(), sms))
                         ._add(new Battery(getStatusBattery(), sms))
-                        ._add(new de.bikebean.app.db.settings.Status(0.0, sms));
+                        ._add(new de.bikebean.app.db.settings.settings.Status(0.0, sms));
                 break;
             case WIFI_ON:
                 settings._add(new Battery(getStatusBattery(), sms))
                         ._add(new Wifi(true, sms))
-                        ._add(new de.bikebean.app.db.settings.Status(0.0, sms));
+                        ._add(new de.bikebean.app.db.settings.settings.Status(0.0, sms));
                 break;
             case WIFI_OFF:
                 settings._add(new Battery(getStatusBattery(), sms))
                         ._add(new Wifi(false, sms))
-                        ._add(new de.bikebean.app.db.settings.Status(0.0, sms));
+                        ._add(new de.bikebean.app.db.settings.settings.Status(0.0, sms));
                 break;
             case WARNING_NUMBER:
                 settings._add(new Battery(getStatusBattery(), sms))
                         ._add(new WarningNumber(getWarningNumber(), sms))
-                        ._add(new de.bikebean.app.db.settings.Status(0.0, sms));
+                        ._add(new de.bikebean.app.db.settings.settings.Status(0.0, sms));
                 break;
             case INT:
                 settings._add(new Battery(getStatusBattery(), sms))
                         ._add(new Interval(getInterval(), sms))
-                        ._add(new de.bikebean.app.db.settings.Status(0.0, sms));
+                        ._add(new de.bikebean.app.db.settings.settings.Status(0.0, sms));
                 break;
             case CELL_TOWERS:
                 // no battery entry in this special case

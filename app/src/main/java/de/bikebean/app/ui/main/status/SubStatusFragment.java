@@ -1,37 +1,30 @@
 package de.bikebean.app.ui.main.status;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.provider.Telephony;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import de.bikebean.app.R;
 import de.bikebean.app.ui.utils.Utils;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.main.status.menu.sms_history.SmsViewModel;
-import de.bikebean.app.ui.utils.sms.send.SmsSendIdGetter;
 import de.bikebean.app.ui.utils.sms.send.SmsSender;
-import de.bikebean.app.ui.main.status.status.LiveDataTimerViewModel;
+import de.bikebean.app.ui.main.status.settings.LiveDataTimerViewModel;
 
 public abstract class SubStatusFragment extends Fragment {
 
     private StateViewModel st;
     protected LiveDataTimerViewModel tv;
     protected SmsViewModel sm;
-
-    protected FragmentActivity act;
-    protected Context ctx;
 
     private SmsSender smsSender;
     
@@ -43,12 +36,9 @@ public abstract class SubStatusFragment extends Fragment {
         tv = new ViewModelProvider(this).get(LiveDataTimerViewModel.class);
         sm = new ViewModelProvider(this).get(SmsViewModel.class);
 
-        act = Objects.requireNonNull(getActivity());
-        ctx = Objects.requireNonNull(act).getApplicationContext();
-
         LifecycleOwner l = getViewLifecycleOwner();
 
-        smsSender = new SmsSender(act, this::onPostSend);
+        smsSender = new SmsSender(requireActivity(), this::onPostSend);
 
         setupListeners(l);
         initUserInteractionElements();
@@ -56,23 +46,15 @@ public abstract class SubStatusFragment extends Fragment {
 
     private void onPostSend(boolean sent, String address, String message, State[] updates) {
         if (sent) {
-            Toast.makeText(ctx,
+            Snackbar.make(requireView(),
                     String.format("SMS an %s gesendet", address),
-                    Toast.LENGTH_LONG
+                    Snackbar.LENGTH_LONG
             ).show();
 
-            long timestamp = System.currentTimeMillis();
-
-            synchronized (this) {
-                new SmsSendIdGetter(sm, smsId ->
-                        sm.insert(new Sms(smsId - 1, address, message,
-                                Telephony.Sms.MESSAGE_TYPE_SENT, Sms.STATUS.NEW,
-                                Utils.convertToTime(timestamp), timestamp))
-                ).execute();
-            }
+            sm.insert(new Sms(sm.getLatestId(), address, message));
             st.insert(updates);
         } else {
-            Toast.makeText(ctx, "Vorgang abgebrochen.", Toast.LENGTH_LONG).show();
+            Snackbar.make(requireView(), "Vorgang abgebrochen.", Snackbar.LENGTH_LONG).show();
             resetElements();
         }
     }

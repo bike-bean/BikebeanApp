@@ -7,12 +7,20 @@ import androidx.lifecycle.AndroidViewModel;
 
 import de.bikebean.app.R;
 import de.bikebean.app.db.MutableObject;
+import de.bikebean.app.db.settings.Setting;
+import de.bikebean.app.db.settings.settings.Battery;
+import de.bikebean.app.db.settings.settings.Interval;
+import de.bikebean.app.db.settings.settings.Location;
+import de.bikebean.app.db.settings.settings.Status;
+import de.bikebean.app.db.settings.settings.Wapp;
+import de.bikebean.app.db.settings.settings.Wifi;
+import de.bikebean.app.db.settings.settings.number_settings.CellTowers;
+import de.bikebean.app.db.settings.settings.number_settings.WifiAccessPoints;
+import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
+import de.bikebean.app.ui.initialization.SettingsList;
 
 public class StateViewModel extends AndroidViewModel {
-
-    protected static final double INITIAL_INTERVAL = 1.0;
-    protected static final double INITIAL_WIFI = 0.0;
 
     private final StateRepository mRepository;
 
@@ -33,46 +41,38 @@ public class StateViewModel extends AndroidViewModel {
                 mRepository.insert(state);
     }
 
+    public void insert(Setting setting) {
+        if (setting.getDate() != 0)
+            insert(setting.getState());
+    }
+
+    public void insertNumberStates(Wapp wapp, Sms sms) {
+        insert(wapp.getCellTowerSetting(sms).getNumberState());
+        insert(wapp.getWifiAccessPointSetting(sms).getNumberState());
+    }
+
+    public void insert(SettingsList settings) {
+        for (Setting s : settings)
+            insert(s);
+    }
+
     public void insertInitialStates(Context ctx) {
         insert(new State(
                 1, State.KEY.WARNING_NUMBER, 0.0, ctx.getString(R.string.warning_number_default),
                 State.STATUS.UNSET, 0)
         );
 
-        insert(new State(
-                1, State.KEY.INTERVAL, INITIAL_INTERVAL, "",
-                State.STATUS.CONFIRMED, 0)
-        );
+        SettingsList settings = new SettingsList();
 
-        insert(new State(
-                1, State.KEY.WIFI, INITIAL_WIFI, "",
-                State.STATUS.CONFIRMED, 0)
-        );
+        settings._add(new Interval())
+                ._add(new Wifi())
+                ._add(new Status())
+                ._add(new Battery())
+                ._add(new Location())
+                ._add(new CellTowers())
+                ._add(new WifiAccessPoints());
 
-        insert(new State(
-                1, State.KEY._STATUS, 0.0, "",
-                State.STATUS.UNSET, 0)
-        );
-
-        insert(new State(
-                1, State.KEY.BATTERY, -1.0, "",
-                State.STATUS.UNSET, 0)
-        );
-
-        insert(new State(
-                1, State.KEY.LOCATION, 0.0, "",
-                State.STATUS.UNSET, 0)
-        );
-
-        insert(new State(
-                1, State.KEY.CELL_TOWERS, 0.0, "",
-                State.STATUS.UNSET, 0)
-        );
-
-        insert(new State(
-                1, State.KEY.WIFI_ACCESS_POINTS, 0.0, "",
-                State.STATUS.UNSET, 0)
-        );
+        insert(settings);
     }
 
     public int getConfirmedIntervalSync() {
@@ -81,7 +81,7 @@ public class StateViewModel extends AndroidViewModel {
         if (intervalConfirmed != null)
             return intervalConfirmed.getValue().intValue();
 
-        return (int) INITIAL_INTERVAL;
+        return new Interval().get().intValue();
     }
 
     public String getWifiAccessPointsSync() {

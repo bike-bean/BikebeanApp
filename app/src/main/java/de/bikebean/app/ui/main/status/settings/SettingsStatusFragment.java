@@ -1,4 +1,4 @@
-package de.bikebean.app.ui.main.status.status;
+package de.bikebean.app.ui.main.status.settings;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -15,6 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
 import de.bikebean.app.ui.utils.Utils;
@@ -22,15 +25,17 @@ import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.main.status.SubStatusFragment;
 
-public class StatusStatusFragment extends SubStatusFragment {
+public class SettingsStatusFragment extends SubStatusFragment {
 
-    private StatusStateViewModel st;
+    private SettingsStateViewModel st;
 
     private final LiveDataTimerViewModel.TIMER t1 = LiveDataTimerViewModel.TIMER.ONE;
     private final LiveDataTimerViewModel.TIMER t2 = LiveDataTimerViewModel.TIMER.TWO;
     private final LiveDataTimerViewModel.TIMER t3 = LiveDataTimerViewModel.TIMER.THREE;
 
     // UI Elements
+    private ImageButton helpButton;
+
     private TextView statusLastChangedText;
 
     private Spinner intervalDropdown;
@@ -44,7 +49,9 @@ public class StatusStatusFragment extends SubStatusFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_status_status, container, false);
+        View v = inflater.inflate(R.layout.fragment_status_settings, container, false);
+
+        helpButton = v.findViewById(R.id.helpButton3);
 
         wlanSwitch = v.findViewById(R.id.wlanSwitch);
         wlanSummary = v.findViewById(R.id.wlanSummary);
@@ -71,8 +78,12 @@ public class StatusStatusFragment extends SubStatusFragment {
     }
 
     private void initIntervalDropdown() {
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(act,
-                R.array.interval_entries, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter =
+                ArrayAdapter.createFromResource(
+                        requireActivity(),
+                        R.array.interval_entries,
+                        android.R.layout.simple_spinner_item
+                );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         intervalDropdown.setAdapter(adapter);
@@ -80,7 +91,7 @@ public class StatusStatusFragment extends SubStatusFragment {
 
     @Override
     protected void setupListeners(LifecycleOwner l) {
-        st = new ViewModelProvider(this).get(StatusStateViewModel.class);
+        st = new ViewModelProvider(this).get(SettingsStateViewModel.class);
 
         st.getStatusWifi().observe(l, this::setElements);
         st.getStatus().observe(l, this::setElements);
@@ -133,6 +144,7 @@ public class StatusStatusFragment extends SubStatusFragment {
 
             sendSms(msg, new State[]{new State(State.KEY.WIFI, isChecked ? 1.0 : 0.0)});
         });
+        helpButton.setOnClickListener(this::onHelpClick);
     }
 
     private String getIntervalString(int position) {
@@ -431,6 +443,10 @@ public class StatusStatusFragment extends SubStatusFragment {
     }
     protected void setLocationElementsTempPending(State state) {
 
+    }
+
+    private void onHelpClick(View v) {
+        Snackbar.make(v, R.string.help, Snackbar.LENGTH_LONG).show();
     }
 }
 

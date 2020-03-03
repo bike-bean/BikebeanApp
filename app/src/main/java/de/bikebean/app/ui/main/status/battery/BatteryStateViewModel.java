@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
+import de.bikebean.app.db.settings.settings.Wifi;
 import de.bikebean.app.ui.utils.Utils;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.main.status.StateViewModel;
@@ -43,6 +44,6 @@ public class BatteryStateViewModel extends StateViewModel {
         if (wifiConfirmed != null)
             return wifiConfirmed.getValue() > 0;
 
-        return Boolean.valueOf(String.valueOf(INITIAL_WIFI));
+        return new Wifi().getRaw();
     }
 }

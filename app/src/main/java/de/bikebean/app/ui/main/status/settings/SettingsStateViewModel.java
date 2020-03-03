@@ -1,4 +1,4 @@
-package de.bikebean.app.ui.main.status.status;
+package de.bikebean.app.ui.main.status.settings;
 
 import android.app.Application;
 
@@ -6,20 +6,22 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
+import de.bikebean.app.db.settings.settings.Interval;
+import de.bikebean.app.db.settings.settings.Wifi;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.main.status.StateViewModel;
 
-public class StatusStateViewModel extends StateViewModel {
+public class SettingsStateViewModel extends StateViewModel {
 
     private final LiveData<List<State>> mStatus;
     private final LiveData<List<State>> mStatusWarningNumber;
     private final LiveData<List<State>> mStatusInterval;
     private final LiveData<List<State>> mStatusWifi;
 
-    public StatusStateViewModel(Application application) {
+    public SettingsStateViewModel(Application application) {
         super(application);
 
-        StatusStateRepository mRepository = new StatusStateRepository(application);
+        SettingsStateRepository mRepository = new SettingsStateRepository(application);
 
         mStatus = mRepository.getStatus();
         mStatusWarningNumber = mRepository.getStatusWarningNumber();
@@ -58,7 +60,7 @@ public class StatusStateViewModel extends StateViewModel {
         if (wifiConfirmed != null)
             return wifiConfirmed.getValue() > 0;
 
-        return Boolean.valueOf(String.valueOf(INITIAL_WIFI));
+        return new Wifi().getRaw();
     }
 
     boolean getWifiStatusSync() {
@@ -67,7 +69,7 @@ public class StatusStateViewModel extends StateViewModel {
         if (wifi != null)
             return wifi.getValue() > 0;
 
-        return Boolean.valueOf(String.valueOf(INITIAL_WIFI));
+        return new Wifi().getRaw();
     }
 
     int getIntervalStatusSync() {
@@ -76,6 +78,6 @@ public class StatusStateViewModel extends StateViewModel {
         if (intervalState != null)
             return intervalState.getValue().intValue();
 
-        return (int) INITIAL_INTERVAL;
+        return new Interval().get().intValue();
     }
 }

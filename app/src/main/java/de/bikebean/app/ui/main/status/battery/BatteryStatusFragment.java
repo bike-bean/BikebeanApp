@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,7 +17,7 @@ import de.bikebean.app.ui.utils.Utils;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.main.status.SubStatusFragment;
-import de.bikebean.app.ui.main.status.status.LiveDataTimerViewModel;
+import de.bikebean.app.ui.main.status.settings.LiveDataTimerViewModel;
 
 public class BatteryStatusFragment extends SubStatusFragment {
 
@@ -26,6 +27,7 @@ public class BatteryStatusFragment extends SubStatusFragment {
 
     // UI Elements
     private Button statusButton;
+    private ImageButton helpButton;
     private TextView statusPendingStatus;
     private TextView batteryStatusText, batteryEstimatedDaysText, batteryLastChangedText;
 
@@ -35,6 +37,7 @@ public class BatteryStatusFragment extends SubStatusFragment {
         View v = inflater.inflate(R.layout.fragment_status_battery, container, false);
 
         statusButton = v.findViewById(R.id.statusButton);
+        helpButton = v.findViewById(R.id.helpButton2);
         statusPendingStatus = v.findViewById(R.id.statusPendingStatus);
 
         batteryStatusText = v.findViewById(R.id.batteryStatusText);
@@ -55,6 +58,7 @@ public class BatteryStatusFragment extends SubStatusFragment {
         statusButton.setOnClickListener(v ->
                 sendSms(Sms.MESSAGE._STATUS, new State[]{new State(State.KEY.BATTERY, 0.0)})
         );
+        helpButton.setOnClickListener(Utils::onHelpClick);
     }
 
     @Override
@@ -70,7 +74,8 @@ public class BatteryStatusFragment extends SubStatusFragment {
 
         batteryStatusText.setText("");
         batteryStatusText.setCompoundDrawablesWithIntrinsicBounds(
-                Utils.getBatteryDrawable(ctx, state.getValue()), null, null, null
+                Utils.getBatteryDrawable(requireContext(), state.getValue()),
+                null, null, null
         );
 
         batteryLastChangedText.setText(R.string.no_data);
@@ -104,7 +109,8 @@ public class BatteryStatusFragment extends SubStatusFragment {
         String batteryStatus = state.getValue() + " %";
         batteryStatusText.setText(batteryStatus);
         batteryStatusText.setCompoundDrawablesWithIntrinsicBounds(
-                Utils.getBatteryDrawable(ctx, state.getValue()), null, null, null
+                Utils.getBatteryDrawable(requireContext(), state.getValue()),
+                null, null, null
         );
 
         batteryLastChangedText.setText(Utils.convertToDateHuman(state.getTimestamp()));
@@ -168,12 +174,14 @@ public class BatteryStatusFragment extends SubStatusFragment {
             batteryEstimatedDaysText.setText(BatteryStateViewModel.getEstimatedDaysText(st));
             batteryStatusText.setText(batteryStatus);
             batteryStatusText.setCompoundDrawablesWithIntrinsicBounds(
-                    Utils.getBatteryDrawable(ctx, batteryValue), null, null, null
+                    Utils.getBatteryDrawable(requireContext(), batteryValue),
+                    null, null, null
             );
         } else {
             batteryStatusText.setText("");
             batteryStatusText.setCompoundDrawablesWithIntrinsicBounds(
-                    Utils.getBatteryDrawable(ctx, -1.0), null, null, null
+                    Utils.getBatteryDrawable(requireContext(), -1.0),
+                    null, null, null
             );
 
             batteryLastChangedText.setText(R.string.no_data);

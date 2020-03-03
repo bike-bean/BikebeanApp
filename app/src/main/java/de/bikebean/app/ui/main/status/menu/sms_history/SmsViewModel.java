@@ -75,7 +75,33 @@ public class SmsViewModel extends AndroidViewModel {
     }
 
     public int getLatestId() {
-        return mRepository.getLatestId();
+        MutableInt id = new MutableInt();
+
+        new Thread(() -> id.set(mRepository.getLatestId())).start();
+
+        return id.waitForSet();
+    }
+
+    class MutableInt {
+        private volatile int i;
+        private boolean isSet = false;
+
+        void set(int i) {
+            this.i = i;
+            isSet = true;
+        }
+
+        int waitForSet() {
+            while (!isSet) {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return i;
+        }
     }
 
     public void fetchSms(Context context, StateViewModel st, LogViewModel lv,
@@ -93,14 +119,12 @@ public class SmsViewModel extends AndroidViewModel {
         mRepository.insert(sms);
     }
 
-    public void markParsed(int id) {
-        mRepository.markParsed(id);
+    public void markParsed(Sms sms) {
+        mRepository.markParsed(sms);
     }
 
     private Sms getSmsSync(MutableObject.ListGetter smsGetter, String timestamp, int position) {
-        final MutableObject<Sms> sms = new MutableObject<>(
-                new Sms(0, "", "", 0, 0, "", 0), position
-        );
+        final MutableObject<Sms> sms = new MutableObject<>(new Sms(), position);
 
         return (Sms) sms.getDbEntitySync(smsGetter, timestamp, 0);
     }
