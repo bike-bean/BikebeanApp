@@ -8,7 +8,8 @@
     <string name="last_updated">Letzte Aktualisierung:</string>
     <string name="status_heading">Willkommen!</string>
     <string name="location_text">Standort</string>
-    <string name="status_text">Status</string>
+    <string name="status_text">Einstellungen</string>
+    <string name="status_title">Bike Bean Status</string>
     <string name="battery_text">Batterie</string>
     <string name="charge_text">Ladezustand:</string>
     <string name="estimated_charge_text">Zeit bis 10%:</string>
@@ -27,9 +28,11 @@
     <string name="title_activity_sms">SMS Historie</string>
     <string name="title_activity_settings">Einstellungen</string>
 
-    <string name="history">Historie</string>
-    <string name="licenses">Lizenzen</string>
+    <string name="history">Historie (Standort &amp; Batterie)</string>
+    <string name="info">Infos &amp; Hilfe</string>
     <string name="log">Fehlerprotokoll</string>
+    <string name="help">Hilfe</string>
+    <string name="share">Teilen</string>
 
     <string name="menu_satellite">Satellit</string>
     <string name="menu_hybrid">Hybrid</string>
@@ -55,9 +58,9 @@
 
     <!-- WLAN Preferences -->
     <string name="wlan_title">WLAN Status</string>
-    <string name="wlan_summary_on">Bike-Bean strahlt WLAN aus.\nACHTUNG:
+    <string name="wlan_summary_on">Bike Bean strahlt WLAN aus.\nACHTUNG:
         Die Batterielaufzeit der Bike Bean wird stark reduziert!</string>
-    <string name="wlan_summary_off">Bike-Bean strahlt aktuell kein WLAN aus.</string>
+    <string name="wlan_summary_off">Bike Bean strahlt aktuell kein WLAN aus.</string>
 
     <!-- Location Preferences -->
     <string name="lat">Lat: </string>

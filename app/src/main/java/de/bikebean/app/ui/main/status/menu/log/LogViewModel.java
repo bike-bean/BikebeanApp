@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
+import de.bikebean.app.MainActivity;
 import de.bikebean.app.db.MutableObject;
 import de.bikebean.app.db.log.Log;
 
@@ -25,20 +26,24 @@ public class LogViewModel extends AndroidViewModel {
     }
 
     public void d(String message) {
+        android.util.Log.d(MainActivity.TAG, message);
         mRepository.insert(new Log(message, Log.LEVEL.DEBUG));
     }
 
     /*
     public void i(String message) {
+        android.util.Log.i(MainActivity.TAG, message);
         mRepository.insert(new Log(message, Log.LEVEL.INFO));
     }
     */
 
     public void w(String message) {
+        android.util.Log.w(MainActivity.TAG, message);
         mRepository.insert(new Log(message, Log.LEVEL.WARNING));
     }
 
     public void e(String message) {
+        android.util.Log.e(MainActivity.TAG, message);
         mRepository.insert(new Log(message, Log.LEVEL.ERROR));
     }
 

@@ -6,6 +6,8 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
+import de.bikebean.app.db.settings.settings.Wapp;
+import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.main.status.StateViewModel;
 
@@ -63,23 +65,23 @@ public class LocationStateViewModel extends StateViewModel {
         return mLocation;
     }
 
-    void confirmWapp(State cellTowerState, State wifiAccessPointsState) {
-        mRepository.confirmWapp(cellTowerState, wifiAccessPointsState);
+    void confirmWapp(Wapp wapp) {
+        mRepository.confirmWapp(wapp);
     }
 
-    State getConfirmedLocationSync(State state) {
+    public State getConfirmedLocationSync(State state) {
         return getConfirmedStateSync(State.KEY.getValue(state.getKey()));
     }
 
-    boolean getLocationByIdSync(int smsId) {
-        return getStateByIdSync(State.KEY.LAT, smsId) != null;
+    boolean getLocationByIdSync(Sms sms) {
+        return getStateByIdSync(State.KEY.LOCATION, sms.getId()) != null;
     }
 
-    State getWifiAccessPointsBySmsIdSync(int smsId) {
-        return getStateByIdSync(State.KEY.WIFI_ACCESS_POINTS, smsId);
+    public State getWifiAccessPointsByWappSync(State wappState) {
+        return getStateByIdSync(State.KEY.WIFI_ACCESS_POINTS, wappState.getSmsId());
     }
 
-    State getCellTowersBySmsIdSync(int smsId) {
-        return getStateByIdSync(State.KEY.CELL_TOWERS, smsId);
+    public State getCellTowersByWappSync(State wappState) {
+        return getStateByIdSync(State.KEY.CELL_TOWERS, wappState.getSmsId());
     }
 }

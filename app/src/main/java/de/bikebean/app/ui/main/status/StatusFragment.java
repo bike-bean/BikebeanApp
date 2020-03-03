@@ -12,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -25,17 +24,18 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.preference.PreferenceManager;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.Objects;
 
 import de.bikebean.app.R;
 import de.bikebean.app.ui.utils.PermissionsRationaleDialog;
 import de.bikebean.app.ui.utils.Utils;
-import de.bikebean.app.ui.main.map.MapFragmentViewModel;
 import de.bikebean.app.ui.main.status.battery.BatteryStatusFragment;
 import de.bikebean.app.ui.main.status.location.LocationStatusFragment;
 import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
 import de.bikebean.app.ui.main.status.menu.sms_history.SmsViewModel;
-import de.bikebean.app.ui.main.status.status.StatusStatusFragment;
+import de.bikebean.app.ui.main.status.settings.SettingsStatusFragment;
 
 public class StatusFragment extends Fragment {
 
@@ -79,7 +79,7 @@ public class StatusFragment extends Fragment {
                 .beginTransaction()
                 .replace(R.id.include0, new LocationStatusFragment())
                 .replace(R.id.include1, new BatteryStatusFragment())
-                .replace(R.id.include2, new StatusStatusFragment())
+                .replace(R.id.include2, new SettingsStatusFragment())
                 .disallowAddToBackStack()
                 .commit();
 
@@ -103,7 +103,7 @@ public class StatusFragment extends Fragment {
         // Show the Action Bar
         ActionBar actionbar = ((AppCompatActivity) act).getSupportActionBar();
         Objects.requireNonNull(actionbar).show();
-        actionbar.setTitle(R.string.status_text);
+        actionbar.setTitle(R.string.status_title);
 
         permissionDeniedHandler = this::showErrorView;
 
@@ -162,16 +162,10 @@ public class StatusFragment extends Fragment {
                 Navigation.findNavController(Objects.requireNonNull(getView()))
                         .navigate(R.id.history_action);
                 return true;
-            case R.id.menu_item_log:
+            case R.id.menu_item_info:
                 Navigation.findNavController(Objects.requireNonNull(getView()))
                         .navigate(R.id.log_action);
                 return true;
-            case R.id.menu_item_share:
-                new ViewModelProvider(this).get(MapFragmentViewModel.class)
-                        .newShareIntent(this, this::share);
-                return true;
-            // case R.id.menu_item_licenses:
-                // startActivity(new Intent(this, OssLicensesMenuActivity.class));
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -180,9 +174,9 @@ public class StatusFragment extends Fragment {
     private void showErrorView(boolean show) {
         if (show) {
             errorView.setVisibility(View.VISIBLE);
-            Toast.makeText(requireContext(),
+            Snackbar.make(requireView(),
                     getString(R.string.warning_sms_permission),
-                    Toast.LENGTH_LONG
+                    Snackbar.LENGTH_LONG
             ).show();
         } else
             errorView.setVisibility(View.GONE);
@@ -196,19 +190,6 @@ public class StatusFragment extends Fragment {
         Uri uri = Uri.fromParts("package", requireActivity().getPackageName(), null);
         intent.setData(uri);
         startActivity(intent);
-    }
-
-    private void share(String string) {
-        Intent shareIntent = Utils.getShareIntent(string);
-
-        if (shareIntent != null)
-            startActivity(shareIntent);
-        else
-            Toast.makeText(
-                    requireContext(),
-                    "Keine Position vorhanden!",
-                    Toast.LENGTH_LONG
-            ).show();
     }
 
     private void fetchSms() {

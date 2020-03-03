@@ -3,18 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/menu_item_sms_history"
         android:title="@string/title_activity_sms" />
-    <item android:id="@+id/menu_item_settings"
-        android:title="@string/title_activity_settings" />
     <item android:id="@+id/menu_item_history"
         android:title="@string/history" />
-    <item android:id="@+id/menu_item_log"
-        android:title="@string/log" />
-    <item android:id="@+id/menu_item_share"
-        android:icon="@drawable/ic_share_white_24dp"
-        app:showAsAction="always"
-        android:title="@string/log" />
-    <!--
-    <item android:id="@+id/menu_item_licenses"
-        android:title="@string/licenses" />
-        -->
+    <item android:id="@+id/menu_item_info"
+        android:title="@string/info" />
+    <item android:id="@+id/menu_item_settings"
+        android:title="@string/title_activity_settings" />
 </menu>

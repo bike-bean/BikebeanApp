@@ -1,4 +1,4 @@
-package de.bikebean.app.ui.main.status.status;
+package de.bikebean.app.ui.main.status.settings;
 
 import android.app.Application;
 import android.util.SparseArray;

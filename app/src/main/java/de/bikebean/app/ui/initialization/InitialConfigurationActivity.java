@@ -12,8 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
 import de.bikebean.app.R;
@@ -108,9 +108,9 @@ public class InitialConfigurationActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 fetchSms();
             else
-                Toast.makeText(this,
+                Snackbar.make(findViewById(android.R.id.content).getRootView(),
                         getString(R.string.warning_sms_permission),
-                        Toast.LENGTH_LONG
+                        Snackbar.LENGTH_LONG
                 ).show();
         }
     }

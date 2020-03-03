@@ -67,6 +67,7 @@ class SmsRepository {
 
     int getLatestId() {
         List<Sms> l = mSmsDao.getLatestId(Telephony.Sms.MESSAGE_TYPE_SENT);
+
         if (l.size() > 0) {
             return l.get(0).getId();
         } else {
@@ -79,9 +80,9 @@ class SmsRepository {
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() -> mSmsDao.insert(sms));
     }
 
-    void markParsed(int id) {
+    void markParsed(Sms sms) {
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() ->
-                mSmsDao.updateStateById(Sms.STATUS.PARSED.ordinal(), id));
+                mSmsDao.updateStateById(Sms.STATUS.PARSED.ordinal(), sms.getId()));
     }
 
     private void discard(int smsId) {

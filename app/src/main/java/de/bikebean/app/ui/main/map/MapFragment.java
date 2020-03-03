@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -38,6 +37,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 import java.util.Objects;
@@ -262,16 +262,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private void showShare(View v) {
         if (v.isEnabled())
-            mapFragmentViewModel.newShareIntent(this, this::share);
+            mapFragmentViewModel.newShareIntent(this);
         else
-            mapFragmentViewModel.newShareIntent(this, this::share);
-    }
-
-    private void share(String string) {
-        Intent shareIntent = Utils.getShareIntent(string);
-
-        if (shareIntent != null)
-            startActivity(shareIntent);
+            mapFragmentViewModel.newShareIntent(this);
     }
 
     private boolean handleMenuClick(MenuItem item) {
@@ -358,9 +351,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 setLocationEnabled();
             else
-                Toast.makeText(act,
+                Snackbar.make(requireView(),
                         "Eigener Standort nicht verfügbar",
-                        Toast.LENGTH_LONG
+                        Snackbar.LENGTH_LONG
                 ).show();
         }
     }

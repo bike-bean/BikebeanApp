@@ -3,7 +3,6 @@ package de.bikebean.app.ui.main.status.menu.preferences;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.InputType;
-import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +13,8 @@ import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Objects;
 
@@ -78,10 +79,18 @@ public class PreferencesActivity extends AppCompatActivity {
                 numberPreference.setDialogMessage(R.string.number_subtitle);
                 numberPreference.setOnPreferenceChangeListener((preference, newValue) -> {
                     if (newValue.toString().isEmpty()) {
-                        Toast.makeText(ctx, R.string.number_error, Toast.LENGTH_LONG).show();
+                        Snackbar.make(
+                                requireView(),
+                                R.string.number_error,
+                                Snackbar.LENGTH_LONG
+                        ).show();
                         return false;
                     } else if (!newValue.toString().substring(0, 1).equals("+")) {
-                        Toast.makeText(ctx, R.string.number_subtitle, Toast.LENGTH_LONG).show();
+                        Snackbar.make(
+                                requireView(),
+                                R.string.number_subtitle,
+                                Snackbar.LENGTH_LONG
+                        ).show();
                         return false;
                     } else {
                         resetAll(newValue.toString());

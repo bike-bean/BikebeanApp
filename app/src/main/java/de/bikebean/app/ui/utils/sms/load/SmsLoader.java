@@ -10,8 +10,7 @@ import android.util.Log;
 import java.lang.ref.WeakReference;
 
 import de.bikebean.app.MainActivity;
-import de.bikebean.app.ui.utils.Utils;
-import de.bikebean.app.db.sms.Conversation;
+import de.bikebean.app.ui.initialization.Conversation;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.ui.main.status.StateViewModel;
 import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
@@ -73,7 +72,7 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
             Log.d(MainActivity.TAG, "Loading " + inbox.getCount() + " SMS");
 
             for (int i=0; i < inbox.getCount(); i++) {
-                Sms sms = buildSms(inbox, Sms.STATUS.NEW);
+                Sms sms = new Sms(inbox, Sms.STATUS.NEW);
 
                 if (smsViewModel.getSmsById(sms.getId()).size() == 0)
                     smsViewModel.insert(sms);
@@ -102,31 +101,18 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
         Conversation conversation = new Conversation(stateViewModel, smsViewModel, logViewModel);
 
         if (inbox.moveToFirst()) {
-            Log.d(MainActivity.TAG, "Loading " + inbox.getCount() + " SMS");
+            logViewModel.d("Loading " + inbox.getCount() + " SMS");
             for (int i = 0; i < inbox.getCount(); i++) {
-                Sms sms = buildSms(inbox, Sms.STATUS.PARSED);
-                conversation.add(sms);
-
+                conversation.add(new Sms(inbox, Sms.STATUS.PARSED));
                 inbox.moveToNext();
             }
 
+            logViewModel.d("Done Loading SMS!");
             inbox.close();
         } else
             return;
 
         conversation.updatePreferences();
-    }
-
-    private Sms buildSms(Cursor inbox, Sms.STATUS smsState) {
-        String address = inbox.getString(inbox.getColumnIndexOrThrow("address"));
-        String id = inbox.getString(inbox.getColumnIndexOrThrow("_id"));
-        String body = inbox.getString(inbox.getColumnIndexOrThrow("body"));
-        String type = inbox.getString(inbox.getColumnIndexOrThrow("type"));
-        String date = inbox.getString(inbox.getColumnIndexOrThrow("date"));
-        long timestamp = Long.parseLong(date);
-
-        return new Sms(Integer.parseInt(id), address, body, Integer.parseInt(type),
-                smsState, Utils.convertToTime(timestamp), timestamp);
     }
 
     private Cursor getInbox(ContentResolver contentResolver, String[] argList) {

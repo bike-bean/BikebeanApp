@@ -1,5 +1,8 @@
 package de.bikebean.app.db.sms;
 
+import android.database.Cursor;
+import android.provider.Telephony;
+
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -7,6 +10,8 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import de.bikebean.app.db.DatabaseEntity;
+import de.bikebean.app.db.state.State;
+import de.bikebean.app.ui.utils.Utils;
 
 @Entity(tableName = "sms_table")
 public class Sms extends DatabaseEntity {
@@ -97,6 +102,59 @@ public class Sms extends DatabaseEntity {
         this.mState = state.ordinal();
         this.mDate = date;
         this.mTimestamp = timestamp;
+    }
+
+    // New Sent SMS
+    @Ignore
+    public Sms(
+            int smsId,
+            @NonNull String address,
+            @NonNull String message
+    ) {
+        long timestamp = System.currentTimeMillis();
+
+        this.mId = smsId - 1;
+        this.mAddress = address;
+        this.mBody = message;
+        this.mType = Telephony.Sms.MESSAGE_TYPE_SENT;
+        this.mState = STATUS.NEW.ordinal();
+        this.mDate = Utils.convertToTime(timestamp);
+        this.mTimestamp = timestamp;
+    }
+
+    @Ignore
+    public Sms(
+            State state
+    ) {
+        this.mId = state.getSmsId();
+        this.mAddress = "";
+        this.mBody = "";
+        this.mType = 0;
+        this.mState = 0;
+        this.mDate = Utils.convertToTime(state.getTimestamp());
+        this.mTimestamp = state.getTimestamp();
+    }
+
+    // with cursor
+    @Ignore
+    public Sms(
+            Cursor inbox,
+            STATUS smsState
+    ) {
+        String id = inbox.getString(inbox.getColumnIndexOrThrow("_id"));
+        this.mId = Integer.parseInt(id);
+
+        String type = inbox.getString(inbox.getColumnIndexOrThrow("type"));
+        this.mType = Integer.parseInt(type);
+
+        this.mState = smsState.ordinal();
+
+        this.mAddress = inbox.getString(inbox.getColumnIndexOrThrow("address"));
+        this.mBody = inbox.getString(inbox.getColumnIndexOrThrow("body"));
+
+        String date = inbox.getString(inbox.getColumnIndexOrThrow("date"));
+        this.mTimestamp = Long.parseLong(date);
+        this.mDate = Utils.convertToTime(mTimestamp);
     }
 
     // nullType

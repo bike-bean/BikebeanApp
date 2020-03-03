@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -14,15 +15,21 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
+import com.google.android.material.snackbar.Snackbar;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import de.bikebean.app.R;
+import de.bikebean.app.db.settings.settings.Wapp;
+import de.bikebean.app.ui.initialization.SettingsList;
+import de.bikebean.app.ui.main.map.MapFragmentViewModel;
 import de.bikebean.app.ui.utils.Utils;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.main.status.SubStatusFragment;
-import de.bikebean.app.ui.main.status.status.LiveDataTimerViewModel;
+import de.bikebean.app.ui.main.status.settings.LiveDataTimerViewModel;
 
 public class LocationStatusFragment extends SubStatusFragment {
 
@@ -32,6 +39,7 @@ public class LocationStatusFragment extends SubStatusFragment {
 
     // UI Elements
     private Button buttonGetLocation, buttonOpenMap;
+    private ImageButton helpButton, shareButton;
     private ProgressBar progressBar;
     private TableLayout tableLayout;
 
@@ -45,6 +53,8 @@ public class LocationStatusFragment extends SubStatusFragment {
 
         buttonGetLocation = v.findViewById(R.id.button_get_location);
         buttonOpenMap = v.findViewById(R.id.button_open_map);
+        helpButton = v.findViewById(R.id.helpButton);
+        shareButton = v.findViewById(R.id.shareButton);
 
         progressBar = v.findViewById(R.id.progressBar);
 
@@ -88,6 +98,8 @@ public class LocationStatusFragment extends SubStatusFragment {
         // Buttons
         buttonGetLocation.setOnClickListener(v -> sendSms(Sms.MESSAGE.WAPP, locationStates));
         buttonOpenMap.setOnClickListener(this::navigateToNext);
+        shareButton.setOnClickListener(this::shareLocation);
+        helpButton.setOnClickListener(this::onHelpClick);
     }
 
     @Override
@@ -230,96 +242,51 @@ public class LocationStatusFragment extends SubStatusFragment {
         buttonGetLocation.setEnabled(false);
     }
 
+    // cached copy of parsed SMS
+    private final List<Integer> parsedSms = new ArrayList<>();
+
     private void updateWapp(List<State> states) {
-        if (states.size() == 0)
+        Wapp wapp = new Wapp();
+
+        if (!wapp.getWappState(st, states))
             return;
 
-        State wappWifiAccessPoints = null;
-        State wappCellTowers = null;
+        int id1 = wapp.getCellTowers().id;
+        int id2 = wapp.getWifiAccessPoints().id;
 
-        if (states.size() > 1) {
-            for (State s : states)
-                if (s.getValue() == State.WAPP_CELL_TOWERS) {
-                    wappCellTowers = s;
-                    break;
-                }
-            for (State s : states)
-                if (s.getValue() == State.WAPP_WIFI_ACCESS_POINTS) {
-                    wappWifiAccessPoints = s;
-                    break;
-                }
-        }
+        if (parsedSms.contains(id1) || parsedSms.contains(id2))
+            return;
 
-        if (wappCellTowers != null && wappWifiAccessPoints != null) {
-            State wifiAccessPointsState =
-                    st.getWifiAccessPointsBySmsIdSync(wappWifiAccessPoints.getSmsId());
-            State cellTowersState =
-                    st.getCellTowersBySmsIdSync(wappCellTowers.getSmsId());
-            State lastWifiAccessPointsState =
-                    st.getConfirmedLocationSync(wifiAccessPointsState);
-            State lastCellTowersState =
-                    st.getConfirmedLocationSync(cellTowersState);
+        parsedSms.add(id1);
+        parsedSms.add(id2);
 
-            new LocationUpdater(ctx, st,
-                    wappCellTowers.getSmsId(),
-                    this::updateLatLngAcc,
-                    this::updateNumbers,
-                    wappCellTowers,
-                    wappWifiAccessPoints
-            ).execute(wifiAccessPointsState.getLongValue(), cellTowersState.getLongValue());
-
-            if (lastWifiAccessPointsState == null || lastCellTowersState == null) {
-                st.insert(new State(State.KEY.LOCATION, 0.0, wappCellTowers.getTimestamp()));
-                return;
-            }
-
-            if (lastWifiAccessPointsState.id == wifiAccessPointsState.id
-                    && lastCellTowersState.id == cellTowersState.id)
-                st.insert(new State(State.KEY.LOCATION, 0.0, wappCellTowers.getTimestamp()));
-        }
+        new LocationUpdater(
+                requireContext(), st, sm.getSmsByIdSync(wapp.getSmsId()),
+                this::updateLatLngAcc, wapp
+        ).execute();
     }
 
-    private void updateNumbers(int numberCellTowers, int numberWifiAccessPoints, int smsId) {
-        Sms sms = sm.getSmsByIdSync(smsId);
-
-        st.insert(new State(
-                sms.getTimestamp(), State.KEY.NO_WIFI_ACCESS_POINTS,
-                (double) numberWifiAccessPoints, "",
-                State.STATUS.CONFIRMED, sms.getId())
-        );
-
-        st.insert(new State(
-                sms.getTimestamp(), State.KEY.NO_CELL_TOWERS, (double) numberCellTowers,
-                "", State.STATUS.CONFIRMED, sms.getId())
-        );
-    }
-
-    private void updateLatLngAcc(double lat, double lng, double acc, int smsId,
-                                 State finalWappCellTowers, State finalWappWifiAccessPoints) {
-        Sms sms = sm.getSmsByIdSync(smsId);
-
-        sm.markParsed(smsId);
-        st.confirmWapp(finalWappCellTowers, finalWappWifiAccessPoints);
-
-        st.insert(new State(
-                sms.getTimestamp() + 1, State.KEY.LAT, lat,
-                "", State.STATUS.CONFIRMED, sms.getId())
-        );
-        st.insert(new State(
-                sms.getTimestamp() + 1, State.KEY.LNG, lng,
-                "", State.STATUS.CONFIRMED, sms.getId())
-        );
-        st.insert(new State(
-                sms.getTimestamp() + 1, State.KEY.ACC, acc,
-                "", State.STATUS.CONFIRMED, sms.getId())
-        );
-        st.insert(new State(
-                sms.getTimestamp() + 1, State.KEY.LOCATION, 0.0,
-                "", State.STATUS.CONFIRMED, sms.getId())
-        );
+    private void updateLatLngAcc(Wapp wapp, SettingsList settings, Sms sms) {
+        sm.markParsed(sms);
+        st.confirmWapp(wapp);
+        st.insert(settings);
     }
 
     private void navigateToNext(View v) {
         Navigation.findNavController(v).navigate(R.id.map_action);
+    }
+
+    private void shareLocation(View v) {
+        if (v.isEnabled())
+            assert true;
+        else
+            assert true;
+
+        new ViewModelProvider(this).get(MapFragmentViewModel.class)
+                .newShareIntent(this);
+    }
+
+    private void onHelpClick(View v) {
+        Snackbar.make(v, R.string.help, Snackbar.LENGTH_LONG).show();
     }
 }
