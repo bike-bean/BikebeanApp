@@ -13,6 +13,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -30,6 +31,10 @@ import java.util.Objects;
 
 import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
+import de.bikebean.app.db.settings.settings.number_settings.WifiAccessPoints;
+import de.bikebean.app.db.sms.Sms;
+import de.bikebean.app.db.state.State;
+import de.bikebean.app.ui.main.status.StateViewModel;
 
 public class Wifi_localizationFragment extends Fragment {
 
@@ -88,6 +93,15 @@ public class Wifi_localizationFragment extends Fragment {
 
             // Aktiviere WLAN, falls deaktiviert
             wifiManager.setWifiEnabled(true);
+        }
+
+        StateViewModel stateViewModel = new ViewModelProvider(this).get(StateViewModel.class);
+        WifiAccessPoints wifiAccessPoints = new WifiAccessPoints(stateViewModel.getWifiAccessPointsSync(), new Sms());
+        WifiAccessPoints.WifiAccessPointList wifiAccessPointList = wifiAccessPoints.getWifiAccessPoints();
+
+        for (WifiAccessPoints.WifiAccessPoint w : wifiAccessPointList) {
+            // use w.macAddress;
+            // use w.signalStrength;
         }
 
         //TODO:
