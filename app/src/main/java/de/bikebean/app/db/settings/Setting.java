@@ -6,6 +6,14 @@ import de.bikebean.app.ui.initialization.SettingsList;
 
 public abstract class Setting {
 
+    protected enum STATE_TYPE {
+        CONFIRMED, CONFIRMED_LONG, CONFIRMED_NEWER, UNSET, UNSET_LONG, PENDING
+    }
+
+    protected enum C_LIST_ADD_TYPE {
+        ADD_TO_LIST, REPLACE_IF_NEWER
+    }
+
     protected interface ConversationListAdder {
         void addToConversationList(SettingsList conversationList);
     }
@@ -14,15 +22,45 @@ public abstract class Setting {
         State getState();
     }
 
-    protected ConversationListAdder conversationListAdder;
-    protected StateGetter stateGetter;
+    private final ConversationListAdder conversationListAdder;
+    private final StateGetter stateGetter;
 
     private Sms sms;
-    private State.KEY key;
+    private final State.KEY key;
 
-    public Setting(Sms sms, State.KEY key) {
+    public Setting(Sms sms, State.KEY key, STATE_TYPE stateType, C_LIST_ADD_TYPE cListAddType) {
         this.sms = sms;
         this.key = key;
+
+        switch (stateType) {
+            case CONFIRMED_LONG:
+                stateGetter = this::getStateConfirmedLong;
+                break;
+            case CONFIRMED_NEWER:
+                stateGetter = this::getStateConfirmedNewer;
+                break;
+            case PENDING:
+                stateGetter = this::getStatePending;
+                break;
+            case UNSET:
+                stateGetter = this::getStateUnset;
+                break;
+            case UNSET_LONG:
+                stateGetter = this::getStateUnsetLong;
+                break;
+            case CONFIRMED: // And:
+            default:
+                stateGetter = this::getStateConfirmed;
+        }
+
+        switch (cListAddType) {
+            case REPLACE_IF_NEWER:
+                conversationListAdder = this::replaceIfNewer;
+                break;
+            case ADD_TO_LIST: // And
+            default:
+                conversationListAdder = this::addToList;
+        }
     }
 
     public State getState() {
@@ -57,53 +95,53 @@ public abstract class Setting {
     }
 
     // methods called as interface methods
-    public State getStateConfirmedLong() {
+    private State getStateConfirmedLong() {
         return new State(
                 getDate(), getKey(), 0.0, (String) get(),
                 State.STATUS.CONFIRMED, getId()
         );
     }
 
-    public State getStateConfirmed() {
+    private State getStateConfirmed() {
         return new State(
                 getDate(), getKey(), (double) get(), "",
                 State.STATUS.CONFIRMED, getId()
         );
     }
 
-    public State getStateConfirmedNewer() {
+    private State getStateConfirmedNewer() {
         return new State(
                 getDate() + 1, getKey(), (double) get(), "",
                 State.STATUS.CONFIRMED, getId()
         );
     }
 
-    public State getStatePending() {
+    private State getStatePending() {
         return new State(
                 getDate(), getKey(), (Double) get(), "",
                 State.STATUS.PENDING, getId()
         );
     }
 
-    public State getStateUnsetLong() {
+    private State getStateUnsetLong() {
         return new State(
                 getDate(), getKey(), 0.0, (String) get(),
                 State.STATUS.UNSET, getId()
         );
     }
 
-    public State getStateUnset() {
+    private State getStateUnset() {
         return new State(
                 getDate(), getKey(), (Double) get(), "",
                 State.STATUS.UNSET, getId()
         );
     }
 
-    public void addToList(SettingsList conversationList) {
+    private void addToList(SettingsList conversationList) {
         conversationList.add(this);
     }
 
-    public void replaceIfNewer(SettingsList conversationList) {
+    private void replaceIfNewer(SettingsList conversationList) {
         for (Setting intListItem : conversationList)
             if (equalsKey(intListItem) && isNewer(intListItem)) {
                 conversationList._add(this).remove(intListItem);

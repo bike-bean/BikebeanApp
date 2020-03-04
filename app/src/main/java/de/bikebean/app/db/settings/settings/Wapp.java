@@ -11,21 +11,18 @@ import de.bikebean.app.ui.main.status.location.LocationStateViewModel;
 
 public class Wapp extends Setting {
 
+    private static final State.KEY key = State.KEY.WAPP;
+    private static final C_LIST_ADD_TYPE cListAddType = C_LIST_ADD_TYPE.ADD_TO_LIST;
+
     private final double wapp;
 
     public Wapp(double wapp, Sms sms) {
-        super(sms, State.KEY.WAPP);
-        conversationListAdder = super::addToList;
-        stateGetter = super::getStatePending;
-
+        super(sms, key, STATE_TYPE.PENDING, cListAddType);
         this.wapp= wapp;
     }
 
     public Wapp() {
-        super(new Sms(), State.KEY.WAPP);
-        conversationListAdder = super::addToList;
-        stateGetter = super::getStatePending;
-
+        super(new Sms(), key, STATE_TYPE.PENDING, cListAddType);
         this.wapp = 0.0;
     }
 

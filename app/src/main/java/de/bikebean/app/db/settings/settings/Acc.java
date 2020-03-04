@@ -6,13 +6,13 @@ import de.bikebean.app.db.state.State;
 
 public class Acc extends Setting {
 
+    private static final State.KEY key = State.KEY.ACC;
+    private static final C_LIST_ADD_TYPE cListAddType = C_LIST_ADD_TYPE.ADD_TO_LIST;
+
     private final double acc;
 
     public Acc(double acc, Sms sms) {
-        super(sms, State.KEY.ACC);
-        conversationListAdder = super::addToList;
-        stateGetter = super::getStateConfirmedNewer;
-
+        super(sms, key, STATE_TYPE.CONFIRMED_NEWER, cListAddType);
         this.acc = acc;
     }
 
