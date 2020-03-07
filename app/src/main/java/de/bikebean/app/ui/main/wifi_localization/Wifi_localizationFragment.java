@@ -160,6 +160,11 @@ public class Wifi_localizationFragment extends Fragment {
 
             Integer number_of_detected_wifis = 0;
             for (ScanResult scanResult : results) {
+                if (scanResult.SSID.equals(bikebean_wifi_name)){
+                    String html_bikebean_wifi_found = "<b>BIKEBEAN-WIFI GEFUNDEN</b><br>Signalstärke: " + scanResult.level + " dBm";
+                    textView.setText(Html.fromHtml(html_bikebean_wifi_found));
+                    counter_bikebean_wifi++;
+                }
                 number_of_detected_wifis++;
             }
 
@@ -168,11 +173,6 @@ public class Wifi_localizationFragment extends Fragment {
 
             for (WifiAccessPoints.WifiAccessPoint w : wifiAccessPointsList_bikebean){
                 for (ScanResult scanResult : results) {
-                    if (scanResult.SSID.equals(bikebean_wifi_name)){
-                        String html_bikebean_wifi_found = "<b>BIKEBEAN-WIFI GEFUNDEN</b><br>Signalstärke: " + scanResult.level + " dBm";
-                        textView.setText(Html.fromHtml(html_bikebean_wifi_found));
-                        counter_bikebean_wifi++;
-                    }
                     if (scanResult.BSSID.equals(w.macAddress)) {
                         Integer difference_signal_strength = java.lang.Math.abs(scanResult.level - w.signalStrength);
                         hashmap.put("\u0394 " + difference_signal_strength.toString() + " dBm bei WLAN [" + scanResult.SSID + "]\n(Bikebean: " + w.signalStrength + " dBm | Handy: " + scanResult.level + " dBm)", difference_signal_strength);
@@ -194,7 +194,7 @@ public class Wifi_localizationFragment extends Fragment {
                                 .compareTo(((Map.Entry<String, Integer>) o2).getValue());
                     }
                 });
-                //sortierte Strings der hashmap an arraylist übergeben
+                //Aufsteigend nach den Integern sortierte Strings der hashmap an arrayList übergeben
                 for (Object e : a) {
                     arrayList.add(((Map.Entry<String, Integer>) e).getKey());
                 }
