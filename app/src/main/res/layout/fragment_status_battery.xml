@@ -39,9 +39,9 @@
 
         <ImageButton
             android:id="@+id/helpButton2"
-            android:layout_width="wrap_content"
+            android:layout_width="35dp"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/help"
+            android:contentDescription="@string/help1"
             android:src="@drawable/ic_help_outline_black_24dp" />
 
         <TextView
@@ -64,6 +64,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
+            android:gravity="center"
             android:icon="@drawable/ic_send_white_24dp"
             android:text="@string/button_get_status" />
     </LinearLayout>

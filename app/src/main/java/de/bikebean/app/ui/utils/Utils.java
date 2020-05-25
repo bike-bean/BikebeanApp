@@ -197,9 +197,9 @@ public class Utils {
         return Intent.createChooser(sendIntent, null);
     }
 
-    public static void onHelpClick(View v) {
-        Snackbar.make(v, R.string.help, Snackbar.LENGTH_LONG)
-                .setAction(R.string.history, (v1 -> {}))
-                .show();
+   public static void onHelpClick(View v) {
+       Snackbar.make(v, R.string.help2, Snackbar.LENGTH_LONG)
+  //              .setAction(R.string.history, (v1 -> {}))
+       .show();
     }
 }
