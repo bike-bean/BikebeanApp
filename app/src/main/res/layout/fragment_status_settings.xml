@@ -41,9 +41,9 @@
 
         <ImageButton
             android:id="@+id/helpButton3"
-            android:layout_width="wrap_content"
+            android:layout_width="35dp"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/help"
+            android:contentDescription="@string/help3"
             android:src="@drawable/ic_help_outline_black_24dp" />
 
         <TextView

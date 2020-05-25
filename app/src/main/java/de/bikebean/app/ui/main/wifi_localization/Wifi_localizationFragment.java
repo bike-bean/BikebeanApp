@@ -1,9 +1,12 @@
 package de.bikebean.app.ui.main.wifi_localization;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -136,6 +140,27 @@ public class Wifi_localizationFragment extends Fragment {
 //        // Ende Überprüfung GPS-Standort
 //        // App stürzt ab, wenn man aufs Wifi-Fragment klickt und GPS deaktiviert ist
 //        // Fehlermeldung: "java.lang.IllegalStateException: You need to use a Theme.AppCompat theme (or descendant) with this activity."
+
+
+//mirkos testecke start
+        LocationManager lm = (LocationManager)ctx.getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+       try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch(Exception ex) {}
+
+        if (!gps_enabled) {
+            // notify user
+            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity()); //ctx
+                alert.setMessage(R.string.gps_network_not_enabled);
+                alert.create().show();
+        }
+
+
+
+//mirkos testecke ende
 
 
         arrayList.clear();

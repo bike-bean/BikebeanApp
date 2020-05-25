@@ -446,7 +446,7 @@ public class SettingsStatusFragment extends SubStatusFragment {
     }
 
     private void onHelpClick(View v) {
-        Snackbar.make(v, R.string.help, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(v, R.string.help3, Snackbar.LENGTH_LONG).show();
     }
 }
 

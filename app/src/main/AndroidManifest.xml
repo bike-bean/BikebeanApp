@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="de.bikebean.app">
+    package="de.bikebean.app"
+    >
     <!--
     For Permission protection levels (whether runtime permission request is needed),
     see https://developer.android.com/reference/android/Manifest.permission.html.
