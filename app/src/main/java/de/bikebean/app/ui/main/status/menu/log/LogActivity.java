@@ -7,16 +7,21 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.List;
 
 import de.bikebean.app.R;
+import de.bikebean.app.db.BikeBeanRoomDatabase;
 import de.bikebean.app.db.log.Log;
 
 public class LogActivity extends AppCompatActivity {
@@ -25,6 +30,7 @@ public class LogActivity extends AppCompatActivity {
 
     private LogAdapter adapter;
 
+    private Button sendButton;
     private TextView noDataText;
     private Spinner spinner;
 
@@ -36,6 +42,7 @@ public class LogActivity extends AppCompatActivity {
         logViewModel = new ViewModelProvider(this).get(LogViewModel.class);
         setupObservers();
 
+        sendButton = findViewById(R.id.sendButton);
         noDataText = findViewById(R.id.noDataText4);
         spinner = findViewById(R.id.spinner2);
         initSpinner();
@@ -91,6 +98,24 @@ public class LogActivity extends AppCompatActivity {
                 // do nothing
             }
         });
+        sendButton.setOnClickListener(this::generateLogAndSendMail);
+    }
+
+    private void generateLogAndSendMail(View v) {
+        logViewModel.d("Exporting database file to user location...");
+        BikeBeanRoomDatabase.createReport(); // retrieve DB report
+
+        // TODO: Move these into Utils
+        Intent intentShareFile = new Intent(Intent.ACTION_SEND);
+
+        intentShareFile.setType("file/*");
+        intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+f));
+
+        intentShareFile.putExtra(Intent.EXTRA_SUBJECT,
+                "Sharing File...");
+        intentShareFile.putExtra(Intent.EXTRA_TEXT, "Sharing File...");
+
+        startActivity(Intent.createChooser(intentShareFile, "Share File"));
     }
 
     private void initRecyclerView() {

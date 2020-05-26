@@ -76,4 +76,8 @@ public abstract class BikeBeanRoomDatabase extends RoomDatabase {
         stateIsClearedFlag.waitForDelete(stateDao::getAllSync);
         logIsClearedFlag.waitForDelete(logDao::getAllSync);
     }
+
+    public static void createReport() {
+        // TODO: implement
+    }
 }

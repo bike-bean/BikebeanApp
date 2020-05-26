@@ -107,5 +107,6 @@
     <string name="prompt_number">Bitte gib als erstes die Telefonnummer der Bike Bean ein:</string>
     <string name="scan_wifi">WLANs SCANNEN</string>
     <string name="gps_network_not_enabled">Dein Standort muss leider aktiviert sein um nach WLANs scannen zu können. (Google Anforderung)</string>
+    <string name="send_log">Fehlerprotokoll senden</string>
 
 </resources>
