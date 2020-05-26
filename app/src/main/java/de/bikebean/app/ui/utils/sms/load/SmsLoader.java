@@ -5,11 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.provider.Telephony;
-import android.util.Log;
 
 import java.lang.ref.WeakReference;
 
-import de.bikebean.app.MainActivity;
 import de.bikebean.app.ui.initialization.Conversation;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.ui.main.status.StateViewModel;
@@ -42,17 +40,17 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
 
         int size = smsViewModel.getInboxCount();
 
-        Log.d(MainActivity.TAG, "There are " + inbox.getCount() + " messages in inbox.");
-        Log.d(MainActivity.TAG, "There are " + size + " messages already saved.");
+        logViewModel.d("There are " + inbox.getCount() + " messages in inbox.");
+        logViewModel.d("There are " + size + " messages already saved.");
 
         if (!waitForNewMessage.isEmpty()) {
             // only search for the newly incoming message
             // It may take a while until it can be retrieved from the content provider
-            Log.d(MainActivity.TAG, "Parsing inbox for new message...");
+            logViewModel.d("Parsing inbox for new message...");
 
             while (inbox.getCount() <= size) {
-                Log.d(MainActivity.TAG, "There are " + inbox.getCount() + " messages in inbox.");
-                Log.d(MainActivity.TAG, "There are " + size + " messages already saved.");
+                logViewModel.d("There are " + inbox.getCount() + " messages in inbox.");
+                logViewModel.d("There are " + size + " messages already saved.");
                 inbox = getInbox(contentResolver, argList);
                 try {
                     Thread.sleep(10);
@@ -69,7 +67,7 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
 
     private void traverseInboxAndClose(Cursor inbox) {
         if (inbox.moveToFirst()) {
-            Log.d(MainActivity.TAG, "Loading " + inbox.getCount() + " SMS");
+            logViewModel.d("Loading " + inbox.getCount() + " SMS");
 
             for (int i=0; i < inbox.getCount(); i++) {
                 Sms sms = new Sms(inbox, Sms.STATUS.NEW);
@@ -77,7 +75,7 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
                 if (smsViewModel.getSmsById(sms.getId()).size() == 0)
                     smsViewModel.insert(sms);
                 else
-                    Log.d(MainActivity.TAG, "SMS " + sms.getId() + " is already present");
+                    logViewModel.d("SMS " + sms.getId() + " is already present");
 
                 inbox.moveToNext();
             }
@@ -92,9 +90,9 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
         ContentResolver contentResolver = contextWeakReference.get().getContentResolver();
         Cursor inbox = getInbox(contentResolver, argList);
 
-        logViewModel.d("Initial Loading");
+        logViewModel.i("Initial Loading");
         traverseInboxAndCloseInitial(inbox);
-        logViewModel.d("Initial Loading completed");
+        logViewModel.i("Initial Loading completed");
     }
 
     private void traverseInboxAndCloseInitial(Cursor inbox) {

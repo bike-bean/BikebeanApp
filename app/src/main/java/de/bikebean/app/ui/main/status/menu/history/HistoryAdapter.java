@@ -12,7 +12,7 @@ import de.bikebean.app.db.DatabaseEntity;
 
 public abstract class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder> {
 
-    public abstract class HistoryViewHolder extends RecyclerView.ViewHolder {
+    public abstract static class HistoryViewHolder extends RecyclerView.ViewHolder {
         public HistoryViewHolder(View v) {
             super(v);
         }

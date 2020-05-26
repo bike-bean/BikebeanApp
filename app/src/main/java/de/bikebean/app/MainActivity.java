@@ -2,8 +2,6 @@ package de.bikebean.app;
 
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -37,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
     private SmsViewModel smsViewModel;
     private StateViewModel stateViewModel;
     private LogViewModel logViewModel;
-    private LocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

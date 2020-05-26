@@ -63,8 +63,8 @@ class LocationStateRepository extends StateRepository {
     }
 
     void confirmWapp(Wapp wapp) {
-        confirmWapp(wapp.getCellTowers().getSmsId(), (double) wapp.getWifiAccessPoints().getSmsId());
-        confirmWapp(wapp.getWifiAccessPoints().getSmsId(), (double) wapp.getCellTowers().getSmsId());
+        confirmWapp(wapp.getCellTowers().getSmsId(), wapp.getWifiAccessPoints().getSmsId());
+        confirmWapp(wapp.getWifiAccessPoints().getSmsId(), wapp.getCellTowers().getSmsId());
     }
 
     private void confirmWapp(int smsId, double value) {

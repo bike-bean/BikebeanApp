@@ -7,7 +7,6 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import de.bikebean.app.db.DatabaseEntity;
-import de.bikebean.app.db.settings.settings.Wapp;
 
 @Entity(tableName = "state_table")
 public class State extends DatabaseEntity {

@@ -6,11 +6,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
-import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
-import de.bikebean.app.MainActivity;
 import de.bikebean.app.ui.main.status.StateViewModel;
 import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
 import de.bikebean.app.ui.main.status.menu.sms_history.SmsViewModel;
@@ -35,7 +33,7 @@ public class SmsListener extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(MainActivity.TAG, "New SMS received...");
+        mLogViewModel.d("New SMS received...");
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         final String address = sharedPreferences.getString("number", "");
@@ -50,7 +48,7 @@ public class SmsListener extends BroadcastReceiver {
                     isMessageFromBikeBean = true;
                     break;
                 } else if (sender != null)
-                    Log.d(MainActivity.TAG, "Sender is not ours. (" + sender + ")");
+                    mLogViewModel.d("Sender is not ours. (" + sender + ")");
             }
 
             if (isMessageFromBikeBean)

@@ -6,7 +6,6 @@ import android.content.Context;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.bikebean.app.db.MutableObject;
@@ -45,21 +44,6 @@ public class SmsViewModel extends AndroidViewModel {
         return mAllIds;
     }
 
-    public List<Sms> getAllSinceDate(long timestamp) {
-        List<Sms> smsList = new ArrayList<>();
-
-        for (int i=0; i<=10; i++) {
-            Sms sms = getSmsSync(mRepository::getAllSinceDate, String.valueOf(timestamp), i);
-
-            if (sms != null)
-                smsList.add(sms);
-            else
-                break;
-        }
-
-        return smsList;
-    }
-
     public int getInboxCount() {
         return mRepository.getInboxCount();
     }
@@ -74,15 +58,15 @@ public class SmsViewModel extends AndroidViewModel {
         return (Sms) sms.getDbEntitySync(mRepository::getSmsById, "", id);
     }
 
-    public int getLatestId() {
+    public int getLatestId(LogViewModel lv) {
         MutableInt id = new MutableInt();
 
-        new Thread(() -> id.set(mRepository.getLatestId())).start();
+        new Thread(() -> id.set(mRepository.getLatestId(lv))).start();
 
         return id.waitForSet();
     }
 
-    class MutableInt {
+    static class MutableInt {
         private volatile int i;
         private boolean isSet = false;
 
@@ -123,9 +107,4 @@ public class SmsViewModel extends AndroidViewModel {
         mRepository.markParsed(sms);
     }
 
-    private Sms getSmsSync(MutableObject.ListGetter smsGetter, String timestamp, int position) {
-        final MutableObject<Sms> sms = new MutableObject<>(new Sms(), position);
-
-        return (Sms) sms.getDbEntitySync(smsGetter, timestamp, 0);
-    }
 }

@@ -26,9 +26,6 @@ public interface SmsDao {
     @Query("SELECT _id FROM sms_table WHERE type = :type ORDER BY timestamp DESC")
     LiveData<List<Integer>> getAllIdsByType(int type);
 
-    @Query("SELECT * FROM sms_table WHERE timestamp >= :timestamp AND type = :type ORDER BY timestamp DESC LIMIT 10")
-    List<Sms> getAllSinceDate(long timestamp, int type);
-
     @Query("SELECT * FROM sms_table")
     List<Sms> getAllSync();
 

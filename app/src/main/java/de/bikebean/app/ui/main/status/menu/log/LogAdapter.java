@@ -19,7 +19,7 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
 
     private final Context mContext;
 
-    class LogViewHolder extends RecyclerView.ViewHolder {
+    static class LogViewHolder extends RecyclerView.ViewHolder {
         private final TextView dateTimeText, messageText;
 
         LogViewHolder(View itemView) {

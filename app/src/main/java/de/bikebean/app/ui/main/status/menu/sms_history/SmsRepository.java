@@ -2,16 +2,15 @@ package de.bikebean.app.ui.main.status.menu.sms_history;
 
 import android.app.Application;
 import android.provider.Telephony;
-import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
-import de.bikebean.app.MainActivity;
 import de.bikebean.app.db.BikeBeanRoomDatabase;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.sms.SmsDao;
+import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
 
 class SmsRepository {
 
@@ -45,11 +44,6 @@ class SmsRepository {
         return mAllIds;
     }
 
-    List<Sms> getAllSinceDate(String timestamp, int smsId) {
-        discard(smsId);
-        return mSmsDao.getAllSinceDate(Long.parseLong(timestamp), Telephony.Sms.MESSAGE_TYPE_INBOX);
-    }
-
     int getInboxCount() {
         return mSmsDao.getCountByType(Telephony.Sms.MESSAGE_TYPE_INBOX);
     }
@@ -65,13 +59,13 @@ class SmsRepository {
             return mSmsDao.getSmsById(id);
     }
 
-    int getLatestId() {
+    int getLatestId(LogViewModel lv) {
         List<Sms> l = mSmsDao.getLatestId(Telephony.Sms.MESSAGE_TYPE_SENT);
 
         if (l.size() > 0) {
             return l.get(0).getId();
         } else {
-            Log.d(MainActivity.TAG, "There seems to be no last SMS saved in DB!");
+            lv.d("There seems to be no last SMS saved in DB!");
             return 0;
         }
     }
@@ -85,10 +79,4 @@ class SmsRepository {
                 mSmsDao.updateStateById(Sms.STATUS.PARSED.ordinal(), sms.getId()));
     }
 
-    private void discard(int smsId) {
-        if (smsId == 0)
-            assert true;
-        else
-            assert true;
-    }
 }

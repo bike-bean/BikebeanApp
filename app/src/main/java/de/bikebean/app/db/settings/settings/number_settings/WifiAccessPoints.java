@@ -15,9 +15,9 @@ public class WifiAccessPoints extends NumberSetting {
 
     private WifiAccessPointList wifiAccessPointList;
 
-    public class WifiAccessPointList extends ArrayList<WifiAccessPoint> {}
+    public static class WifiAccessPointList extends ArrayList<WifiAccessPoint> {}
 
-    public class WifiAccessPoint extends RawNumberSettings {
+    public static class WifiAccessPoint extends RawNumberSettings {
         public String macAddress;
         public Integer signalStrength;
 

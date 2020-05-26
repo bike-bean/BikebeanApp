@@ -45,24 +45,6 @@ public class SettingsStateViewModel extends StateViewModel {
         return mStatusWifi;
     }
 
-    long getIntervalLastChangeDate() {
-        State intervalConfirmed = getConfirmedStateSync(State.KEY.INTERVAL);
-
-        if (intervalConfirmed != null)
-            return intervalConfirmed.getTimestamp();
-
-        return 0;
-    }
-
-    boolean getConfirmedWifiSync() {
-        State wifiConfirmed = getConfirmedStateSync(State.KEY.WIFI);
-
-        if (wifiConfirmed != null)
-            return wifiConfirmed.getValue() > 0;
-
-        return new Wifi().getRaw();
-    }
-
     boolean getWifiStatusSync() {
         State wifi = getLastStateSync(State.KEY.WIFI);
 

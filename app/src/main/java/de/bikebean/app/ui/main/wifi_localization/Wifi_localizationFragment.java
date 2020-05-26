@@ -1,14 +1,11 @@
 package de.bikebean.app.ui.main.wifi_localization;
 
 import android.Manifest;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,27 +34,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
 import de.bikebean.app.db.settings.settings.number_settings.WifiAccessPoints;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.ui.main.status.StateViewModel;
+import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
 
 public class Wifi_localizationFragment extends Fragment {
-    //TODO:
-    // Statt dem WLAN-Namen lieber nach der MacAdresse der BikeBean suchen
-    public String bikebean_wifi_name = "BikeBean.de";
+
     private Context ctx;
     private FragmentActivity act;
     private WifiManager wifiManager;
     private ListView listView;
     private TextView textView;
     private Button buttonScan;
-    private List<ScanResult> results;
-    private ArrayList<String> arrayList = new ArrayList<>();
-    private HashMap<String, Integer> hashmap = new HashMap<>();
+    private final ArrayList<String> arrayList = new ArrayList<>();
+    private final HashMap<String, Integer> hashmap = new HashMap<>();
     private ArrayAdapter adapter;
 
+    private LogViewModel logViewModel;
     private StateViewModel stateViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -77,7 +72,7 @@ public class Wifi_localizationFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         // Get Activity and Context
-        act = Objects.requireNonNull(getActivity());
+        act = requireActivity();
         ctx = act.getApplicationContext();
 
         // hide the actionbar for this fragment
@@ -85,10 +80,11 @@ public class Wifi_localizationFragment extends Fragment {
         Objects.requireNonNull(actionbar).hide();
 
         buttonScan.setOnClickListener(view -> scanWifi());
-        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, arrayList);
+        adapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_list_item_1, arrayList);
         listView.setAdapter(adapter);
 
-        stateViewModel = new ViewModelProvider(getActivity()).get(StateViewModel.class);
+        stateViewModel = new ViewModelProvider(requireActivity()).get(StateViewModel.class);
+        logViewModel = new ViewModelProvider(requireActivity()).get(LogViewModel.class);
 
         scanWifi();
     }
@@ -147,44 +143,46 @@ public class Wifi_localizationFragment extends Fragment {
         boolean gps_enabled = false;
         boolean network_enabled = false;
 
-       try {
+        try {
             gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
         } catch(Exception ex) {}
 
         if (!gps_enabled) {
             // notify user
-            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity()); //ctx
+            AlertDialog.Builder alert = new AlertDialog.Builder(requireActivity()); //ctx
                 alert.setMessage(R.string.gps_network_not_enabled);
                 alert.create().show();
         }
 
-
-
 //mirkos testecke ende
-
 
         arrayList.clear();
         hashmap.clear();
 
-        act.registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        act.registerReceiver(wifiReceiver, new IntentFilter(
+                WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
+        );
         wifiManager.startScan();
         Toast.makeText(act, R.string.scanning_wifi, Toast.LENGTH_SHORT).show();
     }
 
-    private BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            results = wifiManager.getScanResults();
+            List<ScanResult> results = wifiManager.getScanResults();
             act.unregisterReceiver(this);
 
             WifiAccessPoints wifiAccessPoints = new WifiAccessPoints(stateViewModel.getWifiAccessPointsSync(), new Sms());
             WifiAccessPoints.WifiAccessPointList wifiAccessPointsList_bikebean = wifiAccessPoints.getWifiAccessPoints();
 
-            Integer counter_bikebean_wifi = 0;
-            Integer counter_wifis = 0;
+            int counter_bikebean_wifi = 0;
+            int counter_wifis = 0;
 
-            Integer number_of_detected_wifis = 0;
+            int number_of_detected_wifis = 0;
             for (ScanResult scanResult : results) {
+                //TODO:
+                // Statt dem WLAN-Namen lieber nach der MacAdresse der BikeBean suchen
+                String bikebean_wifi_name = "BikeBean.de";
                 if (scanResult.SSID.equals(bikebean_wifi_name)){
                     String html_bikebean_wifi_found = "<b>BIKEBEAN-WIFI GEFUNDEN</b><br>Signalstärke: " + scanResult.level + " dBm";
                     textView.setText(Html.fromHtml(html_bikebean_wifi_found));
@@ -193,8 +191,9 @@ public class Wifi_localizationFragment extends Fragment {
                 number_of_detected_wifis++;
             }
 
-            Log.d(MainActivity.TAG, "Gefundene WLANs: " + number_of_detected_wifis.toString());
-            Toast.makeText(act, "Gefundene WLANs: " + number_of_detected_wifis.toString(), Toast.LENGTH_SHORT).show();
+            logViewModel.d("Gefundene WLANs: " + number_of_detected_wifis);
+            Toast.makeText(act, "Gefundene WLANs: " + number_of_detected_wifis,
+                    Toast.LENGTH_SHORT).show();
 
             for (WifiAccessPoints.WifiAccessPoint w : wifiAccessPointsList_bikebean){
                 for (ScanResult scanResult : results) {
@@ -213,12 +212,8 @@ public class Wifi_localizationFragment extends Fragment {
                 hashmap.put("VERGLEICH SIGNALSTÄRKEN:",-1);
                 //hashmap sortieren
                 Object[] a = hashmap.entrySet().toArray();
-                Arrays.sort(a, new Comparator() {
-                    public int compare(Object o1, Object o2) {
-                        return ((Map.Entry<String, Integer>) o1).getValue()
-                                .compareTo(((Map.Entry<String, Integer>) o2).getValue());
-                    }
-                });
+                Arrays.sort(a, (Comparator) (o1, o2) -> ((Map.Entry<String, Integer>) o1).getValue()
+                        .compareTo(((Map.Entry<String, Integer>) o2).getValue()));
                 //Aufsteigend nach den Integern sortierte Strings der hashmap an arrayList übergeben
                 for (Object e : a) {
                     arrayList.add(((Map.Entry<String, Integer>) e).getKey());

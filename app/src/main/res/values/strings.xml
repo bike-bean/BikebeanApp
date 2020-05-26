@@ -102,13 +102,10 @@
     <string name="to_settings">Zu den Einstellungen</string>
 
     <!-- WifiScan -->
-    <string name="wifi_disabled">Bitte aktivieren Sie das WLAN</string>
-    <string name="location_disabled">Bitte aktivieren Sie Ihren GPS Standort</string>
     <string name="scanning_wifi">Scanne WLANs</string>
     <string name="phone_hint">+4912345678910</string>
     <string name="prompt_number">Bitte gib als erstes die Telefonnummer der Bike Bean ein:</string>
     <string name="scan_wifi">WLANs SCANNEN</string>
-    <string name="no_relevant_wifis_found">Keine relevanten WiFi-Access-Points in der Nähe gefunden</string>
     <string name="gps_network_not_enabled">Dein Standort muss leider aktiviert sein um nach WLANs scannen zu können. (Google Anforderung)</string>
 
 </resources>

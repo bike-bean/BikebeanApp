@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,8 +41,8 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.List;
 import java.util.Objects;
 
-import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
+import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
 import de.bikebean.app.ui.utils.Utils;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.utils.PermissionsRationaleDialog;
@@ -56,6 +55,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             Manifest.permission.ACCESS_FINE_LOCATION
     };
 
+    private LogViewModel logViewModel;
     private MapFragmentViewModel mapFragmentViewModel;
 
     private AppCompatActivity act;
@@ -100,20 +100,23 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         super.onActivityCreated(savedInstanceState);
 
         mapFragmentViewModel = new ViewModelProvider(this).get(MapFragmentViewModel.class);
+        logViewModel = new ViewModelProvider(this).get(LogViewModel.class);
 
         // hide the toolbar for this fragment
         act = (AppCompatActivity) getActivity();
         ActionBar actionbar = Objects.requireNonNull(act).getSupportActionBar();
         Objects.requireNonNull(actionbar).hide();
 
-        act.getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+        act.getOnBackPressedDispatcher().addCallback(
+                getViewLifecycleOwner(),
+                new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 if (!showCurrentPosition)
-                    Navigation.findNavController(Objects.requireNonNull(getView()))
+                    Navigation.findNavController(requireView())
                             .navigate(R.id.history_action);
                 else
-                    Navigation.findNavController(Objects.requireNonNull(getView()))
+                    Navigation.findNavController(requireView())
                             .navigate(R.id.back_action);
             }
         });
@@ -190,7 +193,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         fab.setOnClickListener(v -> {
             String uriString = "geo:0,0?q=" + currentPositionBike.getLat() +
                     "," + currentPositionBike.getLng() + "(" + bikeName + ")";
-            Log.d(MainActivity.TAG, uriString);
+            logViewModel.d(uriString);
             Uri gmmIntentUri = Uri.parse(uriString);
             // Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW
             Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
@@ -199,7 +202,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             // Attempt to start an activity that can handle the Intent
             startActivity(mapIntent);
         });
-        int color = ContextCompat.getColor(Objects.requireNonNull(getContext()), R.color.grey);
+        int color = ContextCompat.getColor(requireContext(), R.color.grey);
         fab2.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
         fab3.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
         fab2.setOnClickListener(this::showPopup);
@@ -253,7 +256,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void showPopup(View v) {
-        PopupMenu popup = new PopupMenu(Objects.requireNonNull(getContext()), v);
+        PopupMenu popup = new PopupMenu(requireContext(), v);
 
         popup.setOnMenuItemClickListener(this::handleMenuClick);
         popup.inflate(R.menu.map_type_menu);
@@ -307,7 +310,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 try {
                     mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(getLatLngBounds(), 0));
                 } catch (IllegalStateException e) {
-                    Log.d(MainActivity.TAG, "premature (skipped)");
+                    logViewModel.d("permature (skipped)");
                 }
             } else {
                 try {
@@ -315,14 +318,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     initializationDone = true;
                     fab.show(); fab3.show();
                 } catch (IllegalStateException e) {
-                    Log.d(MainActivity.TAG, "permature (skipped)");
+                    logViewModel.d("permature (skipped)");
                 }
             }
         } else
             try {
                 mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(getLatLngBounds(), 0));
             } catch (IllegalStateException e) {
-                Log.w(MainActivity.TAG, "Map is not ready yet!");
+                logViewModel.w("Map is not ready yet!");
             }
     }
 
@@ -358,7 +361,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    class Snippet {
+    static class Snippet {
         private int numberCellTowers;
         private int numberWifiAccessPoints;
 
@@ -392,7 +395,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    class MutableLatLng {
+    static class MutableLatLng {
 
         private LatLng latLng;
 
