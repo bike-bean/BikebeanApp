@@ -58,10 +58,10 @@ public class SmsViewModel extends AndroidViewModel {
         return (Sms) sms.getDbEntitySync(mRepository::getSmsById, "", id);
     }
 
-    public int getLatestId() {
+    public int getLatestId(LogViewModel lv) {
         MutableInt id = new MutableInt();
 
-        new Thread(() -> id.set(mRepository.getLatestId())).start();
+        new Thread(() -> id.set(mRepository.getLatestId(lv))).start();
 
         return id.waitForSet();
     }

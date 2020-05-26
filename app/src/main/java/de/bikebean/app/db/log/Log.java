@@ -26,7 +26,6 @@ public class Log extends DatabaseEntity {
     private final String mMessage;
 
     @ColumnInfo(name = "level")
-
     private final LEVEL mLevel;
 
     public Log(
@@ -46,6 +45,17 @@ public class Log extends DatabaseEntity {
     ) {
         this.mTimestamp = System.currentTimeMillis();
         this.mMessage = message;
+        this.mLevel = level;
+    }
+
+    @Ignore
+    public Log(
+            @NonNull String message,
+            @NonNull String callerInformation,
+            LEVEL level
+    ) {
+        this.mTimestamp = System.currentTimeMillis();
+        this.mMessage = callerInformation + ": "+ message;
         this.mLevel = level;
     }
 
