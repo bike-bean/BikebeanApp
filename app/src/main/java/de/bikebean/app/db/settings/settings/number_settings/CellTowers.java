@@ -15,9 +15,9 @@ public class CellTowers extends NumberSetting {
 
     private CellTowerList cellTowerList;
 
-    public class CellTowerList extends ArrayList<CellTower> {}
+    public static class CellTowerList extends ArrayList<CellTower> {}
 
-    private class CellTower extends RawNumberSettings {
+    private static class CellTower extends RawNumberSettings {
         Integer mobileCountryCode;
         Integer mobileNetworkCode;
         Integer locationAreaCode;

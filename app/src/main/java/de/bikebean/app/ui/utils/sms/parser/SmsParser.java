@@ -1,13 +1,12 @@
 package de.bikebean.app.ui.utils.sms.parser;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.lang.ref.WeakReference;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.bikebean.app.MainActivity;
 import de.bikebean.app.db.settings.settings.Battery;
 import de.bikebean.app.db.settings.settings.number_settings.CellTowers;
 import de.bikebean.app.db.settings.settings.Interval;
@@ -65,7 +64,11 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
     protected Boolean doInBackground(String... args) {
         // Parse Sms to get which type it is
         type = getType();
-        Log.d(MainActivity.TAG, String.format("Detected Type %d", type.ordinal()));
+        logViewModelReference.get().w(
+                String.format(
+                        Locale.GERMANY,
+                        "Detected Type %d (%s)", type.ordinal(), type.name())
+        );
 
         // Update the status entries for the status db and the user preferences
         SettingsList settings = getSettingList();
@@ -247,7 +250,7 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
     }
 
     private int getStatusInterval() {
-        return Integer.valueOf(getMatcherResult(statusIntervalMatcher));
+        return Integer.parseInt(getMatcherResult(statusIntervalMatcher));
     }
 
     private boolean getStatusWifi() {
@@ -320,7 +323,7 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
     }
 
     private int getInterval() {
-        return Integer.valueOf(getMatcherResult(intervalChangedMatcher));
+        return Integer.parseInt(getMatcherResult(intervalChangedMatcher));
     }
 
     private String getMatcherResult(Matcher m) {

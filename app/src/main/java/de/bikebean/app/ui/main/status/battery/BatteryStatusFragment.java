@@ -12,8 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.android.material.snackbar.Snackbar;
-
 import de.bikebean.app.R;
 import de.bikebean.app.ui.utils.Utils;
 import de.bikebean.app.db.sms.Sms;

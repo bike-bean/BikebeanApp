@@ -45,11 +45,6 @@ class SmsRepository {
         return mAllIds;
     }
 
-    List<Sms> getAllSinceDate(String timestamp, int smsId) {
-        discard(smsId);
-        return mSmsDao.getAllSinceDate(Long.parseLong(timestamp), Telephony.Sms.MESSAGE_TYPE_INBOX);
-    }
-
     int getInboxCount() {
         return mSmsDao.getCountByType(Telephony.Sms.MESSAGE_TYPE_INBOX);
     }
@@ -85,10 +80,4 @@ class SmsRepository {
                 mSmsDao.updateStateById(Sms.STATUS.PARSED.ordinal(), sms.getId()));
     }
 
-    private void discard(int smsId) {
-        if (smsId == 0)
-            assert true;
-        else
-            assert true;
-    }
 }

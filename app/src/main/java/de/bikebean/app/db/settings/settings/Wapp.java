@@ -90,7 +90,4 @@ public class Wapp extends Setting {
         return cellTowers.getSmsId();
     }
 
-    public long getTimestamp() {
-        return cellTowers.getTimestamp();
-    }
 }

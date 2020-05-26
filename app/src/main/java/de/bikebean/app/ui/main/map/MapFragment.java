@@ -106,14 +106,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         ActionBar actionbar = Objects.requireNonNull(act).getSupportActionBar();
         Objects.requireNonNull(actionbar).hide();
 
-        act.getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+        act.getOnBackPressedDispatcher().addCallback(
+                getViewLifecycleOwner(),
+                new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 if (!showCurrentPosition)
-                    Navigation.findNavController(Objects.requireNonNull(getView()))
+                    Navigation.findNavController(requireView())
                             .navigate(R.id.history_action);
                 else
-                    Navigation.findNavController(Objects.requireNonNull(getView()))
+                    Navigation.findNavController(requireView())
                             .navigate(R.id.back_action);
             }
         });
@@ -199,7 +201,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             // Attempt to start an activity that can handle the Intent
             startActivity(mapIntent);
         });
-        int color = ContextCompat.getColor(Objects.requireNonNull(getContext()), R.color.grey);
+        int color = ContextCompat.getColor(requireContext(), R.color.grey);
         fab2.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
         fab3.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
         fab2.setOnClickListener(this::showPopup);
@@ -253,7 +255,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void showPopup(View v) {
-        PopupMenu popup = new PopupMenu(Objects.requireNonNull(getContext()), v);
+        PopupMenu popup = new PopupMenu(requireContext(), v);
 
         popup.setOnMenuItemClickListener(this::handleMenuClick);
         popup.inflate(R.menu.map_type_menu);
@@ -358,7 +360,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    class Snippet {
+    static class Snippet {
         private int numberCellTowers;
         private int numberWifiAccessPoints;
 
@@ -392,7 +394,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    class MutableLatLng {
+    static class MutableLatLng {
 
         private LatLng latLng;
 

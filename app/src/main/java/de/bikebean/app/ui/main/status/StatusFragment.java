@@ -107,7 +107,9 @@ public class StatusFragment extends Fragment {
 
         permissionDeniedHandler = this::showErrorView;
 
-        act.getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+        act.getOnBackPressedDispatcher().addCallback(
+                getViewLifecycleOwner(),
+                new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 act.finish();
@@ -151,19 +153,19 @@ public class StatusFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_sms_history:
-                Navigation.findNavController(Objects.requireNonNull(getView()))
+                Navigation.findNavController(requireView())
                         .navigate(R.id.sms_history_action);
                 return true;
             case R.id.menu_item_settings:
-                Navigation.findNavController(Objects.requireNonNull(getView()))
+                Navigation.findNavController(requireView())
                         .navigate(R.id.settings_action);
                 return true;
             case R.id.menu_item_history:
-                Navigation.findNavController(Objects.requireNonNull(getView()))
+                Navigation.findNavController(requireView())
                         .navigate(R.id.history_action);
                 return true;
             case R.id.menu_item_info:
-                Navigation.findNavController(Objects.requireNonNull(getView()))
+                Navigation.findNavController(requireView())
                         .navigate(R.id.log_action);
                 return true;
             default:

@@ -18,7 +18,7 @@ public abstract class Setting {
     protected StateGetter stateGetter;
 
     private Sms sms;
-    private State.KEY key;
+    private final State.KEY key;
 
     public Setting(Sms sms, State.KEY key) {
         this.sms = sms;

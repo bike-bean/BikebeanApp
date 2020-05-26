@@ -1,7 +1,5 @@
 package de.bikebean.app.ui.initialization;
 
-import androidx.annotation.NonNull;
-
 import java.util.ArrayList;
 
 import de.bikebean.app.db.settings.Setting;
