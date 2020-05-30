@@ -79,6 +79,12 @@ public class Utils {
         ActivityCompat.requestPermissions(activity, permissions, p.ordinal());
     }
 
+    public static String convertToTimeLog(long datetime) {
+        Date date = new Date(datetime);
+        DateFormat formatter = new SimpleDateFormat("dd.MM.yy HH:mm", Locale.GERMANY);
+        return formatter.format(date);
+    }
+
     public static String convertToTime(long datetime) {
         Date date = new Date(datetime);
         DateFormat formatter = new SimpleDateFormat("dd.MM HH:mm", Locale.GERMANY);
@@ -123,6 +129,10 @@ public class Utils {
             return "Noch ca. " + (int) remainingHoursFromNow + " Stunden!";
 
         return "Unter 10%, bitte umgehend aufladen!";
+    }
+
+    public static String convertToDateHuman() {
+        return convertToDateHuman(new Date().getTime());
     }
 
     public static String convertToDateHuman(long datetime) {

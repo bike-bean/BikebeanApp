@@ -11,12 +11,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
 import de.bikebean.app.R;
+import de.bikebean.app.db.BikeBeanRoomDatabase;
 import de.bikebean.app.db.log.Log;
 
 public class LogActivity extends AppCompatActivity {
@@ -25,6 +29,7 @@ public class LogActivity extends AppCompatActivity {
 
     private LogAdapter adapter;
 
+    private Button sendButton;
     private TextView noDataText;
     private Spinner spinner;
 
@@ -36,6 +41,7 @@ public class LogActivity extends AppCompatActivity {
         logViewModel = new ViewModelProvider(this).get(LogViewModel.class);
         setupObservers();
 
+        sendButton = findViewById(R.id.sendButton);
         noDataText = findViewById(R.id.noDataText4);
         spinner = findViewById(R.id.spinner2);
         initSpinner();
@@ -91,6 +97,36 @@ public class LogActivity extends AppCompatActivity {
                 // do nothing
             }
         });
+        sendButton.setOnClickListener(this::generateLogAndUpload);
+    }
+
+    private void generateLogAndUpload(View v) {
+        logViewModel.d("Exporting database...");
+        Snackbar.make(v,
+                "Fehlerbericht senden...",
+                Snackbar.LENGTH_LONG
+        ).show();
+
+        GithubGistUploader githubGistUploader = BikeBeanRoomDatabase.createReport(
+                getApplicationContext(), logViewModel, this::notifyUploadSuccess
+        );
+
+        githubGistUploader.execute();
+    }
+
+    private void notifyUploadSuccess(boolean success) {
+        View parentLayout = findViewById(R.id.sendButton);
+
+        if (success)
+            Snackbar.make(parentLayout,
+                    "Fehlerbericht gesendet",
+                    Snackbar.LENGTH_LONG
+            ).show();
+        else
+            Snackbar.make(parentLayout,
+                    "Fehlerbericht konnte nicht gesendet werden!",
+                    Snackbar.LENGTH_LONG
+            ).show();
     }
 
     private void initRecyclerView() {

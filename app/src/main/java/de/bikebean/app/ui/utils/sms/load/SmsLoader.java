@@ -40,17 +40,12 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
 
         int size = smsViewModel.getInboxCount();
 
-        logViewModel.d("There are " + inbox.getCount() + " messages in inbox.");
-        logViewModel.d("There are " + size + " messages already saved.");
-
         if (!waitForNewMessage.isEmpty()) {
             // only search for the newly incoming message
             // It may take a while until it can be retrieved from the content provider
             logViewModel.d("Parsing inbox for new message...");
 
             while (inbox.getCount() <= size) {
-                logViewModel.d("There are " + inbox.getCount() + " messages in inbox.");
-                logViewModel.d("There are " + size + " messages already saved.");
                 inbox = getInbox(contentResolver, argList);
                 try {
                     Thread.sleep(10);
@@ -67,15 +62,12 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
 
     private void traverseInboxAndClose(Cursor inbox) {
         if (inbox.moveToFirst()) {
-            logViewModel.d("Loading " + inbox.getCount() + " SMS");
 
             for (int i=0; i < inbox.getCount(); i++) {
                 Sms sms = new Sms(inbox, Sms.STATUS.NEW);
 
                 if (smsViewModel.getSmsById(sms.getId()).size() == 0)
                     smsViewModel.insert(sms);
-                else
-                    logViewModel.d("SMS " + sms.getId() + " is already present");
 
                 inbox.moveToNext();
             }

@@ -18,6 +18,14 @@
         app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
         app:titleTextColor="@color/secondaryTextColor" />
 
+    <Button
+        android:id="@+id/sendButton"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/send_log" />
+
     <Spinner
         android:id="@+id/spinner2"
         android:layout_width="match_parent"
