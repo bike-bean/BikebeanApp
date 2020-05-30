@@ -201,4 +201,18 @@ public class Sms extends DatabaseEntity {
     public DatabaseEntity getNullType() {
         return new Sms();
     }
+
+    @Override
+    public String createReportTitle() {
+        String delimiter = ",";
+        return "ID" + delimiter + "Body" + delimiter + "Type" + delimiter +
+                "State" + delimiter + "Date" + "\n";
+    }
+
+    @Override
+    public String createReport() {
+        String delimiter = ",";
+        return mId + delimiter + mBody.replace("\n", "//") +
+                delimiter + mType + delimiter + mState + delimiter + mDate + "\n";
+    }
 }

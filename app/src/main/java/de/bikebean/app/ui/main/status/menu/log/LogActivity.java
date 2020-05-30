@@ -7,8 +7,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,7 +15,8 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.io.File;
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.List;
 
 import de.bikebean.app.R;
@@ -98,24 +97,36 @@ public class LogActivity extends AppCompatActivity {
                 // do nothing
             }
         });
-        sendButton.setOnClickListener(this::generateLogAndSendMail);
+        sendButton.setOnClickListener(this::generateLogAndUpload);
     }
 
-    private void generateLogAndSendMail(View v) {
-        logViewModel.d("Exporting database file to user location...");
-        BikeBeanRoomDatabase.createReport(); // retrieve DB report
+    private void generateLogAndUpload(View v) {
+        logViewModel.d("Exporting database...");
+        Snackbar.make(v,
+                "Fehlerbericht senden...",
+                Snackbar.LENGTH_LONG
+        ).show();
 
-        // TODO: Move these into Utils
-        Intent intentShareFile = new Intent(Intent.ACTION_SEND);
+        GithubGistUploader githubGistUploader = BikeBeanRoomDatabase.createReport(
+                getApplicationContext(), logViewModel, this::notifyUploadSuccess
+        );
 
-        intentShareFile.setType("file/*");
-        intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+f));
+        githubGistUploader.execute();
+    }
 
-        intentShareFile.putExtra(Intent.EXTRA_SUBJECT,
-                "Sharing File...");
-        intentShareFile.putExtra(Intent.EXTRA_TEXT, "Sharing File...");
+    private void notifyUploadSuccess(boolean success) {
+        View parentLayout = findViewById(R.id.sendButton);
 
-        startActivity(Intent.createChooser(intentShareFile, "Share File"));
+        if (success)
+            Snackbar.make(parentLayout,
+                    "Fehlerbericht gesendet",
+                    Snackbar.LENGTH_LONG
+            ).show();
+        else
+            Snackbar.make(parentLayout,
+                    "Fehlerbericht konnte nicht gesendet werden!",
+                    Snackbar.LENGTH_LONG
+            ).show();
     }
 
     private void initRecyclerView() {

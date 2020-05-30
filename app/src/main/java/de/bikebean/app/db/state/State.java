@@ -7,6 +7,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import de.bikebean.app.db.DatabaseEntity;
+import de.bikebean.app.ui.utils.Utils;
 
 @Entity(tableName = "state_table")
 public class State extends DatabaseEntity {
@@ -19,7 +20,16 @@ public class State extends DatabaseEntity {
         PENDING,
         // Settings that have yet not even been set
         // (Mostly warningNumber)
-        UNSET
+        UNSET;
+
+        private static String getName(int value) {
+            for (STATUS s : STATUS.values()) {
+                if (s.ordinal() == value)
+                    return s.name();
+            }
+
+            return "UNDEFINED";
+        }
     }
 
     public enum KEY {
@@ -172,5 +182,21 @@ public class State extends DatabaseEntity {
     @Override
     public DatabaseEntity getNullType() {
         return new State();
+    }
+
+    @Override
+    public String createReportTitle() {
+        String delimiter = ",";
+        return "ID" + delimiter + "Key" + delimiter + "Date" + delimiter +
+                "Value" + delimiter + "Long Value" + delimiter +
+                "State" + delimiter + "Sms ID" + "\n";
+    }
+
+    @Override
+    public String createReport() {
+        String delimiter = ",";
+        return id + delimiter + mKey + delimiter + Utils.convertToTimeLog(mTimestamp) +
+                delimiter + mValue + delimiter + mLongValue.replace("\n", "//") +
+                delimiter + STATUS.getName(mState) + delimiter + mSmsId + "\n";
     }
 }
