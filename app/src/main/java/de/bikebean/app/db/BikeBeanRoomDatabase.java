@@ -9,6 +9,7 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -18,6 +19,9 @@ import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.sms.SmsDao;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.db.state.StateDao;
+import de.bikebean.app.ui.main.status.menu.log.GithubGistUploader;
+import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
+import de.bikebean.app.ui.utils.Utils;
 
 @Database(entities = {Sms.class, State.class, Log.class}, version = 11, exportSchema = false)
 @TypeConverters({LevelConverters.class})
@@ -75,5 +79,54 @@ public abstract class BikeBeanRoomDatabase extends RoomDatabase {
         smsIsClearedFlag.waitForDelete(smsDao::getAllSync);
         stateIsClearedFlag.waitForDelete(stateDao::getAllSync);
         logIsClearedFlag.waitForDelete(logDao::getAllSync);
+    }
+
+    public static GithubGistUploader createReport(Context ctx, LogViewModel lv,
+                                                  GithubGistUploader.UploadSuccessNotifier usn) {
+        SmsDao smsDao = INSTANCE.smsDao();
+        StateDao stateDao = INSTANCE.stateDao();
+        LogDao logDao = INSTANCE.logDao();
+
+        final MutableObject<Sms> smsMutableObject = new MutableObject<>(new Sms());
+        final MutableObject<State> stateMutableObject = new MutableObject<>(new State());
+        final MutableObject<Log> logMutableObject = new MutableObject<>(new Log());
+
+        List<? extends DatabaseEntity> smsList = smsMutableObject.getAllItems(smsDao::getAllSync);
+        List<? extends DatabaseEntity> stateList = stateMutableObject.getAllItems(stateDao::getAllSync);
+        List<? extends DatabaseEntity> logList = logMutableObject.getAllItems(logDao::getAllSync);
+
+        String description = "BikeBeanAppCrashReport " + Utils.convertToDateHuman();
+        StringBuilder smsCsv = new StringBuilder();
+        StringBuilder stateCsv = new StringBuilder();
+        StringBuilder logCsv = new StringBuilder();
+
+        if (smsList.size() > 0) {
+            smsCsv.append(smsList.get(0).createReportTitle());
+
+            for (DatabaseEntity sms : smsList)
+                smsCsv.append(sms.createReport());
+        }
+
+        if (stateList.size() > 0) {
+            stateCsv.append(stateList.get(0).createReportTitle());
+
+            for (DatabaseEntity state: stateList)
+                stateCsv.append(state.createReport());
+        }
+
+        if (logList.size() > 0) {
+            logCsv.append(logList.get(0).createReportTitle());
+
+            for (DatabaseEntity log: logList)
+                logCsv.append(log.createReport());
+        }
+
+        return new GithubGistUploader(
+                ctx, lv, usn,
+                description,
+                smsCsv.toString(),
+                stateCsv.toString(),
+                logCsv.toString()
+        );
     }
 }

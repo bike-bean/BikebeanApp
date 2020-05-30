@@ -59,4 +59,14 @@ public class LocationState extends DatabaseEntity {
     public DatabaseEntity getNullType() {
         return null;
     }
+
+    @Override
+    public String createReportTitle() {
+        return null;
+    }
+
+    @Override
+    public String createReport() {
+        return null;
+    }
 }
