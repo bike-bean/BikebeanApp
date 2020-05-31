@@ -12,12 +12,10 @@ class LocationApiBody {
 
     private final CellTowers.CellTowerList cellTowers;
     private final WifiAccessPoints.WifiAccessPointList wifiAccessPoints;
-    private LogViewModel logViewModel;
 
     LocationApiBody(Wapp wapp, LogViewModel lv) {
         WifiAccessPoints w = wapp.getWifiAccessPointSetting(new Sms());
         this.wifiAccessPoints = (WifiAccessPoints.WifiAccessPointList) w.getList();
-        logViewModel = lv;
         lv.d("numberWifiAccessPoints: " + w.getNumber());
 
         CellTowers c = wapp.getCellTowerSetting(new Sms());
@@ -25,11 +23,11 @@ class LocationApiBody {
         lv.d("numberCellTowers: " + c.getNumber());
     }
 
-    String createJsonApiBody() {
+    String createJsonApiBody(LogViewModel lv) {
         final Gson gson = new Gson();
 
-        logViewModel.d("WifiAccessPoints_Json: " + gson.toJson(wifiAccessPoints));
-        logViewModel.d("cellTowers_Json: " + gson.toJson(cellTowers));
+        lv.d("WifiAccessPoints_Json: " + gson.toJson(wifiAccessPoints));
+        lv.d("cellTowers_Json: " + gson.toJson(cellTowers));
 
         return gson.toJson(this);
     }

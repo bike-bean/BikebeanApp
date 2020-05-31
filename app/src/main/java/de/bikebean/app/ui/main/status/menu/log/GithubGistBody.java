@@ -7,9 +7,9 @@ class GithubGistBody {
     private final String description;
     private final GithubGistFiles files;
 
-    GithubGistBody(String description, String smsCsv, String stateCsv, String logCsv) {
+    GithubGistBody(String description, String smsTsv, String stateTsv, String logTsv) {
         this.description = description;
-        this.files = new GithubGistFiles(smsCsv, stateCsv, logCsv);
+        this.files = new GithubGistFiles(smsTsv, stateTsv, logTsv);
     }
 
     String createJsonApiBody() {
@@ -18,8 +18,8 @@ class GithubGistBody {
         String json = gson.toJson(this);
 
         return json
-                .replace("sms_csv", "sms.csv")
-                .replace("state_csv", "state.csv")
-                .replace("log_csv", "log.csv");
+                .replace("sms_tsv", "sms.tsv")
+                .replace("state_tsv", "state.tsv")
+                .replace("log_tsv", "log.tsv");
     }
 }

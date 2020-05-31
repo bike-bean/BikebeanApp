@@ -18,9 +18,9 @@ public class GithubGistUploader extends AsyncTask<String, Void, Boolean> {
     private final UploadSuccessNotifier mUploadSuccessNotifier;
 
     private final String mDescription;
-    private final String mSmsCsv;
-    private final String mStateCsv;
-    private final String mLogCsv;
+    private final String mSmsTsv;
+    private final String mStateTsv;
+    private final String mLogTsv;
 
     private final String mUrl;
     private final String githubGistsToken;
@@ -30,14 +30,14 @@ public class GithubGistUploader extends AsyncTask<String, Void, Boolean> {
     }
 
     public GithubGistUploader(Context context, LogViewModel lv, UploadSuccessNotifier usn,
-                              String description, String smsCsv, String stateCsv, String logCsv) {
+                              String description, String smsTsv, String stateTsv, String logTsv) {
         mLogViewModel = lv;
         mUploadSuccessNotifier = usn;
 
         mDescription = description;
-        mSmsCsv = smsCsv;
-        mStateCsv = stateCsv;
-        mLogCsv = logCsv;
+        mSmsTsv = smsTsv;
+        mStateTsv = stateTsv;
+        mLogTsv = logTsv;
 
         githubGistsToken = context.getResources().getString(R.string.github_gist_token);
         mUrl = "https://api.github.com/gists?public=false";
@@ -47,7 +47,7 @@ public class GithubGistUploader extends AsyncTask<String, Void, Boolean> {
     protected Boolean doInBackground(String... args) {
         MediaType mediaType = MediaType.parse("application/json");
 
-        GithubGistBody jsonBody = new GithubGistBody(mDescription, mSmsCsv, mStateCsv, mLogCsv);
+        GithubGistBody jsonBody = new GithubGistBody(mDescription, mSmsTsv, mStateTsv, mLogTsv);
         RequestBody body = RequestBody.create(mediaType, jsonBody.createJsonApiBody());
 
         OkHttpClient client = new OkHttpClient().newBuilder()

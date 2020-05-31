@@ -204,14 +204,14 @@ public class Sms extends DatabaseEntity {
 
     @Override
     public String createReportTitle() {
-        String delimiter = ",";
+        String delimiter = "\t";
         return "ID" + delimiter + "Body" + delimiter + "Type" + delimiter +
                 "State" + delimiter + "Date" + "\n";
     }
 
     @Override
     public String createReport() {
-        String delimiter = ",";
+        String delimiter = "\t";
         return mId + delimiter + mBody.replace("\n", "//") +
                 delimiter + mType + delimiter + mState + delimiter + mDate + "\n";
     }
