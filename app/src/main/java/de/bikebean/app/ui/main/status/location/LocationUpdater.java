@@ -61,7 +61,9 @@ class LocationUpdater extends AsyncTask<String, Void, Boolean> {
         if (mStateViewModel.getLocationByIdSync(mSms))
             return false;
 
-        String requestBody = new LocationApiBody(mWapp, mLogViewModel).createJsonApiBody();
+        String requestBody =
+                new LocationApiBody(mWapp, mLogViewModel)
+                        .createJsonApiBody(mLogViewModel);
         if (requestBody.isEmpty())
             return false;
 
