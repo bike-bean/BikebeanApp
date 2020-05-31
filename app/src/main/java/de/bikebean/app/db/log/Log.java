@@ -87,14 +87,14 @@ public class Log extends DatabaseEntity {
 
     @Override
     public String createReportTitle() {
-        String delimiter = ",";
+        String delimiter = "\t";
         return "ID" + delimiter + "Message" + delimiter +
                 "Date" + delimiter + "level" + "\n";
     }
 
     @Override
     public String createReport() {
-        String delimiter = ",";
+        String delimiter = "\t";
         return id + delimiter + mMessage.replace("\n", "//") +
                 delimiter + Utils.convertToTimeLog(mTimestamp) + delimiter + mLevel + "\n";
     }

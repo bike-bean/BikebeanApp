@@ -96,37 +96,37 @@ public abstract class BikeBeanRoomDatabase extends RoomDatabase {
         List<? extends DatabaseEntity> logList = logMutableObject.getAllItems(logDao::getAllSync);
 
         String description = "BikeBeanAppCrashReport " + Utils.convertToDateHuman();
-        StringBuilder smsCsv = new StringBuilder();
-        StringBuilder stateCsv = new StringBuilder();
-        StringBuilder logCsv = new StringBuilder();
+        StringBuilder smsTsv = new StringBuilder();
+        StringBuilder stateTsv = new StringBuilder();
+        StringBuilder logTsv = new StringBuilder();
 
         if (smsList.size() > 0) {
-            smsCsv.append(smsList.get(0).createReportTitle());
+            smsTsv.append(smsList.get(0).createReportTitle());
 
             for (DatabaseEntity sms : smsList)
-                smsCsv.append(sms.createReport());
+                smsTsv.append(sms.createReport());
         }
 
         if (stateList.size() > 0) {
-            stateCsv.append(stateList.get(0).createReportTitle());
+            stateTsv.append(stateList.get(0).createReportTitle());
 
             for (DatabaseEntity state: stateList)
-                stateCsv.append(state.createReport());
+                stateTsv.append(state.createReport());
         }
 
         if (logList.size() > 0) {
-            logCsv.append(logList.get(0).createReportTitle());
+            logTsv.append(logList.get(0).createReportTitle());
 
             for (DatabaseEntity log: logList)
-                logCsv.append(log.createReport());
+                logTsv.append(log.createReport());
         }
 
         return new GithubGistUploader(
                 ctx, lv, usn,
                 description,
-                smsCsv.toString(),
-                stateCsv.toString(),
-                logCsv.toString()
+                smsTsv.toString(),
+                stateTsv.toString(),
+                logTsv.toString()
         );
     }
 }

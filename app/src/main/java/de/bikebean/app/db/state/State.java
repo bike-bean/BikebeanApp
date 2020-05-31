@@ -186,7 +186,7 @@ public class State extends DatabaseEntity {
 
     @Override
     public String createReportTitle() {
-        String delimiter = ",";
+        String delimiter = "\t";
         return "ID" + delimiter + "Key" + delimiter + "Date" + delimiter +
                 "Value" + delimiter + "Long Value" + delimiter +
                 "State" + delimiter + "Sms ID" + "\n";
@@ -194,7 +194,7 @@ public class State extends DatabaseEntity {
 
     @Override
     public String createReport() {
-        String delimiter = ",";
+        String delimiter = "\t";
         return id + delimiter + mKey + delimiter + Utils.convertToTimeLog(mTimestamp) +
                 delimiter + mValue + delimiter + mLongValue.replace("\n", "//") +
                 delimiter + STATUS.getName(mState) + delimiter + mSmsId + "\n";
