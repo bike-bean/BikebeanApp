@@ -22,11 +22,6 @@ public class MutableObject<T extends DatabaseEntity> {
         position = 0;
     }
 
-    public MutableObject(T value, int position) {
-        nullT = value.getNullType();
-        this.position = position;
-    }
-
     void waitForDelete(DeleteChecker deleteChecker) {
         new Thread(() -> {
             while (deleteChecker.checkDelete().size() > 0) {

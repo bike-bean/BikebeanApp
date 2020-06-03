@@ -15,7 +15,7 @@
         android:gravity="center"
         android:textAlignment="center"
         android:textColor="@color/onSurface"
-        android:textSize="20dp" />
+        android:textSize="20sp" />
 
     <ListView
         android:id="@+id/wifiList"
@@ -23,7 +23,7 @@
         android:layout_height="260dp"
         android:layout_weight="0.97"
         android:fontFamily="sans-serif"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:textColor="@color/onSurface">
 
     </ListView>

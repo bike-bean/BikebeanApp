@@ -123,7 +123,7 @@ public class SettingsStatusFragment extends SubStatusFragment {
                 Sms.MESSAGE msg = Sms.MESSAGE.INT;
                 msg.setValue("Int " + newValue);
 
-                sendSms(msg, new State[]{new State(State.KEY.INTERVAL, Double.valueOf(newValue))});
+                sendSms(msg, new State[]{new State(State.KEY.INTERVAL, Double.parseDouble(newValue))});
             }
 
             @Override
@@ -219,27 +219,6 @@ public class SettingsStatusFragment extends SubStatusFragment {
         intervalSummary.setText(String.format(intervalSummaryString, oldValue));
         intervalPendingStatus.setText("");
         intervalPendingStatus.setVisibility(View.GONE);
-
-        /*
-        long dt = st.getIntervalLastChangeDate();
-        List<Sms> ls = sm.getAllSinceDate(dt);
-
-        List<Integer> n = new ArrayList<>();
-        List<Integer> e = new ArrayList<>();
-
-        final int I = st.getConfirmedIntervalSync() * 60; // Interval in min
-
-        for (int i=1; i<ls.size(); i++) {
-            long t = ls.get(i-1).getTimestamp() - ls.get(ls.size()-1).getTimestamp();
-            double h = t / 1000.0 / 60 / 10;
-            double j = h / (double) I;
-            int _n = (int) Math.round(j);
-            n.add(_n);
-            e.add(30 + (int) (t / 1000.0 / 60 / 10) - ((_n) * I));
-        }
-
-        nextUpdateEstimation.setText("Nächstes Aufwachen ca." + Utils.convertToTime(dt) + "  " + getStringInt(n) + " " + getStringInt(e));
-        */
     }
 
     @Override
@@ -310,104 +289,9 @@ public class SettingsStatusFragment extends SubStatusFragment {
         );
         intervalPendingStatus.setVisibility(View.VISIBLE);
 
-        /*
-        long dt = st.getIntervalLastChangeDate();
-        List<Sms> ls = sm.getAllSinceDate(dt);
-
-        List<Integer> n = new ArrayList<>();
-        List<Integer> e = new ArrayList<>();
-
-        final int I = st.getConfirmedIntervalSync() * 6; // Interval in 6min
-
-        for (int i=1; i<ls.size(); i++) {
-            long t = ls.get(i-1).getTimestamp() - ls.get(ls.size()-1).getTimestamp();
-            double h = t / 1000.0 / 60 / 10;
-            double j = h / (double) I;
-            int _n = (int) Math.round(j);
-            n.add(_n);
-            e.add(5 + (int) (t / 1000.0 / 60 / 10) - ((_n) * I));
-        }
-        */
-
-        // List<Integer> s = new ArrayList<>();
-
-        // CrossProduct crossProduct = new CrossProduct(new int[]{125, 5, 5, 5, 5}, e);
-
-        /*
-        for (int i=0; i<crossProduct.getMax(); i++)
-            if (a + b == e.get(0) && a + c == e.get(1)
-                    && a + d == e.get(2) && a + f == e.get(3))
-                s.add(a);
-         */
-
         // nextUpdateEstimation.setText("Nächstes Aufwachen ca." + Utils.convertToTime(dt) + "  " + getStringInt(n) + " " + getStringInt(e));
         nextUpdateEstimation.setVisibility(View.GONE);
     }
-
-    /*
-    class CrossProduct {
-
-        int[] bases;
-        long max;
-        List<Integer> e;
-
-        long current;
-        String sCurrent;
-
-        CrossProduct(int[] bases, List<Integer> e) {
-            this.bases = bases;
-
-            long j = 1;
-            StringBuilder s = new StringBuilder();
-
-            for (int i : bases) {
-                j *= i;
-                s.append("0");
-            }
-
-            this.sCurrent = s.toString();
-            this.max = j;
-            this.e = e;
-        }
-
-        long start() {
-            this.current = 0;
-            return this.current;
-        }
-
-        long getNext() {
-            for (char c : sCurrent) {
-
-            }
-            return this.current + 1;
-        }
-
-        long getMax() {
-            return this.max;
-        }
-
-        boolean checkConstraints(long current) {
-
-        }
-
-        int decode() {
-
-        }
-    }
-    */
-
-    /*
-    private String getStringInt(List<Integer> l) {
-        StringBuilder s = new StringBuilder();
-
-        for (int d : l) {
-            s.append(d);
-            s.append("\n");
-        }
-
-        return s.toString();
-    }
-    */
 
     @Override
     protected void setWifiElementsPending(State state) {
@@ -446,7 +330,7 @@ public class SettingsStatusFragment extends SubStatusFragment {
     }
 
     private void onHelpClick(View v) {
-        Snackbar.make(v, R.string.help, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(v, R.string.help3, Snackbar.LENGTH_LONG).show();
     }
 }
 

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BikeBeanApp</string>
+    <string name="app_name">Bike Bean</string>
     <string name="title_home">Status</string>
     <string name="title_dashboard">Karte</string>
     <string name="title_wifi">WLAN-Ortung</string>
@@ -31,7 +31,9 @@
     <string name="history">Historie (Standort &amp; Batterie)</string>
     <string name="info">Infos &amp; Hilfe</string>
     <string name="log">Fehlerprotokoll</string>
-    <string name="help">Hilfe</string>
+    <string name="help1">Hier kannst du den Standort deiner Bike Bean abfragen.</string>
+    <string name="help2">Hier kannst du den Akkustand abfragen falls die letzte Aktualisierung länger her ist.</string>
+    <string name="help3">Das WLAN der Bike Bean solltest du nur für die Nahortung anstellen.</string>
     <string name="share">Teilen</string>
 
     <string name="menu_satellite">Satellit</string>
@@ -100,12 +102,10 @@
     <string name="to_settings">Zu den Einstellungen</string>
 
     <!-- WifiScan -->
-    <string name="wifi_disabled">Bitte aktivieren Sie das WLAN</string>
-    <string name="location_disabled">Bitte aktivieren Sie Ihren GPS Standort</string>
     <string name="scanning_wifi">Scanne WLANs</string>
     <string name="phone_hint">+4912345678910</string>
     <string name="prompt_number">Bitte gib als erstes die Telefonnummer der Bike Bean ein:</string>
     <string name="scan_wifi">WLANs SCANNEN</string>
-    <string name="no_relevant_wifis_found">Keine relevanten WiFi-Access-Points in der Nähe gefunden</string>
+    <string name="gps_network_not_enabled">Dein Standort muss leider aktiviert sein um nach WLANs scannen zu können. (Google Anforderung)</string>
 
 </resources>

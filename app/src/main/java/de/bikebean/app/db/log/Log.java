@@ -26,7 +26,6 @@ public class Log extends DatabaseEntity {
     private final String mMessage;
 
     @ColumnInfo(name = "level")
-
     private final LEVEL mLevel;
 
     public Log(

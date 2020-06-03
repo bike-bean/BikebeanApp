@@ -22,7 +22,7 @@ import de.bikebean.app.ui.main.status.menu.history.HistoryAdapter;
 
 class PositionHistoryAdapter extends HistoryAdapter {
 
-    class PositionHistoryViewHolder extends HistoryViewHolder {
+    static class PositionHistoryViewHolder extends HistoryViewHolder {
         private final TableLayout table;
         private final CardView buttonOpenMap;
         private final TextView lat, lng, acc, dateTimeText, smsIdText;

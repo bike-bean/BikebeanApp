@@ -8,7 +8,7 @@ import de.bikebean.app.db.state.State;
 
 public abstract class NumberSetting extends Setting {
 
-    public abstract class RawNumberSettings {}
+    public abstract static class RawNumberSettings {}
 
     private static final C_LIST_ADD_TYPE cListAddType = C_LIST_ADD_TYPE.ADD_TO_LIST;
 

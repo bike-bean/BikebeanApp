@@ -207,4 +207,6 @@ public class BatteryStatusFragment extends SubStatusFragment {
     protected void setLocationElementsTempPending(State state) {
 
     }
+
+
 }

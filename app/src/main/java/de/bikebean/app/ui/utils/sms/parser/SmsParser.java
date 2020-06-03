@@ -247,7 +247,7 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
     }
 
     private int getStatusInterval() {
-        return Integer.valueOf(getMatcherResult(statusIntervalMatcher));
+        return Integer.parseInt(getMatcherResult(statusIntervalMatcher));
     }
 
     private boolean getStatusWifi() {
@@ -320,7 +320,7 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
     }
 
     private int getInterval() {
-        return Integer.valueOf(getMatcherResult(intervalChangedMatcher));
+        return Integer.parseInt(getMatcherResult(intervalChangedMatcher));
     }
 
     private String getMatcherResult(Matcher m) {
