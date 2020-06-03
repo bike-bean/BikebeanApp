@@ -2,7 +2,6 @@ package de.bikebean.app.ui.main.status.location;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -17,7 +16,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
 import de.bikebean.app.db.settings.settings.Acc;
 import de.bikebean.app.db.settings.settings.Lat;
@@ -26,6 +24,7 @@ import de.bikebean.app.db.settings.settings.Location;
 import de.bikebean.app.db.settings.settings.Wapp;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.ui.initialization.SettingsList;
+import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
 
 class LocationUpdater extends AsyncTask<String, Void, Boolean> {
 
@@ -33,6 +32,7 @@ class LocationUpdater extends AsyncTask<String, Void, Boolean> {
         void onPostResponse(Wapp wappCellTowers, SettingsList settings, Sms sms);
     }
 
+    private final LogViewModel mLogViewModel;
     private final LocationStateViewModel mStateViewModel;
     private final Sms mSms;
     private final PostResponseHandler mPostResponseHandler;
@@ -41,9 +41,10 @@ class LocationUpdater extends AsyncTask<String, Void, Boolean> {
     private final RequestQueue mQueue;
     private final String mUrl;
 
-    LocationUpdater(Context context, LocationStateViewModel st, Sms sms,
-                    PostResponseHandler postResponseHandler, Wapp wapp) {
+    LocationUpdater(Context context, LocationStateViewModel st, LogViewModel lv,
+                    Sms sms, PostResponseHandler postResponseHandler, Wapp wapp) {
         mStateViewModel = st;
+        mLogViewModel = lv;
         mSms = sms;
         mPostResponseHandler = postResponseHandler;
         mWapp = wapp;
@@ -60,13 +61,14 @@ class LocationUpdater extends AsyncTask<String, Void, Boolean> {
         if (mStateViewModel.getLocationByIdSync(mSms))
             return false;
 
-        String requestBody = new LocationApiBody(mWapp).createJsonApiBody();
+        String requestBody =
+                new LocationApiBody(mWapp, mLogViewModel)
+                        .createJsonApiBody(mLogViewModel);
         if (requestBody.isEmpty())
             return false;
 
         mStateViewModel.insertNumberStates(mWapp, mSms);
-
-        Log.d(MainActivity.TAG, "Updating Lat/Lng...");
+        mLogViewModel.d("Updating Lat/Lng...");
 
         httpPOST(requestBody);
 
@@ -98,7 +100,7 @@ class LocationUpdater extends AsyncTask<String, Void, Boolean> {
     }
 
     private void responseListener(JSONObject response) {
-        Log.d(MainActivity.TAG, "RESPONSE FROM SERVER: " + response.toString());
+        mLogViewModel.d("RESPONSE FROM SERVER: " + response.toString());
 
         try {
             JSONObject location = response.getJSONObject("location");
@@ -116,6 +118,6 @@ class LocationUpdater extends AsyncTask<String, Void, Boolean> {
     }
 
     private void errorListener(VolleyError error) {
-        Log.d(MainActivity.TAG, "Error.Response: " + error.getMessage());
+        mLogViewModel.d("Error.Response: " + error.getMessage());
     }
 }

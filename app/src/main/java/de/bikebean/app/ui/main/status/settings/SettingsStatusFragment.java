@@ -1,7 +1,6 @@
 package de.bikebean.app.ui.main.status.settings;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
 import de.bikebean.app.ui.utils.Utils;
 import de.bikebean.app.db.sms.Sms;
@@ -119,7 +117,7 @@ public class SettingsStatusFragment extends SubStatusFragment {
                     return;
 
                 // if it has changed, create a new pending state and fire it into the db
-                Log.d(MainActivity.TAG, "Setting Interval about to be changed to " + newValue);
+                lv.d("Setting Interval about to be changed to " + newValue);
                 Sms.MESSAGE msg = Sms.MESSAGE.INT;
                 msg.setValue("Int " + newValue);
 
@@ -138,7 +136,7 @@ public class SettingsStatusFragment extends SubStatusFragment {
                 return;
 
             // if it has changed, create a new pending state and fire it into the db
-            Log.d(MainActivity.TAG, "Setting Wifi about to be changed to " + isChecked);
+            lv.d("Setting Wifi about to be changed to " + isChecked);
             Sms.MESSAGE msg = Sms.MESSAGE.WIFI;
             msg.setValue("Wifi " + (isChecked ? "on" : "off"));
 

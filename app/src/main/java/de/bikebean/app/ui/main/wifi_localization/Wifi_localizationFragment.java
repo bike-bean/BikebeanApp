@@ -6,7 +6,6 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,11 +34,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
 import de.bikebean.app.db.settings.settings.number_settings.WifiAccessPoints;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.ui.main.status.StateViewModel;
+import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
 
 public class Wifi_localizationFragment extends Fragment {
 
@@ -53,6 +52,7 @@ public class Wifi_localizationFragment extends Fragment {
     private final HashMap<String, Integer> hashmap = new HashMap<>();
     private ArrayAdapter adapter;
 
+    private LogViewModel logViewModel;
     private StateViewModel stateViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -84,6 +84,7 @@ public class Wifi_localizationFragment extends Fragment {
         listView.setAdapter(adapter);
 
         stateViewModel = new ViewModelProvider(requireActivity()).get(StateViewModel.class);
+        logViewModel = new ViewModelProvider(requireActivity()).get(LogViewModel.class);
 
         scanWifi();
     }
@@ -190,7 +191,7 @@ public class Wifi_localizationFragment extends Fragment {
                 number_of_detected_wifis++;
             }
 
-            Log.d(MainActivity.TAG, "Gefundene WLANs: " + number_of_detected_wifis);
+            logViewModel.d("Gefundene WLANs: " + number_of_detected_wifis);
             Toast.makeText(act, "Gefundene WLANs: " + number_of_detected_wifis,
                     Toast.LENGTH_SHORT).show();
 

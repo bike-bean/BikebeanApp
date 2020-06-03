@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.bikebean.app.R;
+import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
 import de.bikebean.app.ui.utils.Utils;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
@@ -23,6 +24,7 @@ import de.bikebean.app.ui.main.status.settings.LiveDataTimerViewModel;
 public abstract class SubStatusFragment extends Fragment {
 
     private StateViewModel st;
+    protected LogViewModel lv;
     protected LiveDataTimerViewModel tv;
     protected SmsViewModel sm;
 
@@ -33,6 +35,7 @@ public abstract class SubStatusFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         st = new ViewModelProvider(this).get(StateViewModel.class);
+        lv = new ViewModelProvider(this).get(LogViewModel.class);
         tv = new ViewModelProvider(this).get(LiveDataTimerViewModel.class);
         sm = new ViewModelProvider(this).get(SmsViewModel.class);
 
@@ -51,7 +54,7 @@ public abstract class SubStatusFragment extends Fragment {
                     Snackbar.LENGTH_LONG
             ).show();
 
-            sm.insert(new Sms(sm.getLatestId(), address, message));
+            sm.insert(new Sms(sm.getLatestId(lv), address, message));
             st.insert(updates);
         } else {
             Snackbar.make(requireView(), "Vorgang abgebrochen.", Snackbar.LENGTH_LONG).show();

@@ -27,24 +27,28 @@ public class LogViewModel extends AndroidViewModel {
 
     public void d(String message) {
         android.util.Log.d(MainActivity.TAG, message);
-        mRepository.insert(new Log(message, Log.LEVEL.DEBUG));
+        mRepository.insert(new Log(message, getCallerName(), Log.LEVEL.DEBUG));
     }
 
-    /*
     public void i(String message) {
         android.util.Log.i(MainActivity.TAG, message);
-        mRepository.insert(new Log(message, Log.LEVEL.INFO));
+        mRepository.insert(new Log(message, getCallerName(), Log.LEVEL.INFO));
     }
-    */
 
     public void w(String message) {
         android.util.Log.w(MainActivity.TAG, message);
-        mRepository.insert(new Log(message, Log.LEVEL.WARNING));
+        mRepository.insert(new Log(message, getCallerName(), Log.LEVEL.WARNING));
     }
 
     public void e(String message) {
         android.util.Log.e(MainActivity.TAG, message);
-        mRepository.insert(new Log(message, Log.LEVEL.ERROR));
+        mRepository.insert(new Log(message, getCallerName(), Log.LEVEL.ERROR));
+    }
+
+    private String getCallerName() {
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+
+        return stackTraceElements[4].getFileName() + "::" + stackTraceElements[4].getMethodName();
     }
 
     LiveData<List<Log>> getHigherThanLevel(Log.LEVEL level) {

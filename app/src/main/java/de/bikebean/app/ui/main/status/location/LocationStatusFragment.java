@@ -261,7 +261,8 @@ public class LocationStatusFragment extends SubStatusFragment {
         parsedSms.add(id2);
 
         new LocationUpdater(
-                requireContext(), st, sm.getSmsByIdSync(wapp.getSmsId()),
+                requireContext(), st, lv,
+                sm.getSmsByIdSync(wapp.getSmsId()),
                 this::updateLatLngAcc, wapp
         ).execute();
     }
