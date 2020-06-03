@@ -12,6 +12,7 @@ public abstract class NumberSetting extends Setting {
 
     private static final C_LIST_ADD_TYPE cListAddType = C_LIST_ADD_TYPE.ADD_TO_LIST;
 
+
     protected int number;
     protected String[] stringArrayWapp;
 
