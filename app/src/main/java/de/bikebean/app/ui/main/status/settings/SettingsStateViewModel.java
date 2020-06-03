@@ -6,8 +6,8 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
-import de.bikebean.app.db.settings.settings.Interval;
-import de.bikebean.app.db.settings.settings.Wifi;
+import de.bikebean.app.db.settings.settings.replace_if_newer_settings.Interval;
+import de.bikebean.app.db.settings.settings.replace_if_newer_settings.Wifi;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.main.status.StateViewModel;
 

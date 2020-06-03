@@ -2,7 +2,7 @@ package de.bikebean.app.ui.main.status.location;
 
 import com.google.gson.Gson;
 
-import de.bikebean.app.db.settings.settings.Wapp;
+import de.bikebean.app.db.settings.settings.WappState;
 import de.bikebean.app.db.settings.settings.number_settings.CellTowers;
 import de.bikebean.app.db.settings.settings.number_settings.WifiAccessPoints;
 import de.bikebean.app.db.sms.Sms;
@@ -13,12 +13,12 @@ class LocationApiBody {
     private final CellTowers.CellTowerList cellTowers;
     private final WifiAccessPoints.WifiAccessPointList wifiAccessPoints;
 
-    LocationApiBody(Wapp wapp, LogViewModel lv) {
-        WifiAccessPoints w = wapp.getWifiAccessPointSetting(new Sms());
+    LocationApiBody(WappState wappState, LogViewModel lv) {
+        WifiAccessPoints w = wappState.getWifiAccessPointSetting(new Sms());
         this.wifiAccessPoints = (WifiAccessPoints.WifiAccessPointList) w.getList();
         lv.d("numberWifiAccessPoints: " + w.getNumber());
 
-        CellTowers c = wapp.getCellTowerSetting(new Sms());
+        CellTowers c = wappState.getCellTowerSetting(new Sms());
         this.cellTowers = (CellTowers.CellTowerList) c.getList();
         lv.d("numberCellTowers: " + c.getNumber());
     }

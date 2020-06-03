@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.telephony.SmsManager;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
 
@@ -34,7 +35,7 @@ public class SmsSender {
     private String message;
     private State[] updates;
 
-    public void send(Sms.MESSAGE message, State[] updates) {
+    public void send(@NonNull Sms.MESSAGE message, State[] updates) {
         this.address = sharedPreferences.getString("number","");
         this.message = message.getMsg();
         this.updates = updates;

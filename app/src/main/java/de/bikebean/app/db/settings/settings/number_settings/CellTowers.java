@@ -4,18 +4,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.bikebean.app.db.settings.settings.NumberSetting;
-import de.bikebean.app.db.settings.settings.Wapp;
+import de.bikebean.app.db.settings.settings.WappState;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
+import de.bikebean.app.ui.utils.sms.parser.SmsParser;
 
 public class CellTowers extends NumberSetting {
 
     private static final State.KEY key = State.KEY.CELL_TOWERS;
     private static final State.KEY numberKey = State.KEY.NO_CELL_TOWERS;
 
-    private CellTowerList cellTowerList;
+    private final CellTowerList cellTowerList;
+    private final int number;
+    private final State numberState;
 
-    public static class CellTowerList extends ArrayList<CellTower> {}
+    public static class CellTowerList extends ArrayList<CellTower> {
+        CellTowerList(String[] stringArrayWapp) {
+            parse(stringArrayWapp);
+        }
+
+        private void parse(String[] stringArrayWapp) {
+            for (String s : stringArrayWapp)
+                if (!s.equals("    ")) {
+                    String[] stringArray_gsm_towers = s.split(",");
+                    CellTower c = new CellTower();
+
+                    c.mobileCountryCode = Integer.parseInt(stringArray_gsm_towers[0]);
+                    c.mobileNetworkCode = Integer.parseInt(stringArray_gsm_towers[1]);
+                    c.locationAreaCode = Integer.parseInt(stringArray_gsm_towers[2], 16);
+                    c.cellId = Integer.parseInt(stringArray_gsm_towers[3], 16);
+                    c.signalStrength = Integer.parseInt("-" + stringArray_gsm_towers[4]);
+
+                    this.add(c);
+                }
+        }
+    }
 
     private static class CellTower extends RawNumberSettings {
         Integer mobileCountryCode;
@@ -25,54 +48,40 @@ public class CellTowers extends NumberSetting {
         Integer signalStrength;
     }
 
-    private final String cellTowers;
+    public CellTowers(SmsParser smsParser) {
+        super(smsParser.getWappCellTowers(), smsParser.getSms(), key);
 
-    public CellTowers(String cellTowers, Sms sms) {
-        super(sms, key, numberKey, cellTowers);
-        this.cellTowers = cellTowers;
+        String[] strings = mWappString.split("\n");
+        number = strings.length;
+
+        cellTowerList = new CellTowerList(strings);
+        numberState = new State(
+                getDate(), numberKey,
+                (double) getNumber(), "",
+                State.STATUS.CONFIRMED, getId()
+        );
     }
 
-    public CellTowers(Wapp wapp, Sms sms) {
-        super(sms, key, numberKey, wapp.getCellTowers().getLongValue());
-        this.cellTowers = wapp.getCellTowers().getLongValue();
+    public CellTowers(WappState wappState, Sms sms) {
+        super(wappState.getCellTowers().getLongValue(), sms, key);
+
+        String[] strings = mWappString.split("\n");
+        number = strings.length;
+
+        cellTowerList = new CellTowerList(strings);
+        numberState = new State(
+                getDate(), numberKey,
+                (double) getNumber(), "",
+                State.STATUS.CONFIRMED, getId()
+        );
     }
 
     public CellTowers() {
-        super(key);
+        super("", key);
 
-        this.cellTowers = "";
-    }
-
-    @Override
-    protected void initList() {
-        cellTowerList = new CellTowerList();
-    }
-
-    @Override
-    protected void parseSplitString(String cellTowers) {
-        stringArrayWapp = cellTowers.split("\n");
-    }
-
-    @Override
-    protected void parseNumber() {
-        number = stringArrayWapp.length;
-    }
-
-    @Override
-    protected void parse(String cellTowers) {
-        for (String s : stringArrayWapp)
-            if (!s.equals("    ")) {
-                String[] stringArray_gsm_towers = s.split(",");
-                CellTower c = new CellTower();
-
-                c.mobileCountryCode = Integer.parseInt(stringArray_gsm_towers[0]);
-                c.mobileNetworkCode = Integer.parseInt(stringArray_gsm_towers[1]);
-                c.locationAreaCode = Integer.parseInt(stringArray_gsm_towers[2], 16);
-                c.cellId = Integer.parseInt(stringArray_gsm_towers[3], 16);
-                c.signalStrength = Integer.parseInt("-" + stringArray_gsm_towers[4]);
-
-                cellTowerList.add(c);
-            }
+        cellTowerList = new CellTowerList(new String[]{});
+        number = 0;
+        numberState = new State();
     }
 
     @Override
@@ -81,7 +90,12 @@ public class CellTowers extends NumberSetting {
     }
 
     @Override
-    public String get() {
-        return cellTowers;
+    public int getNumber() {
+        return number;
+    }
+
+    @Override
+    public State getNumberState() {
+        return numberState;
     }
 }
