@@ -49,6 +49,7 @@
     <string name="interval_header">Intervall</string>
     <string name="wlan_header">Bike Bean WLAN</string>
     <string name="db_reset">Datenbank zurücksetzen</string>
+    <string name="db_is_reset">Datenbank zurückgesetzt</string>
 
     <!-- General Preferences -->
     <string name="number_title">Telefonnummer der Bike Bean</string>

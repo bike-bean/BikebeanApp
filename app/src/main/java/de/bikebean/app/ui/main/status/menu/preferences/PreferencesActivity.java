@@ -113,6 +113,11 @@ public class PreferencesActivity extends AppCompatActivity {
             BikeBeanRoomDatabase.resetAll();
             stateViewModel.insert(new Initial());
             smsViewModel.fetchSmsSync(ctx, stateViewModel, logViewModel, address);
+
+            Snackbar.make(
+                    requireView(), R.string.db_is_reset,
+                    Snackbar.LENGTH_LONG
+            ).show();
         }
 
         void cancelReset() {
