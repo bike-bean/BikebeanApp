@@ -310,7 +310,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 try {
                     mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(getLatLngBounds(), 0));
                 } catch (IllegalStateException e) {
-                    logViewModel.d("permature (skipped)");
+                    assert true;
                 }
             } else {
                 try {
@@ -318,7 +318,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     initializationDone = true;
                     fab.show(); fab3.show();
                 } catch (IllegalStateException e) {
-                    logViewModel.d("permature (skipped)");
+                    assert true;
                 }
             }
         } else

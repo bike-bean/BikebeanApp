@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.provider.Telephony;
 
+import androidx.annotation.NonNull;
+
 import java.lang.ref.WeakReference;
 
 import de.bikebean.app.ui.initialization.Conversation;
@@ -30,7 +32,7 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
     }
 
     @Override
-    public Void doInBackground(String... args) {
+    public Void doInBackground(@NonNull String... args) {
         String phoneNumber = args[0];
         String waitForNewMessage = args[1];
         String[] argList = {phoneNumber};
@@ -60,7 +62,7 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
         return null;
     }
 
-    private void traverseInboxAndClose(Cursor inbox) {
+    private void traverseInboxAndClose(@NonNull Cursor inbox) {
         if (inbox.moveToFirst()) {
 
             for (int i=0; i < inbox.getCount(); i++) {
@@ -87,7 +89,7 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
         logViewModel.i("Initial Loading completed");
     }
 
-    private void traverseInboxAndCloseInitial(Cursor inbox) {
+    private void traverseInboxAndCloseInitial(@NonNull Cursor inbox) {
         Conversation conversation = new Conversation(stateViewModel, smsViewModel, logViewModel);
 
         if (inbox.moveToFirst()) {
@@ -105,7 +107,7 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
         conversation.updatePreferences();
     }
 
-    private Cursor getInbox(ContentResolver contentResolver, String[] argList) {
+    private Cursor getInbox(@NonNull ContentResolver contentResolver, String[] argList) {
         return contentResolver.query(
                 Telephony.Sms.Inbox.CONTENT_URI, null,
                 "address=?", argList,

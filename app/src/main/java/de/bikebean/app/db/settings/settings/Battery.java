@@ -3,26 +3,59 @@ package de.bikebean.app.db.settings.settings;
 import de.bikebean.app.db.settings.Setting;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
+import de.bikebean.app.ui.utils.sms.parser.SmsParser;
 
 public class Battery extends Setting {
 
-    private static final State.KEY key = State.KEY.BATTERY;
-    private static final C_LIST_ADD_TYPE cListAddType = C_LIST_ADD_TYPE.ADD_TO_LIST;
-
     private final double battery;
+    private final State state;
+    private final ConversationListAdder conversationListAdder;
 
-    public Battery(double battery, Sms sms) {
-        super(sms, key, STATE_TYPE.CONFIRMED, cListAddType);
-        this.battery = battery;
+    private static final State.KEY key = State.KEY.BATTERY;
+    private static final State.STATUS status = State.STATUS.CONFIRMED;
+
+    public Battery(SmsParser smsParser, boolean isStatus, boolean isNoWifi) {
+        super(smsParser.getSms(), key);
+
+        if (isStatus)
+            this.battery = smsParser.getStatusBattery();
+        else if (isNoWifi)
+            this.battery = smsParser.getBatteryNoWifi();
+        else
+            this.battery = smsParser.getBattery();
+
+        this.conversationListAdder = super::addToList;
+
+        this.state = new State(
+                getDate(), key, get(), "",
+                status, getId()
+        );
     }
 
     public Battery() {
-        super(new Sms(), key, STATE_TYPE.UNSET, cListAddType);
+        super(new Sms(), key);
+
         this.battery = -1.0;
+        this.conversationListAdder = super::addToList;
+
+        this.state = new State(
+                getDate(), key, get(), "",
+                State.STATUS.UNSET, getId()
+        );
     }
 
     @Override
-    public Double get() {
+    public final State getState() {
+        return state;
+    }
+
+    @Override
+    public final ConversationListAdder getConversationListAdder() {
+        return conversationListAdder;
+    }
+
+    @Override
+    public final Double get() {
         return battery;
     }
 }

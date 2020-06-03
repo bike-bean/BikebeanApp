@@ -2,82 +2,58 @@ package de.bikebean.app.ui.utils.sms.parser;
 
 import android.os.AsyncTask;
 
+import androidx.annotation.NonNull;
+
 import java.lang.ref.WeakReference;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.bikebean.app.db.settings.settings.Battery;
-import de.bikebean.app.db.settings.settings.number_settings.CellTowers;
-import de.bikebean.app.db.settings.settings.Interval;
-import de.bikebean.app.db.settings.settings.LowBattery;
-import de.bikebean.app.ui.initialization.SettingsList;
-import de.bikebean.app.db.settings.settings.Wapp;
-import de.bikebean.app.db.settings.settings.WarningNumber;
-import de.bikebean.app.db.settings.settings.Wifi;
-import de.bikebean.app.db.settings.settings.number_settings.WifiAccessPoints;
+import de.bikebean.app.db.type.types.SmsParserType;
+import de.bikebean.app.db.type.types.sms_parser_types.CellTowers;
+import de.bikebean.app.db.type.types.sms_parser_types.Interval;
+import de.bikebean.app.db.type.types.sms_parser_types.LowBattery;
+import de.bikebean.app.db.type.types.sms_parser_types.NoWifiList;
+import de.bikebean.app.db.type.types.sms_parser_types.Position;
+import de.bikebean.app.db.type.types.sms_parser_types.Undefined;
+import de.bikebean.app.db.type.types.sms_parser_types.WarningNumber;
+import de.bikebean.app.db.type.types.sms_parser_types.WifiList;
+import de.bikebean.app.db.type.types.sms_parser_types.WifiOff;
+import de.bikebean.app.db.type.types.sms_parser_types.WifiOn;
 import de.bikebean.app.db.sms.Sms;
-import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
 import de.bikebean.app.ui.main.status.StateViewModel;
 import de.bikebean.app.ui.main.status.menu.sms_history.SmsViewModel;
 
 public class SmsParser extends AsyncTask<String, Void, Boolean> {
 
-    private enum SMS_TYPE {
-        POSITION, _STATUS, WIFI_ON, WIFI_OFF, INT, LOW_BATTERY,
-        WARNING_NUMBER, CELL_TOWERS, WIFI_LIST, NO_WIFI_LIST, UNDEFINED
-    }
-
     private final WeakReference<StateViewModel> statusViewModelReference;
     private final WeakReference<SmsViewModel> smsViewModelReference;
     private final WeakReference<LogViewModel> logViewModelReference;
 
     private final Sms sms;
-    private SMS_TYPE type;
 
-    public SmsParser(Sms sms, StateViewModel stateViewModel,
-                     SmsViewModel smsViewModel, LogViewModel logViewModel) {
+    public SmsParser(@NonNull Sms sms, StateViewModel st, SmsViewModel sm, LogViewModel lv) {
         this.sms = sms;
-        statusViewModelReference = new WeakReference<>(stateViewModel);
-        smsViewModelReference = new WeakReference<>(smsViewModel);
-        logViewModelReference = new WeakReference<>(logViewModel);
+        statusViewModelReference = new WeakReference<>(st);
+        smsViewModelReference = new WeakReference<>(sm);
+        logViewModelReference = new WeakReference<>(lv);
 
         initMatchers(sms.getBody());
-    }
-
-    public SmsParser(Sms sms, LogViewModel logViewModel) {
-        this.sms = sms;
-        statusViewModelReference = new WeakReference<>(null);
-        smsViewModelReference = new WeakReference<>(null);
-        logViewModelReference = new WeakReference<>(logViewModel);
-
-        initMatchers(sms.getBody());
-
-        this.type = getType();
-
-        if (type.equals(SMS_TYPE.UNDEFINED))
-            logViewModelReference.get().w("Could not parse SMS: " + sms.getBody());
     }
 
     @Override
     protected Boolean doInBackground(String... args) {
         // Parse Sms to get which type it is
-        type = getType();
+        SmsParserType type = getType();
         logViewModelReference.get().w(
                 String.format(
                         Locale.GERMANY,
-                        "Detected Type %d (%s)", type.ordinal(), type.name())
+                        "Detected Type %d (%s)", type.smsType.ordinal(), type.smsType.name())
         );
 
-        // Update the status entries for the status db and the user preferences
-        SettingsList settings = getSettingList();
-
-        if (settings.size() > 0)
-            // add each status entry to the status viewModel ( -> database )
-            statusViewModelReference.get().insert(settings);
-        else
-            logViewModelReference.get().e("Could not parse SMS: " + sms.getBody());
+        // add each status entry to the status viewModel ( -> database )
+        statusViewModelReference.get().insert(type);
 
         return true;
     }
@@ -86,6 +62,10 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
     protected void onPostExecute(Boolean isDatabaseUpdated) {
         if (isDatabaseUpdated)
             smsViewModelReference.get().markParsed(sms);
+    }
+
+    public Sms getSms() {
+        return sms;
     }
 
     // MATCHERS
@@ -151,114 +131,52 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
         lowBatteryMatcher = lowBatteryPattern.matcher(smsText);
     }
 
-    private SMS_TYPE getType() {
-        SMS_TYPE type = SMS_TYPE.UNDEFINED;
-
+    public SmsParserType getType() {
         if (positionMatcher.find(0) && statusBatteryStatusMatcher.find(0))
-            type = SMS_TYPE.POSITION;
+            return new Position(this);
         else if (statusWarningNumberMatcher.find(0) && statusIntervalMatcher.find(0) &&
                 statusWifiStatusMatcher.find(0) && statusBatteryStatusMatcher.find(0))
-            type = SMS_TYPE._STATUS;
+            return new de.bikebean.app.db.type.types.sms_parser_types.Status(this, null);
         else if (statusIntervalMatcher.find(0) && statusWifiStatusMatcher.find(0) &&
-                statusBatteryStatusMatcher.find(0)) {
-            logViewModelReference.get().w("Warningnumber is not set!");
-            type = SMS_TYPE._STATUS;
-        } else if (wifiStatusOnMatcher.find(0) && statusBatteryStatusMatcher.find(0))
-            type = SMS_TYPE.WIFI_ON;
+                statusBatteryStatusMatcher.find(0))
+            return new de.bikebean.app.db.type.types.sms_parser_types.Status(this, logViewModelReference);
+        else if (wifiStatusOnMatcher.find(0) && statusBatteryStatusMatcher.find(0))
+            return new WifiOn(this);
         else if (wifiStatusOffMatcher.find(0) && statusBatteryStatusMatcher.find(0))
-            type = SMS_TYPE.WIFI_OFF;
+            return new WifiOff(this);
         else if (warningNumberMatcher.find(0) && statusBatteryStatusMatcher.find(0))
-            type = SMS_TYPE.WARNING_NUMBER;
+            return new WarningNumber(this);
         else if (positionMatcher.find(0))
-            type = SMS_TYPE.CELL_TOWERS;
+            return new CellTowers(this);
         else if (wifiMatcher.find(0) && batteryMatcher.find(0))
-            type = SMS_TYPE.WIFI_LIST;
+            return new WifiList(this);
         else if (noWifiMatcher.find(0))
-            type = SMS_TYPE.NO_WIFI_LIST;
+            return new NoWifiList(this);
         else if (intervalChangedMatcher.find(0) && statusBatteryStatusMatcher.find(0))
-            type = SMS_TYPE.INT;
+            return new Interval(this);
         else if (lowBatteryMatcher.find(0))
-            type = SMS_TYPE.LOW_BATTERY;
-
-        return type;
-    }
-
-    public SettingsList getSettingList() {
-        SettingsList settings = new SettingsList();
-
-        // add entries based on sms type
-        switch (type) {
-            case POSITION:
-                break;
-            case _STATUS:
-                settings._add(new WarningNumber(getStatusWarningNumber(), sms))
-                        ._add(new Interval(getStatusInterval(), sms))
-                        ._add(new Wifi(getStatusWifi(), sms))
-                        ._add(new Battery(getStatusBattery(), sms))
-                        ._add(new de.bikebean.app.db.settings.settings.Status(0.0, sms));
-                break;
-            case WIFI_ON:
-                settings._add(new Battery(getStatusBattery(), sms))
-                        ._add(new Wifi(true, sms))
-                        ._add(new de.bikebean.app.db.settings.settings.Status(0.0, sms));
-                break;
-            case WIFI_OFF:
-                settings._add(new Battery(getStatusBattery(), sms))
-                        ._add(new Wifi(false, sms))
-                        ._add(new de.bikebean.app.db.settings.settings.Status(0.0, sms));
-                break;
-            case WARNING_NUMBER:
-                settings._add(new Battery(getStatusBattery(), sms))
-                        ._add(new WarningNumber(getWarningNumber(), sms))
-                        ._add(new de.bikebean.app.db.settings.settings.Status(0.0, sms));
-                break;
-            case INT:
-                settings._add(new Battery(getStatusBattery(), sms))
-                        ._add(new Interval(getInterval(), sms))
-                        ._add(new de.bikebean.app.db.settings.settings.Status(0.0, sms));
-                break;
-            case CELL_TOWERS:
-                // no battery entry in this special case
-                settings._add(new CellTowers(getWappCellTowers(), sms))
-                        ._add(new Wapp(State.WAPP_CELL_TOWERS, sms));
-                break;
-            case WIFI_LIST:
-                // battery value is encoded differently in this case
-                settings._add(new Battery(getBattery(), sms))
-                        ._add(new WifiAccessPoints(getWappWifi(), sms))
-                        ._add(new Wapp(State.WAPP_WIFI_ACCESS_POINTS, sms));
-                break;
-            case NO_WIFI_LIST:
-                // battery value is encoded differently in this case
-                settings._add(new Battery(getBatteryNoWifi(), sms))
-                        ._add(new WifiAccessPoints("", sms))
-                        ._add(new Wapp(State.WAPP_WIFI_ACCESS_POINTS, sms));
-                break;
-            case LOW_BATTERY:
-                settings._add(new LowBattery(getLowBattery(), sms));
-                break;
-        }
-
-        return settings;
+            return new LowBattery(this);
+        else
+            return new Undefined(this, logViewModelReference);
     }
 
     /*
     Get results of Sms Parser
     */
-    private String getStatusWarningNumber() {
+    public String getStatusWarningNumber() {
         return getMatcherResult(statusWarningNumberMatcher);
     }
 
-    private int getStatusInterval() {
+    public int getStatusInterval() {
         return Integer.parseInt(getMatcherResult(statusIntervalMatcher));
     }
 
-    private boolean getStatusWifi() {
+    public boolean getStatusWifi() {
         String result = getMatcherResult(statusWifiStatusMatcher);
         return result.equals("on");
     }
 
-    private double getStatusBattery() {
+    public double getStatusBattery() {
         String result = getMatcherResult(statusBatteryStatusMatcher);
 
         if (!result.isEmpty())
@@ -266,11 +184,11 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
         else return 0.0;
     }
 
-    private String getWarningNumber() {
+    public String getWarningNumber() {
         return getMatcherResult(warningNumberMatcher);
     }
 
-    private String getWappCellTowers() {
+    public String getWappCellTowers() {
         StringBuilder result = new StringBuilder();
         positionMatcher.reset();
 
@@ -282,7 +200,7 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
         return result.toString();
     }
 
-    private String getWappWifi() {
+    public String getWappWifiAccessPoints() {
         StringBuilder result = new StringBuilder();
         wifiMatcher.reset();
 
@@ -294,7 +212,7 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
         return result.toString();
     }
 
-    private double getBattery() {
+    public double getBattery() {
         String result = "";
         batteryMatcher.reset();
 
@@ -306,7 +224,7 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
         return Double.parseDouble(result);
     }
 
-    private double getBatteryNoWifi() {
+    public double getBatteryNoWifi() {
         String result = getMatcherResult(noWifiMatcher);
 
         if (!result.isEmpty())
@@ -314,7 +232,7 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
         else return 0.0;
     }
 
-    private double getLowBattery() {
+    public double getLowBattery() {
         String result = getMatcherResult(lowBatteryMatcher);
 
         if (!result.isEmpty())
@@ -322,11 +240,11 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
         else return 0.0;
     }
 
-    private int getInterval() {
+    public int getInterval() {
         return Integer.parseInt(getMatcherResult(intervalChangedMatcher));
     }
 
-    private String getMatcherResult(Matcher m) {
+    private String getMatcherResult(@NonNull Matcher m) {
         int count = 0;
         String result = "";
         m.reset();

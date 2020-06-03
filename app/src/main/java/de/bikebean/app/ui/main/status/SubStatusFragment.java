@@ -109,8 +109,7 @@ public abstract class SubStatusFragment extends Fragment {
                         break;
                     case LAT: // And
                     case LNG: // And
-                    case ACC:
-                        break;
+                    case ACC: // And
                     case LOCATION:
                         setLocationElementsUnset();
                         break;

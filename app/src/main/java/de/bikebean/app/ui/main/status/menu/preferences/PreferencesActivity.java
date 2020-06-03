@@ -20,6 +20,7 @@ import java.util.Objects;
 
 import de.bikebean.app.R;
 import de.bikebean.app.db.BikeBeanRoomDatabase;
+import de.bikebean.app.db.type.types.Initial;
 import de.bikebean.app.ui.main.status.StateViewModel;
 import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
 import de.bikebean.app.ui.main.status.menu.sms_history.SmsViewModel;
@@ -110,7 +111,7 @@ public class PreferencesActivity extends AppCompatActivity {
         void resetAll(String address) {
             // reset DB and repopulate it
             BikeBeanRoomDatabase.resetAll();
-            stateViewModel.insertInitialStates(ctx);
+            stateViewModel.insert(new Initial());
             smsViewModel.fetchSmsSync(ctx, stateViewModel, logViewModel, address);
         }
 

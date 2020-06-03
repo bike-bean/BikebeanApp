@@ -17,6 +17,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
 import de.bikebean.app.R;
+import de.bikebean.app.db.type.types.Initial;
 import de.bikebean.app.ui.utils.Utils;
 import de.bikebean.app.ui.utils.PermissionsRationaleDialog;
 import de.bikebean.app.ui.main.status.StateViewModel;
@@ -53,7 +54,7 @@ public class InitialConfigurationActivity extends AppCompatActivity {
 
         continueButton.setOnClickListener(v -> onButtonClicked());
 
-        stateViewModel.insertInitialStates(getApplicationContext());
+        stateViewModel.insert(new Initial());
     }
 
     @Override

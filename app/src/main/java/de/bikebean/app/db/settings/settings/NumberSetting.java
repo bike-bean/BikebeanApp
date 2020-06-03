@@ -10,45 +10,46 @@ public abstract class NumberSetting extends Setting {
 
     public abstract static class RawNumberSettings {}
 
-    private static final C_LIST_ADD_TYPE cListAddType = C_LIST_ADD_TYPE.ADD_TO_LIST;
+    public abstract List<? extends RawNumberSettings> getList();
+    public abstract int getNumber();
+    public abstract State getNumberState();
 
+    private final State state;
+    protected final String mWappString;
 
-    protected int number;
-    protected String[] stringArrayWapp;
+    protected NumberSetting(String wappString, Sms sms, State.KEY key) {
+        super(sms, key);
 
-    private final State numberState;
+        mWappString = wappString;
 
-    protected NumberSetting(Sms sms, State.KEY key, State.KEY numberKey, String string) {
-        super(sms, key, STATE_TYPE.CONFIRMED_LONG, cListAddType);
-
-        initList();
-        parseSplitString(string);
-        parseNumber();
-        parse(string);
-
-        numberState = new State(
-                getDate(), numberKey,
-                (double) number, "",
+        this.state = new State(
+                getDate(), key, 0.0, get(),
                 State.STATUS.CONFIRMED, getId()
         );
     }
 
-    public NumberSetting(State.KEY key) {
-        super(new Sms(), key, STATE_TYPE.UNSET_LONG, cListAddType);
-        numberState = null;
+    public NumberSetting(String wappString, State.KEY key) {
+        super(new Sms(), key);
+
+        mWappString = wappString;
+        this.state = new State(
+                getDate(), key, 0.0, get(),
+                State.STATUS.UNSET, getId()
+        );
     }
 
-    protected abstract void initList();
-    protected abstract void parseSplitString(String string);
-    protected abstract void parseNumber();
-    protected abstract void parse(String string);
-    public abstract List<? extends RawNumberSettings> getList();
-
-    public int getNumber() {
-        return number;
+    @Override
+    public final String get() {
+        return mWappString;
     }
 
-    public State getNumberState() {
-        return numberState;
+    @Override
+    public final State getState() {
+        return state;
+    }
+
+    @Override
+    public final ConversationListAdder getConversationListAdder() {
+        return super::addToList;
     }
 }

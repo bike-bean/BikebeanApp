@@ -173,7 +173,8 @@ public class Wifi_localizationFragment extends Fragment {
             act.unregisterReceiver(this);
 
             WifiAccessPoints wifiAccessPoints = new WifiAccessPoints(stateViewModel.getWifiAccessPointsSync(), new Sms());
-            WifiAccessPoints.WifiAccessPointList wifiAccessPointsList_bikebean = wifiAccessPoints.getWifiAccessPoints();
+            WifiAccessPoints.WifiAccessPointList wifiAccessPointsList_bikebean =
+                    (WifiAccessPoints.WifiAccessPointList) wifiAccessPoints.getList();
 
             int counter_bikebean_wifi = 0;
             int counter_wifis = 0;

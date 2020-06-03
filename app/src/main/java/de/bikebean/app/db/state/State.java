@@ -149,12 +149,6 @@ public class State extends DatabaseEntity {
         this.mSmsId = 0;
     }
 
-    public boolean equals(State other) {
-        if (other != null)
-            return this.id == other.id;
-        else return false;
-    }
-
     public String getKey() {
         return this.mKey;
     }
@@ -179,6 +173,34 @@ public class State extends DatabaseEntity {
         return this.mSmsId;
     }
 
+    public boolean equalsId(State other) {
+        if (other != null)
+            return this.id == other.id;
+        else return false;
+    }
+
+    public boolean getIsWappCellTowers() {
+        return mValue == WAPP_CELL_TOWERS;
+    }
+
+    public boolean getIsWappWifiAccessPoints() {
+        return mValue == WAPP_WIFI_ACCESS_POINTS;
+    }
+
+    public boolean getIsNull() {
+        return equalsWhole((State) getNullType());
+    }
+
+    private boolean equalsWhole(State other) {
+        return (id == other.id &&
+                mValue.equals(other.mValue) &&
+                mTimestamp == other.mTimestamp &&
+                mKey.equals(other.mKey) &&
+                mLongValue.equals(other.mLongValue) &&
+                mState == other.mState &&
+                mSmsId == other.mSmsId);
+    }
+
     @Override
     public DatabaseEntity getNullType() {
         return new State();
@@ -188,15 +210,16 @@ public class State extends DatabaseEntity {
     public String createReportTitle() {
         String delimiter = "\t";
         return "ID" + delimiter + "Key" + delimiter + "Date" + delimiter +
-                "Value" + delimiter + "Long Value" + delimiter +
-                "State" + delimiter + "Sms ID" + "\n";
+                "Timestamp" + delimiter + "Value" + delimiter +
+                "Long Value" + delimiter + "State" + delimiter + "Sms ID" + "\n";
     }
 
     @Override
     public String createReport() {
         String delimiter = "\t";
         return id + delimiter + mKey + delimiter + Utils.convertToTimeLog(mTimestamp) +
-                delimiter + mValue + delimiter + mLongValue.replace("\n", "//") +
-                delimiter + STATUS.getName(mState) + delimiter + mSmsId + "\n";
+                delimiter + mTimestamp + delimiter + mValue + delimiter +
+                mLongValue.replace("\n", "//") + delimiter +
+                STATUS.getName(mState) + delimiter + mSmsId + "\n";
     }
 }

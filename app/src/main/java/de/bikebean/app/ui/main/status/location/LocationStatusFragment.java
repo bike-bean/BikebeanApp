@@ -22,8 +22,9 @@ import java.util.List;
 import java.util.Locale;
 
 import de.bikebean.app.R;
-import de.bikebean.app.db.settings.settings.Wapp;
-import de.bikebean.app.ui.initialization.SettingsList;
+import de.bikebean.app.db.settings.settings.WappState;
+import de.bikebean.app.db.type.Type;
+import de.bikebean.app.ui.initialization.StateList;
 import de.bikebean.app.ui.main.map.MapFragmentViewModel;
 import de.bikebean.app.ui.utils.Utils;
 import de.bikebean.app.db.sms.Sms;
@@ -246,13 +247,12 @@ public class LocationStatusFragment extends SubStatusFragment {
     private final List<Integer> parsedSms = new ArrayList<>();
 
     private void updateWapp(List<State> states) {
-        Wapp wapp = new Wapp();
-
-        if (!wapp.getWappState(st, states))
+        WappState wappState = new WappState(st, new StateList(states));
+        if (wappState.getIsNull())
             return;
 
-        int id1 = wapp.getCellTowers().id;
-        int id2 = wapp.getWifiAccessPoints().id;
+        int id1 = wappState.getCellTowers().id;
+        int id2 = wappState.getWifiAccessPoints().id;
 
         if (parsedSms.contains(id1) || parsedSms.contains(id2))
             return;
@@ -261,16 +261,15 @@ public class LocationStatusFragment extends SubStatusFragment {
         parsedSms.add(id2);
 
         new LocationUpdater(
-                requireContext(), st, lv,
-                sm.getSmsByIdSync(wapp.getSmsId()),
-                this::updateLatLngAcc, wapp
+                requireContext(), st, lv, sm,
+                this::updateLatLngAcc, wappState
         ).execute();
     }
 
-    private void updateLatLngAcc(Wapp wapp, SettingsList settings, Sms sms) {
+    private void updateLatLngAcc(WappState wappState, Type type, Sms sms) {
         sm.markParsed(sms);
-        st.confirmWapp(wapp);
-        st.insert(settings);
+        st.confirmWapp(wappState);
+        st.insert(type);
     }
 
     private void navigateToNext(View v) {

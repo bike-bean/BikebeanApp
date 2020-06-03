@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
-import de.bikebean.app.db.settings.settings.Wapp;
+import de.bikebean.app.db.settings.settings.WappState;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.main.status.StateViewModel;
@@ -65,8 +65,8 @@ public class LocationStateViewModel extends StateViewModel {
         return mLocation;
     }
 
-    void confirmWapp(Wapp wapp) {
-        mRepository.confirmWapp(wapp);
+    void confirmWapp(WappState wappState) {
+        mRepository.confirmWapp(wappState);
     }
 
     public State getConfirmedLocationSync(State state) {
