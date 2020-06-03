@@ -154,30 +154,30 @@ public class SmsParser extends AsyncTask<String, Void, Boolean> {
     private SMS_TYPE getType() {
         SMS_TYPE type = SMS_TYPE.UNDEFINED;
 
-        if (positionMatcher.find() && statusBatteryStatusMatcher.find())
+        if (positionMatcher.find(0) && statusBatteryStatusMatcher.find(0))
             type = SMS_TYPE.POSITION;
-        else if (statusWarningNumberMatcher.find() && statusIntervalMatcher.find() &&
-                statusWifiStatusMatcher.find() && statusBatteryStatusMatcher.find())
+        else if (statusWarningNumberMatcher.find(0) && statusIntervalMatcher.find(0) &&
+                statusWifiStatusMatcher.find(0) && statusBatteryStatusMatcher.find(0))
             type = SMS_TYPE._STATUS;
-        else if (statusIntervalMatcher.find() && statusWifiStatusMatcher.find() &&
-                statusBatteryStatusMatcher.find()) {
+        else if (statusIntervalMatcher.find(0) && statusWifiStatusMatcher.find(0) &&
+                statusBatteryStatusMatcher.find(0)) {
             logViewModelReference.get().w("Warningnumber is not set!");
             type = SMS_TYPE._STATUS;
-        } else if (wifiStatusOnMatcher.find() && statusBatteryStatusMatcher.find())
+        } else if (wifiStatusOnMatcher.find(0) && statusBatteryStatusMatcher.find(0))
             type = SMS_TYPE.WIFI_ON;
-        else if (wifiStatusOffMatcher.find() && statusBatteryStatusMatcher.find())
+        else if (wifiStatusOffMatcher.find(0) && statusBatteryStatusMatcher.find(0))
             type = SMS_TYPE.WIFI_OFF;
-        else if (warningNumberMatcher.find() && statusBatteryStatusMatcher.find())
+        else if (warningNumberMatcher.find(0) && statusBatteryStatusMatcher.find(0))
             type = SMS_TYPE.WARNING_NUMBER;
-        else if (positionMatcher.find())
+        else if (positionMatcher.find(0))
             type = SMS_TYPE.CELL_TOWERS;
-        else if (wifiMatcher.find() && batteryMatcher.find())
+        else if (wifiMatcher.find(0) && batteryMatcher.find(0))
             type = SMS_TYPE.WIFI_LIST;
-        else if (noWifiMatcher.find())
+        else if (noWifiMatcher.find(0))
             type = SMS_TYPE.NO_WIFI_LIST;
-        else if (intervalChangedMatcher.find() && statusBatteryStatusMatcher.find())
+        else if (intervalChangedMatcher.find(0) && statusBatteryStatusMatcher.find(0))
             type = SMS_TYPE.INT;
-        else if (lowBatteryMatcher.find())
+        else if (lowBatteryMatcher.find(0))
             type = SMS_TYPE.LOW_BATTERY;
 
         return type;
