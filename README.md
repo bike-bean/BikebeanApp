@@ -21,12 +21,12 @@ See [Design Doc](doc/Doc.md).
 <!-- https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png -->
 
 Alternatively, you can download a prebuilt version (apk) in the
-[release](https://github.com/Ludwigmair1986/BikebeanApp/releases) section.
+[release](https://github.com/bike-bean/BikebeanApp/releases) section.
 
 ## Todos
 
-- Initial Release (must-have's): See [Initial Release Board](https://github.com/Ludwigmair1986/BikebeanApp/projects/2)
-- Generic (nice-to-have's): See [App Progress Board](https://github.com/Ludwigmair1986/BikebeanApp/projects/1).
+- Initial Release (must-have's): See [Initial Release Board](https://github.com/bike-bean/BikebeanApp/projects/2)
+- Generic (nice-to-have's): See [App Progress Board](https://github.com/bike-bean/BikebeanApp/projects/1).
 
 ## References
 
