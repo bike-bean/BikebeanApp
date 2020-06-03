@@ -10,30 +10,32 @@ public abstract class NumberSetting extends Setting {
 
     public abstract static class RawNumberSettings {}
 
+    private static final C_LIST_ADD_TYPE cListAddType = C_LIST_ADD_TYPE.ADD_TO_LIST;
+
+
     protected int number;
     protected String[] stringArrayWapp;
 
-    private State.KEY numberKey;
-    private State numberState;
+    private final State numberState;
 
     protected NumberSetting(Sms sms, State.KEY key, State.KEY numberKey, String string) {
-        super(sms, key);
-        conversationListAdder = super::addToList;
-        stateGetter = super::getStateConfirmedLong;
+        super(sms, key, STATE_TYPE.CONFIRMED_LONG, cListAddType);
 
-        this.numberKey = numberKey;
         initList();
         parseSplitString(string);
         parseNumber();
         parse(string);
 
-        setNumberState();
+        numberState = new State(
+                getDate(), numberKey,
+                (double) number, "",
+                State.STATUS.CONFIRMED, getId()
+        );
     }
 
     public NumberSetting(State.KEY key) {
-        super(new Sms(), key);
-        conversationListAdder = super::addToList;
-        stateGetter = super::getStateUnsetLong;
+        super(new Sms(), key, STATE_TYPE.UNSET_LONG, cListAddType);
+        numberState = null;
     }
 
     protected abstract void initList();
@@ -44,14 +46,6 @@ public abstract class NumberSetting extends Setting {
 
     public int getNumber() {
         return number;
-    }
-
-    private void setNumberState() {
-        numberState = new State(
-                getDate(), numberKey,
-                (double) number, "",
-                State.STATUS.CONFIRMED, getId()
-        );
     }
 
     public State getNumberState() {

@@ -30,6 +30,10 @@ public class Utils {
         SMS, MAPS
     }
 
+    public interface RationaleShower {
+        void showRationaleDialog();
+    }
+
     private static final Map<Integer, Double> batteryRuntimeByInterval =
             new HashMap<Integer, Double>() {{
                 put(1, 175.0);
@@ -45,10 +49,6 @@ public class Utils {
                 put(PERMISSION_KEY.SMS, StatusFragment.smsPermissions);
                 put(PERMISSION_KEY.MAPS, MapFragment.mapsPermissions);
     }};
-
-    public interface RationaleShower {
-        void showRationaleDialog();
-    }
 
     public static boolean getPermissions(Activity activity, PERMISSION_KEY p, RationaleShower r) {
         String[] permissions = permissionMap.get(p);

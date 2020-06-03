@@ -18,7 +18,7 @@ import de.bikebean.app.ui.main.status.menu.history.HistoryAdapter;
 
 class BatteryHistoryAdapter extends HistoryAdapter {
 
-    class BatteryHistoryViewHolder extends HistoryViewHolder {
+    static class BatteryHistoryViewHolder extends HistoryViewHolder {
         private final TextView batteryValue, dateTimeText, smsIdText;
 
         BatteryHistoryViewHolder(View v) {

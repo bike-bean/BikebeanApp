@@ -21,3 +21,5 @@ keys.properties
 secrets.xml
 google-services.json
 Makefile
+release
+

@@ -6,13 +6,13 @@ import de.bikebean.app.db.state.State;
 
 public class WarningNumber extends Setting {
 
+    private static final State.KEY key = State.KEY.WARNING_NUMBER;
+    private static final C_LIST_ADD_TYPE cListAddType = C_LIST_ADD_TYPE.REPLACE_IF_NEWER;
+
     private final String warningNumber;
 
     public WarningNumber(String warningNumber, Sms sms) {
-        super(sms, State.KEY.WARNING_NUMBER);
-        conversationListAdder = super::replaceIfNewer;
-        stateGetter = super::getStateConfirmedLong;
-
+        super(sms, key, STATE_TYPE.CONFIRMED_LONG, cListAddType);
         this.warningNumber = warningNumber;
     }
 

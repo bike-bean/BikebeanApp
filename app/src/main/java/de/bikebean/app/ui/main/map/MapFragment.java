@@ -110,16 +110,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         act.getOnBackPressedDispatcher().addCallback(
                 getViewLifecycleOwner(),
                 new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                if (!showCurrentPosition)
-                    Navigation.findNavController(requireView())
-                            .navigate(R.id.history_action);
-                else
-                    Navigation.findNavController(requireView())
-                            .navigate(R.id.back_action);
-            }
-        });
+                    @Override
+                    public void handleOnBackPressed() {
+                        if (!showCurrentPosition)
+                            Navigation.findNavController(requireView())
+                                    .navigate(R.id.history_action);
+                        else
+                            Navigation.findNavController(requireView())
+                                    .navigate(R.id.back_action);
+                    }
+                });
 
         bikeName = PreferenceManager.getDefaultSharedPreferences(act)
                 .getString("name", "bike");
