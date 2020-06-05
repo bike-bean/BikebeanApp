@@ -44,10 +44,6 @@ public class SmsViewModel extends AndroidViewModel {
         return mAllIds;
     }
 
-    public int getInboxCount() {
-        return mRepository.getInboxCount();
-    }
-
     public List<Sms> getSmsById(int id) {
         return mRepository.getSmsById(id);
     }
@@ -58,10 +54,10 @@ public class SmsViewModel extends AndroidViewModel {
         return (Sms) sms.getDbEntitySync(mRepository::getSmsById, "", id);
     }
 
-    public int getLatestId(LogViewModel lv) {
+    public int getLatestId(LogViewModel lv, int type) {
         MutableInt id = new MutableInt();
 
-        new Thread(() -> id.set(mRepository.getLatestId(lv))).start();
+        new Thread(() -> id.set(mRepository.getLatestId(lv, type))).start();
 
         return id.waitForSet();
     }
@@ -88,10 +84,9 @@ public class SmsViewModel extends AndroidViewModel {
         }
     }
 
-    public void fetchSms(Context context, StateViewModel st, LogViewModel lv,
-                         String address, String timestamp) {
+    public void fetchSms(Context context, StateViewModel st, LogViewModel lv, String address) {
         // load the sms list in background
-        new SmsLoader(context, this, st, lv).execute(address, timestamp);
+        new SmsLoader(context, this, st, lv).execute(address);
     }
 
     public void fetchSmsSync(Context context, StateViewModel st, LogViewModel lv, String address) {

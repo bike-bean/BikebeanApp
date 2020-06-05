@@ -3,13 +3,13 @@ package de.bikebean.app.ui.utils.sms.listen;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
 
+import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 
-import de.bikebean.app.ui.main.status.StateViewModel;
+import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
 import de.bikebean.app.ui.main.status.menu.sms_history.SmsViewModel;
 
@@ -20,45 +20,37 @@ public class SmsListener extends BroadcastReceiver {
      This class listens for new SMS and calls
      our viewModel to update the SMS in background.
      */
-    private static SmsViewModel mSmsViewModel;
-    private static StateViewModel mStateViewModel;
-    private static LogViewModel mLogViewModel;
+    private static SmsViewModel sm;
+    private static LogViewModel lv;
 
-    public static void setViewModels(StateViewModel stateViewModel, SmsViewModel smsViewModel,
-                                     LogViewModel logViewModel) {
-        mSmsViewModel = smsViewModel;
-        mStateViewModel = stateViewModel;
-        mLogViewModel = logViewModel;
+    public static void setViewModels(SmsViewModel smsViewModel, LogViewModel logViewModel) {
+        sm = smsViewModel;
+        lv = logViewModel;
     }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
-        mLogViewModel.d("New SMS received...");
+    public void onReceive(Context ctx, @NonNull Intent intent) {
+        if (lv == null || sm == null)
+            return;
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        final String address = sharedPreferences.getString("number", "");
+        lv.d("Received something...");
+        if (intent.getAction() == null
+                || !intent.getAction().equals(Telephony.Sms.Intents.SMS_RECEIVED_ACTION))
+            return;
 
-        if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION.equals(intent.getAction())) {
-            boolean isMessageFromBikeBean = false;
+        lv.d("New SMS received...");
+        final String address = PreferenceManager.getDefaultSharedPreferences(ctx)
+                .getString("number", "");
 
-            for (SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
-                String sender = smsMessage.getOriginatingAddress();
+        for (SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
+            String sender = smsMessage.getOriginatingAddress();
 
-                if (sender != null && sender.equals(address)) {
-                    isMessageFromBikeBean = true;
-                    break;
-                } else if (sender != null)
-                    mLogViewModel.d("Sender is not ours. (" + sender + ")");
-            }
+            Sms sms = new Sms(sm.getLatestId(lv, Telephony.Sms.MESSAGE_TYPE_INBOX), smsMessage);
 
-            if (isMessageFromBikeBean)
-                mSmsViewModel.fetchSms(
-                        context,
-                        mStateViewModel,
-                        mLogViewModel,
-                        address,
-                        "true"
-                );
+            if (sender == null || !sender.equals(address))
+                lv.d("Sender is not ours. (" + sender + ")");
+            else
+                sm.insert(sms);
         }
     }
 }

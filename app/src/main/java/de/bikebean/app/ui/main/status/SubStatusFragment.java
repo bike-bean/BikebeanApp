@@ -1,6 +1,7 @@
 package de.bikebean.app.ui.main.status;
 
 import android.os.Bundle;
+import android.provider.Telephony;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -54,7 +55,7 @@ public abstract class SubStatusFragment extends Fragment {
                     Snackbar.LENGTH_LONG
             ).show();
 
-            sm.insert(new Sms(sm.getLatestId(lv), address, message));
+            sm.insert(new Sms(sm.getLatestId(lv, Telephony.Sms.MESSAGE_TYPE_SENT), address, message));
             st.insert(updates);
         } else {
             Snackbar.make(requireView(), "Vorgang abgebrochen.", Snackbar.LENGTH_LONG).show();

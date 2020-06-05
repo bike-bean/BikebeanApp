@@ -34,30 +34,12 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
     @Override
     public Void doInBackground(@NonNull String... args) {
         String phoneNumber = args[0];
-        String waitForNewMessage = args[1];
         String[] argList = {phoneNumber};
 
-        ContentResolver contentResolver = contextWeakReference.get().getContentResolver();
-        Cursor inbox = getInbox(contentResolver, argList);
-
-        int size = smsViewModel.getInboxCount();
-
-        if (!waitForNewMessage.isEmpty()) {
-            // only search for the newly incoming message
-            // It may take a while until it can be retrieved from the content provider
-            logViewModel.d("Parsing inbox for new message...");
-
-            while (inbox.getCount() <= size) {
-                inbox = getInbox(contentResolver, argList);
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        traverseInboxAndClose(inbox);
+        traverseInboxAndClose(getInbox(
+                contextWeakReference.get().getContentResolver(),
+                argList)
+        );
 
         return null;
     }

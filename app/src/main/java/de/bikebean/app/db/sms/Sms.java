@@ -2,6 +2,7 @@ package de.bikebean.app.db.sms;
 
 import android.database.Cursor;
 import android.provider.Telephony;
+import android.telephony.SmsMessage;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
@@ -91,7 +92,7 @@ public class Sms extends DatabaseEntity {
             @NonNull String address,
             @NonNull String body,
             int type,
-            STATUS state,
+            @NonNull STATUS state,
             @NonNull String date,
             long timestamp
     ) {
@@ -124,7 +125,7 @@ public class Sms extends DatabaseEntity {
 
     @Ignore
     public Sms(
-            State state
+            @NonNull State state
     ) {
         this.mId = state.getSmsId();
         this.mAddress = "";
@@ -138,8 +139,8 @@ public class Sms extends DatabaseEntity {
     // with cursor
     @Ignore
     public Sms(
-            Cursor inbox,
-            STATUS smsState
+            @NonNull Cursor inbox,
+            @NonNull STATUS smsState
     ) {
         String id = inbox.getString(inbox.getColumnIndexOrThrow("_id"));
         this.mId = Integer.parseInt(id);
@@ -154,6 +155,27 @@ public class Sms extends DatabaseEntity {
 
         String date = inbox.getString(inbox.getColumnIndexOrThrow("date"));
         this.mTimestamp = Long.parseLong(date);
+        this.mDate = Utils.convertToTime(mTimestamp);
+    }
+
+    // with SmsMessage from Intent
+    @Ignore
+    public Sms(
+            int id,
+            @NonNull SmsMessage smsMessage
+    ) {
+        this.mId = id + 1;
+        this.mType = Telephony.Sms.MESSAGE_TYPE_INBOX;
+        this.mState = STATUS.NEW.ordinal();
+
+        String address = smsMessage.getOriginatingAddress();
+        if (address != null)
+            this.mAddress = address;
+        else
+            this.mAddress = "";
+        this.mBody = smsMessage.getMessageBody();
+
+        this.mTimestamp = smsMessage.getTimestampMillis();
         this.mDate = Utils.convertToTime(mTimestamp);
     }
 

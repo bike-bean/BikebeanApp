@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
         smsViewModel.getNewIncoming().observe(this, this::handleNewIncomingMessages);
 
-        SmsListener.setViewModels(stateViewModel, smsViewModel, logViewModel);
+        SmsListener.setViewModels(smsViewModel, logViewModel);
     }
 
     private void setupNavViewAndActionBar() {

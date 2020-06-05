@@ -199,7 +199,7 @@ public class StatusFragment extends Fragment {
 
         smsViewModel.fetchSms(ctx, stateViewModel, logViewModel,
                 PreferenceManager.getDefaultSharedPreferences(ctx)
-                        .getString("number", ""), ""
+                        .getString("number", "")
         );
     }
 }

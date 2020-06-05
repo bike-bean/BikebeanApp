@@ -59,8 +59,8 @@ class SmsRepository {
             return mSmsDao.getSmsById(id);
     }
 
-    int getLatestId(LogViewModel lv) {
-        List<Sms> l = mSmsDao.getLatestId(Telephony.Sms.MESSAGE_TYPE_SENT);
+    int getLatestId(LogViewModel lv, int type) {
+        List<Sms> l = mSmsDao.getLatestId(type);
 
         if (l.size() > 0) {
             return l.get(0).getId();
