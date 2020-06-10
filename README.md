@@ -16,9 +16,7 @@ See [Design Doc](doc/Doc.md).
 
 ## Where to get
 
-Release on [F-Droid](https://f-droid.org/de/) is planned. 
-
-Alternatively, you can download a prebuilt version (apk) in the
+You can download a prebuilt version (apk) in the
 [release](https://github.com/bike-bean/BikebeanApp/releases) section.
 
 ## Todos
