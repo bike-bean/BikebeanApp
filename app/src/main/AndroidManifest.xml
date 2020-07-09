@@ -15,6 +15,7 @@
     <uses-permission android:name="android.permission.SEND_SMS" /> <!-- dangerous -->
     <uses-permission android:name="android.permission.READ_SMS" /> <!-- dangerous -->
     <uses-permission android:name="android.permission.RECEIVE_SMS" /> <!-- dangerous -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- dangerous, needed on Android 8.0 only -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- dangerous -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- dangerous -->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" /> <!-- normal -->
