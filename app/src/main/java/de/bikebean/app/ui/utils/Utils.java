@@ -46,7 +46,7 @@ public class Utils {
 
     private static final Map<PERMISSION_KEY, String[]> permissionMap =
             new HashMap<PERMISSION_KEY, String[]>() {{
-                put(PERMISSION_KEY.SMS, StatusFragment.smsPermissions);
+                put(PERMISSION_KEY.SMS, StatusFragment.getSmsPermissions());
                 put(PERMISSION_KEY.MAPS, MapFragment.mapsPermissions);
     }};
 

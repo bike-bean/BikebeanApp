@@ -3,6 +3,7 @@ package de.bikebean.app.ui.main.status;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.LayoutInflater;
@@ -39,7 +40,22 @@ import de.bikebean.app.ui.main.status.settings.SettingsStatusFragment;
 
 public class StatusFragment extends Fragment {
 
-    public static final String[] smsPermissions = {
+    public static String[] getSmsPermissions() {
+        if (android.os.Build.VERSION.SDK_INT == Build.VERSION_CODES.O) {
+            return smsPermissionsAndroid8_0;
+        } else {
+            return smsPermissionsAndroidX_X;
+        }
+    }
+
+    private static final String[] smsPermissionsAndroid8_0 = {
+            android.Manifest.permission.READ_SMS,
+            android.Manifest.permission.SEND_SMS,
+            android.Manifest.permission.RECEIVE_SMS,
+            android.Manifest.permission.READ_PHONE_STATE
+    };
+
+    private static final String[] smsPermissionsAndroidX_X = {
             android.Manifest.permission.READ_SMS,
             android.Manifest.permission.SEND_SMS,
             android.Manifest.permission.RECEIVE_SMS
