@@ -13,12 +13,14 @@ import androidx.core.content.ContextCompat;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import de.bikebean.app.BuildConfig;
 import de.bikebean.app.R;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.main.map.MapFragment;
@@ -89,6 +91,19 @@ public class Utils {
         Date date = new Date(datetime);
         DateFormat formatter = new SimpleDateFormat("dd.MM HH:mm", Locale.GERMANY);
         return formatter.format(date);
+    }
+
+    public static String getVersionName() {
+        return BuildConfig.VERSION_NAME;
+    }
+
+    public static Date getDateFromUTCString(String UTCString) {
+        DateFormat df1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.GERMANY);
+        try {
+            return df1.parse(UTCString);
+        } catch (ParseException e) {
+            return null;
+        }
     }
 
     public static String estimateBatteryDays(State lastBatteryState, boolean isWifiOn, int interval) {

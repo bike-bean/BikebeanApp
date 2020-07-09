@@ -1,8 +1,11 @@
 package de.bikebean.app.ui.main.status.menu.preferences;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +27,10 @@ import de.bikebean.app.db.type.types.Initial;
 import de.bikebean.app.ui.main.status.StateViewModel;
 import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
 import de.bikebean.app.ui.main.status.menu.sms_history.SmsViewModel;
+import de.bikebean.app.ui.utils.Utils;
+import de.bikebean.app.ui.utils.VersionChecker;
+
+import static android.content.Intent.*;
 
 public class PreferencesActivity extends AppCompatActivity {
 
@@ -44,6 +51,11 @@ public class PreferencesActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        TextView versionName = findViewById(R.id.versionName);
+        String versionNameString = "Aktuelle Version: " + Utils.getVersionName();
+
+        versionName.setText(versionNameString);
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
@@ -106,6 +118,31 @@ public class PreferencesActivity extends AppCompatActivity {
                     return true;
                 });
             }
+
+            new VersionChecker(ctx, logViewModel, this::newerVersionHandler).execute();
+        }
+
+        void newerVersionHandler(String name, String url) {
+            new NewVersionDialog(requireActivity(),
+                    url, name,
+                    this::downloadNewVersion,
+                    this::cancelNewVersionDownload)
+                    .show(
+                            requireActivity().getSupportFragmentManager(),
+                            "newVersionDialog"
+                    );
+        }
+
+        void downloadNewVersion(String url) {
+            Uri webPage = Uri.parse(url);
+            Intent intent = new Intent(ACTION_VIEW, webPage);
+            if (intent.resolveActivity(requireActivity().getPackageManager()) != null) {
+                startActivity(intent);
+            }
+        }
+
+        void cancelNewVersionDownload() {
+            assert true;
         }
 
         void resetAll(String address) {
