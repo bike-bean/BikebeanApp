@@ -110,4 +110,10 @@
     <string name="gps_network_not_enabled">Dein Standort muss leider aktiviert sein um nach WLANs scannen zu können. (Google Anforderung)</string>
     <string name="send_log">Fehlerprotokoll senden</string>
 
+    <!-- VersionCheck -->
+    <string name="update_title">Update verfügbar</string>
+    <string name="update_text_1">Es ist eine neue Version der App verfügbar (</string>
+    <string name="update_text_2">). Möchten Sie sie herunterladen?</string>
+    <string name="continue_update">Herunterladen</string>
+    <string name="cancel_update">Jetzt nicht</string>
 </resources>
