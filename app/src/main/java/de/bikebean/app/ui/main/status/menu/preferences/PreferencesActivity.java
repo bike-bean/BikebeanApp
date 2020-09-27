@@ -19,8 +19,6 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.Objects;
-
 import de.bikebean.app.R;
 import de.bikebean.app.db.BikeBeanRoomDatabase;
 import de.bikebean.app.db.type.types.Initial;
@@ -74,8 +72,8 @@ public class PreferencesActivity extends AppCompatActivity {
             logViewModel = new ViewModelProvider(this).get(LogViewModel.class);
 
             // act and ctx
-            final FragmentActivity act = getActivity();
-            ctx = Objects.requireNonNull(act).getApplicationContext();
+            final FragmentActivity act = requireActivity();
+            ctx = act.getApplicationContext();
 
             String address = PreferenceManager.getDefaultSharedPreferences(ctx)
                     .getString("number", "");

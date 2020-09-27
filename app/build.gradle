@@ -7,8 +7,8 @@ android {
         applicationId "de.bikebean.app"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 8
-        versionName "0.11.7"
+        versionCode 9
+        versionName "0.11.8"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

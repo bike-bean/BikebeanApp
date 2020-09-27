@@ -94,11 +94,9 @@ public class VersionChecker extends AsyncTask<String, Void, Boolean> {
         if (appDate.equals(new Date(1)))
             return false;
 
-        for (Date date : dates)
-            if (appDate.before(date))
-                newDate = date;
-
-        if (newDate == null)
+        if (appDate.before(dates[0]))
+            newDate = dates[0];
+        else
             return false;
 
         try {
@@ -150,9 +148,25 @@ public class VersionChecker extends AsyncTask<String, Void, Boolean> {
         return null;
     }
 
+    private static final String APK_ALT_DL_URL = "https://bike-bean.de/software/";
+
     private String getUrl() throws JSONException {
         JSONArray assets = newRelease.getJSONArray("assets");
-        return assets.getJSONObject(0).getString("browser_download_url");
+
+        /* This URL points directly to the APK from GITHUB which is very convenient but MAY have
+           introduced a false positive virus report (probably due to suspicion of
+           APK side-loading which is of course bad, but not what we do)
+
+           Anyway, as this is not confirmed, just point to the Homepage URL for the time being,
+           until the virus report is clarified.
+         */
+        // return assets.getJSONObject(0).getString("browser_download_url");
+
+        /* Add useless check to make AndroidStudio quiet */
+        if (!assets.getJSONObject(0).getString("browser_download_url").equals(""))
+            return APK_ALT_DL_URL;
+        else
+            return "";
     }
 
     private String getName() throws JSONException {
