@@ -20,7 +20,6 @@
     <string name="wifi_switch_off_transition">Wird ausgeschaltet</string>
 
     <string name="warning_number_summary">Automatisch (%s)</string>
-    <string name="warning_number_default">Nicht gesetzt</string>
     <string name="warning_number_pending_text">Wird neu gesetzt</string>
 
     <string name="interval_switch_transition">Wird auf %dh umgestellt</string>
@@ -75,6 +74,8 @@
         SMS an Bike Bean gesendet um den Befehl zu übertragen.
         Dies kann Kosten des Netzbetreibers verursachen!</string>
     <string name="number_subtitle">Bitte mit Ländercode (z.B. +49 für Deutschland) eingeben"</string>
+    <string name="number_no_blanks">Nummer darf keine Leerzeichen enthalten,
+        Leerzeichen wurden automatisch gelöscht</string>
     <string name="number_error">Nummer darf nicht leer sein!</string>
     <string name="continue_send_sms">Senden</string>
     <string name="continue_reset">Zurücksetzen</string>
@@ -107,6 +108,7 @@
     <string name="phone_hint">+4912345678910</string>
     <string name="prompt_number">Bitte gib als erstes die Telefonnummer der Bike Bean ein:</string>
     <string name="scan_wifi">WLANs SCANNEN</string>
+    <string name="wifi_not_found">BIKEBEAN-WIFI WURDE NICHT GEFUNDEN</string>
     <string name="gps_network_not_enabled">Dein Standort muss leider aktiviert sein um nach WLANs scannen zu können. (Google Anforderung)</string>
     <string name="send_log">Fehlerprotokoll senden</string>
 
@@ -116,4 +118,5 @@
     <string name="update_text_2">). Möchten Sie sie herunterladen?</string>
     <string name="continue_update">Herunterladen</string>
     <string name="cancel_update">Jetzt nicht</string>
+    <string name="update_text">Update</string>
 </resources>

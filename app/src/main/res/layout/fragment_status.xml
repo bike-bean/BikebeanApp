@@ -38,7 +38,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/design_default_color_error"
-                    android:drawableStart="@drawable/ic_warning_white_24dp"
+                    app:drawableStartCompat="@drawable/ic_warning_white_24dp"
                     android:drawablePadding="@dimen/activity_horizontal_margin"
                     android:paddingStart="@dimen/fragment_horizontal_margin"
                     android:paddingTop="@dimen/fragment_horizontal_margin"

@@ -207,7 +207,6 @@ public class Wifi_localizationFragment extends Fragment {
             }
             if (counter_wifis == 0) {
                 arrayList.add("Keine relevanten WiFi-Access-Points in der Nähe gefunden");
-                adapter.notifyDataSetChanged();
             }
             else {
                 hashmap.put("VERGLEICH SIGNALSTÄRKEN:",-1);
@@ -219,11 +218,11 @@ public class Wifi_localizationFragment extends Fragment {
                 for (Object e : a) {
                     arrayList.add(((Map.Entry<String, Integer>) e).getKey());
                 }
-                adapter.notifyDataSetChanged();
             }
+            adapter.notifyDataSetChanged();
 
             if (counter_bikebean_wifi == 0) {
-                textView.setText("BIKEBEAN-WIFI WURDE NICHT GEFUNDEN");
+                textView.setText(R.string.wifi_not_found);
             }
         }
     };

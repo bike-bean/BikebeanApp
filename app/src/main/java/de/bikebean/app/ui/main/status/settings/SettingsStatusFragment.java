@@ -8,10 +8,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -39,7 +39,7 @@ public class SettingsStatusFragment extends SubStatusFragment {
     private Spinner intervalDropdown;
     private TextView intervalPendingStatus, intervalSummary, nextUpdateEstimation;
 
-    private Switch wlanSwitch;
+    private SwitchCompat wlanSwitch;
     private TextView wlanPendingStatus, wlanSummary;
 
     private TextView warningNumberPendingStatus, warningNumberSummary;

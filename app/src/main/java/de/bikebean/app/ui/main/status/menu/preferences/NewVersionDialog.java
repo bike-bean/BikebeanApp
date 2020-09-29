@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
 import de.bikebean.app.R;
+import de.bikebean.app.ui.utils.Release;
 
 public class NewVersionDialog extends DialogFragment {
 
@@ -17,8 +18,7 @@ public class NewVersionDialog extends DialogFragment {
     private final NewVersionDownloadHandler newVersionDownloadHandler;
     private final NewVersionDownloadCanceller newVersionDownloadCanceller;
 
-    private final String address;
-    private final String versionName;
+    private final Release release;
 
     public interface NewVersionDownloadHandler {
         void downloadNewVersion(String address);
@@ -28,7 +28,7 @@ public class NewVersionDialog extends DialogFragment {
         void cancel();
     }
 
-    NewVersionDialog(Activity act, String address, String versionName,
+    NewVersionDialog(Activity act, Release release,
                      NewVersionDownloadHandler r1,
                      NewVersionDownloadCanceller r2) {
         this.act = act;
@@ -36,8 +36,7 @@ public class NewVersionDialog extends DialogFragment {
         this.newVersionDownloadHandler = r1;
         this.newVersionDownloadCanceller = r2;
 
-        this.address = address;
-        this.versionName = versionName;
+        this.release = release;
     }
 
     @NonNull
@@ -46,14 +45,14 @@ public class NewVersionDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(act);
         String message = getString(
                 R.string.update_text_1) +
-                versionName +
+                release.getName() +
                 getString(R.string.update_text_2
                 );
 
         builder.setTitle(R.string.update_title)
                 .setMessage(message)
                 .setPositiveButton(R.string.continue_update, (dialog, id) ->
-                        newVersionDownloadHandler.downloadNewVersion(address))
+                        newVersionDownloadHandler.downloadNewVersion(release.getUrl()))
                 .setNegativeButton(R.string.cancel_update, (dialog, id) ->
                         newVersionDownloadCanceller.cancel());
 
