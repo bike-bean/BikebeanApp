@@ -75,6 +75,8 @@
         SMS an Bike Bean gesendet um den Befehl zu übertragen.
         Dies kann Kosten des Netzbetreibers verursachen!</string>
     <string name="number_subtitle">Bitte mit Ländercode (z.B. +49 für Deutschland) eingeben"</string>
+    <string name="number_no_blanks">Nummer darf keine Leerzeichen enthalten,
+        Leerzeichen wurden automatisch gelöscht</string>
     <string name="number_error">Nummer darf nicht leer sein!</string>
     <string name="continue_send_sms">Senden</string>
     <string name="continue_reset">Zurücksetzen</string>

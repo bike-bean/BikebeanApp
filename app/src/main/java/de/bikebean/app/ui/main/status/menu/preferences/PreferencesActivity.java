@@ -136,34 +136,13 @@ public class PreferencesActivity extends AppCompatActivity {
 
             // Preferences
             final EditTextPreference numberPreference = findPreference("number");
-            final Preference resetPreference = findPreference("reset");
-
             if (numberPreference != null) {
-                numberPreference.setOnBindEditTextListener(
-                        editText -> editText.setInputType(InputType.TYPE_CLASS_PHONE));
+                numberPreference.setOnBindEditTextListener(numberEditTextListener);
                 numberPreference.setDialogMessage(R.string.number_subtitle);
-                numberPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                    if (newValue.toString().isEmpty()) {
-                        Snackbar.make(
-                                requireView(),
-                                R.string.number_error,
-                                Snackbar.LENGTH_LONG
-                        ).show();
-                        return false;
-                    } else if (!newValue.toString().substring(0, 1).equals("+")) {
-                        Snackbar.make(
-                                requireView(),
-                                R.string.number_subtitle,
-                                Snackbar.LENGTH_LONG
-                        ).show();
-                        return false;
-                    } else {
-                        resetAll(newValue.toString());
-                        return true;
-                    }
-                });
+                numberPreference.setOnPreferenceChangeListener(numberChangeListener);
             }
 
+            final Preference resetPreference = findPreference("reset");
             if (resetPreference != null) {
                 resetPreference.setOnPreferenceClickListener(preference -> {
                     resetDialog.show(act.getSupportFragmentManager(), "resetDialog");
@@ -172,6 +151,40 @@ public class PreferencesActivity extends AppCompatActivity {
             }
         }
 
+        private final EditTextPreference.OnBindEditTextListener numberEditTextListener = text ->
+                text.setInputType(InputType.TYPE_CLASS_PHONE);
+
+        private final Preference.OnPreferenceChangeListener numberChangeListener =
+                (preference, newValue) -> {
+            if (newValue.toString().isEmpty()) {
+                Snackbar.make(
+                        requireView(),
+                        R.string.number_error,
+                        Snackbar.LENGTH_LONG
+                ).show();
+                return false;
+            } else if (!newValue.toString().substring(0, 1).equals("+")) {
+                Snackbar.make(
+                        requireView(),
+                        R.string.number_subtitle,
+                        Snackbar.LENGTH_LONG
+                ).show();
+                return false;
+            } else if (newValue.toString().contains(" ")) {
+                Snackbar.make(
+                        requireView(),
+                        R.string.number_no_blanks,
+                        Snackbar.LENGTH_LONG
+                ).show();
+
+                final EditTextPreference numberPreference = findPreference("number");
+                if (numberPreference != null)
+                    numberPreference.setText(newValue.toString().replace(" ", ""));
+
+                return false;
+            } else {
+                resetAll(newValue.toString());
+                return true;
             }
         };
 

@@ -27,7 +27,7 @@ public class WifiAccessPoints extends NumberSetting {
 
         private void parse(String[] stringArrayWapp) {
             for (String s : stringArrayWapp)
-                if (!s.equals("    ")) {
+                if (!s.equals("    ") && !s.equals("")) {
                     // Länge des Substrings ist Unterscheidungskriterium
                     WifiAccessPoint wap = new WifiAccessPoint();
                     wap.macAddress = s.substring(2);
