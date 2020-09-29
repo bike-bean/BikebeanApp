@@ -44,7 +44,7 @@
                 android:id="@+id/batteryValue"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
-                android:drawableStart="@drawable/ic_battery_unknown_black_24dp"
+                app:drawableStartCompat="@drawable/ic_battery_unknown_black_24dp"
                 android:textColor="@color/onSurface"
                 android:gravity="center"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"

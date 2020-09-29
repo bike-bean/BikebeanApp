@@ -1,6 +1,7 @@
 package de.bikebean.app.ui.main.map;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -137,6 +138,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    @SuppressLint("MissingPermission")
     private void setLocationEnabled() {
         mGoogleMap.setMyLocationEnabled(true);
     }

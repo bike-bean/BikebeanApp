@@ -20,7 +20,6 @@
     <string name="wifi_switch_off_transition">Wird ausgeschaltet</string>
 
     <string name="warning_number_summary">Automatisch (%s)</string>
-    <string name="warning_number_default">Nicht gesetzt</string>
     <string name="warning_number_pending_text">Wird neu gesetzt</string>
 
     <string name="interval_switch_transition">Wird auf %dh umgestellt</string>
@@ -109,6 +108,7 @@
     <string name="phone_hint">+4912345678910</string>
     <string name="prompt_number">Bitte gib als erstes die Telefonnummer der Bike Bean ein:</string>
     <string name="scan_wifi">WLANs SCANNEN</string>
+    <string name="wifi_not_found">BIKEBEAN-WIFI WURDE NICHT GEFUNDEN</string>
     <string name="gps_network_not_enabled">Dein Standort muss leider aktiviert sein um nach WLANs scannen zu können. (Google Anforderung)</string>
     <string name="send_log">Fehlerprotokoll senden</string>
 

@@ -120,7 +120,7 @@
                     android:layout_height="36dp"
                     android:background="@color/primaryColor"
                     android:contentDescription="@string/auf_karte_zeigen"
-                    android:drawableStart="@drawable/ic_map_white_24dp"
+                    app:drawableStartCompat="@drawable/ic_map_white_24dp"
                     android:drawablePadding="8dp"
                     android:fontFamily="sans-serif-medium"
                     android:gravity="center"
