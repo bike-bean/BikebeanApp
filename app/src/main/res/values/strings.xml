@@ -116,4 +116,5 @@
     <string name="update_text_2">). Möchten Sie sie herunterladen?</string>
     <string name="continue_update">Herunterladen</string>
     <string name="cancel_update">Jetzt nicht</string>
+    <string name="update_text">Update</string>
 </resources>

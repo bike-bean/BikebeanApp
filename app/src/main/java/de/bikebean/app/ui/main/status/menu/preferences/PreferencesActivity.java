@@ -5,12 +5,15 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
@@ -25,12 +28,16 @@ import de.bikebean.app.db.type.types.Initial;
 import de.bikebean.app.ui.main.status.StateViewModel;
 import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
 import de.bikebean.app.ui.main.status.menu.sms_history.SmsViewModel;
+import de.bikebean.app.ui.utils.Release;
 import de.bikebean.app.ui.utils.Utils;
 import de.bikebean.app.ui.utils.VersionChecker;
 
 import static android.content.Intent.*;
 
 public class PreferencesActivity extends AppCompatActivity {
+
+    private TextView versionNameNew;
+    private Button downloadNewVersionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +49,11 @@ public class PreferencesActivity extends AppCompatActivity {
                 .replace(R.id.settings, new SettingsFragment())
                 .commit();
 
+        LogViewModel logViewModel =
+                new ViewModelProvider(this).get(LogViewModel.class);
+        PreferencesViewModel preferencesViewModel =
+                new ViewModelProvider(this).get(PreferencesViewModel.class);
+
         Toolbar toolbar = findViewById(R.id.toolbar1);
         setSupportActionBar(toolbar);
 
@@ -52,8 +64,50 @@ public class PreferencesActivity extends AppCompatActivity {
 
         TextView versionName = findViewById(R.id.versionName);
         String versionNameString = "Aktuelle Version: " + Utils.getVersionName();
-
         versionName.setText(versionNameString);
+
+        versionNameNew = findViewById(R.id.versionName2);
+        downloadNewVersionButton = findViewById(R.id.downloadNewVersion);
+        preferencesViewModel.getNewVersion().observe(this, setVersionNameNew);
+
+        new VersionChecker(
+                getApplicationContext(),
+                logViewModel, preferencesViewModel,
+                this::newerVersionHandler
+        ).execute();
+    }
+
+    private final Observer<Release> setVersionNameNew = s -> {
+        if (s.getUrl().equals(""))
+            return;
+
+        String versionNameString = "Neueste Version: " + s.getName();
+
+        versionNameNew.setVisibility(View.VISIBLE);
+        versionNameNew.setText(versionNameString);
+        downloadNewVersionButton.setVisibility(View.VISIBLE);
+        downloadNewVersionButton.setOnClickListener(v -> downloadNewVersion(s.getUrl()));
+    };
+
+    void newerVersionHandler(Release release) {
+        new NewVersionDialog(this, release,
+                this::downloadNewVersion,
+                this::cancelNewVersionDownload)
+                .show(
+                        getSupportFragmentManager(),
+                        "newVersionDialog"
+                );
+    }
+
+    void downloadNewVersion(String url) {
+        Uri webPage = Uri.parse(url);
+        Intent intent = new Intent(ACTION_VIEW, webPage);
+        if (intent.resolveActivity(getPackageManager()) != null)
+            startActivity(intent);
+    }
+
+    void cancelNewVersionDownload() {
+        assert true;
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
@@ -116,32 +170,10 @@ public class PreferencesActivity extends AppCompatActivity {
                     return true;
                 });
             }
-
-            new VersionChecker(ctx, logViewModel, this::newerVersionHandler).execute();
         }
 
-        void newerVersionHandler(String name, String url) {
-            new NewVersionDialog(requireActivity(),
-                    url, name,
-                    this::downloadNewVersion,
-                    this::cancelNewVersionDownload)
-                    .show(
-                            requireActivity().getSupportFragmentManager(),
-                            "newVersionDialog"
-                    );
-        }
-
-        void downloadNewVersion(String url) {
-            Uri webPage = Uri.parse(url);
-            Intent intent = new Intent(ACTION_VIEW, webPage);
-            if (intent.resolveActivity(requireActivity().getPackageManager()) != null) {
-                startActivity(intent);
             }
-        }
-
-        void cancelNewVersionDownload() {
-            assert true;
-        }
+        };
 
         void resetAll(String address) {
             // reset DB and repopulate it
