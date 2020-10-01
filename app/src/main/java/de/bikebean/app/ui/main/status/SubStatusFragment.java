@@ -220,7 +220,7 @@ public abstract class SubStatusFragment extends Fragment {
 
     protected void updatePendingText(TextView textView, long stopTime, long residualSeconds) {
         if (residualSeconds < 0) {
-            textView.setText(getResources().getString(R.string.overdue,
+            textView.setText(getString(R.string.overdue,
                     Utils.convertToDateHuman(stopTime))
             );
             return;
@@ -232,7 +232,7 @@ public abstract class SubStatusFragment extends Fragment {
         String hoursPadded = (hours < 10) ? "0" + hours : String.valueOf(hours);
         String minutesPadded = (minutes < 10) ? "0" + minutes : String.valueOf(minutes);
 
-        textView.setText(getResources().getString(R.string.pending_text,
+        textView.setText(getString(R.string.pending_text,
                 hoursPadded + ":" + minutesPadded,
                 Utils.convertToTime(stopTime))
         );

@@ -33,8 +33,8 @@ public class VersionChecker extends AsyncTask<String, Void, VersionJsonParser> {
         mNewerVersionNotifier = nvn;
         mPreferencesViewModel = pv;
 
-        mUrl = "https://api.github.com/repos/bike-bean/BikebeanApp/releases";
-        githubGistsToken = context.getResources().getString(R.string.github_gist_token);
+        mUrl = context.getString(R.string.github_releases_baseurl);
+        githubGistsToken = context.getString(R.string.github_gist_token);
     }
 
     @Override

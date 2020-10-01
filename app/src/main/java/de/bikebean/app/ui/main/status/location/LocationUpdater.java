@@ -56,8 +56,8 @@ class LocationUpdater extends AsyncTask<String, Void, Boolean> {
 
         mQueue = Volley.newRequestQueue(context);
 
-        String googleMapsAPIKey = context.getResources().getString(R.string.google_maps_api_key);
-        String baseUrl = "https://www.googleapis.com/geolocation/v1/geolocate?key=";
+        String googleMapsAPIKey = context.getString(R.string.google_maps_api_key);
+        String baseUrl = context.getString(R.string.geolocation_baseurl);
         mUrl = baseUrl + googleMapsAPIKey;
     }
 
@@ -66,9 +66,8 @@ class LocationUpdater extends AsyncTask<String, Void, Boolean> {
         if (mStateViewModel.getLocationByIdSync(mSms))
             return false;
 
-        String requestBody =
-                new LocationApiBody(mWappState, mLogViewModel)
-                        .createJsonApiBody(mLogViewModel);
+        String requestBody = new LocationApiBody(mWappState, mLogViewModel)
+                .createJsonApiBody(mLogViewModel);
         if (requestBody.isEmpty())
             return false;
 

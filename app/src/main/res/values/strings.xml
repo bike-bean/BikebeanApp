@@ -15,6 +15,10 @@
     <string name="estimated_charge_text">Zeit bis 10%:</string>
     <string name="auf_karte_zeigen">Anzeigen</string>
 
+    <string name="geolocation_baseurl">https://www.googleapis.com/geolocation/v1/geolocate?key=</string>
+    <string name="github_releases_baseurl">https://api.github.com/repos/bike-bean/BikebeanApp/releases</string>
+    <string name="github_gists_baseurl">https://api.github.com/gists?public=false</string>
+
     <string name="pending_text">Erwarte Bestätigung in ca. %s h (%s)</string>
     <string name="wifi_switch_on_transition">Wird eingeschaltet</string>
     <string name="wifi_switch_off_transition">Wird ausgeschaltet</string>

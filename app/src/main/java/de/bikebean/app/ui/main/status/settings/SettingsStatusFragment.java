@@ -204,8 +204,7 @@ public class SettingsStatusFragment extends SubStatusFragment {
 
     @Override
     protected void setIntervalElementsConfirmed(State state) {
-        String intervalSummaryString =
-                getResources().getString(R.string.interval_summary);
+        String intervalSummaryString = getString(R.string.interval_summary);
 
         assert state != null;
 
@@ -274,8 +273,7 @@ public class SettingsStatusFragment extends SubStatusFragment {
 
     @Override
     protected void setIntervalElementsPending(State state) {
-        String intervalTransitionString =
-                getResources().getString(R.string.interval_switch_transition);
+        String intervalTransitionString = getString(R.string.interval_switch_transition);
 
         long stopTime = tv.startTimer(t2, state.getTimestamp(), st.getConfirmedIntervalSync());
         tv.getResidualTime(t2).observe(this, s ->

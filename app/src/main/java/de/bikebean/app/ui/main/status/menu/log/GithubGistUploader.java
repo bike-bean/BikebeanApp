@@ -39,8 +39,8 @@ public class GithubGistUploader extends AsyncTask<String, Void, Boolean> {
         mStateTsv = stateTsv;
         mLogTsv = logTsv;
 
-        githubGistsToken = context.getResources().getString(R.string.github_gist_token);
-        mUrl = "https://api.github.com/gists?public=false";
+        githubGistsToken = context.getString(R.string.github_gist_token);
+        mUrl = context.getString(R.string.github_gists_baseurl);
     }
 
     @Override
