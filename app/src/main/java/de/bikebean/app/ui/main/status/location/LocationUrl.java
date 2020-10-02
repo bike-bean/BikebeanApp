@@ -1,5 +1,6 @@
 package de.bikebean.app.ui.main.status.location;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import java.io.UnsupportedEncodingException;
@@ -18,7 +19,7 @@ public class LocationUrl {
     private double lat, lng;
     private boolean latSet = false, lngSet = false;
 
-    public void setLat(List<State> lat) {
+    public void setLat(@NonNull List<State> lat) {
         if (lat.size() == 0) {
             setUrl();
             return;
@@ -30,7 +31,7 @@ public class LocationUrl {
         setUrl();
     }
 
-    public void setLng(List<State> lng) {
+    public void setLng(@NonNull List<State> lng) {
         if (lng.size() == 0) {
             setUrl();
             return;
@@ -53,7 +54,7 @@ public class LocationUrl {
         return url;
     }
 
-    private String encodeUrl() {
+    private @NonNull String encodeUrl() {
         try {
             return baseUrl + URLEncoder.encode(
                     mapBaseUrl + encodeLocation(this.lat) + "," + encodeLocation(this.lng),
@@ -65,7 +66,7 @@ public class LocationUrl {
         }
     }
 
-    private String encodeLocation(double loc) {
+    private @NonNull String encodeLocation(double loc) {
         return String.format(Locale.GERMANY, "%.7f", loc)
                 .replace(",", ".");
     }

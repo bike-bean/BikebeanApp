@@ -56,8 +56,10 @@ public abstract class BikeBeanRoomDatabase extends RoomDatabase {
         public void onOpen(@NonNull SupportSQLiteDatabase db) {
             super.onOpen(db);
 
-            // Code to be executed on
-            // App restarts goes here!
+            /*
+             Code to be executed on
+             App restarts goes here!
+             */
         }
     };
 
@@ -81,8 +83,9 @@ public abstract class BikeBeanRoomDatabase extends RoomDatabase {
         logIsClearedFlag.waitForDelete(logDao::getAllSync);
     }
 
-    public static GithubGistUploader createReport(Context ctx, LogViewModel lv,
-                                                  GithubGistUploader.UploadSuccessNotifier usn) {
+    public static @NonNull GithubGistUploader createReport(
+            @NonNull Context ctx, LogViewModel lv,
+            GithubGistUploader.UploadSuccessNotifier usn) {
         SmsDao smsDao = INSTANCE.smsDao();
         StateDao stateDao = INSTANCE.stateDao();
         LogDao logDao = INSTANCE.logDao();
@@ -95,7 +98,9 @@ public abstract class BikeBeanRoomDatabase extends RoomDatabase {
         List<? extends DatabaseEntity> stateList = stateMutableObject.getAllItems(stateDao::getAllSync);
         List<? extends DatabaseEntity> logList = logMutableObject.getAllItems(logDao::getAllSync);
 
-        String description = "BikeBeanAppCrashReport " + Utils.convertToDateHuman();
+        String description = "BikeBeanAppCrashReport " + Utils.ConvertToDateHuman() +
+                " \nVersion: " + Utils.getVersionName() +
+                " \nID: " + Utils.getUUID(ctx);
         StringBuilder smsTsv = new StringBuilder();
         StringBuilder stateTsv = new StringBuilder();
         StringBuilder logTsv = new StringBuilder();

@@ -1,5 +1,7 @@
 package de.bikebean.app.ui.initialization;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 import de.bikebean.app.db.settings.Setting;
@@ -12,16 +14,17 @@ import de.bikebean.app.ui.utils.sms.parser.SmsParser;
 
 public class Conversation {
 
-    private final StateViewModel stateViewModel;
-    private final SmsViewModel smsViewModel;
-    private final LogViewModel logViewModel;
+    private final @NonNull StateViewModel stateViewModel;
+    private final @NonNull SmsViewModel smsViewModel;
+    private final @NonNull LogViewModel logViewModel;
 
-    private final List<Setting> settings;
+    private final @NonNull List<Setting> settings;
 
-    public Conversation(StateViewModel st, SmsViewModel sm, LogViewModel lv) {
-        this.stateViewModel = st;
-        this.smsViewModel = sm;
-        this.logViewModel = lv;
+    public Conversation(@NonNull StateViewModel st, @NonNull SmsViewModel sm,
+                        @NonNull LogViewModel lv) {
+        stateViewModel = st;
+        smsViewModel = sm;
+        logViewModel = lv;
 
         settings = new InitialConversation().getSettings();
     }

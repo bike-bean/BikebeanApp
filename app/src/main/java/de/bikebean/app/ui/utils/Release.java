@@ -1,11 +1,13 @@
 package de.bikebean.app.ui.utils;
 
+import androidx.annotation.NonNull;
+
 public class Release {
 
-    private final String name;
-    private final String url;
+    private final @NonNull String name;
+    private final @NonNull String url;
 
-    public Release(String newVersionName, String newVersionUrl) {
+    public Release(final @NonNull String newVersionName, final @NonNull String newVersionUrl) {
         this.name = newVersionName;
         this.url = newVersionUrl;
     }
@@ -15,11 +17,11 @@ public class Release {
         this.url = "";
     }
 
-    public String getName() {
+    public @NonNull String getName() {
         return name;
     }
 
-    public String getUrl() {
+    public @NonNull String getUrl() {
         return url;
     }
 }

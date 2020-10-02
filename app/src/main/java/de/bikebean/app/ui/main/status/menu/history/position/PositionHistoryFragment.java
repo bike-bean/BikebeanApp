@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.util.ArrayList;
@@ -52,11 +53,11 @@ public class PositionHistoryFragment extends HistoryFragment {
     }
 
     private void updateStates(List<Integer> smsIdList) {
-        final List<LocationState> locationStates = new ArrayList<>();
+        final @NonNull List<LocationState> locationStates = new ArrayList<>();
 
         new Thread(() -> {
             for (int smsId : smsIdList) {
-                LocationState locationState =
+                @Nullable LocationState locationState =
                         updateLocationStates(((PositionHistoryViewModel) st).getAllLocation(smsId));
                 if (locationState != null)
                     locationStates.add(locationState);
@@ -69,7 +70,7 @@ public class PositionHistoryFragment extends HistoryFragment {
         ((PositionHistoryViewModel) st).getLocationStates().observe(this, this::setStatesToAdapter);
     }
 
-    private LocationState updateLocationStates(List<State> states) {
+    private @Nullable LocationState updateLocationStates(@NonNull List<State> states) {
         State latState = null;
         State lngState = null;
         State accState = null;

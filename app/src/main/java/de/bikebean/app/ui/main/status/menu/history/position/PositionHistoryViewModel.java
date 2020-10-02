@@ -2,6 +2,7 @@ package de.bikebean.app.ui.main.status.menu.history.position;
 
 import android.app.Application;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -24,7 +25,7 @@ public class PositionHistoryViewModel extends HistoryViewModel {
         mLocationStates = new MutableLiveData<>();
     }
 
-    List<State> getAllLocation(int smsId) {
+    @NonNull List<State> getAllLocation(int smsId) {
         return mRepository.getAllLocationByIdSync(smsId);
     }
 

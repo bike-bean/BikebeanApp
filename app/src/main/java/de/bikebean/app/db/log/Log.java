@@ -81,19 +81,19 @@ public class Log extends DatabaseEntity {
     }
 
     @Override
-    public DatabaseEntity getNullType() {
+    public @NonNull DatabaseEntity getNullType() {
         return new Log();
     }
 
     @Override
-    public String createReportTitle() {
+    public @NonNull String createReportTitle() {
         String delimiter = "\t";
         return "ID" + delimiter + "Message" + delimiter +
                 "Date" + delimiter + "level" + "\n";
     }
 
     @Override
-    public String createReport() {
+    public @NonNull String createReport() {
         String delimiter = "\t";
         return id + delimiter + mMessage.replace("\n", "//") +
                 delimiter + Utils.convertToTimeLog(mTimestamp) + delimiter + mLevel + "\n";

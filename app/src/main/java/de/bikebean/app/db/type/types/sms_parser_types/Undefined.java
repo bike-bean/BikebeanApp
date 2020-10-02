@@ -1,5 +1,7 @@
 package de.bikebean.app.db.type.types.sms_parser_types;
 
+import androidx.annotation.NonNull;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +15,8 @@ public class Undefined extends SmsParserType {
 
     private final List<Setting> settings;
 
-    public Undefined(SmsParser smsParser, WeakReference<LogViewModel> logViewModelReference) {
+    public Undefined(@NonNull SmsParser smsParser,
+                     @NonNull WeakReference<LogViewModel> logViewModelReference) {
         super(SMSTYPE.UNDEFINED);
         this.mSmsParser = smsParser;
         this.settings = new ArrayList<>();

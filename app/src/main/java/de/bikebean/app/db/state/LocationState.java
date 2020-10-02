@@ -1,5 +1,7 @@
 package de.bikebean.app.db.state;
 
+import androidx.annotation.NonNull;
+
 import de.bikebean.app.db.DatabaseEntity;
 
 public class LocationState extends DatabaseEntity {
@@ -14,8 +16,8 @@ public class LocationState extends DatabaseEntity {
     private final int noCellTowers;
     private final int noWifiAccessPoints;
 
-    public LocationState(State latState, State lngState, State accState,
-                         State noCellTowersState, State noWifiAccessPointsState) {
+    public LocationState(@NonNull State latState, @NonNull State lngState, @NonNull State accState,
+                         @NonNull State noCellTowersState, @NonNull State noWifiAccessPointsState) {
         smsId = latState.getSmsId();
         timestamp = latState.getTimestamp();
 

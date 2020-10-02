@@ -1,5 +1,7 @@
 package de.bikebean.app.db.type.types.sms_parser_types;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +15,7 @@ public class Interval extends SmsParserType {
 
     private final List<Setting> settings;
 
-    public Interval(SmsParser smsParser) {
+    public Interval(@NonNull SmsParser smsParser) {
         super(SMSTYPE.INT);
         this.mSmsParser = smsParser;
         this.settings = new ArrayList<>();

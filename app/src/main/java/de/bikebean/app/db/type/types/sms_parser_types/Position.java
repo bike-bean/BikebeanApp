@@ -1,5 +1,7 @@
 package de.bikebean.app.db.type.types.sms_parser_types;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +13,7 @@ public class Position extends SmsParserType {
 
     private final List<Setting> settings;
 
-    public Position(SmsParser smsParser) {
+    public Position(@NonNull SmsParser smsParser) {
         super(SMSTYPE.POSITION);
         this.mSmsParser = smsParser;
         this.settings = new ArrayList<>();

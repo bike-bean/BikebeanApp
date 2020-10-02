@@ -1,5 +1,7 @@
 package de.bikebean.app.db.type.types.sms_parser_types;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,9 +15,9 @@ import de.bikebean.app.ui.utils.sms.parser.SmsParser;
 
 public class NoWifiList extends SmsParserType {
 
-    private final List<Setting> settings;
+    private final @NonNull List<Setting> settings;
 
-    public NoWifiList(SmsParser smsParser) {
+    public NoWifiList(@NonNull SmsParser smsParser) {
         super(SMSTYPE.NO_WIFI_LIST);
         this.mSmsParser = smsParser;
         this.settings = new ArrayList<>();
@@ -27,7 +29,7 @@ public class NoWifiList extends SmsParserType {
     }
 
     @Override
-    public List<Setting> getSettings() {
+    public @NonNull List<Setting> getSettings() {
         return settings;
     }
 }

@@ -3,6 +3,7 @@ package de.bikebean.app.ui.main.status;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import de.bikebean.app.db.settings.settings.number_settings.WifiAccessPoints;
 import de.bikebean.app.db.settings.settings.replace_if_newer_settings.Interval;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.db.type.Type;
+import de.bikebean.app.ui.utils.sms.send.SmsSender;
 
 public class StateViewModel extends AndroidViewModel {
 
@@ -32,8 +34,8 @@ public class StateViewModel extends AndroidViewModel {
             mRepository.insert(state);
     }
 
-    public void insert(@NonNull State[] states) {
-        for (State state : states)
+    public void insert(@NonNull SmsSender smsSender) {
+        for (State state : smsSender.getUpdates())
             if (state != null)
                 mRepository.insert(state);
     }
@@ -61,7 +63,7 @@ public class StateViewModel extends AndroidViewModel {
     }
 
     public int getConfirmedIntervalSync() {
-        State intervalConfirmed = getConfirmedStateSync(State.KEY.INTERVAL);
+        @Nullable State intervalConfirmed = getConfirmedStateSync(State.KEY.INTERVAL);
 
         if (intervalConfirmed != null)
             return intervalConfirmed.getValue().intValue();
@@ -69,8 +71,8 @@ public class StateViewModel extends AndroidViewModel {
         return new Interval().get().intValue();
     }
 
-    public String getWifiAccessPointsSync() {
-        State wifiAccessPoints = getConfirmedStateSync(State.KEY.WIFI_ACCESS_POINTS);
+    public @NonNull String getWifiAccessPointsSync() {
+        @Nullable State wifiAccessPoints = getConfirmedStateSync(State.KEY.WIFI_ACCESS_POINTS);
 
         if (wifiAccessPoints != null)
             return wifiAccessPoints.getLongValue();
@@ -78,19 +80,20 @@ public class StateViewModel extends AndroidViewModel {
             return "";
     }
 
-    protected State getConfirmedStateSync(State.KEY key) {
+    protected @Nullable State getConfirmedStateSync(State.KEY key) {
         return getStateSync(mRepository::getConfirmedStateSync, key, 0);
     }
 
-    protected State getLastStateSync(State.KEY key) {
+    protected @Nullable State getLastStateSync(State.KEY key) {
         return getStateSync(mRepository::getLastStateSync, key, 0);
     }
 
-    protected State getStateByIdSync(State.KEY key, int smsId) {
+    protected @Nullable State getStateByIdSync(State.KEY key, int smsId) {
         return getStateSync(mRepository::getStateByIdSync, key, smsId);
     }
 
-    private State getStateSync(MutableObject.ListGetter stateGetter, @NonNull State.KEY key, int smsId) {
+    private @Nullable State getStateSync(MutableObject.ListGetter stateGetter,
+                       @NonNull State.KEY key, int smsId) {
         final MutableObject<State> state = new MutableObject<>(new State());
 
         return (State) state.getDbEntitySync(stateGetter, key.get(), smsId);

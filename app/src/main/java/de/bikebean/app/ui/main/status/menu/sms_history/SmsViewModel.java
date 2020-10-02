@@ -3,12 +3,12 @@ package de.bikebean.app.ui.main.status.menu.sms_history;
 import android.app.Application;
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
-import de.bikebean.app.db.MutableObject;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.ui.main.status.StateViewModel;
 import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
@@ -44,14 +44,8 @@ public class SmsViewModel extends AndroidViewModel {
         return mAllIds;
     }
 
-    public List<Sms> getSmsById(int id) {
+    public @NonNull List<Sms> getSmsById(int id) {
         return mRepository.getSmsById(id);
-    }
-
-    public Sms getSmsByIdSync(int id) {
-        final MutableObject<Sms> sms = new MutableObject<>(new Sms());
-
-        return (Sms) sms.getDbEntitySync(mRepository::getSmsById, "", id);
     }
 
     public int getLatestId(LogViewModel lv, int type) {
@@ -84,12 +78,15 @@ public class SmsViewModel extends AndroidViewModel {
         }
     }
 
-    public void fetchSms(Context context, StateViewModel st, LogViewModel lv, String address) {
+    public void fetchSms(final @NonNull Context context, final StateViewModel st,
+                         final LogViewModel lv, final @NonNull String address) {
         // load the sms list in background
         new SmsLoader(context, this, st, lv).execute(address);
     }
 
-    public void fetchSmsSync(Context context, StateViewModel st, LogViewModel lv, String address) {
+    public void fetchSmsSync(final @NonNull Context context,
+                             final StateViewModel st, final LogViewModel lv,
+                             final @NonNull String address) {
         // load the sms list in foreground
         new SmsLoader(context, this, st, lv).loadInitial(address);
     }
@@ -101,5 +98,4 @@ public class SmsViewModel extends AndroidViewModel {
     public void markParsed(Sms sms) {
         mRepository.markParsed(sms);
     }
-
 }

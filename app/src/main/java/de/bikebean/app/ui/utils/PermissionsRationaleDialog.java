@@ -5,18 +5,19 @@ import android.app.Dialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import de.bikebean.app.R;
 
 public class PermissionsRationaleDialog extends DialogFragment {
 
-    private final Activity act;
+    private final @NonNull Activity act;
+    private final @NonNull Utils.PERMISSION_KEY permissionKey;
 
     private static final Map<Utils.PERMISSION_KEY, Integer[]> permissionMap =
             new HashMap<Utils.PERMISSION_KEY, Integer[]>() {{
@@ -30,23 +31,38 @@ public class PermissionsRationaleDialog extends DialogFragment {
                 });
     }};
 
-    private final Utils.PERMISSION_KEY permissionKey;
-
-    public PermissionsRationaleDialog(Activity act, Utils.PERMISSION_KEY permissionKey) {
+    public PermissionsRationaleDialog(final @NonNull Activity act,
+                                      final @NonNull Utils.PERMISSION_KEY permissionKey) {
         this.act = act;
         this.permissionKey = permissionKey;
     }
 
     @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(act);
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        final @NonNull AlertDialog.Builder builder = new AlertDialog.Builder(act);
 
-        builder.setTitle(Objects.requireNonNull(permissionMap.get(permissionKey))[0])
-                .setMessage(Objects.requireNonNull(permissionMap.get(permissionKey))[1])
-                .setPositiveButton(R.string.continue_ok, (dialog, id) ->
-                        Utils.askForPermissions(act, permissionKey)
-                );
+        final @Nullable Integer[] integers = permissionMap.get(permissionKey);
+        final @Nullable Integer title;
+        final @Nullable Integer message;
+        if (integers != null) {
+            title = integers[0];
+            message = integers[1];
+        } else {
+            title = null;
+            message = null;
+        }
+
+        if (title != null && message != null)
+            builder.setTitle(title)
+                    .setMessage(message);
+        else
+            builder.setTitle("Berechtigungen")
+                    .setMessage("Die App benötigt weitere Berechtigungen!");
+
+        builder.setPositiveButton(R.string.continue_ok, (dialog, id) ->
+                Utils.askForPermissions(act, permissionKey)
+        );
 
         return builder.create();
     }

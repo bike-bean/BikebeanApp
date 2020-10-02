@@ -1,6 +1,7 @@
 package de.bikebean.app.db.state;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -110,10 +111,10 @@ public class State extends DatabaseEntity {
     @Ignore
     public State(
             long timestamp,
-            KEY key,
+            @NonNull KEY key,
             @NonNull Double value,
             @NonNull String longValue,
-            STATUS state,
+            @NonNull STATUS state,
             int smsId
     ) {
         this.mTimestamp = timestamp;
@@ -127,7 +128,7 @@ public class State extends DatabaseEntity {
     // For "PENDING" State
     @Ignore
     public State(
-            KEY key,
+            @NonNull KEY key,
             double value
     ) {
         this.mTimestamp = System.currentTimeMillis();
@@ -157,11 +158,11 @@ public class State extends DatabaseEntity {
         return this.mTimestamp;
     }
 
-    public Double getValue() {
+    public @NonNull Double getValue() {
         return this.mValue;
     }
 
-    public String getLongValue() {
+    public @NonNull String getLongValue() {
         return this.mLongValue;
     }
 
@@ -173,7 +174,7 @@ public class State extends DatabaseEntity {
         return this.mSmsId;
     }
 
-    public boolean equalsId(State other) {
+    public boolean equalsId(@Nullable State other) {
         if (other != null)
             return this.id == other.id;
         else return false;
@@ -191,7 +192,7 @@ public class State extends DatabaseEntity {
         return equalsWhole((State) getNullType());
     }
 
-    private boolean equalsWhole(State other) {
+    private boolean equalsWhole(@NonNull State other) {
         return (id == other.id &&
                 mValue.equals(other.mValue) &&
                 mTimestamp == other.mTimestamp &&
@@ -202,21 +203,21 @@ public class State extends DatabaseEntity {
     }
 
     @Override
-    public DatabaseEntity getNullType() {
+    public @NonNull DatabaseEntity getNullType() {
         return new State();
     }
 
     @Override
-    public String createReportTitle() {
-        String delimiter = "\t";
+    public @NonNull String createReportTitle() {
+        final @NonNull String delimiter = "\t";
         return "ID" + delimiter + "Key" + delimiter + "Date" + delimiter +
                 "Timestamp" + delimiter + "Value" + delimiter +
                 "Long Value" + delimiter + "State" + delimiter + "Sms ID" + "\n";
     }
 
     @Override
-    public String createReport() {
-        String delimiter = "\t";
+    public @NonNull String createReport() {
+        final @NonNull String delimiter = "\t";
         return id + delimiter + mKey + delimiter + Utils.convertToTimeLog(mTimestamp) +
                 delimiter + mTimestamp + delimiter + mValue + delimiter +
                 mLongValue.replace("\n", "//") + delimiter +

@@ -19,8 +19,8 @@ public class Location extends Type {
 
     private final List<Setting> settings;
 
-    public Location(@NonNull JSONObject location, @NonNull JSONObject response, WappState wappState)
-            throws JSONException {
+    public Location(@NonNull JSONObject location, @NonNull JSONObject response,
+                    @NonNull WappState wappState) throws JSONException {
         super(SMSTYPE.LOCATION);
 
         settings = new ArrayList<>();
