@@ -2,8 +2,6 @@ package de.bikebean.app.db.settings.settings;
 
 import androidx.annotation.NonNull;
 
-import de.bikebean.app.db.settings.settings.number_settings.CellTowers;
-import de.bikebean.app.db.settings.settings.number_settings.WifiAccessPoints;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.initialization.StateList;
@@ -40,13 +38,5 @@ public class WappState extends Wapp {
     public boolean getIfNewest(@NonNull LocationStateViewModel st) {
         return (wifiAccessPoints.equalsId(st.getConfirmedLocationSync(wifiAccessPoints))
                 && cellTowers.equalsId(st.getConfirmedLocationSync(cellTowers)));
-    }
-
-    public CellTowers getCellTowerSetting(Sms sms) {
-        return new CellTowers(this, sms);
-    }
-
-    public WifiAccessPoints getWifiAccessPointSetting(Sms sms) {
-        return new WifiAccessPoints(this, sms);
     }
 }

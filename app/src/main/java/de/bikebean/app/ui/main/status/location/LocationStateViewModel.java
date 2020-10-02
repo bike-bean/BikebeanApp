@@ -7,7 +7,6 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 import de.bikebean.app.db.settings.settings.WappState;
-import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.main.status.StateViewModel;
 
@@ -73,8 +72,8 @@ public class LocationStateViewModel extends StateViewModel {
         return getConfirmedStateSync(State.KEY.getValue(state.getKey()));
     }
 
-    boolean getLocationByIdSync(Sms sms) {
-        return getStateByIdSync(State.KEY.LOCATION, sms.getId()) != null;
+    boolean getLocationByIdSync(WappState wappState) {
+        return getStateByIdSync(State.KEY.LOCATION, wappState.getSmsId()) != null;
     }
 
     public State getWifiAccessPointsByWappSync(State wappState) {

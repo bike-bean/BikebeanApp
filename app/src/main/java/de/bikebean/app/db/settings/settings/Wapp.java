@@ -1,8 +1,11 @@
 package de.bikebean.app.db.settings.settings;
 
+import androidx.annotation.NonNull;
+
 import de.bikebean.app.db.settings.Setting;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
+import de.bikebean.app.ui.utils.sms.parser.SmsParser;
 
 public class Wapp extends Setting {
 
@@ -10,9 +13,9 @@ public class Wapp extends Setting {
 
     private final double wapp;
 
-    public Wapp(double wapp, Sms sms) {
-        super(sms, key);
-        this.wapp= wapp;
+    public Wapp(double wapp, @NonNull SmsParser smsParser) {
+        super(smsParser.getSms(), key);
+        this.wapp = wapp;
     }
 
     public Wapp() {

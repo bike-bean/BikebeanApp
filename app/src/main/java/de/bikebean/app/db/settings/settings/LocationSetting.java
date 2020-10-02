@@ -9,8 +9,8 @@ public abstract class LocationSetting extends Setting {
     private final double location;
     private final State state;
 
-    protected LocationSetting(double location, Sms sms, State.KEY key) {
-        super(sms, key);
+    protected LocationSetting(double location, WappState wappState, State.KEY key) {
+        super(wappState.getSms(), key);
 
         this.location = location;
 

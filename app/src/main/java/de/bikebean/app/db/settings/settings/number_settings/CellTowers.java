@@ -5,7 +5,6 @@ import java.util.List;
 
 import de.bikebean.app.db.settings.settings.NumberSetting;
 import de.bikebean.app.db.settings.settings.WappState;
-import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.utils.sms.parser.SmsParser;
 
@@ -62,8 +61,8 @@ public class CellTowers extends NumberSetting {
         );
     }
 
-    public CellTowers(WappState wappState, Sms sms) {
-        super(wappState.getCellTowers().getLongValue(), sms, key);
+    public CellTowers(WappState wappState) {
+        super(wappState.getCellTowers().getLongValue(), wappState.getSms(), key);
 
         String[] strings = mWappString.split("\n");
         number = strings.length;

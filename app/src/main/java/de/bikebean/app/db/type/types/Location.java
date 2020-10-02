@@ -9,26 +9,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.bikebean.app.db.settings.Setting;
+import de.bikebean.app.db.settings.settings.WappState;
 import de.bikebean.app.db.settings.settings.location_settings.Acc;
 import de.bikebean.app.db.settings.settings.location_settings.Lat;
 import de.bikebean.app.db.settings.settings.location_settings.Lng;
-import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.type.Type;
 
 public class Location extends Type {
 
     private final List<Setting> settings;
 
-    public Location(@NonNull JSONObject location, @NonNull JSONObject response, Sms sms)
+    public Location(@NonNull JSONObject location, @NonNull JSONObject response, WappState wappState)
             throws JSONException {
         super(SMSTYPE.LOCATION);
 
         settings = new ArrayList<>();
 
-        settings.add(new Lat(location.getDouble("lat"), sms));
-        settings.add(new Lng(location.getDouble("lng"), sms));
-        settings.add(new Acc(response.getDouble("accuracy"), sms));
-        settings.add(new de.bikebean.app.db.settings.settings.location_settings.Location(0.0, sms));
+        settings.add(new Lat(location.getDouble("lat"), wappState));
+        settings.add(new Lng(location.getDouble("lng"), wappState));
+        settings.add(new Acc(response.getDouble("accuracy"), wappState));
+        settings.add(new de.bikebean.app.db.settings.settings.location_settings.Location(0.0, wappState));
     }
 
     @Override

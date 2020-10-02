@@ -88,8 +88,8 @@ public class WifiAccessPoints extends NumberSetting {
         );
     }
 
-    public WifiAccessPoints(@NonNull WappState wappState, Sms sms) {
-        super(wappState.getWifiAccessPoints().getLongValue(), sms, key);
+    public WifiAccessPoints(@NonNull WappState wappState) {
+        super(wappState.getWifiAccessPoints().getLongValue(), wappState.getSms(), key);
 
         String[] strings = mWappString.split("\n");
         number = strings.length;

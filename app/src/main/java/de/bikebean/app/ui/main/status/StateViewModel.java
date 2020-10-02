@@ -9,9 +9,11 @@ import java.util.List;
 
 import de.bikebean.app.db.MutableObject;
 import de.bikebean.app.db.settings.Setting;
+import de.bikebean.app.db.settings.settings.NumberSetting;
 import de.bikebean.app.db.settings.settings.WappState;
+import de.bikebean.app.db.settings.settings.number_settings.CellTowers;
+import de.bikebean.app.db.settings.settings.number_settings.WifiAccessPoints;
 import de.bikebean.app.db.settings.settings.replace_if_newer_settings.Interval;
-import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.db.type.Type;
 
@@ -36,13 +38,12 @@ public class StateViewModel extends AndroidViewModel {
                 mRepository.insert(state);
     }
 
-    public void insert(@NonNull Setting setting) {
-        insert(setting.getState());
+    private void insert(@NonNull NumberSetting numberSetting) {
+        insert(numberSetting.getNumberState());
     }
 
-    public void insertNumberStates(@NonNull WappState wappState, Sms sms) {
-        insert(wappState.getCellTowerSetting(sms).getNumberState());
-        insert(wappState.getWifiAccessPointSetting(sms).getNumberState());
+    public void insert(@NonNull Setting setting) {
+        insert(setting.getState());
     }
 
     public void insert(@NonNull List<Setting> settings) {
@@ -52,6 +53,11 @@ public class StateViewModel extends AndroidViewModel {
 
     public void insert(@NonNull Type type) {
         insert(type.getSettings());
+    }
+
+    public void insertNumberStates(@NonNull WappState wappState) {
+        insert(new CellTowers(wappState));
+        insert(new WifiAccessPoints(wappState));
     }
 
     public int getConfirmedIntervalSync() {

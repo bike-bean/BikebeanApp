@@ -5,7 +5,6 @@ import com.google.gson.Gson;
 import de.bikebean.app.db.settings.settings.WappState;
 import de.bikebean.app.db.settings.settings.number_settings.CellTowers;
 import de.bikebean.app.db.settings.settings.number_settings.WifiAccessPoints;
-import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
 
 class LocationApiBody {
@@ -14,11 +13,11 @@ class LocationApiBody {
     private final WifiAccessPoints.WifiAccessPointList wifiAccessPoints;
 
     LocationApiBody(WappState wappState, LogViewModel lv) {
-        WifiAccessPoints w = wappState.getWifiAccessPointSetting(new Sms());
+        WifiAccessPoints w = new WifiAccessPoints(wappState);
         this.wifiAccessPoints = (WifiAccessPoints.WifiAccessPointList) w.getList();
         lv.d("numberWifiAccessPoints: " + w.getNumber());
 
-        CellTowers c = wappState.getCellTowerSetting(new Sms());
+        CellTowers c = new CellTowers(wappState);
         this.cellTowers = (CellTowers.CellTowerList) c.getList();
         lv.d("numberCellTowers: " + c.getNumber());
     }

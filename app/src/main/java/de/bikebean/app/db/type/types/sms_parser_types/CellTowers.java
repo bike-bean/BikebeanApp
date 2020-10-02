@@ -20,7 +20,7 @@ public class CellTowers extends SmsParserType {
 
         // no battery entry in this special case
         settings.add(new de.bikebean.app.db.settings.settings.number_settings.CellTowers(mSmsParser));
-        settings.add(new Wapp(State.WAPP_CELL_TOWERS, smsParser.getSms()));
+        settings.add(new Wapp(State.WAPP_CELL_TOWERS, smsParser));
     }
 
     @Override

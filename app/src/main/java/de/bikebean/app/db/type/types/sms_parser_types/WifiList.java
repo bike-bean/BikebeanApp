@@ -22,7 +22,7 @@ public class WifiList extends SmsParserType {
 
         // battery value is encoded differently in this case
         settings.add(new WifiAccessPoints(smsParser));
-        settings.add(new Wapp(State.WAPP_WIFI_ACCESS_POINTS, smsParser.getSms()));
+        settings.add(new Wapp(State.WAPP_WIFI_ACCESS_POINTS, smsParser));
         settings.add(new Battery(mSmsParser, false, false));
     }
 
