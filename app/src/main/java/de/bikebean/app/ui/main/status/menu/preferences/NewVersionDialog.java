@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
@@ -13,24 +14,24 @@ import de.bikebean.app.ui.utils.Release;
 
 public class NewVersionDialog extends DialogFragment {
 
-    private final Activity act;
+    private final @NonNull Activity act;
 
-    private final NewVersionDownloadHandler newVersionDownloadHandler;
-    private final NewVersionDownloadCanceller newVersionDownloadCanceller;
+    private final @NonNull NewVersionDownloadHandler newVersionDownloadHandler;
+    private final @NonNull NewVersionDownloadCanceller newVersionDownloadCanceller;
 
-    private final Release release;
+    private final @NonNull Release release;
 
     public interface NewVersionDownloadHandler {
-        void downloadNewVersion(String address);
+        void downloadNewVersion(@NonNull String address);
     }
 
     public interface NewVersionDownloadCanceller {
         void cancel();
     }
 
-    NewVersionDialog(Activity act, Release release,
-                     NewVersionDownloadHandler r1,
-                     NewVersionDownloadCanceller r2) {
+    NewVersionDialog(@NonNull Activity act, @NonNull Release release,
+                     @NonNull NewVersionDownloadHandler r1,
+                     @NonNull NewVersionDownloadCanceller r2) {
         this.act = act;
 
         this.newVersionDownloadHandler = r1;
@@ -41,9 +42,9 @@ public class NewVersionDialog extends DialogFragment {
 
     @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(act);
-        String message = getString(
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        final @NonNull AlertDialog.Builder builder = new AlertDialog.Builder(act);
+        final @NonNull String message = getString(
                 R.string.update_text_1) +
                 release.getName() +
                 getString(R.string.update_text_2
@@ -52,7 +53,8 @@ public class NewVersionDialog extends DialogFragment {
         builder.setTitle(R.string.update_title)
                 .setMessage(message)
                 .setPositiveButton(R.string.continue_update, (dialog, id) ->
-                        newVersionDownloadHandler.downloadNewVersion(release.getUrl()))
+                        newVersionDownloadHandler.downloadNewVersion(release.getUrl())
+                )
                 .setNegativeButton(R.string.cancel_update, (dialog, id) ->
                         newVersionDownloadCanceller.cancel());
 

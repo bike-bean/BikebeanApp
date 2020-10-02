@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.provider.Telephony;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
@@ -29,8 +30,6 @@ public abstract class SubStatusFragment extends Fragment {
     protected LiveDataTimerViewModel tv;
     protected SmsViewModel sm;
 
-    private SmsSender smsSender;
-    
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -40,23 +39,19 @@ public abstract class SubStatusFragment extends Fragment {
         tv = new ViewModelProvider(this).get(LiveDataTimerViewModel.class);
         sm = new ViewModelProvider(this).get(SmsViewModel.class);
 
-        LifecycleOwner l = getViewLifecycleOwner();
-
-        smsSender = new SmsSender(requireActivity(), this::onPostSend);
-
-        setupListeners(l);
+        setupListeners(getViewLifecycleOwner());
         initUserInteractionElements();
     }
 
-    private void onPostSend(boolean sent, String address, String message, State[] updates) {
+    private void onPostSend(boolean sent, final @NonNull SmsSender smsSender) {
         if (sent) {
             Snackbar.make(requireView(),
-                    String.format("SMS an %s gesendet", address),
+                    String.format("SMS an %s gesendet", smsSender.getAddress()),
                     Snackbar.LENGTH_LONG
             ).show();
 
-            sm.insert(new Sms(sm.getLatestId(lv, Telephony.Sms.MESSAGE_TYPE_SENT), address, message));
-            st.insert(updates);
+            sm.insert(new Sms(sm.getLatestId(lv, Telephony.Sms.MESSAGE_TYPE_SENT), smsSender));
+            st.insert(smsSender);
         } else {
             Snackbar.make(requireView(), "Vorgang abgebrochen.", Snackbar.LENGTH_LONG).show();
             resetElements();
@@ -76,11 +71,11 @@ public abstract class SubStatusFragment extends Fragment {
     // Cached copy of parsed sms
     private final List<Integer> parsedSms = new ArrayList<>();
 
-    protected void setElements(List<State> states) {
+    protected void setElements(@NonNull List<State> states) {
         if (states.size() == 0)
             return;
 
-        State state = states.get(0);
+        @NonNull State state = states.get(0);
 
         int id = state.id;
 
@@ -174,8 +169,6 @@ public abstract class SubStatusFragment extends Fragment {
                     case WARNING_NUMBER:
                         setWarningNumberElementsPending(state);
                         break;
-                    case _STATUS:
-                        break;
                     case LAT: // And
                     case LNG: // And
                     case ACC: // And
@@ -187,41 +180,46 @@ public abstract class SubStatusFragment extends Fragment {
                     case WIFI_ACCESS_POINTS:
                         setLocationElementsTempPending(state);
                         break;
+                    case _STATUS:
+                    case WAPP:
+                    case NO_WIFI_ACCESS_POINTS:
+                    case NO_CELL_TOWERS:
+                        break;
                 }
                 break;
         }
     }
 
     // confirmed
-    protected abstract void setBatteryElementsConfirmed(State state);
-    protected abstract void setIntervalElementsConfirmed(State state);
-    protected abstract void setWifiElementsConfirmed(State state);
-    protected abstract void setWarningNumberElementsConfirmed(State state);
-    protected abstract void setStatusElementsConfirmed(State state);
-    protected abstract void setLocationElementsConfirmed(State state);
-    protected abstract void setLatConfirmed(State state);
-    protected abstract void setLngConfirmed(State state);
-    protected abstract void setAccConfirmed(State state);
+    protected abstract void setBatteryElementsConfirmed(@NonNull State state);
+    protected abstract void setIntervalElementsConfirmed(@NonNull State state);
+    protected abstract void setWifiElementsConfirmed(@NonNull State state);
+    protected abstract void setWarningNumberElementsConfirmed(@NonNull State state);
+    protected abstract void setStatusElementsConfirmed(@NonNull State state);
+    protected abstract void setLocationElementsConfirmed(@NonNull State state);
+    protected abstract void setLatConfirmed(@NonNull State state);
+    protected abstract void setLngConfirmed(@NonNull State state);
+    protected abstract void setAccConfirmed(@NonNull State state);
 
     // pending
-    protected abstract void setBatteryElementsPending(State state);
-    protected abstract void setIntervalElementsPending(State state);
-    protected abstract void setWifiElementsPending(State state);
-    protected abstract void setWarningNumberElementsPending(State state);
-    protected abstract void setLocationElementsPending(State state);
-    protected abstract void setLocationElementsTempPending(State state);
+    protected abstract void setBatteryElementsPending(@NonNull State state);
+    protected abstract void setIntervalElementsPending(@NonNull State state);
+    protected abstract void setWifiElementsPending(@NonNull State state);
+    protected abstract void setWarningNumberElementsPending(@NonNull State state);
+    protected abstract void setLocationElementsPending(@NonNull State state);
+    protected abstract void setLocationElementsTempPending(@NonNull State state);
 
     // unset
-    protected abstract void setBatteryElementsUnset(State state);
-    protected abstract void setWarningNumberElementsUnset(State state);
-    protected abstract void setStatusElementsUnset(State state);
+    protected abstract void setBatteryElementsUnset(@NonNull State state);
+    protected abstract void setWarningNumberElementsUnset(@NonNull State state);
+    protected abstract void setStatusElementsUnset(@NonNull State state);
     protected abstract void setLocationElementsUnset();
     protected abstract void setLocationElementsTempUnset();
 
     protected void updatePendingText(TextView textView, long stopTime, long residualSeconds) {
         if (residualSeconds < 0) {
             textView.setText(getString(R.string.overdue,
-                    Utils.convertToDateHuman(stopTime))
+                    Utils.ConvertPeriodToHuman(stopTime))
             );
             return;
         }
@@ -238,7 +236,7 @@ public abstract class SubStatusFragment extends Fragment {
         );
     }
 
-    protected void sendSms(Sms.MESSAGE message, State[] updates) {
-        smsSender.send(message, updates);
+    protected void sendSms(@NonNull Sms.MESSAGE message, @NonNull State[] updates) {
+        new SmsSender(requireActivity(), lv, this::onPostSend, message, updates).send();
     }
 }

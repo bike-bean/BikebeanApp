@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,19 +25,22 @@ import okhttp3.Response;
 class LocationUpdater extends AsyncTask<String, Void, Boolean> {
 
     public interface PostResponseHandler {
-        void onPostResponse(WappState wappCellTowers, Type type);
+        void onPostResponse(@NonNull WappState wappCellTowers, Type type);
     }
 
+    private static final @Nullable MediaType JSON =
+            MediaType.parse("application/json; charset=utf-8");
+
     private final LocationStateViewModel mStateViewModel;
-    private final LogViewModel mLogViewModel;
-    private final PostResponseHandler mPostResponseHandler;
-    private final WappState mWappState;
+    private final @NonNull LogViewModel mLogViewModel;
+    private final @NonNull PostResponseHandler mPostResponseHandler;
+    private final @NonNull WappState mWappState;
 
-    private final String mUrl;
-    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private final @NonNull String mUrl;
 
-    LocationUpdater(@NonNull Context context, LocationStateViewModel st, LogViewModel lv,
-                    PostResponseHandler postResponseHandler, @NonNull WappState wappState) {
+    LocationUpdater(@NonNull Context context, LocationStateViewModel st, @NonNull LogViewModel lv,
+                    @NonNull PostResponseHandler postResponseHandler,
+                    @NonNull WappState wappState) {
         mStateViewModel = st;
         mLogViewModel = lv;
         mPostResponseHandler = postResponseHandler;
@@ -54,7 +58,12 @@ class LocationUpdater extends AsyncTask<String, Void, Boolean> {
         if (requestBodyString.isEmpty())
             return false;
 
-        RequestBody requestBody = RequestBody.create(JSON, requestBodyString);
+        RequestBody requestBody;
+        if (JSON != null)
+            requestBody = RequestBody.create(JSON, requestBodyString);
+        else
+            return false;
+
         Request request = new Request.Builder()
                 .url(mUrl)
                 .post(requestBody)

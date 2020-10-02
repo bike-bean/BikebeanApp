@@ -1,5 +1,6 @@
 package de.bikebean.app.ui.main.status.menu.history;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -51,7 +52,7 @@ public class HistoryActivity extends AppCompatActivity {
         batteryHistoryButton.setOnClickListener(this::navigateToTab);
     }
 
-    private void navigateToTab(View v) {
+    private void navigateToTab(@NonNull View v) {
         if (v.getId() == R.id.positionButton)
             Navigation.findNavController(this, R.id.history)
                     .navigate(R.id.position_action);

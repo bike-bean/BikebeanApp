@@ -11,34 +11,33 @@ public class WarningNumber extends ReplaceIfNewerSetting {
 
     private static final State.KEY key = State.KEY.WARNING_NUMBER;
 
-    private final State state;
-
-    private final String warningNumber;
+    private final @NonNull State state;
+    private final @NonNull String warningNumber;
 
     public WarningNumber(@NonNull SmsParser smsParser, boolean isStatus) {
         super(smsParser.getSms(), key);
 
         if (isStatus)
-            this.warningNumber = smsParser.getStatusWarningNumber();
+            warningNumber = smsParser.getStatusWarningNumber();
         else
-            this.warningNumber = smsParser.getWarningNumber();
+            warningNumber = smsParser.getWarningNumber();
 
-        this.state = new State(getDate(), key, 0.0, get(), State.STATUS.CONFIRMED, getId());
+        state = new State(getDate(), key, 0.0, get(), State.STATUS.CONFIRMED, getId());
     }
 
-    public WarningNumber(String warningNumber, Sms sms) {
+    public WarningNumber(@NonNull String warningNumber, @NonNull Sms sms) {
         super(sms, key);
         this.warningNumber = warningNumber;
-        this.state = new State(getDate(), key, 0.0, get(), State.STATUS.UNSET, getId());
+        state = new State(getDate(), key, 0.0, get(), State.STATUS.UNSET, getId());
     }
 
     @Override
-    public String get() {
+    public @NonNull String get() {
         return warningNumber;
     }
 
     @Override
-    public State getState() {
+    public @NonNull State getState() {
         return state;
     }
 }

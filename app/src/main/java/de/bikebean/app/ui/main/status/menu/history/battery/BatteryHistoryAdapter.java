@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.List;
 import java.util.Locale;
@@ -30,7 +31,7 @@ class BatteryHistoryAdapter extends HistoryAdapter {
         }
     }
 
-    BatteryHistoryAdapter(Context context, List<? extends DatabaseEntity> states) {
+    BatteryHistoryAdapter(Context context, @Nullable List<? extends DatabaseEntity> states) {
         super(context, states);
     }
 
@@ -57,7 +58,7 @@ class BatteryHistoryAdapter extends HistoryAdapter {
                     Utils.getBatteryDrawable(ctx, current.getValue()),
                     null, null, null
             );
-            bHolder.dateTimeText.setText(Utils.convertToDateHuman(current.getTimestamp()));
+            bHolder.dateTimeText.setText(Utils.ConvertPeriodToHuman(current.getTimestamp()));
             bHolder.smsIdText.setText(
                     String.format(Locale.GERMANY, "SmsId: %d", current.getSmsId()));
         } else {

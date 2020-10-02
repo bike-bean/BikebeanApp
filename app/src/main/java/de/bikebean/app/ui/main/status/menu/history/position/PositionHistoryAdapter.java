@@ -72,7 +72,7 @@ class PositionHistoryAdapter extends HistoryAdapter {
             pHolder.lat.setText(String.format(Locale.GERMANY, "%.7f", current.getLat()));
             pHolder.lng.setText(String.format(Locale.GERMANY, "%.7f", current.getLng()));
             pHolder.acc.setText(String.format(Locale.GERMANY, "%.1f", current.getAcc()));
-            pHolder.dateTimeText.setText(Utils.convertToDateHuman(current.getTimestamp()));
+            pHolder.dateTimeText.setText(Utils.ConvertPeriodToHuman(current.getTimestamp()));
             pHolder.smsIdText.setText(
                     String.format(Locale.GERMANY, "SmsId: %d", current.getSmsId())
             );

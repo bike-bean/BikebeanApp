@@ -2,6 +2,8 @@ package de.bikebean.app.ui.main.status;
 
 import android.app.Application;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 import de.bikebean.app.db.BikeBeanRoomDatabase;
@@ -21,17 +23,17 @@ public class StateRepository {
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() -> mStateDao.insert(state));
     }
 
-    List<State> getConfirmedStateSync(String key, int smsId) {
+    @NonNull List<State> getConfirmedStateSync(String key, int smsId) {
         discard(smsId);
         return mStateDao.getByKeyAndStateSync(key, State.STATUS.CONFIRMED.ordinal());
     }
 
-    List<State> getLastStateSync(String key, int smsId) {
+    @NonNull List<State> getLastStateSync(String key, int smsId) {
         discard(smsId);
         return mStateDao.getByKeySync(key);
     }
 
-    List<State> getStateByIdSync(String key, int smsId) {
+    @NonNull List<State> getStateByIdSync(String key, int smsId) {
         return mStateDao.getByKeyAndIdSync(key, smsId);
     }
 

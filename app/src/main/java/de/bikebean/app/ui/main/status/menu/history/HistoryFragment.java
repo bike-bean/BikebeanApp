@@ -84,7 +84,7 @@ public abstract class HistoryFragment extends Fragment {
 
     protected abstract HistoryAdapter getNewAdapter(Context ctx);
 
-    protected void setStatesToAdapter(List<? extends DatabaseEntity> ls) {
+    protected void setStatesToAdapter(@NonNull List<? extends DatabaseEntity> ls) {
         if (ls.size() != 0) {
             adapter.setStates(ls);
             noDataText.setVisibility(View.GONE);

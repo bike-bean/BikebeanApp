@@ -4,6 +4,7 @@ import android.app.Application;
 import android.util.SparseArray;
 import android.util.SparseLongArray;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -35,7 +36,7 @@ public class LiveDataTimerViewModel extends AndroidViewModel {
         }
     }
 
-    public long startTimer(final TIMER which, long startTime, int interval) {
+    public long startTimer(@NonNull final TIMER which, long startTime, int interval) {
         timers.put(which.ordinal(), new Timer());
         stopTimes.put(which.ordinal(), startTime + interval * 1000 * 60 * 60);
 
@@ -51,11 +52,11 @@ public class LiveDataTimerViewModel extends AndroidViewModel {
         return stopTimes.get(which.ordinal());
     }
 
-    public LiveData<Long> getResidualTime(final TIMER which) {
+    public LiveData<Long> getResidualTime(final @NonNull TIMER which) {
         return residualTimes.get(which.ordinal());
     }
 
-    public void cancelTimer(final TIMER which) {
+    public void cancelTimer(final @NonNull TIMER which) {
         timers.get(which.ordinal()).cancel();
     }
 

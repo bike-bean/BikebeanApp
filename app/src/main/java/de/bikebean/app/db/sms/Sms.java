@@ -2,7 +2,6 @@ package de.bikebean.app.db.sms;
 
 import android.database.Cursor;
 import android.provider.Telephony;
-import android.telephony.SmsMessage;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
@@ -13,6 +12,7 @@ import androidx.room.PrimaryKey;
 import de.bikebean.app.db.DatabaseEntity;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.utils.Utils;
+import de.bikebean.app.ui.utils.sms.send.SmsSender;
 
 @Entity(tableName = "sms_table")
 public class Sms extends DatabaseEntity {
@@ -109,14 +109,13 @@ public class Sms extends DatabaseEntity {
     @Ignore
     public Sms(
             int smsId,
-            @NonNull String address,
-            @NonNull String message
-    ) {
+            @NonNull SmsSender smsSender
+            ) {
         long timestamp = System.currentTimeMillis();
 
         this.mId = smsId - 1;
-        this.mAddress = address;
-        this.mBody = message;
+        this.mAddress = smsSender.getAddress();
+        this.mBody = smsSender.getMessage().getMsg();
         this.mType = Telephony.Sms.MESSAGE_TYPE_SENT;
         this.mState = STATUS.NEW.ordinal();
         this.mDate = Utils.convertToTime(timestamp);
@@ -158,27 +157,6 @@ public class Sms extends DatabaseEntity {
         this.mDate = Utils.convertToTime(mTimestamp);
     }
 
-    // with SmsMessage from Intent
-    @Ignore
-    public Sms(
-            int id,
-            @NonNull SmsMessage smsMessage
-    ) {
-        this.mId = id + 1;
-        this.mType = Telephony.Sms.MESSAGE_TYPE_INBOX;
-        this.mState = STATUS.NEW.ordinal();
-
-        String address = smsMessage.getOriginatingAddress();
-        if (address != null)
-            this.mAddress = address;
-        else
-            this.mAddress = "";
-        this.mBody = smsMessage.getMessageBody();
-
-        this.mTimestamp = smsMessage.getTimestampMillis();
-        this.mDate = Utils.convertToTime(mTimestamp);
-    }
-
     // nullType
     @Ignore
     public Sms() {
@@ -195,11 +173,11 @@ public class Sms extends DatabaseEntity {
         return this.mId;
     }
 
-    public String getAddress() {
+    public @NonNull String getAddress() {
         return this.mAddress;
     }
 
-    public String getBody() {
+    public @NonNull String getBody() {
         return this.mBody;
     }
 
@@ -211,7 +189,7 @@ public class Sms extends DatabaseEntity {
         return this.mState;
     }
 
-    public String getDate() {
+    public @NonNull String getDate() {
         return this.mDate;
     }
 
@@ -220,19 +198,19 @@ public class Sms extends DatabaseEntity {
     }
 
     @Override
-    public DatabaseEntity getNullType() {
+    public @NonNull DatabaseEntity getNullType() {
         return new Sms();
     }
 
     @Override
-    public String createReportTitle() {
+    public @NonNull String createReportTitle() {
         String delimiter = "\t";
         return "ID" + delimiter + "Body" + delimiter + "Type" + delimiter +
                 "State" + delimiter + "Date" + "\n";
     }
 
     @Override
-    public String createReport() {
+    public @NonNull String createReport() {
         String delimiter = "\t";
         return mId + delimiter + mBody.replace("\n", "//") +
                 delimiter + mType + delimiter + mState + delimiter + mDate + "\n";

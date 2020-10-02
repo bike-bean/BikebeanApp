@@ -1,5 +1,7 @@
 package de.bikebean.app.db.type.types;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 import de.bikebean.app.db.settings.Setting;
@@ -10,7 +12,7 @@ public abstract class SmsParserType extends Type {
 
     protected SmsParser mSmsParser;
 
-    public SmsParserType(Type.SMSTYPE t) {
+    public SmsParserType(@NonNull Type.SMSTYPE t) {
         super(t);
     }
 

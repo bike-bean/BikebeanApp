@@ -1,5 +1,7 @@
 package de.bikebean.app.db.settings.settings.replace_if_newer_settings;
 
+import androidx.annotation.NonNull;
+
 import de.bikebean.app.db.settings.settings.ReplaceIfNewerSetting;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
@@ -12,27 +14,27 @@ public class Interval extends ReplaceIfNewerSetting {
 
     private final int interval;
 
-    public Interval(SmsParser smsParser, boolean isStatus) {
+    public Interval(@NonNull SmsParser smsParser, boolean isStatus) {
         super(smsParser.getSms(), key);
 
         if (isStatus)
-            this.interval = smsParser.getStatusInterval();
+            interval = smsParser.getStatusInterval();
         else
-            this.interval = smsParser.getInterval();
+            interval = smsParser.getInterval();
     }
 
     public Interval() {
         super(new Sms(), key);
-        this.interval = INITIAL_INTERVAL;
+        interval = INITIAL_INTERVAL;
     }
 
     @Override
-    public final Double get() {
+    public final @NonNull Double get() {
         return (double) interval;
     }
 
     @Override
-    public final State getState() {
+    public final @NonNull State getState() {
         return new State(getDate(), key, get(), "", State.STATUS.CONFIRMED, getId());
     }
 }

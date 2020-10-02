@@ -1,5 +1,7 @@
 package de.bikebean.app.ui.initialization;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +14,7 @@ public class StateList extends ArrayList<State> {
         super(a);
     }
 
-    public State getCellTowersState(LocationStateViewModel st) {
+    public @NonNull State getCellTowersState(LocationStateViewModel st) {
         if (isEmpty())
             return new State();
 
@@ -23,7 +25,7 @@ public class StateList extends ArrayList<State> {
         return new State();
     }
 
-    public State getWifiAccessPointsState(LocationStateViewModel st) {
+    public @NonNull State getWifiAccessPointsState(LocationStateViewModel st) {
         if (isEmpty())
             return new State();
 

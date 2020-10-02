@@ -10,23 +10,23 @@ import de.bikebean.app.db.state.State;
 public abstract class Setting {
 
     public interface ConversationListAdder {
-        void addToConversationList(List<Setting> conversationList);
+        void addToConversationList(@NonNull List<Setting> conversationList);
     }
 
-    public abstract ConversationListAdder getConversationListAdder();
-    public abstract State getState();
-    public abstract Object get();
+    public abstract @NonNull ConversationListAdder getConversationListAdder();
+    public abstract @NonNull State getState();
+    public abstract @NonNull Object get();
 
-    private Sms sms;
-    private final State.KEY key;
+    private @NonNull Sms sms;
+    private final @NonNull State.KEY key;
 
-    public Setting(Sms sms, State.KEY key) {
+    public Setting(@NonNull Sms sms, @NonNull State.KEY key) {
         this.sms = sms;
         this.key = key;
     }
 
     // setters / getters
-    protected void setSms(Sms sms) {
+    protected void setSms(@NonNull Sms sms) {
         this.sms = sms;
     }
 
@@ -38,7 +38,7 @@ public abstract class Setting {
         return sms.getId();
     }
 
-    public Sms getSms() {
+    public @NonNull Sms getSms() {
         return sms;
     }
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -20,9 +21,9 @@ public abstract class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter
 
     protected final Context ctx;
     protected final LayoutInflater mInflater;
-    protected List<? extends DatabaseEntity> mStates;
+    protected @Nullable List<? extends DatabaseEntity> mStates;
 
-    protected HistoryAdapter(Context context, List<? extends DatabaseEntity> states) {
+    protected HistoryAdapter(Context context, @Nullable List<? extends DatabaseEntity> states) {
         ctx = context;
 
         mInflater = LayoutInflater.from(context);

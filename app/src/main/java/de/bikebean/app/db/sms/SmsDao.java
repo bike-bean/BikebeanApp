@@ -29,9 +29,6 @@ public interface SmsDao {
     @Query("SELECT * FROM sms_table")
     List<Sms> getAllSync();
 
-    @Query("SELECT COUNT(*) FROM sms_table WHERE type LIKE :type")
-    int getCountByType(int type);
-
     @Query("SELECT * FROM sms_table WHERE _id = :id")
     List<Sms> getSmsById(int id);
 

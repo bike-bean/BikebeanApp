@@ -2,6 +2,7 @@ package de.bikebean.app.ui.main.status.location;
 
 import android.app.Application;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
 import java.util.List;
@@ -62,7 +63,7 @@ class LocationStateRepository extends StateRepository {
         return mWifiAccessPoints;
     }
 
-    void confirmWapp(WappState wappState) {
+    void confirmWapp(@NonNull WappState wappState) {
         confirmWapp(wappState.getCellTowers().getSmsId(), wappState.getWifiAccessPoints().getSmsId());
         confirmWapp(wappState.getWifiAccessPoints().getSmsId(), wappState.getCellTowers().getSmsId());
     }

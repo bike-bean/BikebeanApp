@@ -9,8 +9,8 @@ import de.bikebean.app.ui.main.status.location.LocationStateViewModel;
 
 public class WappState extends Wapp {
 
-    private final State wifiAccessPoints;
-    private final State cellTowers;
+    private final @NonNull State wifiAccessPoints;
+    private final @NonNull State cellTowers;
 
     public WappState(LocationStateViewModel st, @NonNull StateList states) {
         wifiAccessPoints = states.getWifiAccessPointsState(st);
@@ -27,11 +27,11 @@ public class WappState extends Wapp {
         return cellTowers.getIsNull() || wifiAccessPoints.getIsNull();
     }
 
-    public State getCellTowers() {
+    public @NonNull State getCellTowers() {
         return cellTowers;
     }
 
-    public State getWifiAccessPoints() {
+    public @NonNull State getWifiAccessPoints() {
         return wifiAccessPoints;
     }
 

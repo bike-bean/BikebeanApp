@@ -24,17 +24,17 @@ public class Wapp extends Setting {
     }
 
     @Override
-    public final Double get() {
+    public final @NonNull Double get() {
         return wapp;
     }
 
     @Override
-    public final State getState(){
+    public final @NonNull State getState(){
         return new State(getDate(), key, get(), "", State.STATUS.PENDING, getId());
     }
 
     @Override
-    public final ConversationListAdder getConversationListAdder() {
+    public final @NonNull ConversationListAdder getConversationListAdder() {
         return super::addToList;
     }
 }

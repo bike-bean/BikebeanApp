@@ -1,5 +1,7 @@
 package de.bikebean.app.db.type.types.sms_parser_types;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +13,7 @@ public class LowBattery extends SmsParserType {
 
     private final List<Setting> settings;
 
-    public LowBattery(SmsParser smsParser) {
+    public LowBattery(@NonNull SmsParser smsParser) {
         super(SMSTYPE.LOW_BATTERY);
         this.mSmsParser = smsParser;
         this.settings = new ArrayList<>();

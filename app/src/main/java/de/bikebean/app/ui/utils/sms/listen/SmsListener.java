@@ -7,9 +7,10 @@ import android.provider.Telephony;
 import android.telephony.SmsMessage;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
-import de.bikebean.app.db.sms.Sms;
+import de.bikebean.app.ui.main.status.StateViewModel;
 import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
 import de.bikebean.app.ui.main.status.menu.sms_history.SmsViewModel;
 
@@ -21,36 +22,46 @@ public class SmsListener extends BroadcastReceiver {
      our viewModel to update the SMS in background.
      */
     private static SmsViewModel sm;
+    private static StateViewModel st;
     private static LogViewModel lv;
 
-    public static void setViewModels(SmsViewModel smsViewModel, LogViewModel logViewModel) {
+    public static void setViewModels(SmsViewModel smsViewModel, StateViewModel stateViewModel,
+                                     LogViewModel logViewModel) {
         sm = smsViewModel;
+        st = stateViewModel;
         lv = logViewModel;
     }
 
     @Override
-    public void onReceive(Context ctx, @NonNull Intent intent) {
-        if (lv == null || sm == null)
+    public void onReceive(@NonNull Context ctx, @NonNull Intent intent) {
+        if (lv == null || st == null || sm == null)
             return;
 
         lv.d("Received something...");
         if (intent.getAction() == null
                 || !intent.getAction().equals(Telephony.Sms.Intents.SMS_RECEIVED_ACTION))
             return;
+        else
+            lv.d("New SMS received...");
 
-        lv.d("New SMS received...");
-        final String address = PreferenceManager.getDefaultSharedPreferences(ctx)
-                .getString("number", "");
+        final @Nullable String address = PreferenceManager.getDefaultSharedPreferences(ctx)
+                .getString("number", null);
+        if (address == null) {
+            lv.e("Failed to load BB-number! Maybe it's not set?");
+            return;
+        }
 
-        for (SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
-            String sender = smsMessage.getOriginatingAddress();
+        for (@NonNull SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
+            final @Nullable String senderAddress = smsMessage.getOriginatingAddress();
 
-            Sms sms = new Sms(sm.getLatestId(lv, Telephony.Sms.MESSAGE_TYPE_INBOX), smsMessage);
-
-            if (sender == null || !sender.equals(address))
-                lv.d("Sender is not ours. (" + sender + ")");
+            if (senderAddress != null)
+                if (senderAddress.equals(address)) {
+                    lv.d("Sender is ours, start fetching sms");
+                    sm.fetchSms(ctx, st, lv, address);
+                } else
+                    lv.d("Sender is not ours. (" + senderAddress + ")");
             else
-                sm.insert(sms);
+                lv.w("Failed to get sender address!");
         }
     }
 }

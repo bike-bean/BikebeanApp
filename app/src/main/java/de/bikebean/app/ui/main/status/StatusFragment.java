@@ -16,6 +16,7 @@ import android.widget.Button;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -146,7 +147,7 @@ public class StatusFragment extends Fragment {
     private void getPermissions() {
         permissionGrantedHandler = this::fetchSms;
 
-        FragmentActivity act = requireActivity();
+        final @NonNull FragmentActivity act = requireActivity();
 
         if (Utils.getPermissions(act, Utils.PERMISSION_KEY.SMS, () ->
                 new PermissionsRationaleDialog(act, Utils.PERMISSION_KEY.SMS).show(
@@ -160,13 +161,13 @@ public class StatusFragment extends Fragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.status_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_sms_history:
                 Navigation.findNavController(requireView())
@@ -200,7 +201,7 @@ public class StatusFragment extends Fragment {
             errorView.setVisibility(View.GONE);
     }
 
-    private void openSettings(View v) {
+    private void openSettings(@NonNull View v) {
         if (v.getId() == 0)
             return;
 
@@ -211,11 +212,13 @@ public class StatusFragment extends Fragment {
     }
 
     private void fetchSms() {
-        Context ctx = requireContext();
+        @NonNull Context ctx = requireContext();
+        final @Nullable String number = PreferenceManager.getDefaultSharedPreferences(ctx)
+                .getString("number", null);
 
-        smsViewModel.fetchSms(ctx, stateViewModel, logViewModel,
-                PreferenceManager.getDefaultSharedPreferences(ctx)
-                        .getString("number", "")
-        );
+        if (number != null)
+            smsViewModel.fetchSms(ctx, stateViewModel, logViewModel, number);
+        else
+            logViewModel.e("Failed to load BB-number! Maybe it's not set?");
     }
 }

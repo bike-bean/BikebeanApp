@@ -16,16 +16,16 @@ public class WifiAccessPoints extends NumberSetting {
     private static final State.KEY key = State.KEY.WIFI_ACCESS_POINTS;
     private static final State.KEY numberKey = State.KEY.NO_WIFI_ACCESS_POINTS;
 
-    private final WifiAccessPointList wifiAccessPointList;
+    private final @NonNull WifiAccessPointList wifiAccessPointList;
     private final int number;
-    private final State numberState;
+    private final @NonNull State numberState;
 
     public static class WifiAccessPointList extends ArrayList<WifiAccessPoint> {
-        WifiAccessPointList(String[] stringArrayWapp) {
+        WifiAccessPointList(@NonNull String[] stringArrayWapp) {
             parse(stringArrayWapp);
         }
 
-        private void parse(String[] stringArrayWapp) {
+        private void parse(@NonNull String[] stringArrayWapp) {
             for (String s : stringArrayWapp)
                 if (!s.equals("    ") && !s.equals("")) {
                     // Länge des Substrings ist Unterscheidungskriterium
@@ -38,6 +38,7 @@ public class WifiAccessPoints extends NumberSetting {
                 }
         }
     }
+
     public static class WifiAccessPoint extends RawNumberSettings {
         public String macAddress;
         public Integer signalStrength;
@@ -60,10 +61,10 @@ public class WifiAccessPoints extends NumberSetting {
         }
     }
 
-    public WifiAccessPoints(String wifiAccessPoints, Sms sms) {
+    public WifiAccessPoints(@NonNull String wifiAccessPoints, Sms sms) {
         super(wifiAccessPoints, sms, key);
 
-        String[] strings = mWappString.split("\n");
+        @NonNull String[] strings = mWappString.split("\n");
         number = strings.length;
 
         wifiAccessPointList = new WifiAccessPointList(strings);
@@ -77,7 +78,7 @@ public class WifiAccessPoints extends NumberSetting {
     public WifiAccessPoints(@NonNull SmsParser smsParser) {
         super(smsParser.getWappWifiAccessPoints(), smsParser.getSms(), key);
 
-        String[] strings = mWappString.split("\n");
+        @NonNull String[] strings = mWappString.split("\n");
         number = strings.length;
 
         wifiAccessPointList = new WifiAccessPointList(strings);
@@ -91,7 +92,7 @@ public class WifiAccessPoints extends NumberSetting {
     public WifiAccessPoints(@NonNull WappState wappState) {
         super(wappState.getWifiAccessPoints().getLongValue(), wappState.getSms(), key);
 
-        String[] strings = mWappString.split("\n");
+        @NonNull String[] strings = mWappString.split("\n");
         number = strings.length;
 
         wifiAccessPointList = new WifiAccessPointList(strings);
@@ -111,7 +112,7 @@ public class WifiAccessPoints extends NumberSetting {
     }
 
     @Override
-    public List<? extends RawNumberSettings> getList() {
+    public @NonNull List<? extends RawNumberSettings> getList() {
         return wifiAccessPointList;
     }
 
@@ -121,7 +122,7 @@ public class WifiAccessPoints extends NumberSetting {
     }
 
     @Override
-    public State getNumberState() {
+    public @NonNull State getNumberState() {
         return numberState;
     }
 }

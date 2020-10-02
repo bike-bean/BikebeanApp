@@ -12,22 +12,23 @@ import de.bikebean.app.R;
 
 public class ResetDialog extends DialogFragment {
 
-    private final Activity act;
+    private final @NonNull Activity act;
 
-    private final ResetHandler resetHandler;
-    private final ResetCanceller resetCanceller;
+    private final @NonNull ResetHandler resetHandler;
+    private final @NonNull ResetCanceller resetCanceller;
 
-    private final String address;
+    private final @NonNull String address;
 
     public interface ResetHandler {
-        void reset(String address);
+        void reset(@NonNull String address);
     }
 
     public interface ResetCanceller {
         void cancel();
     }
 
-    ResetDialog(Activity act, String address, ResetHandler r1, ResetCanceller r2) {
+    ResetDialog(@NonNull Activity act, @NonNull String address,
+                @NonNull ResetHandler r1, @NonNull ResetCanceller r2) {
         this.act = act;
 
         this.resetHandler = r1;

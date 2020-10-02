@@ -1,5 +1,8 @@
 package de.bikebean.app.db.type.types.sms_parser_types;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +19,8 @@ public class Status extends SmsParserType {
 
     private final List<Setting> settings;
 
-    public Status(SmsParser smsParser, WeakReference<LogViewModel> logViewModelReference) {
+    public Status(@NonNull SmsParser smsParser,
+                  @Nullable WeakReference<LogViewModel> logViewModelReference) {
         super(SMSTYPE.STATUS);
         this.mSmsParser = smsParser;
         this.settings = new ArrayList<>();
@@ -27,7 +31,7 @@ public class Status extends SmsParserType {
         settings.add(new Battery(mSmsParser, true, false));
         settings.add(new de.bikebean.app.db.settings.settings.replace_if_newer_settings.Status(mSmsParser));
 
-        if (logViewModelReference != null)
+        if (logViewModelReference != null && logViewModelReference.get() != null)
             logViewModelReference.get().w("WarningNumber is not set!");
     }
 

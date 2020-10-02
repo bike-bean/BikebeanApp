@@ -9,56 +9,52 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import de.bikebean.app.R;
-import de.bikebean.app.db.sms.Sms;
 
 public class SmsSendWarnDialog extends DialogFragment {
 
-    private final Activity act;
-    private final iSmsSender smsSender;
-    private final iSmsCanceler smsCanceler;
+    private final @NonNull Activity act;
+    private final @NonNull SmsSender smsSender;
 
-    private final String message;
-
-    public interface iSmsSender {
-        void send();
-    }
-
-    public interface iSmsCanceler {
-        void cancel();
-    }
-
-    SmsSendWarnDialog(Activity act, Sms.MESSAGE message,
-                      iSmsSender smsSender, iSmsCanceler smsCanceler) {
-        this.smsSender = smsSender;
-        this.smsCanceler = smsCanceler;
+    SmsSendWarnDialog(@NonNull Activity act, @NonNull SmsSender smsSender) {
         this.act = act;
-
-        this.message = message.getMsg();
+        this.smsSender = smsSender;
     }
 
     @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(act);
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        final @NonNull AlertDialog.Builder builder = new AlertDialog.Builder(act);
 
-        LayoutInflater inflater = act.getLayoutInflater();
+        final @NonNull LayoutInflater inflater = act.getLayoutInflater();
 
         @SuppressLint("InflateParams")
-        View v = inflater.inflate(R.layout.dialog_warn_sms, null);
+        final @NonNull View v = inflater.inflate(R.layout.dialog_warn_sms, null);
 
-        TextView smsMessage = v.findViewById(R.id.txtMsgYou2);
-        TextView smsMessageDots = v.findViewById(R.id.txtMsgFrom2);
-        smsMessage.setText(message);
-        smsMessageDots.setText("...");
+        final @Nullable TextView smsMessage = v.findViewById(R.id.txtMsgYou2);
+        final @Nullable TextView smsMessageDots = v.findViewById(R.id.txtMsgFrom2);
+
+        if (smsMessage != null && smsMessageDots != null) {
+            smsMessage.setText(smsSender.getMessage().getMsg());
+            smsMessageDots.setText("...");
+        } else {
+            Snackbar.make(
+                    requireView(),
+                    smsSender.getMessage().getMsg() + "senden?",
+                    Snackbar.LENGTH_LONG
+            );
+        }
 
         builder.setView(v)
                 .setMessage(R.string.sms_send_warning)
-                .setPositiveButton(R.string.continue_send_sms, (dialog, id) -> smsSender.send())
-                .setNegativeButton(R.string.abort_send_sms, (dialog, id) -> smsCanceler.cancel());
+                .setPositiveButton(R.string.continue_send_sms, (dialog, id) -> smsSender.getPermissions())
+                .setNegativeButton(R.string.abort_send_sms, (dialog, id) -> smsSender.cancelSend());
 
         return builder.create();
     }

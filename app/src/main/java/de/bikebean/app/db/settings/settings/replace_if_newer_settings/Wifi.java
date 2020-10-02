@@ -1,5 +1,7 @@
 package de.bikebean.app.db.settings.settings.replace_if_newer_settings;
 
+import androidx.annotation.NonNull;
+
 import de.bikebean.app.db.settings.settings.ReplaceIfNewerSetting;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
@@ -12,12 +14,12 @@ public class Wifi extends ReplaceIfNewerSetting {
 
     private final boolean wifi;
 
-    public Wifi(SmsParser smsParser) {
+    public Wifi(@NonNull SmsParser smsParser) {
         super(smsParser.getSms(), key);
         this.wifi = smsParser.getStatusWifi();
     }
 
-    public Wifi(boolean wifi, Sms sms) {
+    public Wifi(boolean wifi, @NonNull Sms sms) {
         super(sms, key);
         this.wifi = wifi;
     }
@@ -28,12 +30,12 @@ public class Wifi extends ReplaceIfNewerSetting {
     }
 
     @Override
-    public Double get() {
+    public @NonNull Double get() {
         return wifi ? 1.0 : 0.0;
     }
 
     @Override
-    public State getState() {
+    public @NonNull State getState() {
         return new State(getDate(), key, get(), "", State.STATUS.CONFIRMED, getId());
     }
 

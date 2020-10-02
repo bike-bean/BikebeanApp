@@ -3,6 +3,7 @@ package de.bikebean.app.ui.main.status.menu.sms_history;
 import android.app.Application;
 import android.provider.Telephony;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
 import java.util.List;
@@ -44,23 +45,12 @@ class SmsRepository {
         return mAllIds;
     }
 
-    int getInboxCount() {
-        return mSmsDao.getCountByType(Telephony.Sms.MESSAGE_TYPE_INBOX);
-    }
-
-    List<Sms> getSmsById(int id) {
+    @NonNull List<Sms> getSmsById(int id) {
         return mSmsDao.getSmsById(id);
     }
 
-    List<Sms> getSmsById(String s, int id) {
-        if (s.isEmpty())
-            return mSmsDao.getSmsById(id);
-        else
-            return mSmsDao.getSmsById(id);
-    }
-
     int getLatestId(LogViewModel lv, int type) {
-        List<Sms> l = mSmsDao.getLatestId(type);
+        @NonNull List<Sms> l = mSmsDao.getLatestId(type);
 
         if (l.size() > 0) {
             return l.get(0).getId();
@@ -78,5 +68,4 @@ class SmsRepository {
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() ->
                 mSmsDao.updateStateById(Sms.STATUS.PARSED.ordinal(), sms.getId()));
     }
-
 }

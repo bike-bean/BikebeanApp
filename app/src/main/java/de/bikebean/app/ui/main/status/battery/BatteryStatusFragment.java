@@ -9,6 +9,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -68,7 +69,7 @@ public class BatteryStatusFragment extends SubStatusFragment {
 
     // unset
     @Override
-    protected void setBatteryElementsUnset(State state) {
+    protected void setBatteryElementsUnset(@NonNull State state) {
         tv.getResidualTime(t1).removeObservers(this);
         tv.cancelTimer(t1);
 
@@ -87,22 +88,14 @@ public class BatteryStatusFragment extends SubStatusFragment {
         statusPendingStatus.setVisibility(View.GONE);
     }
 
-    protected void setWarningNumberElementsUnset(State state) {
-
-    }
-    protected void setStatusElementsUnset(State state) {
-
-    }
-    protected void setLocationElementsUnset() {
-
-    }
-    protected void setLocationElementsTempUnset() {
-
-    }
+    protected void setWarningNumberElementsUnset(@NonNull State state) {}
+    protected void setStatusElementsUnset(@NonNull State state) {}
+    protected void setLocationElementsUnset() {}
+    protected void setLocationElementsTempUnset() {}
 
     // confirmed
     @Override
-    protected void setBatteryElementsConfirmed(State state) {
+    protected void setBatteryElementsConfirmed(@NonNull State state) {
         tv.getResidualTime(t1).removeObservers(this);
         tv.cancelTimer(t1);
 
@@ -113,7 +106,7 @@ public class BatteryStatusFragment extends SubStatusFragment {
                 null, null, null
         );
 
-        batteryLastChangedText.setText(Utils.convertToDateHuman(state.getTimestamp()));
+        batteryLastChangedText.setText(Utils.ConvertPeriodToHuman(state.getTimestamp()));
         batteryEstimatedDaysText.setText(BatteryStateViewModel.getEstimatedDaysText(st));
 
         statusButton.setEnabled(true);
@@ -123,54 +116,38 @@ public class BatteryStatusFragment extends SubStatusFragment {
     }
 
     @Override
-    protected void setIntervalElementsConfirmed(State state) {
-        assert state != null;
-
+    protected void setIntervalElementsConfirmed(@NonNull State state) {
         batteryEstimatedDaysText.setText(BatteryStateViewModel.getEstimatedDaysText(st));
     }
 
     @Override
-    protected void setWifiElementsConfirmed(State state) {
-        assert state != null;
-
+    protected void setWifiElementsConfirmed(@NonNull State state) {
         batteryEstimatedDaysText.setText(
                 BatteryStateViewModel.getEstimatedDaysText(st));
     }
 
-    protected void setWarningNumberElementsConfirmed(State state) {
-
-    }
-    protected void setStatusElementsConfirmed(State state) {
-
-    }
-    protected void setLocationElementsConfirmed(State state) {
-
-    }
-    protected void setLatConfirmed(State state) {
-
-    }
-    protected void setLngConfirmed(State state) {
-
-    }
-    protected void setAccConfirmed(State state) {
-
-    }
+    protected void setWarningNumberElementsConfirmed(@NonNull State state) {}
+    protected void setStatusElementsConfirmed(@NonNull State state) {}
+    protected void setLocationElementsConfirmed(@NonNull State state) {}
+    protected void setLatConfirmed(@NonNull State state) {}
+    protected void setLngConfirmed(@NonNull State state) {}
+    protected void setAccConfirmed(@NonNull State state) {}
 
     // pending
     @Override
-    protected void setBatteryElementsPending(State state) {
+    protected void setBatteryElementsPending(@NonNull State state) {
         long stopTime = tv.startTimer(t1, state.getTimestamp(), st.getConfirmedIntervalSync());
         tv.getResidualTime(t1).observe(this, s ->
                 updatePendingText(statusPendingStatus, stopTime, s)
         );
 
-        State lastBatteryState = st.getConfirmedBatterySync();
+        @Nullable State lastBatteryState = st.getConfirmedBatterySync();
         if (lastBatteryState != null) {
             double batteryValue = lastBatteryState.getValue();
             String batteryStatus = batteryValue + " %";
 
             batteryLastChangedText.setText(
-                    Utils.convertToDateHuman(lastBatteryState.getTimestamp()));
+                    Utils.ConvertPeriodToHuman(lastBatteryState.getTimestamp()));
             batteryEstimatedDaysText.setText(BatteryStateViewModel.getEstimatedDaysText(st));
             batteryStatusText.setText(batteryStatus);
             batteryStatusText.setCompoundDrawablesWithIntrinsicBounds(
@@ -192,21 +169,9 @@ public class BatteryStatusFragment extends SubStatusFragment {
         statusPendingStatus.setVisibility(View.VISIBLE);
     }
 
-    protected void setIntervalElementsPending(State state) {
-
-    }
-    protected void setWifiElementsPending(State state) {
-
-    }
-    protected void setWarningNumberElementsPending(State state) {
-
-    }
-    protected void setLocationElementsPending(State state) {
-
-    }
-    protected void setLocationElementsTempPending(State state) {
-
-    }
-
-
+    protected void setIntervalElementsPending(@NonNull State state) {}
+    protected void setWifiElementsPending(@NonNull State state) {}
+    protected void setWarningNumberElementsPending(@NonNull State state) {}
+    protected void setLocationElementsPending(@NonNull State state) {}
+    protected void setLocationElementsTempPending(@NonNull State state) {}
 }

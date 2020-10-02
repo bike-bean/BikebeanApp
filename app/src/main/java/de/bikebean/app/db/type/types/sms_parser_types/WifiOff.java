@@ -1,5 +1,7 @@
 package de.bikebean.app.db.type.types.sms_parser_types;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +16,7 @@ public class WifiOff extends SmsParserType {
 
     private final List<Setting> settings;
 
-    public WifiOff(SmsParser smsParser) {
+    public WifiOff(@NonNull SmsParser smsParser) {
         super(SMSTYPE.WIFI_OFF);
         this.mSmsParser = smsParser;
         this.settings = new ArrayList<>();

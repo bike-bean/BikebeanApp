@@ -143,7 +143,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mGoogleMap.setMyLocationEnabled(true);
     }
 
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         mGoogleMap = googleMap;
 
         googleMap.getUiSettings().setZoomControlsEnabled(true);
@@ -229,7 +229,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mapFragmentViewModel.getStatusNumberWifiAccessPoints().observe(l, this::setMapElements);
     }
 
-    private void setMapElements(List<State> statuses) {
+    private void setMapElements(@NonNull List<State> statuses) {
         if (statuses.size() == 0)
             return;
 
@@ -265,14 +265,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         popup.show();
     }
 
-    private void showShare(View v) {
+    private void showShare(@NonNull View v) {
         if (v.isEnabled())
             mapFragmentViewModel.newShareIntent(this);
         else
             mapFragmentViewModel.newShareIntent(this);
     }
 
-    private boolean handleMenuClick(MenuItem item) {
+    private boolean handleMenuClick(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_normal:
                 mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -331,7 +331,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             }
     }
 
-    private LatLngBounds getLatLngBounds() throws IllegalStateException {
+    private @NonNull LatLngBounds getLatLngBounds() throws IllegalStateException {
         // convert accuracy from m to geo lat/lng
         double geoLength = circle.getRadius() / (1852.0 * 60.0);
 
@@ -352,8 +352,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             @NonNull String[] permissions,
             @NonNull int[] grantResults) {
         if (requestCode == Utils.PERMISSION_KEY.MAPS.ordinal()) {
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 setLocationEnabled();
             else
                 Snackbar.make(requireView(),
@@ -417,7 +416,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             return latLng.longitude;
         }
 
-        LatLng set(State state) {
+        LatLng set(@NonNull State state) {
             switch (State.KEY.getValue(state.getKey())) {
                 case LAT:
                     latLng = new LatLng(state.getValue(), this.latLng.longitude);

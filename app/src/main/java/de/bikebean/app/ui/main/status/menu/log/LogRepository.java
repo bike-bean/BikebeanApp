@@ -2,6 +2,7 @@ package de.bikebean.app.ui.main.status.menu.log;
 
 import android.app.Application;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
 import java.util.List;
@@ -31,7 +32,7 @@ class LogRepository {
         return mLogDao.getByLevel(Log.LEVEL.INTERNAL);
     }
 
-    List<Log> getLastLevelSync(String s, int i) {
+    @NonNull List<Log> getLastLevelSync(String s, int i) {
         if (i == 0 && s.isEmpty())
             return mLogDao.getByLevelSync(Log.LEVEL.INTERNAL);
         else
