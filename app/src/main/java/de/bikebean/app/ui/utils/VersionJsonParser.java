@@ -1,5 +1,8 @@
 package de.bikebean.app.ui.utils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,19 +13,19 @@ public class VersionJsonParser {
 
     private static final String APK_ALT_DL_URL = "https://bike-bean.de/software/";
 
-    private final JSONArray jsonResponse;
-    private final JSONObject newReleaseJson;
+    private final @NonNull JSONArray jsonResponse;
+    private final @NonNull JSONObject newReleaseJson;
 
     private final boolean isNewRelease;
-    private final Release newRelease;
+    private final @NonNull Release newRelease;
 
-    public VersionJsonParser(String responseBody) throws JSONException {
-        Date[] dates;
-        Date appDate;
-        Date newDate;
+    public VersionJsonParser(@NonNull String responseBody) throws JSONException {
+        final @NonNull Date[] dates;
+        final @NonNull Date appDate;
+        final @NonNull Date newDate;
 
-        Release tmpRelease;
-        JSONObject tmpReleaseJson;
+        final @NonNull Release tmpRelease;
+        final @Nullable JSONObject tmpReleaseJson;
 
         jsonResponse = new JSONArray(responseBody);
 
@@ -87,26 +90,25 @@ public class VersionJsonParser {
         return isNewRelease;
     }
 
-    public Release getNewRelease() {
+    public @NonNull Release getNewRelease() {
         return newRelease;
     }
 
-    private Date[] getDates() throws JSONException {
-        Date[] ret = new Date[jsonResponse.length()];
+    private @NonNull Date[] getDates() throws JSONException {
+        final @NonNull Date[] ret = new Date[jsonResponse.length()];
 
         for (int i = 0; i < jsonResponse.length(); i++) {
-            JSONObject row = jsonResponse.getJSONObject(i);
-
-            Date date = Utils.getDateFromUTCString(row.getString("created_at"));
-            ret[i] = date;
+            ret[i] = Utils.getDateFromUTCString(
+                    jsonResponse.getJSONObject(i).getString("created_at")
+            );
         }
 
         return ret;
     }
 
-    private Date getAppDate() throws JSONException {
+    private @NonNull Date getAppDate() throws JSONException {
         for(int i = 0; i < jsonResponse.length(); i++) {
-            JSONObject row = jsonResponse.getJSONObject(i);
+            final @NonNull JSONObject row = jsonResponse.getJSONObject(i);
 
             if (row.get("tag_name").equals(Utils.getVersionName()))
                 return Utils.getDateFromUTCString(row.getString("created_at"));
@@ -115,11 +117,12 @@ public class VersionJsonParser {
         return new Date(1);
     }
 
-    private JSONObject getNewRelease(Date newDate) throws JSONException {
+    private @Nullable JSONObject getNewRelease(Date newDate) throws JSONException {
         for (int i = 0; i < jsonResponse.length(); i++) {
-            JSONObject row = jsonResponse.getJSONObject(i);
+            final @NonNull JSONObject row = jsonResponse.getJSONObject(i);
 
-            Date date = Utils.getDateFromUTCString(row.getString("created_at"));
+            final @NonNull Date date =
+                    Utils.getDateFromUTCString(row.getString("created_at"));
 
             if (newDate.equals(date))
                 return row;
@@ -128,8 +131,8 @@ public class VersionJsonParser {
         return null;
     }
 
-    private String getUrl() throws JSONException {
-        JSONArray assets = newReleaseJson.getJSONArray("assets");
+    private @NonNull String getUrl() throws JSONException {
+        final @NonNull JSONArray assets = newReleaseJson.getJSONArray("assets");
 
         /* This URL points directly to the APK from GITHUB which is very convenient but MAY have
            introduced a false positive virus report (probably due to suspicion of
@@ -147,7 +150,7 @@ public class VersionJsonParser {
             return "";
     }
 
-    private String getName() throws JSONException {
+    private @NonNull String getName() throws JSONException {
         return newReleaseJson.getString("tag_name");
     }
 }

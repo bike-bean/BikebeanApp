@@ -11,8 +11,8 @@ public class Location extends LocationSetting {
 
     private final static State.KEY key = State.KEY.LOCATION;
 
-    public Location(double location, Sms sms) {
-        super(location, sms, key);
+    public Location(double location, @NonNull WappState wappState) {
+        super(location, wappState, key);
     }
 
     public Location() {

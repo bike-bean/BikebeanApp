@@ -91,16 +91,20 @@ public class LocationStatusFragment extends SubStatusFragment {
 
     @Override
     protected void initUserInteractionElements() {
-        State[] locationStates = {
-                new State(State.KEY.CELL_TOWERS, 0.0),
-                new State(State.KEY.WIFI_ACCESS_POINTS, 0.0)
-        };
-
-        // Buttons
-        buttonGetLocation.setOnClickListener(v -> sendSms(Sms.MESSAGE.WAPP, locationStates));
+        /*
+         Set the function of the buttons
+         */
         buttonOpenMap.setOnClickListener(this::navigateToNext);
         shareButton.setOnClickListener(this::shareLocation);
         helpButton.setOnClickListener(this::onHelpClick);
+        /* Insert two new pending States to mark waiting for response */
+        buttonGetLocation.setOnClickListener(v ->
+                sendSms(Sms.MESSAGE.WAPP,
+                        new State[] {
+                                new State(State.KEY.CELL_TOWERS, 0.0),
+                                new State(State.KEY.WIFI_ACCESS_POINTS, 0.0)
+                        })
+        );
     }
 
     @Override
@@ -109,15 +113,9 @@ public class LocationStatusFragment extends SubStatusFragment {
     }
 
     // unset
-    protected void setBatteryElementsUnset(State state) {
-
-    }
-    protected void setWarningNumberElementsUnset(State state) {
-
-    }
-    protected void setStatusElementsUnset(State state) {
-
-    }
+    protected void setBatteryElementsUnset(@NonNull State state) {}
+    protected void setWarningNumberElementsUnset(@NonNull State state) {}
+    protected void setStatusElementsUnset(@NonNull State state) {}
 
     @Override
     protected void setLocationElementsUnset() {
@@ -144,24 +142,14 @@ public class LocationStatusFragment extends SubStatusFragment {
     }
 
     // confirmed
-    protected void setBatteryElementsConfirmed(State state) {
-
-    }
-    protected void setIntervalElementsConfirmed(State state) {
-
-    }
-    protected void setWifiElementsConfirmed(State state) {
-
-    }
-    protected void setWarningNumberElementsConfirmed(State state) {
-
-    }
-    protected void setStatusElementsConfirmed(State state) {
-
-    }
+    protected void setBatteryElementsConfirmed(@NonNull State state) {}
+    protected void setIntervalElementsConfirmed(@NonNull State state) {}
+    protected void setWifiElementsConfirmed(@NonNull State state) {}
+    protected void setWarningNumberElementsConfirmed(@NonNull State state) {}
+    protected void setStatusElementsConfirmed(@NonNull State state) {}
 
     @Override
-    protected void setLocationElementsConfirmed(State state) {
+    protected void setLocationElementsConfirmed(@NonNull State state) {
         tableLayout.setVisibility(View.VISIBLE);
         locationNoData.setVisibility(View.GONE);
         locationNoData.setText("");
@@ -170,40 +158,32 @@ public class LocationStatusFragment extends SubStatusFragment {
 
         progressBar.setVisibility(ProgressBar.GONE);
 
-        locationLastChangedText.setText(Utils.convertToDateHuman(state.getTimestamp()));
+        locationLastChangedText.setText(Utils.ConvertPeriodToHuman(state.getTimestamp()));
     }
 
     @Override
-    protected void setLatConfirmed(State state) {
+    protected void setLatConfirmed(@NonNull State state) {
         latText.setText(String.format(Locale.GERMANY, "%.7f", state.getValue()));
     }
 
     @Override
-    protected void setLngConfirmed(State state) {
+    protected void setLngConfirmed(@NonNull State state) {
         lngText.setText(String.format(Locale.GERMANY, "%.7f", state.getValue()));
     }
 
     @Override
-    protected void setAccConfirmed(State state) {
+    protected void setAccConfirmed(@NonNull State state) {
         accText.setText(String.format(Locale.GERMANY, "%.1f", state.getValue()));
     }
 
     // pending
-    protected void setBatteryElementsPending(State state) {
-
-    }
-    protected void setIntervalElementsPending(State state) {
-
-    }
-    protected void setWifiElementsPending(State state) {
-
-    }
-    protected void setWarningNumberElementsPending(State state) {
-
-    }
+    protected void setBatteryElementsPending(@NonNull State state) {}
+    protected void setIntervalElementsPending(@NonNull State state) {}
+    protected void setWifiElementsPending(@NonNull State state) {}
+    protected void setWarningNumberElementsPending(@NonNull State state) {}
 
     @Override
-    protected void setLocationElementsPending(State state) {
+    protected void setLocationElementsPending(@NonNull State state) {
         // BB has responded, but not response from Google Maps API yet
         tv.getResidualTime(t1).removeObservers(this);
         tv.cancelTimer(t1);
@@ -223,7 +203,7 @@ public class LocationStatusFragment extends SubStatusFragment {
         if (lastLocationState != null) {
             buttonOpenMap.setEnabled(true);
             locationLastChangedText.setText(
-                    Utils.convertToDateHuman(lastLocationState.getTimestamp()));
+                    Utils.ConvertPeriodToHuman(lastLocationState.getTimestamp()));
         } else {
             buttonOpenMap.setEnabled(false);
             locationLastChangedText.setText(R.string.no_data);
@@ -231,8 +211,10 @@ public class LocationStatusFragment extends SubStatusFragment {
     }
 
     @Override
-    protected void setLocationElementsTempPending(State state) {
-        // User has clicked the update button, but no response from BB yet
+    protected void setLocationElementsTempPending(@NonNull State state) {
+        /*
+         User has clicked the update button, but no response from BB yet
+         */
         long stopTime = tv.startTimer(t1, state.getTimestamp(), st.getConfirmedIntervalSync());
         tv.getResidualTime(t1).observe(this, s ->
                 updatePendingText(locationPendingStatus, stopTime, s)
@@ -261,13 +243,13 @@ public class LocationStatusFragment extends SubStatusFragment {
         parsedSms.add(id2);
 
         new LocationUpdater(
-                requireContext(), st, lv, sm,
+                requireContext(), st, lv,
                 this::updateLatLngAcc, wappState
         ).execute();
     }
 
-    private void updateLatLngAcc(WappState wappState, Type type, Sms sms) {
-        sm.markParsed(sms);
+    private void updateLatLngAcc(@NonNull WappState wappState, Type type) {
+        sm.markParsed(wappState.getSms());
         st.confirmWapp(wappState);
         st.insert(type);
     }
@@ -276,7 +258,7 @@ public class LocationStatusFragment extends SubStatusFragment {
         Navigation.findNavController(v).navigate(R.id.map_action);
     }
 
-    private void shareLocation(View v) {
+    private void shareLocation(@NonNull View v) {
         if (v.isEnabled())
             assert true;
         else

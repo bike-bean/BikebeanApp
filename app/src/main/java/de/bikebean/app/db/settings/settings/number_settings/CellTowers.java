@@ -1,11 +1,12 @@
 package de.bikebean.app.db.settings.settings.number_settings;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import de.bikebean.app.db.settings.settings.NumberSetting;
 import de.bikebean.app.db.settings.settings.WappState;
-import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.utils.sms.parser.SmsParser;
 
@@ -14,16 +15,16 @@ public class CellTowers extends NumberSetting {
     private static final State.KEY key = State.KEY.CELL_TOWERS;
     private static final State.KEY numberKey = State.KEY.NO_CELL_TOWERS;
 
-    private final CellTowerList cellTowerList;
+    private final @NonNull CellTowerList cellTowerList;
     private final int number;
-    private final State numberState;
+    private final @NonNull State numberState;
 
     public static class CellTowerList extends ArrayList<CellTower> {
-        CellTowerList(String[] stringArrayWapp) {
+        CellTowerList(@NonNull String[] stringArrayWapp) {
             parse(stringArrayWapp);
         }
 
-        private void parse(String[] stringArrayWapp) {
+        private void parse(@NonNull String[] stringArrayWapp) {
             for (String s : stringArrayWapp)
                 if (!s.equals("    ")) {
                     String[] stringArray_gsm_towers = s.split(",");
@@ -48,10 +49,10 @@ public class CellTowers extends NumberSetting {
         Integer signalStrength;
     }
 
-    public CellTowers(SmsParser smsParser) {
+    public CellTowers(@NonNull SmsParser smsParser) {
         super(smsParser.getWappCellTowers(), smsParser.getSms(), key);
 
-        String[] strings = mWappString.split("\n");
+        @NonNull String[] strings = mWappString.split("\n");
         number = strings.length;
 
         cellTowerList = new CellTowerList(strings);
@@ -62,10 +63,10 @@ public class CellTowers extends NumberSetting {
         );
     }
 
-    public CellTowers(WappState wappState, Sms sms) {
-        super(wappState.getCellTowers().getLongValue(), sms, key);
+    public CellTowers(@NonNull WappState wappState) {
+        super(wappState.getCellTowers().getLongValue(), wappState.getSms(), key);
 
-        String[] strings = mWappString.split("\n");
+        @NonNull String[] strings = mWappString.split("\n");
         number = strings.length;
 
         cellTowerList = new CellTowerList(strings);
@@ -85,7 +86,7 @@ public class CellTowers extends NumberSetting {
     }
 
     @Override
-    public List<? extends RawNumberSettings> getList() {
+    public @NonNull List<? extends RawNumberSettings> getList() {
         return cellTowerList;
     }
 
@@ -95,7 +96,7 @@ public class CellTowers extends NumberSetting {
     }
 
     @Override
-    public State getNumberState() {
+    public @NonNull State getNumberState() {
         return numberState;
     }
 }

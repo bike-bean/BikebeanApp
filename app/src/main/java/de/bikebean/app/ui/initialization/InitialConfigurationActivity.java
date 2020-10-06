@@ -1,6 +1,7 @@
 package de.bikebean.app.ui.initialization;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
@@ -94,9 +95,13 @@ public class InitialConfigurationActivity extends AppCompatActivity {
     }
 
     private void fetchSms() {
-        smsViewModel.fetchSmsSync(this, stateViewModel, logViewModel,
-                sharedPreferences.getString("number", "")
-        );
+        final @Nullable String address = sharedPreferences.getString("number", null);
+
+        if (address == null)
+            logViewModel.e("Failed to load BB-number! Maybe it's not set?");
+        else
+            smsViewModel.fetchSmsSync(this, stateViewModel, logViewModel, address);
+
         finish();
     }
 

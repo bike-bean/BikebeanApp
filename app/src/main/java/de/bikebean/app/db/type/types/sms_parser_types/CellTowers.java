@@ -1,5 +1,7 @@
 package de.bikebean.app.db.type.types.sms_parser_types;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,14 +15,14 @@ public class CellTowers extends SmsParserType {
 
     private final List<Setting> settings;
 
-    public CellTowers(SmsParser smsParser) {
+    public CellTowers(@NonNull SmsParser smsParser) {
         super(SMSTYPE.CELL_TOWERS);
         this.mSmsParser = smsParser;
         this.settings = new ArrayList<>();
 
         // no battery entry in this special case
         settings.add(new de.bikebean.app.db.settings.settings.number_settings.CellTowers(mSmsParser));
-        settings.add(new Wapp(State.WAPP_CELL_TOWERS, smsParser.getSms()));
+        settings.add(new Wapp(State.WAPP_CELL_TOWERS, smsParser));
     }
 
     @Override

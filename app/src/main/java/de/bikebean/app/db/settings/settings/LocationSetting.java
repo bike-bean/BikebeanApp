@@ -1,5 +1,7 @@
 package de.bikebean.app.db.settings.settings;
 
+import androidx.annotation.NonNull;
+
 import de.bikebean.app.db.settings.Setting;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
@@ -7,10 +9,10 @@ import de.bikebean.app.db.state.State;
 public abstract class LocationSetting extends Setting {
 
     private final double location;
-    private final State state;
+    private final @NonNull State state;
 
-    protected LocationSetting(double location, Sms sms, State.KEY key) {
-        super(sms, key);
+    protected LocationSetting(double location, @NonNull WappState wappState, State.KEY key) {
+        super(wappState.getSms(), key);
 
         this.location = location;
 
@@ -20,29 +22,29 @@ public abstract class LocationSetting extends Setting {
         );
     }
 
-    protected LocationSetting(Sms sms, State.KEY key, State.STATUS status) {
+    protected LocationSetting(@NonNull Sms sms, State.KEY key, State.STATUS status) {
         super(sms, key);
 
-        this.location = 0.0;
+        location = 0.0;
 
-        this.state = new State(
+        state = new State(
                 getDate(), key, get(), "",
                 status, getId()
         );
     }
 
     @Override
-    public final Double get() {
+    public final @NonNull Double get() {
         return location;
     }
 
     @Override
-    public final State getState() {
+    public final @NonNull State getState() {
         return state;
     }
 
     @Override
-    public final ConversationListAdder getConversationListAdder() {
+    public final @NonNull ConversationListAdder getConversationListAdder() {
         return super::addToList;
     }
 }

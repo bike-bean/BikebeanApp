@@ -3,6 +3,8 @@ package de.bikebean.app.ui.utils;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import androidx.annotation.NonNull;
+
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -18,38 +20,38 @@ public class VersionChecker extends AsyncTask<String, Void, VersionJsonParser> {
 
     private final LogViewModel mLogViewModel;
     private final PreferencesViewModel mPreferencesViewModel;
-    private final NewerVersionNotifier mNewerVersionNotifier;
+    private final @NonNull NewerVersionNotifier mNewerVersionNotifier;
 
-    private final String mUrl;
-    private final String githubGistsToken;
+    private final @NonNull String mUrl;
+    private final @NonNull String githubGistsToken;
 
     public interface NewerVersionNotifier {
-        void notifyNewerVersion(Release release);
+        void notifyNewerVersion(final @NonNull Release release);
     }
 
-    public VersionChecker(Context context, LogViewModel lv, PreferencesViewModel pv,
-                          NewerVersionNotifier nvn) {
+    public VersionChecker(final @NonNull Context context, LogViewModel lv, PreferencesViewModel pv,
+                          final @NonNull NewerVersionNotifier nvn) {
         mLogViewModel = lv;
         mNewerVersionNotifier = nvn;
         mPreferencesViewModel = pv;
 
-        mUrl = "https://api.github.com/repos/bike-bean/BikebeanApp/releases";
-        githubGistsToken = context.getResources().getString(R.string.github_gist_token);
+        mUrl = context.getString(R.string.github_releases_baseurl);
+        githubGistsToken = context.getString(R.string.github_gist_token);
     }
 
     @Override
-    protected VersionJsonParser doInBackground(String... args) {
-        OkHttpClient client = new OkHttpClient().newBuilder()
+    protected @NonNull VersionJsonParser doInBackground(final @NonNull String... args) {
+        final @NonNull OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
-        Request request = new Request.Builder()
+        final @NonNull Request request = new Request.Builder()
                 .url(mUrl)
                 .method("GET", null)
                 .addHeader("Authorization", "token " + githubGistsToken)
                 .addHeader("Content-Type", "application/json")
                 .build();
 
-        Response response;
-        VersionJsonParser versionJsonParser;
+        final @NonNull Response response;
+        final @NonNull VersionJsonParser versionJsonParser;
 
         try {
             response = client.newCall(request).execute();
@@ -76,7 +78,7 @@ public class VersionChecker extends AsyncTask<String, Void, VersionJsonParser> {
     }
 
     @Override
-    protected void onPostExecute(VersionJsonParser versionJsonParser) {
+    protected void onPostExecute(final @NonNull VersionJsonParser versionJsonParser) {
         if (!versionJsonParser.checkIfExistsNewerVersion()) {
             mPreferencesViewModel.setNewVersion("n/a");
             return;

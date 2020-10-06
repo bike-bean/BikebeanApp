@@ -2,6 +2,7 @@ package de.bikebean.app.ui.main.status.menu.log;
 
 import android.app.Application;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
@@ -45,7 +46,7 @@ public class LogViewModel extends AndroidViewModel {
         mRepository.insert(new Log(message, getCallerName(), Log.LEVEL.ERROR));
     }
 
-    private String getCallerName() {
+    private @NonNull String getCallerName() {
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
 
         return stackTraceElements[4].getFileName() + "::" + stackTraceElements[4].getMethodName();

@@ -3,6 +3,8 @@ package de.bikebean.app.ui.main.status.menu.log;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import androidx.annotation.NonNull;
+
 import java.io.IOException;
 
 import de.bikebean.app.R;
@@ -29,7 +31,7 @@ public class GithubGistUploader extends AsyncTask<String, Void, Boolean> {
         void notifyUploadSuccess(boolean success);
     }
 
-    public GithubGistUploader(Context context, LogViewModel lv, UploadSuccessNotifier usn,
+    public GithubGistUploader(@NonNull Context context, LogViewModel lv, UploadSuccessNotifier usn,
                               String description, String smsTsv, String stateTsv, String logTsv) {
         mLogViewModel = lv;
         mUploadSuccessNotifier = usn;
@@ -39,8 +41,8 @@ public class GithubGistUploader extends AsyncTask<String, Void, Boolean> {
         mStateTsv = stateTsv;
         mLogTsv = logTsv;
 
-        githubGistsToken = context.getResources().getString(R.string.github_gist_token);
-        mUrl = "https://api.github.com/gists?public=false";
+        githubGistsToken = context.getString(R.string.github_gist_token);
+        mUrl = context.getString(R.string.github_gists_baseurl);
     }
 
     @Override

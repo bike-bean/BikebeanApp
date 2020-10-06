@@ -118,7 +118,7 @@ public class SettingsStatusFragment extends SubStatusFragment {
 
                 // if it has changed, create a new pending state and fire it into the db
                 lv.d("Setting Interval about to be changed to " + newValue);
-                Sms.MESSAGE msg = Sms.MESSAGE.INT;
+                final @NonNull Sms.MESSAGE msg = Sms.MESSAGE.INT;
                 msg.setValue("Int " + newValue);
 
                 sendSms(msg, new State[]{new State(State.KEY.INTERVAL, Double.parseDouble(newValue))});
@@ -137,7 +137,7 @@ public class SettingsStatusFragment extends SubStatusFragment {
 
             // if it has changed, create a new pending state and fire it into the db
             lv.d("Setting Wifi about to be changed to " + isChecked);
-            Sms.MESSAGE msg = Sms.MESSAGE.WIFI;
+            final @NonNull Sms.MESSAGE msg = Sms.MESSAGE.WIFI;
             msg.setValue("Wifi " + (isChecked ? "on" : "off"));
 
             sendSms(msg, new State[]{new State(State.KEY.WIFI, isChecked ? 1.0 : 0.0)});
@@ -167,12 +167,10 @@ public class SettingsStatusFragment extends SubStatusFragment {
     }
 
     // unset
-    protected void setBatteryElementsUnset(State state) {
-
-    }
+    protected void setBatteryElementsUnset(@NonNull State state) {}
 
     @Override
-    protected void setWarningNumberElementsUnset(State state) {
+    protected void setWarningNumberElementsUnset(@NonNull State state) {
         tv.getResidualTime(t3).removeObservers(this);
         tv.cancelTimer(t3);
 
@@ -184,30 +182,19 @@ public class SettingsStatusFragment extends SubStatusFragment {
     }
 
     @Override
-    protected void setStatusElementsUnset(State state) {
-        assert state != null;
-
+    protected void setStatusElementsUnset(@NonNull State state) {
         statusLastChangedText.setText(R.string.no_data);
     }
 
-    protected void setLocationElementsUnset() {
-
-    }
-    protected void setLocationElementsTempUnset() {
-
-    }
+    protected void setLocationElementsUnset() {}
+    protected void setLocationElementsTempUnset() {}
 
     // confirmed
-    protected void setBatteryElementsConfirmed(State state) {
-
-    }
+    protected void setBatteryElementsConfirmed(@NonNull State state) {}
 
     @Override
-    protected void setIntervalElementsConfirmed(State state) {
-        String intervalSummaryString =
-                getResources().getString(R.string.interval_summary);
-
-        assert state != null;
+    protected void setIntervalElementsConfirmed(@NonNull State state) {
+        String intervalSummaryString = getString(R.string.interval_summary);
 
         tv.getResidualTime(t2).removeObservers(this);
         tv.cancelTimer(t2);
@@ -220,7 +207,7 @@ public class SettingsStatusFragment extends SubStatusFragment {
     }
 
     @Override
-    protected void setWifiElementsConfirmed(State state) {
+    protected void setWifiElementsConfirmed(@NonNull State state) {
         tv.getResidualTime(t1).removeObservers(this);
         tv.cancelTimer(t1);
 
@@ -237,7 +224,7 @@ public class SettingsStatusFragment extends SubStatusFragment {
     }
 
     @Override
-    protected void setWarningNumberElementsConfirmed(State state) {
+    protected void setWarningNumberElementsConfirmed(@NonNull State state) {
         tv.getResidualTime(t3).removeObservers(this);
         tv.cancelTimer(t3);
 
@@ -250,32 +237,21 @@ public class SettingsStatusFragment extends SubStatusFragment {
     }
 
     @Override
-    protected void setStatusElementsConfirmed(State state) {
-        statusLastChangedText.setText(Utils.convertToDateHuman(state.getTimestamp()));
+    protected void setStatusElementsConfirmed(@NonNull State state) {
+        statusLastChangedText.setText(Utils.ConvertPeriodToHuman(state.getTimestamp()));
     }
 
-    protected void setLocationElementsConfirmed(State state) {
-
-    }
-    protected void setLatConfirmed(State state) {
-
-    }
-    protected void setLngConfirmed(State state) {
-
-    }
-    protected void setAccConfirmed(State state) {
-
-    }
+    protected void setLocationElementsConfirmed(@NonNull State state) {}
+    protected void setLatConfirmed(@NonNull State state) {}
+    protected void setLngConfirmed(@NonNull State state) {}
+    protected void setAccConfirmed(@NonNull State state) {}
 
     // pending
-    protected void setBatteryElementsPending(State state) {
-
-    }
+    protected void setBatteryElementsPending(@NonNull State state) {}
 
     @Override
-    protected void setIntervalElementsPending(State state) {
-        String intervalTransitionString =
-                getResources().getString(R.string.interval_switch_transition);
+    protected void setIntervalElementsPending(@NonNull State state) {
+        String intervalTransitionString = getString(R.string.interval_switch_transition);
 
         long stopTime = tv.startTimer(t2, state.getTimestamp(), st.getConfirmedIntervalSync());
         tv.getResidualTime(t2).observe(this, s ->
@@ -292,7 +268,7 @@ public class SettingsStatusFragment extends SubStatusFragment {
     }
 
     @Override
-    protected void setWifiElementsPending(State state) {
+    protected void setWifiElementsPending(@NonNull State state) {
         long stopTime = tv.startTimer(t1, state.getTimestamp(), st.getConfirmedIntervalSync());
         tv.getResidualTime(t1).observe(this, s ->
                 updatePendingText(wlanPendingStatus, stopTime, s)
@@ -310,7 +286,7 @@ public class SettingsStatusFragment extends SubStatusFragment {
     }
 
     @Override
-    protected void setWarningNumberElementsPending(State state) {
+    protected void setWarningNumberElementsPending(@NonNull State state) {
         long stopTime = tv.startTimer(t3, state.getTimestamp(), st.getConfirmedIntervalSync());
         tv.getResidualTime(t3).observe(this, s ->
                 updatePendingText(warningNumberPendingStatus, stopTime, s)
@@ -320,12 +296,8 @@ public class SettingsStatusFragment extends SubStatusFragment {
         warningNumberPendingStatus.setVisibility(View.VISIBLE);
     }
 
-    protected void setLocationElementsPending(State state) {
-
-    }
-    protected void setLocationElementsTempPending(State state) {
-
-    }
+    protected void setLocationElementsPending(@NonNull State state) {}
+    protected void setLocationElementsTempPending(@NonNull State state) {}
 
     private void onHelpClick(View v) {
         Snackbar.make(v, R.string.help3, Snackbar.LENGTH_LONG).show();

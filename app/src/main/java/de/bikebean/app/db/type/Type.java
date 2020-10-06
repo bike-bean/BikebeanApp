@@ -1,5 +1,7 @@
 package de.bikebean.app.db.type;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 import de.bikebean.app.db.settings.Setting;
@@ -14,9 +16,9 @@ public abstract class Type {
 
     public abstract List<Setting> getSettings();
 
-    public final SMSTYPE smsType;
+    public final @NonNull SMSTYPE smsType;
 
-    public Type(SMSTYPE t) {
+    public Type(@NonNull SMSTYPE t) {
         smsType = t;
     }
 }

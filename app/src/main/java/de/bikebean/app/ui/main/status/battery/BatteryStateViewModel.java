@@ -2,6 +2,8 @@ package de.bikebean.app.ui.main.status.battery;
 
 import android.app.Application;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 
 import java.util.List;
@@ -26,12 +28,12 @@ public class BatteryStateViewModel extends StateViewModel {
         return mStatusBattery;
     }
 
-    State getConfirmedBatterySync() {
+    @Nullable State getConfirmedBatterySync() {
         return getConfirmedStateSync(State.KEY.BATTERY);
     }
 
-    static String getEstimatedDaysText(BatteryStateViewModel st) {
-        State lastBatteryState = st.getConfirmedBatterySync();
+    static @NonNull String getEstimatedDaysText(@NonNull BatteryStateViewModel st) {
+        @Nullable State lastBatteryState = st.getConfirmedBatterySync();
         boolean isWifiOn = st.getConfirmedWifiSync();
         int interval = st.getConfirmedIntervalSync();
 
@@ -39,7 +41,7 @@ public class BatteryStateViewModel extends StateViewModel {
     }
 
     private boolean getConfirmedWifiSync() {
-        State wifiConfirmed = getConfirmedStateSync(State.KEY.WIFI);
+        @Nullable State wifiConfirmed = getConfirmedStateSync(State.KEY.WIFI);
 
         if (wifiConfirmed != null)
             return wifiConfirmed.getValue() > 0;

@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.provider.Telephony;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.lang.ref.WeakReference;
 
@@ -18,13 +19,17 @@ import de.bikebean.app.ui.main.status.menu.sms_history.SmsViewModel;
 
 public class SmsLoader extends AsyncTask<String, Void, Void> {
 
-    private final WeakReference<Context> contextWeakReference;
+    public interface InboxTraverser {
+        void traverseInbox(final @NonNull Cursor inbox);
+    }
+
+    private final @NonNull WeakReference<Context> contextWeakReference;
     private final SmsViewModel smsViewModel;
     private final StateViewModel stateViewModel;
     private final LogViewModel logViewModel;
 
-    public SmsLoader(Context context, SmsViewModel smsViewModel, StateViewModel stateViewModel,
-                     LogViewModel logViewModel) {
+    public SmsLoader(final @NonNull Context context, final SmsViewModel smsViewModel,
+                     final StateViewModel stateViewModel, final LogViewModel logViewModel) {
         contextWeakReference = new WeakReference<>(context);
         this.smsViewModel = smsViewModel;
         this.stateViewModel = stateViewModel;
@@ -32,23 +37,61 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
     }
 
     @Override
-    public Void doInBackground(@NonNull String... args) {
-        String phoneNumber = args[0];
-        String[] argList = {phoneNumber};
+    public Void doInBackground(final @NonNull String... args) {
+        final @NonNull String phoneNumber = args[0];
 
-        traverseInboxAndClose(getInbox(
-                contextWeakReference.get().getContentResolver(),
-                argList)
-        );
+        getCursor(phoneNumber, this::traverseInboxAndClose);
 
         return null;
     }
 
-    private void traverseInboxAndClose(@NonNull Cursor inbox) {
+    public void loadInitial(final @NonNull String phoneNumber) {
+        logViewModel.i("Initial Loading");
+        getCursor(phoneNumber, this::traverseInboxAndCloseInitial);
+        logViewModel.i("Initial Loading completed");
+    }
+
+    private void getCursor(final @NonNull String phoneNumber,
+                           final @NonNull InboxTraverser inboxTraverser) {
+        final @NonNull String[] argList = { phoneNumber };
+
+        final @Nullable Context context = contextWeakReference.get();
+        final @Nullable ContentResolver contentResolver;
+        final @Nullable Cursor cursor;
+
+        if (context != null)
+            contentResolver = context.getContentResolver();
+        else {
+            logViewModel.w("Failed to load SMS, context was removed!");
+            return;
+        }
+
+        if (contentResolver != null)
+            cursor = getInbox(contentResolver, argList);
+        else {
+            logViewModel.w("Failed to load SMS, could not get contentResolver!");
+            return;
+        }
+
+        if (cursor != null)
+            inboxTraverser.traverseInbox(cursor);
+        else
+            logViewModel.w("Failed to load SMS, could not get cursor");
+    }
+
+    private @Nullable Cursor getInbox(final @NonNull ContentResolver contentResolver,
+                                      final @NonNull String[] argList) {
+        return contentResolver.query(
+                Telephony.Sms.Inbox.CONTENT_URI, null,
+                "address=?", argList,
+                null, null);
+    }
+
+    private void traverseInboxAndClose(final @NonNull Cursor inbox) {
         if (inbox.moveToFirst()) {
 
             for (int i=0; i < inbox.getCount(); i++) {
-                Sms sms = new Sms(inbox, Sms.STATUS.NEW);
+                final @NonNull Sms sms = new Sms(inbox, Sms.STATUS.NEW);
 
                 if (smsViewModel.getSmsById(sms.getId()).size() == 0)
                     smsViewModel.insert(sms);
@@ -60,19 +103,9 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
         }
     }
 
-    public void loadInitial(String phoneNumber) {
-        String[] argList = {phoneNumber};
-
-        ContentResolver contentResolver = contextWeakReference.get().getContentResolver();
-        Cursor inbox = getInbox(contentResolver, argList);
-
-        logViewModel.i("Initial Loading");
-        traverseInboxAndCloseInitial(inbox);
-        logViewModel.i("Initial Loading completed");
-    }
-
-    private void traverseInboxAndCloseInitial(@NonNull Cursor inbox) {
-        Conversation conversation = new Conversation(stateViewModel, smsViewModel, logViewModel);
+    private void traverseInboxAndCloseInitial(final @NonNull Cursor inbox) {
+        final @NonNull Conversation conversation =
+                new Conversation(stateViewModel, smsViewModel, logViewModel);
 
         if (inbox.moveToFirst()) {
             logViewModel.d("Loading " + inbox.getCount() + " SMS");
@@ -87,12 +120,5 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
             return;
 
         conversation.updatePreferences();
-    }
-
-    private Cursor getInbox(@NonNull ContentResolver contentResolver, String[] argList) {
-        return contentResolver.query(
-                Telephony.Sms.Inbox.CONTENT_URI, null,
-                "address=?", argList,
-                null, null);
     }
 }

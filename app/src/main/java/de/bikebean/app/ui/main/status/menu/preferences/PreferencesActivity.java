@@ -1,6 +1,5 @@
 package de.bikebean.app.ui.main.status.menu.preferences;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,10 +8,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.EditTextPreference;
@@ -54,17 +54,20 @@ public class PreferencesActivity extends AppCompatActivity {
         PreferencesViewModel preferencesViewModel =
                 new ViewModelProvider(this).get(PreferencesViewModel.class);
 
-        Toolbar toolbar = findViewById(R.id.toolbar1);
-        setSupportActionBar(toolbar);
+        final @Nullable Toolbar toolbar = findViewById(R.id.toolbar1);
+        if (toolbar != null)
+            setSupportActionBar(toolbar);
 
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
+        final @Nullable ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
-        }
 
-        TextView versionName = findViewById(R.id.versionName);
-        String versionNameString = "Aktuelle Version: " + Utils.getVersionName();
-        versionName.setText(versionNameString);
+        final @Nullable TextView versionName = findViewById(R.id.versionName);
+        final @NonNull String versionNameString = "Aktuelle Version: " + Utils.getVersionName();
+        if (versionName != null)
+            versionName.setText(versionNameString);
+        else
+            logViewModel.e("Failed to load TextView versionName!");
 
         versionNameNew = findViewById(R.id.versionName2);
         downloadNewVersionButton = findViewById(R.id.downloadNewVersion);
@@ -81,7 +84,7 @@ public class PreferencesActivity extends AppCompatActivity {
         if (s.getUrl().equals(""))
             return;
 
-        String versionNameString = "Neueste Version: " + s.getName();
+        final @NonNull String versionNameString = "Neueste Version: " + s.getName();
 
         versionNameNew.setVisibility(View.VISIBLE);
         versionNameNew.setText(versionNameString);
@@ -89,19 +92,16 @@ public class PreferencesActivity extends AppCompatActivity {
         downloadNewVersionButton.setOnClickListener(v -> downloadNewVersion(s.getUrl()));
     };
 
-    void newerVersionHandler(Release release) {
-        new NewVersionDialog(this, release,
-                this::downloadNewVersion,
-                this::cancelNewVersionDownload)
-                .show(
-                        getSupportFragmentManager(),
-                        "newVersionDialog"
-                );
+    void newerVersionHandler(final @NonNull Release release) {
+        new NewVersionDialog(
+                this, release,
+                this::downloadNewVersion, this::cancelNewVersionDownload
+        ).show(getSupportFragmentManager(),"newVersionDialog");
     }
 
-    void downloadNewVersion(String url) {
-        Uri webPage = Uri.parse(url);
-        Intent intent = new Intent(ACTION_VIEW, webPage);
+    void downloadNewVersion(final @NonNull String url) {
+        final @NonNull Uri webPage = Uri.parse(url);
+        final @NonNull Intent intent = new Intent(ACTION_VIEW, webPage);
         if (intent.resolveActivity(getPackageManager()) != null)
             startActivity(intent);
     }
@@ -115,39 +115,50 @@ public class PreferencesActivity extends AppCompatActivity {
         StateViewModel stateViewModel;
         SmsViewModel smsViewModel;
         LogViewModel logViewModel;
-        Context ctx;
 
         @Override
-        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        public void onCreatePreferences(@NonNull Bundle savedInstanceState,
+                                        @NonNull String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
             stateViewModel = new ViewModelProvider(this).get(StateViewModel.class);
             smsViewModel = new ViewModelProvider(this).get(SmsViewModel.class);
             logViewModel = new ViewModelProvider(this).get(LogViewModel.class);
 
-            // act and ctx
-            final FragmentActivity act = requireActivity();
-            ctx = act.getApplicationContext();
+            final @Nullable String address =
+                    PreferenceManager.getDefaultSharedPreferences(requireContext())
+                            .getString("number", null);
+            final @Nullable ResetDialog resetDialog;
 
-            String address = PreferenceManager.getDefaultSharedPreferences(ctx)
-                    .getString("number", "");
-            ResetDialog resetDialog =
-                    new ResetDialog(act, address, this::resetAll, this::cancelReset);
+            if (address != null)
+                resetDialog = new ResetDialog(
+                        requireActivity(), address,
+                        this::resetAll, this::cancelReset
+                );
+            else {
+                resetDialog = null;
+                logViewModel.e("Failed to load BB-number! Maybe it's not set?");
+            }
 
-            // Preferences
-            final EditTextPreference numberPreference = findPreference("number");
+            /*
+             Preferences
+             */
+            final @Nullable EditTextPreference numberPreference = findPreference("number");
             if (numberPreference != null) {
                 numberPreference.setOnBindEditTextListener(numberEditTextListener);
                 numberPreference.setDialogMessage(R.string.number_subtitle);
                 numberPreference.setOnPreferenceChangeListener(numberChangeListener);
             }
 
-            final Preference resetPreference = findPreference("reset");
+            final @Nullable Preference resetPreference = findPreference("reset");
             if (resetPreference != null) {
-                resetPreference.setOnPreferenceClickListener(preference -> {
-                    resetDialog.show(act.getSupportFragmentManager(), "resetDialog");
-                    return true;
-                });
+                if (resetDialog != null)
+                    resetPreference.setOnPreferenceClickListener(preference -> {
+                        resetDialog.show(requireActivity().getSupportFragmentManager(), "resetDialog");
+                        return true;
+                    });
+                else
+                    resetPreference.setEnabled(false);
             }
         }
 
@@ -156,43 +167,50 @@ public class PreferencesActivity extends AppCompatActivity {
 
         private final Preference.OnPreferenceChangeListener numberChangeListener =
                 (preference, newValue) -> {
-            if (newValue.toString().isEmpty()) {
+            final @NonNull String newValueString = newValue.toString();
+
+            if (newValueString.isEmpty()) {
                 Snackbar.make(
                         requireView(),
                         R.string.number_error,
                         Snackbar.LENGTH_LONG
                 ).show();
+
                 return false;
-            } else if (!newValue.toString().substring(0, 1).equals("+")) {
+            } else if (!newValueString.substring(0, 1).equals("+")) {
                 Snackbar.make(
                         requireView(),
                         R.string.number_subtitle,
                         Snackbar.LENGTH_LONG
                 ).show();
+
                 return false;
-            } else if (newValue.toString().contains(" ")) {
+            } else if (newValueString.contains(" ")) {
                 Snackbar.make(
                         requireView(),
                         R.string.number_no_blanks,
                         Snackbar.LENGTH_LONG
                 ).show();
 
-                final EditTextPreference numberPreference = findPreference("number");
+                final @Nullable EditTextPreference numberPreference = findPreference("number");
                 if (numberPreference != null)
-                    numberPreference.setText(newValue.toString().replace(" ", ""));
+                    numberPreference.setText(newValueString.replace(" ", ""));
+                else
+                    logViewModel.e("Failed to load BB-number! Maybe it's not set?");
 
                 return false;
             } else {
-                resetAll(newValue.toString());
+                resetAll(newValueString);
                 return true;
             }
         };
 
-        void resetAll(String address) {
+        void resetAll(final @NonNull String address) {
             // reset DB and repopulate it
             BikeBeanRoomDatabase.resetAll();
             stateViewModel.insert(new Initial());
-            smsViewModel.fetchSmsSync(ctx, stateViewModel, logViewModel, address);
+
+            smsViewModel.fetchSmsSync(requireContext(), stateViewModel, logViewModel, address);
 
             Snackbar.make(
                     requireView(), R.string.db_is_reset,

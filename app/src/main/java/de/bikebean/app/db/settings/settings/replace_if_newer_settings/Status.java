@@ -1,5 +1,7 @@
 package de.bikebean.app.db.settings.settings.replace_if_newer_settings;
 
+import androidx.annotation.NonNull;
+
 import de.bikebean.app.db.settings.settings.ReplaceIfNewerSetting;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
@@ -10,27 +12,27 @@ public class Status extends ReplaceIfNewerSetting {
     private static final State.KEY key = State.KEY._STATUS;
 
     private final double status;
-    private final State state;
+    private final @NonNull State state;
 
-    public Status(SmsParser smsParser) {
+    public Status(@NonNull SmsParser smsParser) {
         super(smsParser.getSms(), key);
-        this.status = 0.0;
-        this.state = new State(getDate(), key, get(), "", State.STATUS.CONFIRMED, getId());
+        status = 0.0;
+        state = new State(getDate(), key, get(), "", State.STATUS.CONFIRMED, getId());
     }
 
     public Status() {
         super(new Sms(), key);
-        this.status = 0.0;
-        this.state = new State(getDate(), key, get(), "", State.STATUS.UNSET, getId());
+        status = 0.0;
+        state = new State(getDate(), key, get(), "", State.STATUS.UNSET, getId());
     }
 
     @Override
-    public final Double get() {
+    public final @NonNull Double get() {
         return status;
     }
 
     @Override
-    public final State getState() {
+    public final @NonNull State getState() {
         return state;
     }
 }

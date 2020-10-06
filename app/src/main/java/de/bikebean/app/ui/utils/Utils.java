@@ -3,30 +3,40 @@ package de.bikebean.app.ui.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 import de.bikebean.app.BuildConfig;
 import de.bikebean.app.R;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.main.map.MapFragment;
 import de.bikebean.app.ui.main.status.StatusFragment;
+import de.bikebean.app.ui.utils.date.Period;
 
 public class Utils {
+
+    /* Permissions */
 
     public enum PERMISSION_KEY {
         SMS, MAPS
@@ -36,31 +46,22 @@ public class Utils {
         void showRationaleDialog();
     }
 
-    private static final Map<Integer, Double> batteryRuntimeByInterval =
-            new HashMap<Integer, Double>() {{
-                put(1, 175.0);
-                put(2, 260.0);
-                put(4, 346.0);
-                put(8, 415.0);
-                put(12, 444.0);
-                put(24, 477.0);
-    }};
-
     private static final Map<PERMISSION_KEY, String[]> permissionMap =
             new HashMap<PERMISSION_KEY, String[]>() {{
                 put(PERMISSION_KEY.SMS, StatusFragment.getSmsPermissions());
                 put(PERMISSION_KEY.MAPS, MapFragment.mapsPermissions);
     }};
 
-    public static boolean getPermissions(Activity activity, PERMISSION_KEY p, RationaleShower r) {
-        String[] permissions = permissionMap.get(p);
+    public static boolean getPermissions(final @NonNull Activity activity,
+                                         final @NonNull PERMISSION_KEY p,
+                                         final @NonNull RationaleShower r) {
+        final @Nullable String[] permissions = permissionMap.get(p);
 
-        if (activity == null || permissions == null)
+        if (permissions == null)
             return false;
 
-        for (String permission : permissions)
-            if (ContextCompat.checkSelfPermission(activity, permission)
-                    != PackageManager.PERMISSION_GRANTED)
+        for (@NonNull String permission : permissions)
+            if (checkSelfPermission(activity, permission))
                 if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
                     r.showRationaleDialog();
                     return false;
@@ -72,47 +73,77 @@ public class Utils {
         return true;
     }
 
-    static void askForPermissions(Activity activity, PERMISSION_KEY p) {
-        String[] permissions = permissionMap.get(p);
-
-        if (activity == null || permissions == null)
-            return;
-
-        ActivityCompat.requestPermissions(activity, permissions, p.ordinal());
+    private static boolean checkSelfPermission(final @NonNull Context context,
+                                               final @NonNull String permission) {
+        return ContextCompat.checkSelfPermission(context, permission)
+                != PackageManager.PERMISSION_GRANTED;
     }
 
-    public static String convertToTimeLog(long datetime) {
-        Date date = new Date(datetime);
-        DateFormat formatter = new SimpleDateFormat("dd.MM.yy HH:mm", Locale.GERMANY);
-        return formatter.format(date);
+    static void askForPermissions(final @NonNull Activity activity,
+                                  final @NonNull PERMISSION_KEY p) {
+        final @Nullable String[] permissions = permissionMap.get(p);
+
+        if (permissions != null)
+            ActivityCompat.requestPermissions(activity, permissions, p.ordinal());
     }
 
-    public static String convertToTime(long datetime) {
-        Date date = new Date(datetime);
-        DateFormat formatter = new SimpleDateFormat("dd.MM HH:mm", Locale.GERMANY);
-        return formatter.format(date);
-    }
+    /* */
 
-    public static String getVersionName() {
+    /* Version name */
+
+    public static @NonNull String getVersionName() {
         return BuildConfig.VERSION_NAME;
     }
 
-    public static Date getDateFromUTCString(String UTCString) {
-        DateFormat df1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.GERMANY);
-        try {
-            return df1.parse(UTCString);
-        } catch (ParseException e) {
-            return null;
+    /* */
+
+    /* UUID */
+
+    private static @Nullable String uniqueID = null;
+    private static final @NonNull String PREF_UNIQUE_ID = "DEVICE_UUID";
+
+    public synchronized static @NonNull String getUUID(final @NonNull Context context) {
+        if (uniqueID == null) {
+            final @Nullable SharedPreferences sharedPrefs =
+                    PreferenceManager.getDefaultSharedPreferences(context);
+
+            if (sharedPrefs != null)
+                uniqueID = sharedPrefs.getString(PREF_UNIQUE_ID,null);
+            else return UUID.randomUUID().toString();
+
+            if (uniqueID == null) {
+                uniqueID = UUID.randomUUID().toString();
+
+                final @NonNull SharedPreferences.Editor editor = sharedPrefs.edit();
+                editor.putString(PREF_UNIQUE_ID, uniqueID);
+                editor.apply();
+            }
         }
+
+        return uniqueID;
     }
 
-    public static String estimateBatteryDays(State lastBatteryState, boolean isWifiOn, int interval) {
-        if (lastBatteryState == null) {
+    /* */
+
+    /* Battery runtime and date utils */
+
+    private static final Map<Integer, Double> batteryRuntimeByInterval =
+            new HashMap<Integer, Double>() {{
+                put(1, 175.0);
+                put(2, 260.0);
+                put(4, 346.0);
+                put(8, 415.0);
+                put(12, 444.0);
+                put(24, 477.0);
+            }};
+
+    public static @NonNull String estimateBatteryDays(final @Nullable State lastBatteryState,
+                                                      boolean isWifiOn, int interval) {
+        if (lastBatteryState == null)
             return "";
-        }
 
         int remainingPercent = lastBatteryState.getValue().intValue() - 10;
-        Double days;
+        @Nullable Double days;
         long timeSinceLastManagement = new Date().getTime() - lastBatteryState.getTimestamp();
         double daysSinceLastManagement = timeSinceLastManagement / 1000.0 / 60 / 60 / 24;
 
@@ -133,8 +164,8 @@ public class Utils {
         double remainingHoursFromNow = remainingDaysFromNow * 24;
         long chargeDateMs =
                 lastBatteryState.getTimestamp() + ((long) remainingDays * 1000 * 60 * 60 * 24);
-        Date chargeDateDate = new Date(chargeDateMs);
-        String chargeDate =
+        final @NonNull Date chargeDateDate = new Date(chargeDateMs);
+        final @NonNull String chargeDate =
                 new SimpleDateFormat("dd.MM.yy", Locale.GERMANY).format(chargeDateDate);
 
         if (remainingDaysFromNow > 1)
@@ -146,75 +177,99 @@ public class Utils {
         return "Unter 10%, bitte umgehend aufladen!";
     }
 
-    public static String convertToDateHuman() {
-        return convertToDateHuman(new Date().getTime());
+    public static @NonNull String ConvertToDateHuman() {
+        return new Period(new Date().getTime()).convertPeriodToHuman();
     }
 
-    public static String convertToDateHuman(long datetime) {
-        Date date = new Date(datetime);
-
-        String outputTime = new SimpleDateFormat("HH:mm", Locale.GERMANY).format(date);
-        String outputDate = new SimpleDateFormat("dd.MM", Locale.GERMANY).format(date);
-        String outputDateWithYear = new SimpleDateFormat("dd.MM.yy", Locale.GERMANY).format(date);
-        String outputAll = new SimpleDateFormat("dd.MM.yy HH:mm", Locale.GERMANY).format(date);
-
-        long ms = new Date().getTime() - date.getTime();
-        long s = ms/1000;
-        long m = s/60;
-        int h = (int) m/60;
-        int d = h/24;
-        int y = d/365;
-
-        if (y > 1)
-            return outputDateWithYear + String.format(Locale.GERMANY, " (Vor %d Jahren)", y);
-        if (y > 0)
-            return outputDateWithYear + " (Vor 1 Jahr)";
-        if (d > 1)
-            return outputDate + String.format(Locale.GERMANY, " (Vor %d Tagen)", d);
-        if (d > 0)
-            return outputDate + " (Vor 1 Tag)";
-        if (h > 1)
-            return outputTime + String.format(Locale.GERMANY, " (Vor %d Stunden)", h);
-        if (h > 0)
-            return outputTime + " (Vor 1 Stunde)";
-        if (m > 1)
-            return outputTime + String.format(Locale.GERMANY, " (Vor %d Minuten)", m);
-        if (m > 0)
-            return outputTime + " (Vor 1 Minute)";
-        if (s > 1)
-            return outputTime + String.format(Locale.GERMANY, " (Vor %d Sekunden)", s);
-        if (s > 0)
-            return outputTime + " (Vor 1 Sekunde)";
-
-        return outputAll;
+    public static @NonNull String ConvertPeriodToHuman(long datetime) {
+        return new Period(datetime).convertPeriodToHuman();
     }
 
-    public static Drawable getBatteryDrawable(Context ctx, double batteryStatus) {
-        if (batteryStatus == 100.0)
-            return ContextCompat.getDrawable(ctx, R.drawable.ic_battery_full_black_24dp);
-        if (batteryStatus > 90.0)
-            return ContextCompat.getDrawable(ctx, R.drawable.ic_battery_90_black_24dp);
-        if (batteryStatus > 80.0)
-            return ContextCompat.getDrawable(ctx, R.drawable.ic_battery_80_black_24dp);
-        if (batteryStatus > 60.0)
-            return ContextCompat.getDrawable(ctx, R.drawable.ic_battery_60_black_24dp);
-        if (batteryStatus > 50.0)
-            return ContextCompat.getDrawable(ctx, R.drawable.ic_battery_50_black_24dp);
-        if (batteryStatus > 30.0)
-            return ContextCompat.getDrawable(ctx, R.drawable.ic_battery_30_black_24dp);
-        if (batteryStatus > 20.0)
-            return ContextCompat.getDrawable(ctx, R.drawable.ic_battery_20_black_24dp);
-        if (batteryStatus > 0)
-            return ContextCompat.getDrawable(ctx, R.drawable.ic_battery_alert_red_24dp);
-
-        return ContextCompat.getDrawable(ctx, R.drawable.ic_battery_unknown_black_24dp);
+    public static @NonNull String convertToTimeLog(long datetime) {
+        return formatDate("dd.MM.yy HH:mm", datetime);
     }
 
-    public static Intent getShareIntent(String string) {
-        if (string == null || string.isEmpty())
+    public static @NonNull String convertToTime(long datetime) {
+        return formatDate("dd.MM HH:mm", datetime);
+    }
+
+    private static @NonNull String formatDate(final @NonNull String pattern, long datetime) {
+        final @NonNull Date date = new Date(datetime);
+        final @NonNull DateFormat formatter = new SimpleDateFormat(pattern, Locale.GERMANY);
+
+        return formatter.format(date);
+    }
+
+    public static @NonNull Date getDateFromUTCString(final @NonNull String UTCString) {
+        final @NonNull DateFormat df1 =
+                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.GERMANY);
+        final @Nullable Date tmpDate;
+
+        try {
+            tmpDate = df1.parse(UTCString);
+        } catch (ParseException e) {
+            return new Date(1);
+        }
+
+        if (tmpDate != null)
+            return tmpDate;
+
+        return new Date(1);
+    }
+
+    /* */
+
+    /* Battery drawables */
+
+    private static final @NonNull Map<Double, Integer> batteryDrawables =
+            new HashMap<Double, Integer>() {{
+        put(100.0, R.drawable.ic_battery_full_black_24dp);
+        put(90.0, R.drawable.ic_battery_90_black_24dp);
+        put(80.0, R.drawable.ic_battery_80_black_24dp);
+        put(60.0, R.drawable.ic_battery_60_black_24dp);
+        put(50.0, R.drawable.ic_battery_50_black_24dp);
+        put(30.0, R.drawable.ic_battery_30_black_24dp);
+        put(20.0, R.drawable.ic_battery_20_black_24dp);
+        put(0.0, R.drawable.ic_battery_alert_red_24dp);
+        put(-1.0, R.drawable.ic_battery_unknown_black_24dp);
+    }};
+
+    public static @Nullable Drawable getBatteryDrawable(final @NonNull Context ctx,
+                                                       double batteryStatus) {
+        final @NonNull Double flooredBatteryStatus = floorToBatterySteps(batteryStatus);
+        final @Nullable Integer batteryDrawableId;
+
+        if (batteryDrawables.containsKey(flooredBatteryStatus))
+            batteryDrawableId = batteryDrawables.get(flooredBatteryStatus);
+        else
             return null;
 
-        Intent sendIntent = new Intent()
+        if (batteryDrawableId == null)
+            return null;
+
+        return ContextCompat.getDrawable(ctx, batteryDrawableId);
+    }
+
+    private static double floorToBatterySteps(double batteryStatus) {
+        Double[] doubles = batteryDrawables.keySet().toArray(new Double[]{});
+        Arrays.sort(doubles, Collections.reverseOrder());
+
+        for (double d : doubles)
+            if (batteryStatus >= d)
+                return d;
+
+        return -1.0;
+    }
+
+    /* */
+
+    /* Share Button and Help Button */
+
+    public static @Nullable Intent getShareIntent(final @NonNull String string) {
+        if (string.isEmpty())
+            return null;
+
+        final @NonNull Intent sendIntent = new Intent()
                 .setAction(Intent.ACTION_SEND)
                 .putExtra(Intent.EXTRA_TEXT, string)
                 .setType("text/plain");
@@ -222,9 +277,13 @@ public class Utils {
         return Intent.createChooser(sendIntent, null);
     }
 
-    public static void onHelpClick(View v) {
-        Snackbar.make(v, R.string.help2, Snackbar.LENGTH_LONG)
+    public static void onHelpClick(final @NonNull View v) {
+        Snackbar.make(v,
+                R.string.help2,
+                Snackbar.LENGTH_LONG)
 //                .setAction(R.string.history, (v1 -> {}))
         .show();
     }
+
+    /* */
 }

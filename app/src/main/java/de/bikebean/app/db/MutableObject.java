@@ -1,5 +1,8 @@
 package de.bikebean.app.db;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,10 +12,9 @@ public class MutableObject<T extends DatabaseEntity> {
     private List<? extends DatabaseEntity> tAll;
     private volatile boolean is_set = false;
     private final DatabaseEntity nullT;
-    private final int position;
 
     public interface ListGetter {
-        List<? extends DatabaseEntity> getList(String sArg, int iArg);
+        @NonNull List<? extends DatabaseEntity> getList(String sArg, int iArg);
     }
 
     public interface AllItemsGetter {
@@ -25,7 +27,6 @@ public class MutableObject<T extends DatabaseEntity> {
 
     public MutableObject(T value) {
         nullT = value.getNullType();
-        position = 0;
     }
 
     void waitForDelete(DeleteChecker deleteChecker) {
@@ -44,12 +45,12 @@ public class MutableObject<T extends DatabaseEntity> {
         waitForStateChange();
     }
 
-    public DatabaseEntity getDbEntitySync(ListGetter listGetter, String sArg, int iArg) {
+    public @Nullable DatabaseEntity getDbEntitySync(ListGetter listGetter, String sArg, int iArg) {
         new Thread(() -> {
-            List<? extends DatabaseEntity> stateList = listGetter.getList(sArg, iArg);
+            @NonNull List<? extends DatabaseEntity> stateList = listGetter.getList(sArg, iArg);
 
-            if (stateList.size() > position)
-                set(stateList.get(position));
+            if (stateList.size() > 0)
+                set(stateList.get(0));
             else
                 set(null);
         }).start();
@@ -97,7 +98,7 @@ public class MutableObject<T extends DatabaseEntity> {
         is_set = true;
     }
 
-    private DatabaseEntity get() {
+    private @Nullable DatabaseEntity get() {
         if (is_set)
             return t;
         else

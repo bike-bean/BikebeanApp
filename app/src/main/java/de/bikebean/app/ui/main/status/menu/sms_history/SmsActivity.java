@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -55,7 +56,7 @@ public class SmsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
     }
 
-    private void updateAdapterSms(List<Sms> sms) {
+    private void updateAdapterSms(@NonNull List<Sms> sms) {
         if (sms.size() != 0) {
             adapter.setSms(sms);
             noDataText.setVisibility(View.GONE);

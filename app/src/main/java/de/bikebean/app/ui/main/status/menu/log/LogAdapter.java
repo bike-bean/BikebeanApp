@@ -52,7 +52,7 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
             Log current = mLog.get(position);
 
             holder.messageText.setText(current.getMessage());
-            holder.dateTimeText.setText(Utils.convertToDateHuman(current.getTimestamp()));
+            holder.dateTimeText.setText(Utils.ConvertPeriodToHuman(current.getTimestamp()));
 
             switch (current.getLevel()) {
                 case DEBUG:

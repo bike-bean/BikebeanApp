@@ -1,5 +1,6 @@
 package de.bikebean.app.ui.main.status.menu.log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -153,7 +154,7 @@ public class LogActivity extends AppCompatActivity {
         return 0;
     }
 
-    private void changeLevel(List<Log> logs) {
+    private void changeLevel(@NonNull List<Log> logs) {
         Log.LEVEL level;
 
         if (logs.size() > 0)
@@ -164,7 +165,7 @@ public class LogActivity extends AppCompatActivity {
         logViewModel.getHigherThanLevel(level).observe(this, this::updateAdapter);
     }
 
-    private void updateAdapter(List<Log> log) {
+    private void updateAdapter(@NonNull List<Log> log) {
         if (log.size() != 0) {
             adapter.setLog(log);
             noDataText.setVisibility(View.GONE);
