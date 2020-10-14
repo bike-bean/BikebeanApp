@@ -55,7 +55,7 @@
 
     <fragment
         android:id="@+id/navigation_map"
-        android:name="de.bikebean.app.ui.main.map.MapFragment"
+        android:name="de.bikebean.app.ui.main.map.MapFragmentCurrent"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_map" >
 
