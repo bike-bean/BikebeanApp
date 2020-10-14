@@ -39,6 +39,7 @@ public class PreferencesActivity extends AppCompatActivity {
     public static final @NonNull String NUMBER_PREFERENCE = "number";
     public static final @NonNull String RESET_PREFERENCE = "reset";
     public static final @NonNull String NAME_PREFERENCE = "name";
+    public static final @NonNull String MAP_TYPE_PREFERENCE = "mapType";
 
     private TextView versionNameNew;
     private Button downloadNewVersionButton;

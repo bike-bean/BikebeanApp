@@ -3,7 +3,9 @@ package de.bikebean.app.ui.main.map;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -35,6 +38,10 @@ public abstract class MapFragment extends Fragment {
             Manifest.permission.ACCESS_FINE_LOCATION
     };
 
+    static boolean firstTimeClicked = true;
+
+    private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
+
     AppCompatActivity act;
     @Nullable Bundle args;
 
@@ -54,8 +61,33 @@ public abstract class MapFragment extends Fragment {
 
         args = getArguments();
 
-        mMapView = v.findViewById(R.id.mapview);
-        mMapView.onCreate(savedInstanceState);
+        @Nullable Bundle mapViewBundle = null;
+        if (savedInstanceState != null)
+            mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
+
+        /*
+         Crude part START
+
+         This code basically does the same as
+         > mMapView = v.findViewById(R.id.mapview);
+
+         except that code can't pass the GoogleMapOptions to the map,
+         which is why I use the constructor for MapView myself
+         and integrate it into the ConstraintLayout manually.
+
+         Thanks to strangeluck: https://stackoverflow.com/a/16193642
+
+         Very crude, but it works.
+         */
+        final @NonNull ConstraintLayout constraintLayout = v.findViewById(R.id.map_constraint_layout);
+        final @NonNull ViewGroup.LayoutParams mapParams = v.findViewById(R.id.mapview).getLayoutParams();
+
+        MapFragmentHelper.googleMapOptions.mapType(MapFragmentHelper.getMapType(requireContext()));
+        mMapView = new MapView(requireContext(), MapFragmentHelper.googleMapOptions);
+        constraintLayout.addView(mMapView, mapParams);
+        /* crude part END */
+
+        mMapView.onCreate(mapViewBundle);
         mMapView.getMapAsync(this::onMapReady);
 
         launchGmNavigationFab = v.findViewById(R.id.fab);
@@ -84,13 +116,29 @@ public abstract class MapFragment extends Fragment {
         /*
          Init the buttons
          */
-        int color = ContextCompat.getColor(requireContext(), R.color.grey);
-        mapTypeFab.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
-        shareFab.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
+        final @NonNull ColorFilter colorFilter = new PorterDuffColorFilter(
+                ContextCompat.getColor(requireContext(), R.color.grey),
+                PorterDuff.Mode.SRC_IN
+        );
+        mapTypeFab.getDrawable().setColorFilter(colorFilter);
+        shareFab.getDrawable().setColorFilter(colorFilter);
 
         launchGmNavigationFab.setOnClickListener(this::startNavigation);
         mapTypeFab.setOnClickListener(this::showPopup);
         shareFab.setOnClickListener(this::showShare);
+    }
+
+    @Override
+    public void onSaveInstanceState(final @NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        @Nullable Bundle mapViewBundle = outState.getBundle(MAPVIEW_BUNDLE_KEY);
+        if (mapViewBundle == null) {
+            mapViewBundle = new Bundle();
+            outState.putBundle(MAPVIEW_BUNDLE_KEY, mapViewBundle);
+        }
+
+        mMapView.onSaveInstanceState(mapViewBundle);
     }
 
     public void onMapReady(final @NonNull GoogleMap googleMap) {
@@ -105,9 +153,14 @@ public abstract class MapFragment extends Fragment {
             mapFragmentHelper.setLocationEnabled();
     }
 
-    void setButtonsVisible() {
-        launchGmNavigationFab.show();
-        shareFab.show();
+    void setButtonsVisible(boolean visible) {
+        if (visible) {
+            launchGmNavigationFab.show();
+            shareFab.show();
+        } else {
+            launchGmNavigationFab.hide();
+            shareFab.hide();
+        }
     }
 
     void startNavigation(final @NonNull View v) {
@@ -131,9 +184,27 @@ public abstract class MapFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        mMapView.onStart();
+    }
+
+    @Override
     public void onResume() {
-        mMapView.onResume();
         super.onResume();
+        mMapView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mMapView.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mMapView.onStop();
     }
 
     @Override
@@ -151,8 +222,8 @@ public abstract class MapFragment extends Fragment {
     @Override
     public void onRequestPermissionsResult(
             int requestCode,
-            @NonNull String[] permissions,
-            @NonNull int[] grantResults) {
+            final @NonNull String[] permissions,
+            final @NonNull int[] grantResults) {
         if (requestCode == Utils.PERMISSION_KEY.MAPS.ordinal()) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 mapFragmentHelper.setLocationEnabled();

@@ -207,7 +207,8 @@ public class LocationStatusFragment extends SubStatusFragment {
         if (lastLocationState != null) {
             buttonOpenMap.setEnabled(true);
             locationLastChangedText.setText(
-                    Utils.ConvertPeriodToHuman(lastLocationState.getTimestamp()));
+                    Utils.ConvertPeriodToHuman(lastLocationState.getTimestamp())
+            );
         } else {
             buttonOpenMap.setEnabled(false);
             locationLastChangedText.setText(R.string.no_data);

@@ -1,10 +1,13 @@
 package de.bikebean.app.ui.main.map;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -13,10 +16,12 @@ import androidx.preference.PreferenceManager;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.Dot;
+import com.google.android.gms.maps.model.Gap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -30,12 +35,14 @@ import java.util.Map;
 
 import de.bikebean.app.R;
 import de.bikebean.app.db.state.State;
+import de.bikebean.app.ui.utils.Utils;
 
 import static de.bikebean.app.db.state.State.KEY.ACC;
 import static de.bikebean.app.db.state.State.KEY.LAT;
 import static de.bikebean.app.db.state.State.KEY.LNG;
 import static de.bikebean.app.db.state.State.KEY.NO_CELL_TOWERS;
 import static de.bikebean.app.db.state.State.KEY.NO_WIFI_ACCESS_POINTS;
+import static de.bikebean.app.ui.main.status.menu.preferences.PreferencesActivity.MAP_TYPE_PREFERENCE;
 import static de.bikebean.app.ui.main.status.menu.preferences.PreferencesActivity.NAME_PREFERENCE;
 
 public class MapElements {
@@ -45,10 +52,11 @@ public class MapElements {
     /*
      Map elements
      */
-    private final @NonNull BikeMarker marker;
-    private final @NonNull BikeCircle circle;
     private final @NonNull MutableLatLng currentPositionBike;
     private final @NonNull Snippet snippet;
+    private final @NonNull AreaColor areaColor;
+    private final @NonNull BikeMarker marker;
+    private final @NonNull BikeCircle circle;
 
     private final @NonNull String bikeName;
 
@@ -56,15 +64,15 @@ public class MapElements {
                        final @NonNull MapFragment mapFragment,
                        final @NonNull MapFragmentHelper mapFragmentHelper) {
         this.mapFragmentHelper = mapFragmentHelper;
-
         final @NonNull Context context = mapFragment.requireContext();
         bikeName = PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(NAME_PREFERENCE, "bike");
 
         currentPositionBike = new MutableLatLng(mapFragment.args);
         snippet = new Snippet(mapFragment.args);
-        circle = new BikeCircle(googleMap, currentPositionBike, mapFragment.args, context);
-        marker = new BikeMarker(googleMap, currentPositionBike, bikeName, snippet);
+        areaColor = new AreaColor(mapFragment.mapFragmentViewModel, context, mapFragment.args);
+        circle = new BikeCircle(googleMap, currentPositionBike, mapFragment.args, areaColor);
+        marker = new BikeMarker(googleMap, currentPositionBike, bikeName, snippet, areaColor);
     }
 
     final @NonNull Map<State.KEY, MapFragmentHelper.MapElementsSetter> setterMap =
@@ -90,6 +98,11 @@ public class MapElements {
         currentPositionBike.set(state);
         marker.setPosition(currentPositionBike);
         circle.setCenter(currentPositionBike);
+
+        areaColor.refreshColor(state);
+        marker.setIcon(areaColor);
+        circle.setColor(areaColor);
+
         mapFragmentHelper.setCamera();
     }
 
@@ -99,7 +112,8 @@ public class MapElements {
     }
 
     public void setColor(final @NonNull MenuItem menuItem) {
-        circle.setColor(menuItem);
+        areaColor.refreshColor(menuItem.getItemId());
+        circle.setColor(areaColor);
     }
 
     @NonNull CameraUpdate getCameraUpdate() throws IllegalStateException {
@@ -124,12 +138,86 @@ public class MapElements {
         return CameraUpdateFactory.newLatLngBounds(new LatLngBounds(southwest, northeast),0);
     }
 
+    @NonNull CameraUpdate getCameraUpdate(final @NonNull Marker marker) {
+        return CameraUpdateFactory.newLatLng(marker.getPosition());
+    }
+
+    @NonNull CameraUpdate getCameraUpdate(final @NonNull Circle circle) {
+        return CameraUpdateFactory.newLatLng(circle.getCenter());
+    }
+
     public @NonNull Uri getUri() {
         return Uri.parse(String.format(Locale.GERMANY,"geo:0,0?q=%s,%s(%s)",
                 currentPositionBike.getLat(),
                 currentPositionBike.getLng(),
                 bikeName.replace(" ", "+"))
         );
+    }
+
+    static class AreaColor {
+
+        private static final int AREA_ALPHA = 50;
+
+        private final @NonNull MapFragmentViewModel mf;
+        private final @NonNull Context context;
+
+        private @NonNull @ColorInt Integer mainColor;  /* the color of the marker */
+        private @NonNull @ColorInt Integer secondaryColor;  /* the color of the circle */
+        private @NonNull Double daysSinceLastState;
+
+        AreaColor(final @NonNull MapFragmentViewModel mf, final @NonNull Context context,
+                  final @Nullable Bundle args) {
+            this.mf = mf;
+            this.context = context;
+
+            daysSinceLastState = Utils.getDaysSinceState(args);
+
+            int menuItemId = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getInt(MAP_TYPE_PREFERENCE, 0);
+
+            if (menuItemId == R.id.menu_satellite || menuItemId == R.id.menu_hybrid) {
+                mainColor = Utils.getMarkerColor(context, daysSinceLastState);
+                secondaryColor = ContextCompat.getColor(context, R.color.white);
+            } else if (menuItemId == R.id.menu_normal)
+                mainColor = secondaryColor =
+                        Utils.getMarkerColor(context, daysSinceLastState);
+            else
+                mainColor = secondaryColor =
+                        ContextCompat.getColor(context, R.color.secondaryColor);
+        }
+
+        @NonNull BitmapDescriptor getMarkerIcon() {
+            final @Nullable Bitmap bitmap =  mf.getMapMarkerBitmap(mainColor);
+            return BitmapDescriptorFactory.fromBitmap(bitmap);
+        }
+
+        @ColorInt int getCircleStrokeColor() {
+            return secondaryColor;
+        }
+
+        @ColorInt int getCircleFillColor() {
+            return Color.argb(
+                    AREA_ALPHA, Color.red(secondaryColor),
+                    Color.green(secondaryColor), Color.blue(secondaryColor)
+            );
+        }
+
+        void refreshColor(final @NonNull State state) {
+            daysSinceLastState = Utils.getDaysSinceState(state);
+
+            refreshColor(PreferenceManager.getDefaultSharedPreferences(context)
+                    .getInt(MAP_TYPE_PREFERENCE, 0)
+            );
+        }
+
+        void refreshColor(int menuItemId) {
+            if (menuItemId == R.id.menu_satellite || menuItemId == R.id.menu_hybrid)
+                secondaryColor = ContextCompat.getColor(context, R.color.white);
+            else if (menuItemId == R.id.menu_normal)
+                secondaryColor = Utils.getMarkerColor(context, daysSinceLastState);
+            else
+                secondaryColor = ContextCompat.getColor(context, R.color.secondaryColor);
+        }
     }
 
     static class MutableLatLng {
@@ -206,28 +294,22 @@ public class MapElements {
          */
 
         private final @NonNull Circle circle;
-        private final @NonNull Context context;
 
-        private static final @NonNull Map<Integer, Integer> colorMap =
-                new HashMap<Integer, Integer>() {{
-                    put(R.id.menu_normal, R.color.grey);
-                    put(R.id.menu_satellite, R.color.white);
-                    put(R.id.menu_hybrid, R.color.white);
-                }};
-
-        public BikeCircle(final @NonNull GoogleMap googleMap,
-                          final @NonNull MutableLatLng pos,
-                          final @Nullable Bundle args,
-                          final @NonNull Context context) {
-            this.context = context;
+        BikeCircle(final @NonNull GoogleMap googleMap,
+                   final @NonNull MutableLatLng pos,
+                   final @Nullable Bundle args,
+                   final @NonNull AreaColor areaColor) {
             circle = googleMap.addCircle(new CircleOptions()
                     .center(pos.get())
                     .radius(getRadius(args))
+                    .fillColor(areaColor.getCircleFillColor())
+                    .clickable(true)
                     .strokeWidth(10)
                     .strokePattern(new ArrayList<PatternItem>() {{
                         add(new Dot());
+                        add(new Gap(8));
                     }})
-                    .strokeColor(ContextCompat.getColor(context, R.color.grey))
+                    .strokeColor(areaColor.getCircleStrokeColor())
             );
         }
 
@@ -241,19 +323,17 @@ public class MapElements {
             return circle.getRadius();
         }
 
-        public void setCenter(final @NonNull MutableLatLng latLng) {
+        void setCenter(final @NonNull MutableLatLng latLng) {
             circle.setCenter(latLng.get());
         }
 
-        public void setRadius(final @NonNull State state) {
+        void setRadius(final @NonNull State state) {
             circle.setRadius(state.getValue());
         }
 
-        public void setColor(final @NonNull MenuItem menuItem) {
-            final @Nullable Integer color = colorMap.get(menuItem.getItemId());
-
-            if (color != null)
-                circle.setStrokeColor(ContextCompat.getColor(context, color));
+        void setColor(final @NonNull AreaColor areaColor) {
+            circle.setStrokeColor(areaColor.getCircleStrokeColor());
+            circle.setFillColor(areaColor.getCircleFillColor());
         }
     }
 
@@ -267,12 +347,13 @@ public class MapElements {
         public BikeMarker(final @NonNull GoogleMap googleMap,
                           final @NonNull MutableLatLng pos,
                           final @NonNull String bikeName,
-                          final @NonNull Snippet snippet) {
+                          final @NonNull Snippet snippet,
+                          final @NonNull AreaColor areaColor) {
             marker = googleMap.addMarker(new MarkerOptions()
                     .position(pos.get())
                     .title(bikeName)
                     .snippet(snippet.toString())
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_action_name))
+                    .icon(areaColor.getMarkerIcon())
             );
         }
 
@@ -282,6 +363,10 @@ public class MapElements {
 
         public void setPosition(final @NonNull MutableLatLng position) {
             marker.setPosition(position.get());
+        }
+
+        public void setIcon(final @NonNull AreaColor areaColor) {
+            marker.setIcon(areaColor.getMarkerIcon());
         }
     }
 }

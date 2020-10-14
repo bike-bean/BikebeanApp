@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 
 import de.bikebean.app.db.DatabaseEntity;
+import de.bikebean.app.ui.utils.Utils;
 
 import static de.bikebean.app.db.state.State.KEY.ACC;
 import static de.bikebean.app.db.state.State.KEY.LAT;
@@ -16,6 +17,7 @@ public class LocationState extends DatabaseEntity {
 
     private final int smsId;
     private final long timestamp;
+    private final double daysSinceLastState;
 
     private final double lat;
     private final double lng;
@@ -29,6 +31,7 @@ public class LocationState extends DatabaseEntity {
                          final @NonNull State noWifiAccessPointsState) {
         smsId = latState.getSmsId();
         timestamp = latState.getTimestamp();
+        daysSinceLastState = Utils.getDaysSinceState(latState);
 
         lat = latState.getValue();
         lng = lngState.getValue();
@@ -63,6 +66,7 @@ public class LocationState extends DatabaseEntity {
                 .putDouble(LAT, lat)
                 .putDouble(LNG, lng)
                 .putDouble(ACC, acc)
+                .putDaysSinceLastState(daysSinceLastState)
                 .putInt(NO_CELL_TOWERS, noCellTowers)
                 .putInt(NO_WIFI_ACCESS_POINTS, noWifiAccessPoints)
                 .get();
@@ -78,6 +82,11 @@ public class LocationState extends DatabaseEntity {
 
         LocationBundle putDouble(final @NonNull State.KEY key, double value) {
             bundle.putDouble(key.get(), value);
+            return this;
+        }
+
+        LocationBundle putDaysSinceLastState(double value) {
+            bundle.putDouble(Utils.DAYS_SINCE_LAST_STATE, value);
             return this;
         }
 

@@ -2,7 +2,9 @@ package de.bikebean.app.ui.main.map;
 
 import android.app.Application;
 import android.content.Intent;
+import android.graphics.Bitmap;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -19,6 +21,8 @@ import de.bikebean.app.ui.utils.Utils;
 
 public class MapFragmentViewModel extends StateViewModel {
 
+    private final @NonNull MapStateRepository mRepository;
+
     private final LiveData<List<State>> mStatusNumberCellTowers;
     private final LiveData<List<State>> mStatusNumberWifiAccessPoints;
     private final LiveData<List<State>> mConfirmedLocationLat;
@@ -28,7 +32,7 @@ public class MapFragmentViewModel extends StateViewModel {
     public MapFragmentViewModel(final @NonNull Application application) {
         super(application);
 
-        final @NonNull MapStateRepository mRepository = new MapStateRepository(application);
+        mRepository = new MapStateRepository(application);
 
         mStatusNumberCellTowers = mRepository.getStatusNumberCellTowers();
         mStatusNumberWifiAccessPoints = mRepository.getStatusNumberWifiAccessPoints();
@@ -74,5 +78,9 @@ public class MapFragmentViewModel extends StateViewModel {
                         Snackbar.LENGTH_LONG
                 ).show();
         });
+    }
+
+    @Nullable Bitmap getMapMarkerBitmap(@ColorInt int color) {
+        return mRepository.getMapMarkerBitmap(color);
     }
 }

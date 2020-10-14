@@ -6,12 +6,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.view.View;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -137,6 +141,19 @@ public class Utils {
                 put(24, 477.0);
             }};
 
+    public static final @NonNull String DAYS_SINCE_LAST_STATE = "daysSinceLastState";
+
+    public static double getDaysSinceState(final @NonNull State state) {
+        long timeSinceLastManagement = new Date().getTime() - state.getTimestamp();
+        return timeSinceLastManagement / 1000.0 / 60 / 60 / 24;
+    }
+
+    public static double getDaysSinceState(final @Nullable Bundle args) {
+        if (args != null)
+            return args.getDouble(DAYS_SINCE_LAST_STATE, 0.0);
+        else return 0.0;
+    }
+
     public static @NonNull String estimateBatteryDays(final @Nullable State lastBatteryState,
                                                       boolean isWifiOn, int interval) {
         if (lastBatteryState == null)
@@ -144,8 +161,7 @@ public class Utils {
 
         int remainingPercent = lastBatteryState.getValue().intValue() - 10;
         @Nullable Double days;
-        long timeSinceLastManagement = new Date().getTime() - lastBatteryState.getTimestamp();
-        double daysSinceLastManagement = timeSinceLastManagement / 1000.0 / 60 / 60 / 24;
+        double daysSinceLastManagement = getDaysSinceState(lastBatteryState);
 
         if (remainingPercent < 0)
             return "Unter 10%, bitte umgehend aufladen!";
@@ -259,6 +275,37 @@ public class Utils {
                 return d;
 
         return -1.0;
+    }
+
+    /* */
+
+    /* Map Marker colors */
+
+    public static @ColorInt int getMarkerColor(final @NonNull Context context,
+                                               final double daysSinceState) {
+        float d = floorToOne(daysSinceState / 365);
+        return new HslColor(context, R.color.secondaryColor).getCodedMarkerColor(d);
+    }
+
+    private static float floorToOne(double a) {
+        return (float) (a > 1 ? 1 : a);
+    }
+
+    static class HslColor {
+        final float h, s, l;
+
+        HslColor(final @NonNull Context context, final @ColorRes int color) {
+            float[] hsl = new float[3];
+            ColorUtils.colorToHSL(ContextCompat.getColor(context, color), hsl);
+
+            h = hsl[0];
+            s = hsl[1];
+            l = hsl[2];
+        }
+
+        @ColorInt int getCodedMarkerColor(final float d) {
+            return ColorUtils.HSLToColor(new float[]{h, s * (1-d), (float) (l + (0.33*d))});
+        }
     }
 
     /* */

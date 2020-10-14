@@ -1,7 +1,11 @@
 package de.bikebean.app.ui.main.map;
 
 import android.app.Application;
+import android.graphics.Bitmap;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 
 import java.util.List;
@@ -17,7 +21,9 @@ class MapStateRepository extends StateRepository {
     private final LiveData<List<State>> mConfirmedLocationLng;
     private final LiveData<List<State>> mConfirmedLocationAcc;
 
-    MapStateRepository(Application application) {
+    private final @NonNull MapMarkerCache mapMarkerCache;
+
+    MapStateRepository(final @NonNull Application application) {
         super(application);
 
         mStatusNumberCellTowers = mStateDao.getAllByKey(State.KEY.NO_CELL_TOWERS.get());
@@ -32,6 +38,8 @@ class MapStateRepository extends StateRepository {
         mConfirmedLocationAcc = mStateDao.getByKeyAndState(
                 State.KEY.ACC.get(), State.STATUS.CONFIRMED.ordinal()
         );
+
+        mapMarkerCache = new MapMarkerCache(application.getApplicationContext(), 100);
     }
 
     LiveData<List<State>> getConfirmedLocationLat() {
@@ -52,5 +60,9 @@ class MapStateRepository extends StateRepository {
 
     LiveData<List<State>> getStatusNumberWifiAccessPoints() {
         return mStatusNumberWifiAccessPoints;
+    }
+
+    @Nullable Bitmap getMapMarkerBitmap(@ColorInt int color) {
+        return mapMarkerCache.getBitmap(color);
     }
 }

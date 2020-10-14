@@ -2,6 +2,7 @@ package de.bikebean.app;
 
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
@@ -77,9 +78,9 @@ public class MainActivity extends AppCompatActivity {
             final @Nullable Drawable overFlowIcon = toolbar.getOverflowIcon();
 
             if (overFlowIcon != null)
-                overFlowIcon.setColorFilter(
+                overFlowIcon.setColorFilter(new PorterDuffColorFilter(
                         ContextCompat.getColor(this, R.color.white),
-                        PorterDuff.Mode.SRC_ATOP
+                        PorterDuff.Mode.SRC_ATOP)
                 );
         }
 
