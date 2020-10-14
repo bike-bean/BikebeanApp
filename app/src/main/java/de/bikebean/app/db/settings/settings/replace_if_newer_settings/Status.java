@@ -9,12 +9,12 @@ import de.bikebean.app.ui.utils.sms.parser.SmsParser;
 
 public class Status extends ReplaceIfNewerSetting {
 
-    private static final State.KEY key = State.KEY._STATUS;
+    private static final @NonNull State.KEY key = State.KEY._STATUS;
 
     private final double status;
     private final @NonNull State state;
 
-    public Status(@NonNull SmsParser smsParser) {
+    public Status(final @NonNull SmsParser smsParser) {
         super(smsParser.getSms(), key);
         status = 0.0;
         state = new State(getDate(), key, get(), "", State.STATUS.CONFIRMED, getId());

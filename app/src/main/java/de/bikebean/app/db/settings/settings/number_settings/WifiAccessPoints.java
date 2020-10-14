@@ -13,23 +13,23 @@ import de.bikebean.app.ui.utils.sms.parser.SmsParser;
 
 public class WifiAccessPoints extends NumberSetting {
 
-    private static final State.KEY key = State.KEY.WIFI_ACCESS_POINTS;
-    private static final State.KEY numberKey = State.KEY.NO_WIFI_ACCESS_POINTS;
+    private static final @NonNull State.KEY key = State.KEY.WIFI_ACCESS_POINTS;
+    private static final @NonNull State.KEY numberKey = State.KEY.NO_WIFI_ACCESS_POINTS;
 
     private final @NonNull WifiAccessPointList wifiAccessPointList;
     private final int number;
     private final @NonNull State numberState;
 
     public static class WifiAccessPointList extends ArrayList<WifiAccessPoint> {
-        WifiAccessPointList(@NonNull String[] stringArrayWapp) {
+        WifiAccessPointList(final @NonNull String[] stringArrayWapp) {
             parse(stringArrayWapp);
         }
 
-        private void parse(@NonNull String[] stringArrayWapp) {
-            for (String s : stringArrayWapp)
+        private void parse(final @NonNull String[] stringArrayWapp) {
+            for (final @NonNull String s : stringArrayWapp)
                 if (!s.equals("    ") && !s.equals("")) {
                     // Länge des Substrings ist Unterscheidungskriterium
-                    WifiAccessPoint wap = new WifiAccessPoint();
+                    final @NonNull WifiAccessPoint wap = new WifiAccessPoint();
                     wap.macAddress = s.substring(2);
                     wap.signalStrength = Integer.parseInt("-" + s.substring(0, 2));
                     wap.toMacAddress();
@@ -44,8 +44,8 @@ public class WifiAccessPoints extends NumberSetting {
         public Integer signalStrength;
 
         void toMacAddress() {
-            String str = macAddress;
-            StringBuilder tmp = new StringBuilder();
+            @NonNull String str = macAddress;
+            final @NonNull StringBuilder tmp = new StringBuilder();
             final int divisor = 2;
 
             while (str.length() > 0) {
@@ -61,10 +61,10 @@ public class WifiAccessPoints extends NumberSetting {
         }
     }
 
-    public WifiAccessPoints(@NonNull String wifiAccessPoints, Sms sms) {
+    public WifiAccessPoints(final @NonNull String wifiAccessPoints, final @NonNull Sms sms) {
         super(wifiAccessPoints, sms, key);
 
-        @NonNull String[] strings = mWappString.split("\n");
+        final @NonNull String[] strings = mWappString.split("\n");
         number = strings.length;
 
         wifiAccessPointList = new WifiAccessPointList(strings);
@@ -75,10 +75,10 @@ public class WifiAccessPoints extends NumberSetting {
         );
     }
 
-    public WifiAccessPoints(@NonNull SmsParser smsParser) {
+    public WifiAccessPoints(final @NonNull SmsParser smsParser) {
         super(smsParser.getWappWifiAccessPoints(), smsParser.getSms(), key);
 
-        @NonNull String[] strings = mWappString.split("\n");
+        final @NonNull String[] strings = mWappString.split("\n");
         number = strings.length;
 
         wifiAccessPointList = new WifiAccessPointList(strings);
@@ -89,10 +89,10 @@ public class WifiAccessPoints extends NumberSetting {
         );
     }
 
-    public WifiAccessPoints(@NonNull WappState wappState) {
+    public WifiAccessPoints(final @NonNull WappState wappState) {
         super(wappState.getWifiAccessPoints().getLongValue(), wappState.getSms(), key);
 
-        @NonNull String[] strings = mWappString.split("\n");
+        final @NonNull String[] strings = mWappString.split("\n");
         number = strings.length;
 
         wifiAccessPointList = new WifiAccessPointList(strings);

@@ -12,28 +12,28 @@ import de.bikebean.app.db.state.StateDao;
 
 public class StateRepository {
 
-    protected final StateDao mStateDao;
+    protected final @NonNull StateDao mStateDao;
 
-    public StateRepository(Application application) {
-        BikeBeanRoomDatabase db = BikeBeanRoomDatabase.getDatabase(application);
+    public StateRepository(final @NonNull Application application) {
+        final @NonNull BikeBeanRoomDatabase db = BikeBeanRoomDatabase.getDatabase(application);
         mStateDao = db.stateDao();
     }
 
-    void insert(final State state) {
+    void insert(final @NonNull State state) {
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() -> mStateDao.insert(state));
     }
 
-    @NonNull List<State> getConfirmedStateSync(String key, int smsId) {
+    @NonNull List<State> getConfirmedStateSync(final @NonNull String key, int smsId) {
         discard(smsId);
         return mStateDao.getByKeyAndStateSync(key, State.STATUS.CONFIRMED.ordinal());
     }
 
-    @NonNull List<State> getLastStateSync(String key, int smsId) {
+    @NonNull List<State> getLastStateSync(final @NonNull String key, int smsId) {
         discard(smsId);
         return mStateDao.getByKeySync(key);
     }
 
-    @NonNull List<State> getStateByIdSync(String key, int smsId) {
+    @NonNull List<State> getStateByIdSync(final @NonNull String key, int smsId) {
         return mStateDao.getByKeyAndIdSync(key, smsId);
     }
 

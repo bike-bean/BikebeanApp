@@ -2,6 +2,8 @@ package de.bikebean.app.ui.main.status.settings;
 
 import android.app.Application;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 
 import java.util.List;
@@ -18,10 +20,10 @@ public class SettingsStateViewModel extends StateViewModel {
     private final LiveData<List<State>> mStatusInterval;
     private final LiveData<List<State>> mStatusWifi;
 
-    public SettingsStateViewModel(Application application) {
+    public SettingsStateViewModel(final @NonNull Application application) {
         super(application);
 
-        SettingsStateRepository mRepository = new SettingsStateRepository(application);
+        final @NonNull SettingsStateRepository mRepository = new SettingsStateRepository(application);
 
         mStatus = mRepository.getStatus();
         mStatusWarningNumber = mRepository.getStatusWarningNumber();
@@ -46,7 +48,7 @@ public class SettingsStateViewModel extends StateViewModel {
     }
 
     boolean getWifiStatusSync() {
-        State wifi = getLastStateSync(State.KEY.WIFI);
+        final @Nullable State wifi = getLastStateSync(State.KEY.WIFI);
 
         if (wifi != null)
             return wifi.getValue() > 0;
@@ -55,7 +57,7 @@ public class SettingsStateViewModel extends StateViewModel {
     }
 
     int getIntervalStatusSync() {
-        State intervalState = getLastStateSync(State.KEY.INTERVAL);
+        final @Nullable State intervalState = getLastStateSync(State.KEY.INTERVAL);
 
         if (intervalState != null)
             return intervalState.getValue().intValue();

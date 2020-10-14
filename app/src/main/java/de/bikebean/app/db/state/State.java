@@ -23,8 +23,16 @@ public class State extends DatabaseEntity {
         // (Mostly warningNumber)
         UNSET;
 
-        private static String getName(int value) {
-            for (STATUS s : STATUS.values()) {
+        public static @NonNull STATUS getValue(final @NonNull State state) {
+            for (final @NonNull STATUS s : STATUS.values())
+                if (s.ordinal() == state.getState())
+                    return s;
+
+            return STATUS.UNSET;
+        }
+
+        private static @NonNull String getName(int value) {
+            for (final @NonNull STATUS s : STATUS.values()) {
                 if (s.ordinal() == value)
                     return s.name();
             }
@@ -46,9 +54,9 @@ public class State extends DatabaseEntity {
         NO_CELL_TOWERS("noCellTowers"), NO_WIFI_ACCESS_POINTS("noWifiAccessPoints"),
         CELL_TOWERS("cellTowers"), WIFI_ACCESS_POINTS("wifiAccessPoints");
 
-        private final String key;
+        private final @NonNull String key;
 
-        KEY(String key) {
+        KEY(final @NonNull String key) {
             this.key = key;
         }
 
@@ -56,9 +64,9 @@ public class State extends DatabaseEntity {
             return key;
         }
 
-        public static KEY getValue(String key) {
-            for (KEY k : KEY.values())
-                if (k.get().equals(key))
+        public static KEY getValue(final @NonNull State state) {
+            for (final @NonNull KEY k : KEY.values())
+                if (k.get().equals(state.getKey()))
                     return k;
 
             return KEY.BATTERY;
@@ -94,9 +102,9 @@ public class State extends DatabaseEntity {
 
     public State(
             long timestamp,
-            @NonNull String key,
-            @NonNull Double value,
-            @NonNull String longValue,
+            final @NonNull String key,
+            final @NonNull Double value,
+            final @NonNull String longValue,
             int state,
             int smsId
     ) {
@@ -111,10 +119,10 @@ public class State extends DatabaseEntity {
     @Ignore
     public State(
             long timestamp,
-            @NonNull KEY key,
-            @NonNull Double value,
-            @NonNull String longValue,
-            @NonNull STATUS state,
+            final @NonNull KEY key,
+            final @NonNull Double value,
+            final @NonNull String longValue,
+            final @NonNull STATUS state,
             int smsId
     ) {
         this.mTimestamp = timestamp;
@@ -128,7 +136,7 @@ public class State extends DatabaseEntity {
     // For "PENDING" State
     @Ignore
     public State(
-            @NonNull KEY key,
+            final @NonNull KEY key,
             double value
     ) {
         this.mTimestamp = System.currentTimeMillis();
@@ -139,7 +147,7 @@ public class State extends DatabaseEntity {
         this.mSmsId = 0; // Maybe allow changing this in the future?
     }
 
-    // nullType
+    /* nullType */
     @Ignore
     public State() {
         this.mTimestamp = 0;
@@ -150,7 +158,7 @@ public class State extends DatabaseEntity {
         this.mSmsId = 0;
     }
 
-    public String getKey() {
+    public @NonNull String getKey() {
         return this.mKey;
     }
 
@@ -174,7 +182,7 @@ public class State extends DatabaseEntity {
         return this.mSmsId;
     }
 
-    public boolean equalsId(@Nullable State other) {
+    public boolean equalsId(final @Nullable State other) {
         if (other != null)
             return this.id == other.id;
         else return false;
@@ -192,7 +200,7 @@ public class State extends DatabaseEntity {
         return equalsWhole((State) getNullType());
     }
 
-    private boolean equalsWhole(@NonNull State other) {
+    private boolean equalsWhole(final @NonNull State other) {
         return (id == other.id &&
                 mValue.equals(other.mValue) &&
                 mTimestamp == other.mTimestamp &&

@@ -1,12 +1,15 @@
 package de.bikebean.app.ui.main.status.menu.log;
 
+import androidx.annotation.NonNull;
+
 class GithubGistFiles {
 
-    private final GithubGistTsv sms_tsv;
-    private final GithubGistTsv state_tsv;
-    private final GithubGistTsv log_tsv;
+    private final @NonNull GithubGistTsv sms_tsv;
+    private final @NonNull GithubGistTsv state_tsv;
+    private final @NonNull GithubGistTsv log_tsv;
 
-    GithubGistFiles(String smsTsv, String stateTsv, String logTsv) {
+    GithubGistFiles(final @NonNull String smsTsv, final @NonNull String stateTsv,
+                    final @NonNull String logTsv) {
         this.sms_tsv = new GithubGistTsv(smsTsv);
         this.state_tsv = new GithubGistTsv(stateTsv);
         this.log_tsv = new GithubGistTsv(logTsv);

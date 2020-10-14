@@ -9,17 +9,17 @@ import de.bikebean.app.ui.utils.sms.parser.SmsParser;
 
 public class Wifi extends ReplaceIfNewerSetting {
 
-    private static final State.KEY key = State.KEY.WIFI;
+    private static final @NonNull State.KEY key = State.KEY.WIFI;
     private static final boolean INITIAL_WIFI = false;
 
     private final boolean wifi;
 
-    public Wifi(@NonNull SmsParser smsParser) {
+    public Wifi(final @NonNull SmsParser smsParser) {
         super(smsParser.getSms(), key);
         this.wifi = smsParser.getStatusWifi();
     }
 
-    public Wifi(boolean wifi, @NonNull Sms sms) {
+    public Wifi(boolean wifi, final @NonNull Sms sms) {
         super(sms, key);
         this.wifi = wifi;
     }

@@ -12,7 +12,7 @@ public class WappState extends Wapp {
     private final @NonNull State wifiAccessPoints;
     private final @NonNull State cellTowers;
 
-    public WappState(LocationStateViewModel st, @NonNull StateList states) {
+    public WappState(final LocationStateViewModel st, final @NonNull StateList states) {
         wifiAccessPoints = states.getWifiAccessPointsState(st);
         cellTowers = states.getCellTowersState(st);
 
@@ -35,7 +35,7 @@ public class WappState extends Wapp {
         return wifiAccessPoints;
     }
 
-    public boolean getIfNewest(@NonNull LocationStateViewModel st) {
+    public boolean getIfNewest(final @NonNull LocationStateViewModel st) {
         return (wifiAccessPoints.equalsId(st.getConfirmedLocationSync(wifiAccessPoints))
                 && cellTowers.equalsId(st.getConfirmedLocationSync(cellTowers)));
     }

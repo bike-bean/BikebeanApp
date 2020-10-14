@@ -1,5 +1,7 @@
 package de.bikebean.app.db.type.types;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +15,7 @@ import de.bikebean.app.db.type.Type;
 
 public class InitialConversation extends Type {
 
-    private final List<Setting> settings;
+    private final @NonNull List<Setting> settings;
 
     public InitialConversation() {
         super(SMSTYPE.INITIAL_CONVERSATION);
@@ -27,7 +29,7 @@ public class InitialConversation extends Type {
     }
 
     @Override
-    public List<Setting> getSettings() {
+    public @NonNull List<Setting> getSettings() {
         return settings;
     }
 }

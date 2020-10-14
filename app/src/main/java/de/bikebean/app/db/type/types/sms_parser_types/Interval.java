@@ -13,9 +13,9 @@ import de.bikebean.app.ui.utils.sms.parser.SmsParser;
 
 public class Interval extends SmsParserType {
 
-    private final List<Setting> settings;
+    private final @NonNull List<Setting> settings;
 
-    public Interval(@NonNull SmsParser smsParser) {
+    public Interval(final @NonNull SmsParser smsParser) {
         super(SMSTYPE.INT);
         this.mSmsParser = smsParser;
         this.settings = new ArrayList<>();
@@ -26,7 +26,7 @@ public class Interval extends SmsParserType {
     }
 
     @Override
-    public List<Setting> getSettings() {
+    public @NonNull List<Setting> getSettings() {
         return settings;
     }
 }

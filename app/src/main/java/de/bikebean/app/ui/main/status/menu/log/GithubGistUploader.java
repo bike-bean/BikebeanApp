@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.IOException;
 
@@ -17,22 +18,24 @@ import okhttp3.Response;
 public class GithubGistUploader extends AsyncTask<String, Void, Boolean> {
 
     private final LogViewModel mLogViewModel;
-    private final UploadSuccessNotifier mUploadSuccessNotifier;
+    private final @NonNull UploadSuccessNotifier mUploadSuccessNotifier;
 
-    private final String mDescription;
-    private final String mSmsTsv;
-    private final String mStateTsv;
-    private final String mLogTsv;
+    private final @NonNull String mDescription;
+    private final @NonNull String mSmsTsv;
+    private final @NonNull String mStateTsv;
+    private final @NonNull String mLogTsv;
 
-    private final String mUrl;
-    private final String githubGistsToken;
+    private final @NonNull String mUrl;
+    private final @NonNull String githubGistsToken;
 
     public interface UploadSuccessNotifier {
         void notifyUploadSuccess(boolean success);
     }
 
-    public GithubGistUploader(@NonNull Context context, LogViewModel lv, UploadSuccessNotifier usn,
-                              String description, String smsTsv, String stateTsv, String logTsv) {
+    public GithubGistUploader(final @NonNull Context context, LogViewModel lv,
+                              final @NonNull UploadSuccessNotifier usn,
+                              final @NonNull String description, final @NonNull String smsTsv,
+                              final @NonNull String stateTsv, final @NonNull String logTsv) {
         mLogViewModel = lv;
         mUploadSuccessNotifier = usn;
 
@@ -46,22 +49,24 @@ public class GithubGistUploader extends AsyncTask<String, Void, Boolean> {
     }
 
     @Override
-    protected Boolean doInBackground(String... args) {
-        MediaType mediaType = MediaType.parse("application/json");
+    protected @NonNull Boolean doInBackground(final @NonNull String... args) {
+        final @Nullable MediaType mediaType = MediaType.parse("application/json");
 
-        GithubGistBody jsonBody = new GithubGistBody(mDescription, mSmsTsv, mStateTsv, mLogTsv);
-        RequestBody body = RequestBody.create(mediaType, jsonBody.createJsonApiBody());
+        final @NonNull GithubGistBody jsonBody =
+                new GithubGistBody(mDescription, mSmsTsv, mStateTsv, mLogTsv);
+        final @NonNull RequestBody body =
+                RequestBody.create(mediaType, jsonBody.createJsonApiBody());
 
-        OkHttpClient client = new OkHttpClient().newBuilder()
+        final @NonNull OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
-        Request request = new Request.Builder()
+        final @NonNull Request request = new Request.Builder()
                 .url(mUrl)
                 .method("POST", body)
                 .addHeader("Authorization", "token " + githubGistsToken)
                 .addHeader("Content-Type", "application/json")
                 .build();
 
-        Response response;
+        final @NonNull Response response;
 
         try {
             response = client.newCall(request).execute();
@@ -74,7 +79,7 @@ public class GithubGistUploader extends AsyncTask<String, Void, Boolean> {
     }
 
     @Override
-    protected void onPostExecute(Boolean isLogUploaded) {
+    protected void onPostExecute(final @NonNull Boolean isLogUploaded) {
         mUploadSuccessNotifier.notifyUploadSuccess(isLogUploaded);
     }
 }

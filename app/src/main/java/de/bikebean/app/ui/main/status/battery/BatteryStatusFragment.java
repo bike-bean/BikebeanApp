@@ -24,7 +24,7 @@ public class BatteryStatusFragment extends SubStatusFragment {
 
     private BatteryStateViewModel st;
 
-    private final LiveDataTimerViewModel.TIMER t1 = LiveDataTimerViewModel.TIMER.FOUR;
+    private final @NonNull LiveDataTimerViewModel.TIMER t1 = LiveDataTimerViewModel.TIMER.FOUR;
 
     // UI Elements
     private Button statusButton;
@@ -33,9 +33,10 @@ public class BatteryStatusFragment extends SubStatusFragment {
     private TextView batteryStatusText, batteryEstimatedDaysText, batteryLastChangedText;
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_status_battery, container, false);
+    public View onCreateView(final @NonNull LayoutInflater inflater,
+                             final @Nullable ViewGroup container,
+                             final @Nullable Bundle savedInstanceState) {
+        final @NonNull View v = inflater.inflate(R.layout.fragment_status_battery, container, false);
 
         statusButton = v.findViewById(R.id.statusButton);
         helpButton = v.findViewById(R.id.helpButton2);
@@ -49,7 +50,7 @@ public class BatteryStatusFragment extends SubStatusFragment {
     }
 
     @Override
-    protected void setupListeners(LifecycleOwner l) {
+    protected void setupListeners(final @NonNull LifecycleOwner l) {
         st = new ViewModelProvider(this).get(BatteryStateViewModel.class);
         st.getStatusBattery().observe(l, this::setElements);
     }
@@ -69,7 +70,7 @@ public class BatteryStatusFragment extends SubStatusFragment {
 
     // unset
     @Override
-    protected void setBatteryElementsUnset(@NonNull State state) {
+    protected void setBatteryElementsUnset(final @NonNull State state) {
         tv.getResidualTime(t1).removeObservers(this);
         tv.cancelTimer(t1);
 
@@ -88,18 +89,18 @@ public class BatteryStatusFragment extends SubStatusFragment {
         statusPendingStatus.setVisibility(View.GONE);
     }
 
-    protected void setWarningNumberElementsUnset(@NonNull State state) {}
-    protected void setStatusElementsUnset(@NonNull State state) {}
+    protected void setWarningNumberElementsUnset(final @NonNull State state) {}
+    protected void setStatusElementsUnset() {}
     protected void setLocationElementsUnset() {}
     protected void setLocationElementsTempUnset() {}
 
     // confirmed
     @Override
-    protected void setBatteryElementsConfirmed(@NonNull State state) {
+    protected void setBatteryElementsConfirmed(final @NonNull State state) {
         tv.getResidualTime(t1).removeObservers(this);
         tv.cancelTimer(t1);
 
-        String batteryStatus = state.getValue() + " %";
+        final @NonNull String batteryStatus = state.getValue() + " %";
         batteryStatusText.setText(batteryStatus);
         batteryStatusText.setCompoundDrawablesWithIntrinsicBounds(
                 Utils.getBatteryDrawable(requireContext(), state.getValue()),
@@ -116,35 +117,35 @@ public class BatteryStatusFragment extends SubStatusFragment {
     }
 
     @Override
-    protected void setIntervalElementsConfirmed(@NonNull State state) {
+    protected void setIntervalElementsConfirmed() {
         batteryEstimatedDaysText.setText(BatteryStateViewModel.getEstimatedDaysText(st));
     }
 
     @Override
-    protected void setWifiElementsConfirmed(@NonNull State state) {
+    protected void setWifiElementsConfirmed(final @NonNull State state) {
         batteryEstimatedDaysText.setText(
                 BatteryStateViewModel.getEstimatedDaysText(st));
     }
 
-    protected void setWarningNumberElementsConfirmed(@NonNull State state) {}
-    protected void setStatusElementsConfirmed(@NonNull State state) {}
-    protected void setLocationElementsConfirmed(@NonNull State state) {}
-    protected void setLatConfirmed(@NonNull State state) {}
-    protected void setLngConfirmed(@NonNull State state) {}
-    protected void setAccConfirmed(@NonNull State state) {}
+    protected void setWarningNumberElementsConfirmed(final @NonNull State state) {}
+    protected void setStatusElementsConfirmed(final @NonNull State state) {}
+    protected void setLocationElementsConfirmed(final @NonNull State state) {}
+    protected void setLatConfirmed(final @NonNull State state) {}
+    protected void setLngConfirmed(final @NonNull State state) {}
+    protected void setAccConfirmed(final @NonNull State state) {}
 
     // pending
     @Override
-    protected void setBatteryElementsPending(@NonNull State state) {
+    protected void setBatteryElementsPending(final @NonNull State state) {
         long stopTime = tv.startTimer(t1, state.getTimestamp(), st.getConfirmedIntervalSync());
         tv.getResidualTime(t1).observe(this, s ->
                 updatePendingText(statusPendingStatus, stopTime, s)
         );
 
-        @Nullable State lastBatteryState = st.getConfirmedBatterySync();
+        final @Nullable State lastBatteryState = st.getConfirmedBatterySync();
         if (lastBatteryState != null) {
             double batteryValue = lastBatteryState.getValue();
-            String batteryStatus = batteryValue + " %";
+            final @NonNull String batteryStatus = batteryValue + " %";
 
             batteryLastChangedText.setText(
                     Utils.ConvertPeriodToHuman(lastBatteryState.getTimestamp()));
@@ -169,9 +170,9 @@ public class BatteryStatusFragment extends SubStatusFragment {
         statusPendingStatus.setVisibility(View.VISIBLE);
     }
 
-    protected void setIntervalElementsPending(@NonNull State state) {}
-    protected void setWifiElementsPending(@NonNull State state) {}
-    protected void setWarningNumberElementsPending(@NonNull State state) {}
-    protected void setLocationElementsPending(@NonNull State state) {}
-    protected void setLocationElementsTempPending(@NonNull State state) {}
+    protected void setIntervalElementsPending(final @NonNull State state) {}
+    protected void setWifiElementsPending(final @NonNull State state) {}
+    protected void setWarningNumberElementsPending(final @NonNull State state) {}
+    protected void setLocationElementsPending(final @NonNull State state) {}
+    protected void setLocationElementsTempPending(final @NonNull State state) {}
 }

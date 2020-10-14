@@ -13,10 +13,10 @@ public class Battery extends Setting {
     private final @NonNull State state;
     private final @NonNull ConversationListAdder conversationListAdder;
 
-    private static final State.KEY key = State.KEY.BATTERY;
-    private static final State.STATUS status = State.STATUS.CONFIRMED;
+    private static final @NonNull State.KEY key = State.KEY.BATTERY;
+    private static final @NonNull State.STATUS status = State.STATUS.CONFIRMED;
 
-    public Battery(@NonNull SmsParser smsParser, boolean isStatus, boolean isNoWifi) {
+    public Battery(final @NonNull SmsParser smsParser, boolean isStatus, boolean isNoWifi) {
         super(smsParser.getSms(), key);
 
         if (isStatus)

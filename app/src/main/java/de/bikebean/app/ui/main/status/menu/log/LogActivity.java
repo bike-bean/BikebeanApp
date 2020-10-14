@@ -1,6 +1,7 @@
 package de.bikebean.app.ui.main.status.menu.log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -35,7 +36,7 @@ public class LogActivity extends AppCompatActivity {
     private Spinner spinner;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log);
 
@@ -48,13 +49,12 @@ public class LogActivity extends AppCompatActivity {
         initSpinner();
         initUserElements();
 
-        Toolbar toolbar = findViewById(R.id.toolbar3);
+        final @Nullable Toolbar toolbar = findViewById(R.id.toolbar3);
         setSupportActionBar(toolbar);
 
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
+        final @Nullable ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
-        }
 
         initRecyclerView();
     }
@@ -64,7 +64,7 @@ public class LogActivity extends AppCompatActivity {
     }
 
     private void initSpinner() {
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+        final @NonNull ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.log_entries, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -75,40 +75,45 @@ public class LogActivity extends AppCompatActivity {
         spinner.setSelection(getLevelPosition(logViewModel.getLastLevelSync()));
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String newValue = getLevelString(position);
+            public void onItemSelected(final @NonNull AdapterView<?> parent,
+                                       final @NonNull View view, int position, long id) {
+                final @Nullable String newValue = getLevelString(position);
 
-                // See if the "new" value is actually just the placeholder.
-                // In that case, set the text underneath to reflect the last known status
+                /*
+                 See if the "new" value is actually just the placeholder.
+                 In that case, set the text underneath to reflect the last known status
+                 */
                 if (newValue.equals("0"))
                     return;
 
-                // Get the last confirmed level status and
-                // see if the value has changed from then.
-                // If it has not changed, return
+                /*
+                 Get the last confirmed level status and
+                 see if the value has changed from then.
+                 If it has not changed, return
+                 */
                 if (position == getLevelPosition(logViewModel.getLastLevelSync()))
                     return;
 
-                // if it has changed, create a new pending state and fire it into the db
+                /* if it has changed, create a new pending state and fire it into the db */
                 logViewModel.setInternal(getResources().getStringArray(R.array.log_entries_internal)[position]);
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onNothingSelected(final @NonNull AdapterView<?> parent) {
                 // do nothing
             }
         });
         sendButton.setOnClickListener(this::generateLogAndUpload);
     }
 
-    private void generateLogAndUpload(View v) {
+    private void generateLogAndUpload(final @NonNull View v) {
         logViewModel.d("Exporting database...");
         Snackbar.make(v,
                 "Fehlerbericht senden...",
                 Snackbar.LENGTH_LONG
         ).show();
 
-        GithubGistUploader githubGistUploader = BikeBeanRoomDatabase.createReport(
+        final @NonNull GithubGistUploader githubGistUploader = BikeBeanRoomDatabase.createReport(
                 getApplicationContext(), logViewModel, this::notifyUploadSuccess
         );
 
@@ -116,7 +121,7 @@ public class LogActivity extends AppCompatActivity {
     }
 
     private void notifyUploadSuccess(boolean success) {
-        View parentLayout = findViewById(R.id.sendButton);
+        final @NonNull View parentLayout = findViewById(R.id.sendButton);
 
         if (success)
             Snackbar.make(parentLayout,
@@ -131,21 +136,28 @@ public class LogActivity extends AppCompatActivity {
     }
 
     private void initRecyclerView() {
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        final @Nullable RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        if (recyclerView == null)
+            return;
+
         adapter = new LogAdapter(this, logViewModel.getHigherThanLevel(Log.LEVEL.ERROR).getValue());
         recyclerView.setAdapter(adapter);
 
-        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        final @NonNull LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
     }
 
-    private String getLevelString(int position) {
-        String[] items = getResources().getStringArray(R.array.log_values);
-        return items[position];
+    private @NonNull String getLevelString(int position) {
+        final @NonNull String[] items = getResources().getStringArray(R.array.log_values);
+
+        if (items.length > position)
+            return items[position];
+        else
+            return "0";
     }
 
-    private int getLevelPosition(Log.LEVEL level) {
-        String[] items = getResources().getStringArray(R.array.log_values);
+    private int getLevelPosition(final @NonNull Log.LEVEL level) {
+        final @NonNull String[] items = getResources().getStringArray(R.array.log_values);
 
         for (int i=0; i<items.length; i++)
             if (items[i].equals(String.valueOf(level.ordinal())))
@@ -154,8 +166,8 @@ public class LogActivity extends AppCompatActivity {
         return 0;
     }
 
-    private void changeLevel(@NonNull List<Log> logs) {
-        Log.LEVEL level;
+    private void changeLevel(final @NonNull List<Log> logs) {
+        final @NonNull Log.LEVEL level;
 
         if (logs.size() > 0)
             level = Log.LEVEL.valueOf(logs.get(0).getMessage());
@@ -165,7 +177,7 @@ public class LogActivity extends AppCompatActivity {
         logViewModel.getHigherThanLevel(level).observe(this, this::updateAdapter);
     }
 
-    private void updateAdapter(@NonNull List<Log> log) {
+    private void updateAdapter(final @NonNull List<Log> log) {
         if (log.size() != 0) {
             adapter.setLog(log);
             noDataText.setVisibility(View.GONE);

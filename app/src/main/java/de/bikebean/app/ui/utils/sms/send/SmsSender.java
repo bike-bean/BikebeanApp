@@ -16,6 +16,8 @@ import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.utils.PermissionsRationaleDialog;
 import de.bikebean.app.ui.main.status.StatusFragment;
 
+import static de.bikebean.app.ui.main.status.menu.preferences.PreferencesActivity.NUMBER_PREFERENCE;
+
 public class SmsSender {
 
     public interface PostSmsSendHandler {
@@ -42,7 +44,7 @@ public class SmsSender {
         final @Nullable String number;
 
         if (sharedPreferences != null)
-            number = sharedPreferences.getString("number", null);
+            number = sharedPreferences.getString(NUMBER_PREFERENCE, null);
         else {
             lv.e("Failed to get sharedPreferences!");
             this.address = "";

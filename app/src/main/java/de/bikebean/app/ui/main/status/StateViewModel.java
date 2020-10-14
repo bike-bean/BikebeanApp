@@ -21,49 +21,49 @@ import de.bikebean.app.ui.utils.sms.send.SmsSender;
 
 public class StateViewModel extends AndroidViewModel {
 
-    private final StateRepository mRepository;
+    private final @NonNull StateRepository mRepository;
 
-    public StateViewModel(Application application) {
+    public StateViewModel(final @NonNull Application application) {
         super(application);
 
         mRepository = new StateRepository(application);
     }
 
-    public void insert(State state) {
+    public void insert(final @Nullable State state) {
         if (state != null)
             mRepository.insert(state);
     }
 
-    public void insert(@NonNull SmsSender smsSender) {
+    public void insert(final @NonNull SmsSender smsSender) {
         for (State state : smsSender.getUpdates())
             if (state != null)
                 mRepository.insert(state);
     }
 
-    private void insert(@NonNull NumberSetting numberSetting) {
+    private void insert(final @NonNull NumberSetting numberSetting) {
         insert(numberSetting.getNumberState());
     }
 
-    public void insert(@NonNull Setting setting) {
+    public void insert(final @NonNull Setting setting) {
         insert(setting.getState());
     }
 
-    public void insert(@NonNull List<Setting> settings) {
-        for (Setting s : settings)
+    public void insert(final @NonNull List<Setting> settings) {
+        for (final @NonNull Setting s : settings)
             insert(s);
     }
 
-    public void insert(@NonNull Type type) {
+    public void insert(final @NonNull Type type) {
         insert(type.getSettings());
     }
 
-    public void insertNumberStates(@NonNull WappState wappState) {
+    public void insertNumberStates(final @NonNull WappState wappState) {
         insert(new CellTowers(wappState));
         insert(new WifiAccessPoints(wappState));
     }
 
     public int getConfirmedIntervalSync() {
-        @Nullable State intervalConfirmed = getConfirmedStateSync(State.KEY.INTERVAL);
+        final @Nullable State intervalConfirmed = getConfirmedStateSync(State.KEY.INTERVAL);
 
         if (intervalConfirmed != null)
             return intervalConfirmed.getValue().intValue();
@@ -72,7 +72,7 @@ public class StateViewModel extends AndroidViewModel {
     }
 
     public @NonNull String getWifiAccessPointsSync() {
-        @Nullable State wifiAccessPoints = getConfirmedStateSync(State.KEY.WIFI_ACCESS_POINTS);
+        final @Nullable State wifiAccessPoints = getConfirmedStateSync(State.KEY.WIFI_ACCESS_POINTS);
 
         if (wifiAccessPoints != null)
             return wifiAccessPoints.getLongValue();
@@ -92,9 +92,9 @@ public class StateViewModel extends AndroidViewModel {
         return getStateSync(mRepository::getStateByIdSync, key, smsId);
     }
 
-    private @Nullable State getStateSync(MutableObject.ListGetter stateGetter,
-                       @NonNull State.KEY key, int smsId) {
-        final MutableObject<State> state = new MutableObject<>(new State());
+    private @Nullable State getStateSync(final @NonNull MutableObject.ListGetter stateGetter,
+                                         final @NonNull State.KEY key, int smsId) {
+        final @NonNull MutableObject<State> state = new MutableObject<>(new State());
 
         return (State) state.getDbEntitySync(stateGetter, key.get(), smsId);
     }

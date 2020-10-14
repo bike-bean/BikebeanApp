@@ -28,8 +28,6 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.Objects;
-
 import de.bikebean.app.R;
 import de.bikebean.app.ui.utils.PermissionsRationaleDialog;
 import de.bikebean.app.ui.utils.Utils;
@@ -39,9 +37,11 @@ import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
 import de.bikebean.app.ui.main.status.menu.sms_history.SmsViewModel;
 import de.bikebean.app.ui.main.status.settings.SettingsStatusFragment;
 
+import static de.bikebean.app.ui.main.status.menu.preferences.PreferencesActivity.NUMBER_PREFERENCE;
+
 public class StatusFragment extends Fragment {
 
-    public static String[] getSmsPermissions() {
+    public static @NonNull String[] getSmsPermissions() {
         if (android.os.Build.VERSION.SDK_INT == Build.VERSION_CODES.O) {
             return smsPermissionsAndroid8_0;
         } else {
@@ -49,14 +49,14 @@ public class StatusFragment extends Fragment {
         }
     }
 
-    private static final String[] smsPermissionsAndroid8_0 = {
+    private static final @NonNull String[] smsPermissionsAndroid8_0 = {
             android.Manifest.permission.READ_SMS,
             android.Manifest.permission.SEND_SMS,
             android.Manifest.permission.RECEIVE_SMS,
             android.Manifest.permission.READ_PHONE_STATE
     };
 
-    private static final String[] smsPermissionsAndroidX_X = {
+    private static final @NonNull String[] smsPermissionsAndroidX_X = {
             android.Manifest.permission.READ_SMS,
             android.Manifest.permission.SEND_SMS,
             android.Manifest.permission.RECEIVE_SMS
@@ -82,14 +82,16 @@ public class StatusFragment extends Fragment {
     private CardView errorView;
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_status, container, false);
+    public View onCreateView(final @NonNull LayoutInflater inflater,
+                             final @Nullable ViewGroup container,
+                             final @Nullable Bundle savedInstanceState) {
+        final @NonNull View root = inflater.inflate(R.layout.fragment_status, container, false);
 
         errorView = root.findViewById(R.id.errorView);
 
-        Button openSettingsButton = root.findViewById(R.id.errorViewButton);
-        openSettingsButton.setOnClickListener(this::openSettings);
+        final @Nullable Button openSettingsButton = root.findViewById(R.id.errorViewButton);
+        if (openSettingsButton != null)
+            openSettingsButton.setOnClickListener(this::openSettings);
 
         // init sub-fragments
         getChildFragmentManager()
@@ -106,7 +108,7 @@ public class StatusFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(final @Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         // init the ViewModels
@@ -115,12 +117,14 @@ public class StatusFragment extends Fragment {
         logViewModel = new ViewModelProvider(this).get(LogViewModel.class);
 
         // Get Activity
-        FragmentActivity act = requireActivity();
+        final @NonNull FragmentActivity act = requireActivity();
 
         // Show the Action Bar
-        ActionBar actionbar = ((AppCompatActivity) act).getSupportActionBar();
-        Objects.requireNonNull(actionbar).show();
-        actionbar.setTitle(R.string.status_title);
+        final @Nullable ActionBar actionbar = ((AppCompatActivity) act).getSupportActionBar();
+        if (actionbar != null) {
+            actionbar.show();
+            actionbar.setTitle(R.string.status_title);
+        }
 
         permissionDeniedHandler = this::showErrorView;
 
@@ -133,10 +137,10 @@ public class StatusFragment extends Fragment {
             }
         });
 
-        String address = PreferenceManager.getDefaultSharedPreferences(requireContext())
-                .getString("number", "");
+        final @Nullable String address = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getString(NUMBER_PREFERENCE, null);
 
-        if (address.isEmpty())
+        if (address == null)
             // Navigate to the initial configuration screen
             Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
                     .navigate(R.id.initial_configuration_action);
@@ -161,13 +165,13 @@ public class StatusFragment extends Fragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+    public void onCreateOptionsMenu(final @NonNull Menu menu, final @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.status_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    public boolean onOptionsItemSelected(final @NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_sms_history:
                 Navigation.findNavController(requireView())
@@ -201,20 +205,21 @@ public class StatusFragment extends Fragment {
             errorView.setVisibility(View.GONE);
     }
 
-    private void openSettings(@NonNull View v) {
+    private void openSettings(final @NonNull View v) {
         if (v.getId() == 0)
             return;
 
-        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        Uri uri = Uri.fromParts("package", requireActivity().getPackageName(), null);
+        final @NonNull Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        final @NonNull Uri uri =
+                Uri.fromParts("package", requireActivity().getPackageName(), null);
         intent.setData(uri);
         startActivity(intent);
     }
 
     private void fetchSms() {
-        @NonNull Context ctx = requireContext();
+        final @NonNull Context ctx = requireContext();
         final @Nullable String number = PreferenceManager.getDefaultSharedPreferences(ctx)
-                .getString("number", null);
+                .getString(NUMBER_PREFERENCE, null);
 
         if (number != null)
             smsViewModel.fetchSms(ctx, stateViewModel, logViewModel, number);

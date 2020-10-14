@@ -28,17 +28,17 @@ public class Sms extends DatabaseEntity {
         WIFI(""),
         WARNING_NUMBER("Warningnumber");
 
-        private String msg;
+        private @NonNull String msg;
 
-        MESSAGE(String msg) {
+        MESSAGE(@NonNull String msg) {
             this.msg = msg;
         }
 
-        public String getMsg() {
+        public @NonNull String getMsg() {
             return msg;
         }
 
-        public void setValue(String msg) {
+        public void setValue(final @NonNull String msg) {
             this.msg = msg;
         }
     }
@@ -70,11 +70,11 @@ public class Sms extends DatabaseEntity {
 
     public Sms(
             int id,
-            @NonNull String address,
-            @NonNull String body,
+            final @NonNull String address,
+            final @NonNull String body,
             int type,
             int state,
-            @NonNull String date,
+            final @NonNull String date,
             long timestamp
     ) {
         this.mId = id;
@@ -89,11 +89,11 @@ public class Sms extends DatabaseEntity {
     @Ignore
     public Sms(
             int id,
-            @NonNull String address,
-            @NonNull String body,
+            final @NonNull String address,
+            final @NonNull String body,
             int type,
-            @NonNull STATUS state,
-            @NonNull String date,
+            final @NonNull STATUS state,
+            final @NonNull String date,
             long timestamp
     ) {
         this.mId = id;
@@ -109,7 +109,7 @@ public class Sms extends DatabaseEntity {
     @Ignore
     public Sms(
             int smsId,
-            @NonNull SmsSender smsSender
+            final @NonNull SmsSender smsSender
             ) {
         long timestamp = System.currentTimeMillis();
 
@@ -124,7 +124,7 @@ public class Sms extends DatabaseEntity {
 
     @Ignore
     public Sms(
-            @NonNull State state
+            final @NonNull State state
     ) {
         this.mId = state.getSmsId();
         this.mAddress = "";
@@ -138,13 +138,13 @@ public class Sms extends DatabaseEntity {
     // with cursor
     @Ignore
     public Sms(
-            @NonNull Cursor inbox,
-            @NonNull STATUS smsState
+            final @NonNull Cursor inbox,
+            final @NonNull STATUS smsState
     ) {
-        String id = inbox.getString(inbox.getColumnIndexOrThrow("_id"));
+        final @NonNull String id = inbox.getString(inbox.getColumnIndexOrThrow("_id"));
         this.mId = Integer.parseInt(id);
 
-        String type = inbox.getString(inbox.getColumnIndexOrThrow("type"));
+        final @NonNull String type = inbox.getString(inbox.getColumnIndexOrThrow("type"));
         this.mType = Integer.parseInt(type);
 
         this.mState = smsState.ordinal();
@@ -152,7 +152,7 @@ public class Sms extends DatabaseEntity {
         this.mAddress = inbox.getString(inbox.getColumnIndexOrThrow("address"));
         this.mBody = inbox.getString(inbox.getColumnIndexOrThrow("body"));
 
-        String date = inbox.getString(inbox.getColumnIndexOrThrow("date"));
+        final @NonNull String date = inbox.getString(inbox.getColumnIndexOrThrow("date"));
         this.mTimestamp = Long.parseLong(date);
         this.mDate = Utils.convertToTime(mTimestamp);
     }
@@ -204,14 +204,14 @@ public class Sms extends DatabaseEntity {
 
     @Override
     public @NonNull String createReportTitle() {
-        String delimiter = "\t";
+        final @NonNull String delimiter = "\t";
         return "ID" + delimiter + "Body" + delimiter + "Type" + delimiter +
                 "State" + delimiter + "Date" + "\n";
     }
 
     @Override
     public @NonNull String createReport() {
-        String delimiter = "\t";
+        final @NonNull String delimiter = "\t";
         return mId + delimiter + mBody.replace("\n", "//") +
                 delimiter + mType + delimiter + mState + delimiter + mDate + "\n";
     }

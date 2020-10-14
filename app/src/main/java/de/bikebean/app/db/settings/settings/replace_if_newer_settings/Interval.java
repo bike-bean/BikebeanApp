@@ -9,12 +9,12 @@ import de.bikebean.app.ui.utils.sms.parser.SmsParser;
 
 public class Interval extends ReplaceIfNewerSetting {
 
-    private static final State.KEY key = State.KEY.INTERVAL;
+    private static final @NonNull State.KEY key = State.KEY.INTERVAL;
     private static final int INITIAL_INTERVAL = 1;
 
     private final int interval;
 
-    public Interval(@NonNull SmsParser smsParser, boolean isStatus) {
+    public Interval(final @NonNull SmsParser smsParser, boolean isStatus) {
         super(smsParser.getSms(), key);
 
         if (isStatus)

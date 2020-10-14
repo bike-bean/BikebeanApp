@@ -17,10 +17,10 @@ import de.bikebean.app.db.type.Type;
 
 public class Location extends Type {
 
-    private final List<Setting> settings;
+    private final @NonNull List<Setting> settings;
 
-    public Location(@NonNull JSONObject location, @NonNull JSONObject response,
-                    @NonNull WappState wappState) throws JSONException {
+    public Location(final @NonNull JSONObject location, final @NonNull JSONObject response,
+                    final @NonNull WappState wappState) throws JSONException {
         super(SMSTYPE.LOCATION);
 
         settings = new ArrayList<>();
@@ -32,7 +32,7 @@ public class Location extends Type {
     }
 
     @Override
-    public List<Setting> getSettings() {
+    public @NonNull List<Setting> getSettings() {
         return settings;
     }
 }

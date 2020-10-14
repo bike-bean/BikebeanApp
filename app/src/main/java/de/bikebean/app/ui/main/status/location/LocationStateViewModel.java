@@ -14,7 +14,7 @@ import de.bikebean.app.ui.main.status.StateViewModel;
 
 public class LocationStateViewModel extends StateViewModel {
 
-    private final LocationStateRepository mRepository;
+    private final @NonNull LocationStateRepository mRepository;
 
     private final LiveData<List<State>> mStatusLocationLat;
     private final LiveData<List<State>> mStatusLocationLng;
@@ -24,7 +24,7 @@ public class LocationStateViewModel extends StateViewModel {
     private final LiveData<List<State>> mWapp;
     private final LiveData<List<State>> mLocation;
 
-    public LocationStateViewModel(Application application) {
+    public LocationStateViewModel(final @NonNull Application application) {
         super(application);
 
         mRepository = new LocationStateRepository(application);
@@ -66,23 +66,23 @@ public class LocationStateViewModel extends StateViewModel {
         return mLocation;
     }
 
-    void confirmWapp(WappState wappState) {
+    void confirmWapp(final @NonNull WappState wappState) {
         mRepository.confirmWapp(wappState);
     }
 
-    public @Nullable State getConfirmedLocationSync(@NonNull State state) {
-        return getConfirmedStateSync(State.KEY.getValue(state.getKey()));
+    public @Nullable State getConfirmedLocationSync(final @NonNull State state) {
+        return getConfirmedStateSync(State.KEY.getValue(state));
     }
 
-    boolean getLocationByIdSync(@NonNull WappState wappState) {
+    boolean getLocationByIdSync(final @NonNull WappState wappState) {
         return getStateByIdSync(State.KEY.LOCATION, wappState.getSmsId()) != null;
     }
 
-    public State getWifiAccessPointsByWappSync(@NonNull State wappState) {
+    public State getWifiAccessPointsByWappSync(final @NonNull State wappState) {
         return getStateByIdSync(State.KEY.WIFI_ACCESS_POINTS, wappState.getSmsId());
     }
 
-    public State getCellTowersByWappSync(@NonNull State wappState) {
+    public State getCellTowersByWappSync(final @NonNull State wappState) {
         return getStateByIdSync(State.KEY.CELL_TOWERS, wappState.getSmsId());
     }
 }

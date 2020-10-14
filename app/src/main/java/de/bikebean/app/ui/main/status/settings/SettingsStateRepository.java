@@ -2,6 +2,7 @@ package de.bikebean.app.ui.main.status.settings;
 
 import android.app.Application;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
 import java.util.List;
@@ -16,7 +17,7 @@ class SettingsStateRepository extends StateRepository {
     private final LiveData<List<State>> mStatusInterval;
     private final LiveData<List<State>> mStatusWifi;
 
-    SettingsStateRepository(Application application) {
+    SettingsStateRepository(final @NonNull Application application) {
         super(application);
 
         mStatus = mStateDao.getAllByKey(State.KEY._STATUS.get());

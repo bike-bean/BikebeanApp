@@ -13,13 +13,13 @@ import de.bikebean.app.db.state.State;
 public class LocationUrl {
 
     private final MutableLiveData<String> url = new MutableLiveData<>();
-    private static final String baseUrl = "https://maps.app.goo.gl/?link=";
-    private static final String mapBaseUrl = "https://www.google.com/maps/search/?api=1&query=";
+    private static final @NonNull String baseUrl = "https://maps.app.goo.gl/?link=";
+    private static final @NonNull String mapBaseUrl = "https://www.google.com/maps/search/?api=1&query=";
 
     private double lat, lng;
     private boolean latSet = false, lngSet = false;
 
-    public void setLat(@NonNull List<State> lat) {
+    public void setLat(final @NonNull List<State> lat) {
         if (lat.size() == 0) {
             setUrl();
             return;
@@ -31,7 +31,7 @@ public class LocationUrl {
         setUrl();
     }
 
-    public void setLng(@NonNull List<State> lng) {
+    public void setLng(final @NonNull List<State> lng) {
         if (lng.size() == 0) {
             setUrl();
             return;

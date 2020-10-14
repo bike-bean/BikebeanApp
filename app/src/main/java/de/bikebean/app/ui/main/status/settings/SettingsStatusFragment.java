@@ -11,6 +11,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
@@ -27,9 +28,9 @@ public class SettingsStatusFragment extends SubStatusFragment {
 
     private SettingsStateViewModel st;
 
-    private final LiveDataTimerViewModel.TIMER t1 = LiveDataTimerViewModel.TIMER.ONE;
-    private final LiveDataTimerViewModel.TIMER t2 = LiveDataTimerViewModel.TIMER.TWO;
-    private final LiveDataTimerViewModel.TIMER t3 = LiveDataTimerViewModel.TIMER.THREE;
+    private final @NonNull LiveDataTimerViewModel.TIMER t1 = LiveDataTimerViewModel.TIMER.ONE;
+    private final @NonNull LiveDataTimerViewModel.TIMER t2 = LiveDataTimerViewModel.TIMER.TWO;
+    private final @NonNull LiveDataTimerViewModel.TIMER t3 = LiveDataTimerViewModel.TIMER.THREE;
 
     // UI Elements
     private ImageButton helpButton;
@@ -44,10 +45,12 @@ public class SettingsStatusFragment extends SubStatusFragment {
 
     private TextView warningNumberPendingStatus, warningNumberSummary;
 
+    @NonNull
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_status_settings, container, false);
+    public View onCreateView(final @NonNull LayoutInflater inflater,
+                             final @Nullable ViewGroup container,
+                             final @Nullable Bundle savedInstanceState) {
+        final @NonNull View v = inflater.inflate(R.layout.fragment_status_settings, container, false);
 
         helpButton = v.findViewById(R.id.helpButton3);
 
@@ -69,14 +72,14 @@ public class SettingsStatusFragment extends SubStatusFragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(final @Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         initIntervalDropdown();
     }
 
     private void initIntervalDropdown() {
-        ArrayAdapter<CharSequence> adapter =
+        final @NonNull ArrayAdapter<CharSequence> adapter =
                 ArrayAdapter.createFromResource(
                         requireActivity(),
                         R.array.interval_entries,
@@ -88,7 +91,7 @@ public class SettingsStatusFragment extends SubStatusFragment {
     }
 
     @Override
-    protected void setupListeners(LifecycleOwner l) {
+    protected void setupListeners(final @NonNull LifecycleOwner l) {
         st = new ViewModelProvider(this).get(SettingsStateViewModel.class);
 
         st.getStatusWifi().observe(l, this::setElements);
@@ -102,8 +105,9 @@ public class SettingsStatusFragment extends SubStatusFragment {
         // React to user interactions
         intervalDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String newValue = getIntervalString(position);
+            public void onItemSelected(final @NonNull AdapterView<?> parent,
+                                       final @NonNull View view, int position, long id) {
+                final @NonNull String newValue = getIntervalString(position);
 
                 // See if the "new" value is actually just the placeholder.
                 // In that case, set the text underneath to reflect the last known status
@@ -125,7 +129,7 @@ public class SettingsStatusFragment extends SubStatusFragment {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onNothingSelected(final @NonNull AdapterView<?> parent) {
                 // Do nothing
             }
         });
@@ -145,13 +149,13 @@ public class SettingsStatusFragment extends SubStatusFragment {
         helpButton.setOnClickListener(this::onHelpClick);
     }
 
-    private String getIntervalString(int position) {
-        String[] items = getResources().getStringArray(R.array.interval_values);
+    private @NonNull String getIntervalString(int position) {
+        final @NonNull String[] items = getResources().getStringArray(R.array.interval_values);
         return items[position];
     }
 
     private int getIntervalPosition(int intervalValue) {
-        String[] items = getResources().getStringArray(R.array.interval_values);
+        final @NonNull String[] items = getResources().getStringArray(R.array.interval_values);
 
         for (int i=0; i<items.length; i++)
             if (items[i].equals(String.valueOf(intervalValue)))
@@ -167,10 +171,10 @@ public class SettingsStatusFragment extends SubStatusFragment {
     }
 
     // unset
-    protected void setBatteryElementsUnset(@NonNull State state) {}
+    protected void setBatteryElementsUnset(final @NonNull State state) {}
 
     @Override
-    protected void setWarningNumberElementsUnset(@NonNull State state) {
+    protected void setWarningNumberElementsUnset(final @NonNull State state) {
         tv.getResidualTime(t3).removeObservers(this);
         tv.cancelTimer(t3);
 
@@ -182,7 +186,7 @@ public class SettingsStatusFragment extends SubStatusFragment {
     }
 
     @Override
-    protected void setStatusElementsUnset(@NonNull State state) {
+    protected void setStatusElementsUnset() {
         statusLastChangedText.setText(R.string.no_data);
     }
 
@@ -190,16 +194,16 @@ public class SettingsStatusFragment extends SubStatusFragment {
     protected void setLocationElementsTempUnset() {}
 
     // confirmed
-    protected void setBatteryElementsConfirmed(@NonNull State state) {}
+    protected void setBatteryElementsConfirmed(final @NonNull State state) {}
 
     @Override
-    protected void setIntervalElementsConfirmed(@NonNull State state) {
-        String intervalSummaryString = getString(R.string.interval_summary);
+    protected void setIntervalElementsConfirmed() {
+        final @NonNull String intervalSummaryString = getString(R.string.interval_summary);
 
         tv.getResidualTime(t2).removeObservers(this);
         tv.cancelTimer(t2);
 
-        String oldValue = String.valueOf(st.getIntervalStatusSync());
+        final @NonNull String oldValue = String.valueOf(st.getIntervalStatusSync());
 
         intervalSummary.setText(String.format(intervalSummaryString, oldValue));
         intervalPendingStatus.setText("");
@@ -207,7 +211,7 @@ public class SettingsStatusFragment extends SubStatusFragment {
     }
 
     @Override
-    protected void setWifiElementsConfirmed(@NonNull State state) {
+    protected void setWifiElementsConfirmed(final @NonNull State state) {
         tv.getResidualTime(t1).removeObservers(this);
         tv.cancelTimer(t1);
 
@@ -224,7 +228,7 @@ public class SettingsStatusFragment extends SubStatusFragment {
     }
 
     @Override
-    protected void setWarningNumberElementsConfirmed(@NonNull State state) {
+    protected void setWarningNumberElementsConfirmed(final @NonNull State state) {
         tv.getResidualTime(t3).removeObservers(this);
         tv.cancelTimer(t3);
 
@@ -237,21 +241,21 @@ public class SettingsStatusFragment extends SubStatusFragment {
     }
 
     @Override
-    protected void setStatusElementsConfirmed(@NonNull State state) {
+    protected void setStatusElementsConfirmed(final @NonNull State state) {
         statusLastChangedText.setText(Utils.ConvertPeriodToHuman(state.getTimestamp()));
     }
 
-    protected void setLocationElementsConfirmed(@NonNull State state) {}
-    protected void setLatConfirmed(@NonNull State state) {}
-    protected void setLngConfirmed(@NonNull State state) {}
-    protected void setAccConfirmed(@NonNull State state) {}
+    protected void setLocationElementsConfirmed(final @NonNull State state) {}
+    protected void setLatConfirmed(final @NonNull State state) {}
+    protected void setLngConfirmed(final @NonNull State state) {}
+    protected void setAccConfirmed(final @NonNull State state) {}
 
     // pending
-    protected void setBatteryElementsPending(@NonNull State state) {}
+    protected void setBatteryElementsPending(final @NonNull State state) {}
 
     @Override
-    protected void setIntervalElementsPending(@NonNull State state) {
-        String intervalTransitionString = getString(R.string.interval_switch_transition);
+    protected void setIntervalElementsPending(final @NonNull State state) {
+        final @NonNull String intervalTransitionString = getString(R.string.interval_switch_transition);
 
         long stopTime = tv.startTimer(t2, state.getTimestamp(), st.getConfirmedIntervalSync());
         tv.getResidualTime(t2).observe(this, s ->
@@ -268,7 +272,7 @@ public class SettingsStatusFragment extends SubStatusFragment {
     }
 
     @Override
-    protected void setWifiElementsPending(@NonNull State state) {
+    protected void setWifiElementsPending(final @NonNull State state) {
         long stopTime = tv.startTimer(t1, state.getTimestamp(), st.getConfirmedIntervalSync());
         tv.getResidualTime(t1).observe(this, s ->
                 updatePendingText(wlanPendingStatus, stopTime, s)
@@ -286,7 +290,7 @@ public class SettingsStatusFragment extends SubStatusFragment {
     }
 
     @Override
-    protected void setWarningNumberElementsPending(@NonNull State state) {
+    protected void setWarningNumberElementsPending(final @NonNull State state) {
         long stopTime = tv.startTimer(t3, state.getTimestamp(), st.getConfirmedIntervalSync());
         tv.getResidualTime(t3).observe(this, s ->
                 updatePendingText(warningNumberPendingStatus, stopTime, s)
@@ -296,10 +300,10 @@ public class SettingsStatusFragment extends SubStatusFragment {
         warningNumberPendingStatus.setVisibility(View.VISIBLE);
     }
 
-    protected void setLocationElementsPending(@NonNull State state) {}
-    protected void setLocationElementsTempPending(@NonNull State state) {}
+    protected void setLocationElementsPending(final @NonNull State state) {}
+    protected void setLocationElementsTempPending(final @NonNull State state) {}
 
-    private void onHelpClick(View v) {
+    private void onHelpClick(final @NonNull View v) {
         Snackbar.make(v, R.string.help3, Snackbar.LENGTH_LONG).show();
     }
 }

@@ -10,7 +10,7 @@ import de.bikebean.app.db.state.State;
 public abstract class Setting {
 
     public interface ConversationListAdder {
-        void addToConversationList(@NonNull List<Setting> conversationList);
+        void addToConversationList(final @NonNull List<Setting> conversationList);
     }
 
     public abstract @NonNull ConversationListAdder getConversationListAdder();
@@ -20,13 +20,13 @@ public abstract class Setting {
     private @NonNull Sms sms;
     private final @NonNull State.KEY key;
 
-    public Setting(@NonNull Sms sms, @NonNull State.KEY key) {
+    public Setting(final @NonNull Sms sms, final @NonNull State.KEY key) {
         this.sms = sms;
         this.key = key;
     }
 
     // setters / getters
-    protected void setSms(@NonNull Sms sms) {
+    protected void setSms(final @NonNull Sms sms) {
         this.sms = sms;
     }
 
@@ -43,12 +43,12 @@ public abstract class Setting {
     }
 
     // interface methods
-    public void addToList(@NonNull List<Setting> conversationList) {
+    public void addToList(final @NonNull List<Setting> conversationList) {
         conversationList.add(this);
     }
 
-    public void replaceIfNewer(@NonNull List<Setting> conversationList) {
-        for (Setting intListItem : conversationList)
+    public void replaceIfNewer(final @NonNull List<Setting> conversationList) {
+        for (final @NonNull Setting intListItem : conversationList)
             if (equalsKey(intListItem) && isNewer(intListItem)) {
                 conversationList.add(this);
                 conversationList.remove(intListItem);
@@ -57,11 +57,11 @@ public abstract class Setting {
     }
 
     // utils
-    private boolean equalsKey(@NonNull Setting other) {
+    private boolean equalsKey(final @NonNull Setting other) {
         return this.key == other.key;
     }
 
-    private boolean isNewer(@NonNull Setting other) {
+    private boolean isNewer(final @NonNull Setting other) {
         return this.getDate() > other.getDate();
     }
 }

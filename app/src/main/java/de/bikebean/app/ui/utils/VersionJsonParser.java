@@ -13,6 +13,10 @@ public class VersionJsonParser {
 
     private static final String APK_ALT_DL_URL = "https://bike-bean.de/software/";
 
+    private static final @NonNull String JSON_DATE = "created_at";
+    private static final @NonNull String JSON_NAME = "tag_name";
+    private static final @NonNull String JSON_URL = "browser_download_url";
+
     private final @NonNull JSONArray jsonResponse;
     private final @NonNull JSONObject newReleaseJson;
 
@@ -99,7 +103,7 @@ public class VersionJsonParser {
 
         for (int i = 0; i < jsonResponse.length(); i++) {
             ret[i] = Utils.getDateFromUTCString(
-                    jsonResponse.getJSONObject(i).getString("created_at")
+                    jsonResponse.getJSONObject(i).getString(JSON_DATE)
             );
         }
 
@@ -111,7 +115,7 @@ public class VersionJsonParser {
             final @NonNull JSONObject row = jsonResponse.getJSONObject(i);
 
             if (row.get("tag_name").equals(Utils.getVersionName()))
-                return Utils.getDateFromUTCString(row.getString("created_at"));
+                return Utils.getDateFromUTCString(row.getString(JSON_DATE));
         }
 
         return new Date(1);
@@ -122,7 +126,7 @@ public class VersionJsonParser {
             final @NonNull JSONObject row = jsonResponse.getJSONObject(i);
 
             final @NonNull Date date =
-                    Utils.getDateFromUTCString(row.getString("created_at"));
+                    Utils.getDateFromUTCString(row.getString(JSON_DATE));
 
             if (newDate.equals(date))
                 return row;
@@ -144,13 +148,13 @@ public class VersionJsonParser {
         // return assets.getJSONObject(0).getString("browser_download_url");
 
         /* Add useless check to make AndroidStudio quiet */
-        if (!assets.getJSONObject(0).getString("browser_download_url").equals(""))
+        if (!assets.getJSONObject(0).getString(JSON_URL).equals(""))
             return APK_ALT_DL_URL;
         else
             return "";
     }
 
     private @NonNull String getName() throws JSONException {
-        return newReleaseJson.getString("tag_name");
+        return newReleaseJson.getString(JSON_NAME);
     }
 }

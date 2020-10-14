@@ -9,9 +9,9 @@ import de.bikebean.app.db.state.State;
 
 public class Location extends LocationSetting {
 
-    private final static State.KEY key = State.KEY.LOCATION;
+    private final static @NonNull State.KEY key = State.KEY.LOCATION;
 
-    public Location(double location, @NonNull WappState wappState) {
+    public Location(double location, final @NonNull WappState wappState) {
         super(location, wappState, key);
     }
 
@@ -19,7 +19,7 @@ public class Location extends LocationSetting {
         super(new Sms(), key, State.STATUS.UNSET);
     }
 
-    public Location(@NonNull WappState wappState) {
+    public Location(final @NonNull WappState wappState) {
         super(wappState.getSms(), key, State.STATUS.PENDING);
     }
 }

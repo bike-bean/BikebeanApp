@@ -12,7 +12,7 @@ import java.util.List;
 public interface SmsDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insert(Sms sms);
+    void insert(final Sms sms);
 
     @Query("DELETE FROM sms_table")
     void deleteAll();

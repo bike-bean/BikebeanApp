@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         private final LinearLayout msgFrom, msgYou;
         private final TextView txtMsgYou, timeMsgYou, lblMsgFrom, txtMsgFrom, timeMsgFrom;
 
-        ChatViewHolder(View itemView) {
+        ChatViewHolder(final @NonNull View itemView) {
             super(itemView);
             msgFrom = itemView.findViewById(R.id.msgFrom);
             msgYou = itemView.findViewById(R.id.msgYou);
@@ -34,28 +35,28 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         }
     }
 
-    private final LayoutInflater mInflater;
-    private List<Sms> mSms;  // cached copy of sms
+    private final @NonNull LayoutInflater mInflater;
+    private @Nullable List<Sms> mSms;  /* cached copy of sms */
 
-    ChatAdapter(Context context, List<Sms> sms) {
+    ChatAdapter(final @NonNull Context context, final @Nullable List<Sms> sms) {
         mInflater = LayoutInflater.from(context);
         mSms = sms;
     }
 
     @NonNull
     @Override
-    public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.recyclerview_item_chat, parent, false);
+    public ChatViewHolder onCreateViewHolder(final @NonNull ViewGroup parent, int viewType) {
+        final @NonNull View itemView = mInflater.inflate(R.layout.recyclerview_item_chat, parent, false);
         return new ChatViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
+    public void onBindViewHolder(final @NonNull ChatViewHolder holder, int position) {
         if (mSms != null) {
-            Sms current = mSms.get(position);
+            final @NonNull Sms current = mSms.get(position);
 
             if (current.getType() == Telephony.Sms.MESSAGE_TYPE_INBOX) {
-                // Make FROM elements visible (message from other part)
+                /* Make FROM elements visible (message from other part) */
                 holder.msgFrom.setVisibility(View.VISIBLE);
                 holder.msgYou.setVisibility(View.GONE);
 
@@ -63,7 +64,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
                 holder.lblMsgFrom.setText(String.format("Bike Bean (%s)", current.getAddress()));
                 holder.timeMsgFrom.setText(current.getDate());
             } else {
-                // Make OUR elements visible (message from us)
+                /* Make OUR elements visible (message from us) */
                 holder.msgYou.setVisibility(View.VISIBLE);
                 holder.msgFrom.setVisibility(View.GONE);
 
@@ -76,7 +77,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         }
     }
 
-    public void setSms(List<Sms> sms) {
+    public void setSms(final @Nullable List<Sms> sms) {
         mSms = sms;
         notifyDataSetChanged();
     }

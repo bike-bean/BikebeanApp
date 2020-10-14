@@ -11,7 +11,7 @@ import de.bikebean.app.ui.main.status.menu.history.HistoryRepository;
 
 class PositionHistoryRepository extends HistoryRepository {
 
-    PositionHistoryRepository(Application application) {
+    PositionHistoryRepository(final @NonNull Application application) {
         super(application);
     }
 

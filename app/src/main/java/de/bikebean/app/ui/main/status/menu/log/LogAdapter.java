@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -17,7 +18,7 @@ import de.bikebean.app.db.log.Log;
 
 public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
 
-    private final Context mContext;
+    private final @NonNull Context mContext;
 
     static class LogViewHolder extends RecyclerView.ViewHolder {
         private final TextView dateTimeText, messageText;
@@ -29,10 +30,10 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
         }
     }
 
-    private final LayoutInflater mInflater;
-    private List<Log> mLog;  // cached copy of sms
+    private final @NonNull LayoutInflater mInflater;
+    private @Nullable List<Log> mLog;  /* cached copy of sms */
 
-    LogAdapter(Context context, List<Log> log) {
+    LogAdapter(final @NonNull Context context, final @Nullable List<Log> log) {
         mInflater = LayoutInflater.from(context);
 
         mContext = context;
@@ -41,15 +42,15 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
 
     @NonNull
     @Override
-    public LogViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.recyclerview_item_log, parent, false);
+    public LogViewHolder onCreateViewHolder(final @NonNull ViewGroup parent, int viewType) {
+        final @NonNull View itemView = mInflater.inflate(R.layout.recyclerview_item_log, parent, false);
         return new LogViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull LogViewHolder holder, int position) {
+    public void onBindViewHolder(final @NonNull LogViewHolder holder, int position) {
         if (mLog != null) {
-            Log current = mLog.get(position);
+            final @NonNull Log current = mLog.get(position);
 
             holder.messageText.setText(current.getMessage());
             holder.dateTimeText.setText(Utils.ConvertPeriodToHuman(current.getTimestamp()));
@@ -70,11 +71,11 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
         }
     }
 
-    private void setColor(@NonNull LogViewHolder holder, int color) {
+    private void setColor(final @NonNull LogViewHolder holder, int color) {
         holder.messageText.setTextColor(mContext.getResources().getColor(color));
     }
 
-    public void setLog(List<Log> log) {
+    public void setLog(final @Nullable List<Log> log) {
         mLog = log;
         notifyDataSetChanged();
     }

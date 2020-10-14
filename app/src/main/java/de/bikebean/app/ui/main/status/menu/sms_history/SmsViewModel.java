@@ -2,6 +2,7 @@ package de.bikebean.app.ui.main.status.menu.sms_history;
 
 import android.app.Application;
 import android.content.Context;
+import android.provider.Telephony;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -13,6 +14,7 @@ import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.ui.main.status.StateViewModel;
 import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
 import de.bikebean.app.ui.utils.sms.load.SmsLoader;
+import de.bikebean.app.ui.utils.sms.send.SmsSender;
 
 public class SmsViewModel extends AndroidViewModel {
 
@@ -91,8 +93,12 @@ public class SmsViewModel extends AndroidViewModel {
         new SmsLoader(context, this, st, lv).loadInitial(address);
     }
 
-    public void insert(Sms sms) {
+    public void insert(final @NonNull Sms sms) {
         mRepository.insert(sms);
+    }
+
+    public void insert(final @NonNull SmsSender smsSender, LogViewModel lv) {
+        mRepository.insert(new Sms(getLatestId(lv, Telephony.Sms.MESSAGE_TYPE_SENT), smsSender));
     }
 
     public void markParsed(Sms sms) {

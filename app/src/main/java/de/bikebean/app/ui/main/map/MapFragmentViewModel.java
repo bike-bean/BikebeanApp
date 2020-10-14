@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 
@@ -24,10 +25,10 @@ public class MapFragmentViewModel extends StateViewModel {
     private final LiveData<List<State>> mConfirmedLocationLng;
     private final LiveData<List<State>> mConfirmedLocationAcc;
 
-    public MapFragmentViewModel(Application application) {
+    public MapFragmentViewModel(final @NonNull Application application) {
         super(application);
 
-        MapStateRepository mRepository = new MapStateRepository(application);
+        final @NonNull MapStateRepository mRepository = new MapStateRepository(application);
 
         mStatusNumberCellTowers = mRepository.getStatusNumberCellTowers();
         mStatusNumberWifiAccessPoints = mRepository.getStatusNumberWifiAccessPoints();
@@ -56,13 +57,13 @@ public class MapFragmentViewModel extends StateViewModel {
         return mStatusNumberCellTowers;
     }
 
-    public void newShareIntent(@NonNull Fragment fragment) {
-        LocationUrl locationUrl = new LocationUrl();
+    public void newShareIntent(final @NonNull Fragment fragment) {
+        final @NonNull LocationUrl locationUrl = new LocationUrl();
 
         getConfirmedLocationLat().observe(fragment.getViewLifecycleOwner(), locationUrl::setLat);
         getConfirmedLocationLng().observe(fragment.getViewLifecycleOwner(), locationUrl::setLng);
         locationUrl.getUrl().observe(fragment.getViewLifecycleOwner(), string -> {
-            Intent shareIntent = Utils.getShareIntent(string);
+            final @Nullable Intent shareIntent = Utils.getShareIntent(string);
 
             if (shareIntent != null)
                 fragment.startActivity(shareIntent);

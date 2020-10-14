@@ -13,9 +13,9 @@ import de.bikebean.app.ui.utils.sms.parser.SmsParser;
 
 public class CellTowers extends SmsParserType {
 
-    private final List<Setting> settings;
+    private final @NonNull List<Setting> settings;
 
-    public CellTowers(@NonNull SmsParser smsParser) {
+    public CellTowers(final @NonNull SmsParser smsParser) {
         super(SMSTYPE.CELL_TOWERS);
         this.mSmsParser = smsParser;
         this.settings = new ArrayList<>();
@@ -26,7 +26,7 @@ public class CellTowers extends SmsParserType {
     }
 
     @Override
-    public List<Setting> getSettings() {
+    public @NonNull List<Setting> getSettings() {
         return settings;
     }
 }

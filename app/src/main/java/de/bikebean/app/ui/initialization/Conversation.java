@@ -20,8 +20,8 @@ public class Conversation {
 
     private final @NonNull List<Setting> settings;
 
-    public Conversation(@NonNull StateViewModel st, @NonNull SmsViewModel sm,
-                        @NonNull LogViewModel lv) {
+    public Conversation(final @NonNull StateViewModel st, final @NonNull SmsViewModel sm,
+                        final @NonNull LogViewModel lv) {
         stateViewModel = st;
         smsViewModel = sm;
         logViewModel = lv;
@@ -29,7 +29,7 @@ public class Conversation {
         settings = new InitialConversation().getSettings();
     }
 
-    public void add(Sms sms) {
+    public void add(final @NonNull Sms sms) {
         new SmsParser(sms, null, null, logViewModel).getType().addToConversationList(settings);
         smsViewModel.insert(sms);
     }

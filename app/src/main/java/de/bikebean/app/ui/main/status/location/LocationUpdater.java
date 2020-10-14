@@ -32,15 +32,15 @@ class LocationUpdater extends AsyncTask<String, Void, Boolean> {
             MediaType.parse("application/json; charset=utf-8");
 
     private final LocationStateViewModel mStateViewModel;
-    private final @NonNull LogViewModel mLogViewModel;
+    private final LogViewModel mLogViewModel;
     private final @NonNull PostResponseHandler mPostResponseHandler;
     private final @NonNull WappState mWappState;
 
     private final @NonNull String mUrl;
 
-    LocationUpdater(@NonNull Context context, LocationStateViewModel st, @NonNull LogViewModel lv,
-                    @NonNull PostResponseHandler postResponseHandler,
-                    @NonNull WappState wappState) {
+    LocationUpdater(final @NonNull Context context, LocationStateViewModel st, LogViewModel lv,
+                    final @NonNull PostResponseHandler postResponseHandler,
+                    final @NonNull WappState wappState) {
         mStateViewModel = st;
         mLogViewModel = lv;
         mPostResponseHandler = postResponseHandler;
@@ -51,25 +51,25 @@ class LocationUpdater extends AsyncTask<String, Void, Boolean> {
     }
 
     @Override
-    protected Boolean doInBackground(String... args) {
-        OkHttpClient client = new OkHttpClient();
-        String requestBodyString = new LocationApiBody(mWappState, mLogViewModel)
+    protected @NonNull Boolean doInBackground(final @NonNull String... args) {
+        final @NonNull OkHttpClient client = new OkHttpClient();
+        final @NonNull String requestBodyString = new LocationApiBody(mWappState, mLogViewModel)
                 .createJsonApiBody(mLogViewModel);
         if (requestBodyString.isEmpty())
             return false;
 
-        RequestBody requestBody;
+        final @Nullable RequestBody requestBody;
         if (JSON != null)
             requestBody = RequestBody.create(JSON, requestBodyString);
         else
             return false;
 
-        Request request = new Request.Builder()
+        final @NonNull Request request = new Request.Builder()
                 .url(mUrl)
                 .post(requestBody)
                 .addHeader("Content-Type", "application/json")
                 .build();
-        Response response;
+        final @Nullable Response response;
 
         if (mStateViewModel.getLocationByIdSync(mWappState))
             return false;
@@ -97,14 +97,14 @@ class LocationUpdater extends AsyncTask<String, Void, Boolean> {
                 return false;
             }
 
-            String responseBodyString = response.body().string();
+            final @NonNull String responseBodyString = response.body().string();
 
             mLogViewModel.d("RESPONSE FROM SERVER: " + responseBodyString);
 
-            JSONObject responseJson = new JSONObject(responseBodyString);
-            JSONObject locationJson = responseJson.getJSONObject("location");
+            final @NonNull JSONObject responseJson = new JSONObject(responseBodyString);
+            final @NonNull JSONObject locationJson = responseJson.getJSONObject("location");
 
-            Location location = new Location(locationJson, responseJson, mWappState);
+            final @NonNull Location location = new Location(locationJson, responseJson, mWappState);
 
             mPostResponseHandler.onPostResponse(mWappState, location);
         } catch (JSONException e) {

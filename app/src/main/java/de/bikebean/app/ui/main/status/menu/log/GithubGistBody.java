@@ -1,21 +1,24 @@
 package de.bikebean.app.ui.main.status.menu.log;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.Gson;
 
 class GithubGistBody {
 
-    private final String description;
-    private final GithubGistFiles files;
+    private final @NonNull String description;
+    private final @NonNull GithubGistFiles files;
 
-    GithubGistBody(String description, String smsTsv, String stateTsv, String logTsv) {
+    GithubGistBody(final @NonNull String description, final @NonNull String smsTsv,
+                   final @NonNull String stateTsv, final @NonNull String logTsv) {
         this.description = description;
         this.files = new GithubGistFiles(smsTsv, stateTsv, logTsv);
     }
 
-    String createJsonApiBody() {
-        final Gson gson = new Gson();
+    @NonNull String createJsonApiBody() {
+        final @NonNull Gson gson = new Gson();
 
-        String json = gson.toJson(this);
+        final @NonNull String json = gson.toJson(this);
 
         return json
                 .replace("sms_tsv", "sms.tsv")

@@ -23,7 +23,7 @@ class LocationStateRepository extends StateRepository {
     private final LiveData<List<State>> mCellTowers;
     private final LiveData<List<State>> mWifiAccessPoints;
 
-    LocationStateRepository(Application application) {
+    LocationStateRepository(final @NonNull Application application) {
         super(application);
 
         mStatusLocationLat = mStateDao.getAllByKey(State.KEY.LAT.get());
@@ -63,7 +63,7 @@ class LocationStateRepository extends StateRepository {
         return mWifiAccessPoints;
     }
 
-    void confirmWapp(@NonNull WappState wappState) {
+    void confirmWapp(final @NonNull WappState wappState) {
         confirmWapp(wappState.getCellTowers().getSmsId(), wappState.getWifiAccessPoints().getSmsId());
         confirmWapp(wappState.getWifiAccessPoints().getSmsId(), wappState.getCellTowers().getSmsId());
     }

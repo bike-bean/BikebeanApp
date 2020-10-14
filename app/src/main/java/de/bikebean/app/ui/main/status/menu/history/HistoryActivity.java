@@ -1,6 +1,7 @@
 package de.bikebean.app.ui.main.status.menu.history;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -20,17 +21,16 @@ public class HistoryActivity extends AppCompatActivity {
     private LinearLayout tabs;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
 
-        Toolbar toolbar = findViewById(R.id.toolbar4);
+        final @Nullable Toolbar toolbar = findViewById(R.id.toolbar4);
         setSupportActionBar(toolbar);
 
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
+        final @Nullable ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
-        }
 
         positionHistoryButton = findViewById(R.id.positionButton);
         batteryHistoryButton = findViewById(R.id.batteryButton);
@@ -52,7 +52,7 @@ public class HistoryActivity extends AppCompatActivity {
         batteryHistoryButton.setOnClickListener(this::navigateToTab);
     }
 
-    private void navigateToTab(@NonNull View v) {
+    private void navigateToTab(final @NonNull View v) {
         if (v.getId() == R.id.positionButton)
             Navigation.findNavController(this, R.id.history)
                     .navigate(R.id.position_action);

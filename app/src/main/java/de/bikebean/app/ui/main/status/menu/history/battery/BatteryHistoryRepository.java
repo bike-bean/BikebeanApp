@@ -2,6 +2,7 @@ package de.bikebean.app.ui.main.status.menu.history.battery;
 
 import android.app.Application;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
 import java.util.List;
@@ -13,7 +14,7 @@ class BatteryHistoryRepository extends HistoryRepository {
 
     private final LiveData<List<State>> mBatteryConfirmed;
 
-    BatteryHistoryRepository(Application application) {
+    BatteryHistoryRepository(final @NonNull Application application) {
         super(application);
 
         mBatteryConfirmed = mStateDao.getByKeyAndState(

@@ -11,7 +11,8 @@ public abstract class LocationSetting extends Setting {
     private final double location;
     private final @NonNull State state;
 
-    protected LocationSetting(double location, @NonNull WappState wappState, State.KEY key) {
+    protected LocationSetting(double location, final @NonNull WappState wappState,
+                              final @NonNull State.KEY key) {
         super(wappState.getSms(), key);
 
         this.location = location;
@@ -22,7 +23,8 @@ public abstract class LocationSetting extends Setting {
         );
     }
 
-    protected LocationSetting(@NonNull Sms sms, State.KEY key, State.STATUS status) {
+    protected LocationSetting(final @NonNull Sms sms, final @NonNull State.KEY key,
+                              final @NonNull State.STATUS status) {
         super(sms, key);
 
         location = 0.0;

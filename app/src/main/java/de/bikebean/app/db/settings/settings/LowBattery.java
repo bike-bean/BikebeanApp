@@ -10,9 +10,9 @@ public class LowBattery extends Setting {
 
     private final double battery;
 
-    private static final State.KEY key = State.KEY.BATTERY;
+    private static final @NonNull State.KEY key = State.KEY.BATTERY;
 
-    public LowBattery(@NonNull SmsParser smsParser) {
+    public LowBattery(final @NonNull SmsParser smsParser) {
         super(smsParser.getSms(), key);
 
         battery = smsParser.getLowBattery();

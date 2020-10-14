@@ -7,8 +7,8 @@ import de.bikebean.app.db.log.Log;
 
 public class LevelConverters {
     @TypeConverter
-    public static Log.LEVEL fromIntValue(int value) {
-        for (Log.LEVEL l : Log.LEVEL.values())
+    public static @NonNull Log.LEVEL fromIntValue(int value) {
+        for (final @NonNull Log.LEVEL l : Log.LEVEL.values())
             if (l.ordinal() == value)
                 return l;
 
@@ -16,7 +16,7 @@ public class LevelConverters {
     }
 
     @TypeConverter
-    public static int levelToIntValue(@NonNull Log.LEVEL level) {
+    public static int levelToIntValue(final @NonNull Log.LEVEL level) {
         return level.ordinal();
     }
 }

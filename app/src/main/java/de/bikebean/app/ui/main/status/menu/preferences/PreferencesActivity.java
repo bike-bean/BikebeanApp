@@ -36,11 +36,15 @@ import static android.content.Intent.*;
 
 public class PreferencesActivity extends AppCompatActivity {
 
+    public static final @NonNull String NUMBER_PREFERENCE = "number";
+    public static final @NonNull String RESET_PREFERENCE = "reset";
+    public static final @NonNull String NAME_PREFERENCE = "name";
+
     private TextView versionNameNew;
     private Button downloadNewVersionButton;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
@@ -49,14 +53,13 @@ public class PreferencesActivity extends AppCompatActivity {
                 .replace(R.id.settings, new SettingsFragment())
                 .commit();
 
-        LogViewModel logViewModel =
+        final @NonNull LogViewModel logViewModel =
                 new ViewModelProvider(this).get(LogViewModel.class);
-        PreferencesViewModel preferencesViewModel =
+        final @NonNull PreferencesViewModel preferencesViewModel =
                 new ViewModelProvider(this).get(PreferencesViewModel.class);
 
         final @Nullable Toolbar toolbar = findViewById(R.id.toolbar1);
-        if (toolbar != null)
-            setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);
 
         final @Nullable ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
@@ -80,7 +83,7 @@ public class PreferencesActivity extends AppCompatActivity {
         ).execute();
     }
 
-    private final Observer<Release> setVersionNameNew = s -> {
+    private final @NonNull Observer<Release> setVersionNameNew = s -> {
         if (s.getUrl().equals(""))
             return;
 
@@ -100,8 +103,7 @@ public class PreferencesActivity extends AppCompatActivity {
     }
 
     void downloadNewVersion(final @NonNull String url) {
-        final @NonNull Uri webPage = Uri.parse(url);
-        final @NonNull Intent intent = new Intent(ACTION_VIEW, webPage);
+        final @NonNull Intent intent = new Intent(ACTION_VIEW, Uri.parse(url));
         if (intent.resolveActivity(getPackageManager()) != null)
             startActivity(intent);
     }
@@ -117,8 +119,8 @@ public class PreferencesActivity extends AppCompatActivity {
         LogViewModel logViewModel;
 
         @Override
-        public void onCreatePreferences(@NonNull Bundle savedInstanceState,
-                                        @NonNull String rootKey) {
+        public void onCreatePreferences(final @NonNull Bundle savedInstanceState,
+                                        final @NonNull String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
             stateViewModel = new ViewModelProvider(this).get(StateViewModel.class);
@@ -127,7 +129,7 @@ public class PreferencesActivity extends AppCompatActivity {
 
             final @Nullable String address =
                     PreferenceManager.getDefaultSharedPreferences(requireContext())
-                            .getString("number", null);
+                            .getString(NUMBER_PREFERENCE, null);
             final @Nullable ResetDialog resetDialog;
 
             if (address != null)
@@ -143,14 +145,15 @@ public class PreferencesActivity extends AppCompatActivity {
             /*
              Preferences
              */
-            final @Nullable EditTextPreference numberPreference = findPreference("number");
+            final @Nullable EditTextPreference numberPreference =
+                    findPreference(NUMBER_PREFERENCE);
             if (numberPreference != null) {
                 numberPreference.setOnBindEditTextListener(numberEditTextListener);
                 numberPreference.setDialogMessage(R.string.number_subtitle);
                 numberPreference.setOnPreferenceChangeListener(numberChangeListener);
             }
 
-            final @Nullable Preference resetPreference = findPreference("reset");
+            final @Nullable Preference resetPreference = findPreference(RESET_PREFERENCE);
             if (resetPreference != null) {
                 if (resetDialog != null)
                     resetPreference.setOnPreferenceClickListener(preference -> {
@@ -192,7 +195,8 @@ public class PreferencesActivity extends AppCompatActivity {
                         Snackbar.LENGTH_LONG
                 ).show();
 
-                final @Nullable EditTextPreference numberPreference = findPreference("number");
+                final @Nullable EditTextPreference numberPreference =
+                        findPreference(NUMBER_PREFERENCE);
                 if (numberPreference != null)
                     numberPreference.setText(newValueString.replace(" ", ""));
                 else

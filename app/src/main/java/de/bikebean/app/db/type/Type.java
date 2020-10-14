@@ -14,7 +14,7 @@ public abstract class Type {
         UNDEFINED, INITIAL, LOCATION, INITIAL_CONVERSATION
     }
 
-    public abstract List<Setting> getSettings();
+    public abstract @NonNull List<Setting> getSettings();
 
     public final @NonNull SMSTYPE smsType;
 

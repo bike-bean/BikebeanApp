@@ -11,6 +11,7 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -36,7 +37,7 @@ public class LocationStatusFragment extends SubStatusFragment {
 
     private LocationStateViewModel st;
 
-    private final LiveDataTimerViewModel.TIMER t1 = LiveDataTimerViewModel.TIMER.FIVE;
+    private final @NonNull LiveDataTimerViewModel.TIMER t1 = LiveDataTimerViewModel.TIMER.FIVE;
 
     // UI Elements
     private Button buttonGetLocation, buttonOpenMap;
@@ -48,9 +49,10 @@ public class LocationStatusFragment extends SubStatusFragment {
     private TextView locationLastChangedText, locationPendingStatus, locationNoData;
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_status_location, container, false);
+    public View onCreateView(final @NonNull LayoutInflater inflater,
+                             final @Nullable ViewGroup container,
+                             final @Nullable Bundle savedInstanceState) {
+        final @NonNull View v = inflater.inflate(R.layout.fragment_status_location, container, false);
 
         buttonGetLocation = v.findViewById(R.id.button_get_location);
         buttonOpenMap = v.findViewById(R.id.button_open_map);
@@ -73,11 +75,13 @@ public class LocationStatusFragment extends SubStatusFragment {
     }
 
     @Override
-    protected void setupListeners(LifecycleOwner l) {
-        // Observe any changes to
-        // lat, lng or acc in the database
-        // (i.e. after the location updater has written
-        // its stuff in there)
+    protected void setupListeners(final @NonNull LifecycleOwner l) {
+        /*
+         Observe any changes to
+         lat, lng or acc in the database
+         (i.e. after the location updater has written
+         its stuff in there)
+         */
         st = new ViewModelProvider(this).get(LocationStateViewModel.class);
 
         st.getStatusLocationLat().observe(l, this::setElements);
@@ -113,9 +117,9 @@ public class LocationStatusFragment extends SubStatusFragment {
     }
 
     // unset
-    protected void setBatteryElementsUnset(@NonNull State state) {}
-    protected void setWarningNumberElementsUnset(@NonNull State state) {}
-    protected void setStatusElementsUnset(@NonNull State state) {}
+    protected void setBatteryElementsUnset(final @NonNull State state) {}
+    protected void setWarningNumberElementsUnset(final @NonNull State state) {}
+    protected void setStatusElementsUnset() {}
 
     @Override
     protected void setLocationElementsUnset() {
@@ -142,14 +146,14 @@ public class LocationStatusFragment extends SubStatusFragment {
     }
 
     // confirmed
-    protected void setBatteryElementsConfirmed(@NonNull State state) {}
-    protected void setIntervalElementsConfirmed(@NonNull State state) {}
-    protected void setWifiElementsConfirmed(@NonNull State state) {}
-    protected void setWarningNumberElementsConfirmed(@NonNull State state) {}
-    protected void setStatusElementsConfirmed(@NonNull State state) {}
+    protected void setBatteryElementsConfirmed(final @NonNull State state) {}
+    protected void setIntervalElementsConfirmed() {}
+    protected void setWifiElementsConfirmed(final @NonNull State state) {}
+    protected void setWarningNumberElementsConfirmed(final @NonNull State state) {}
+    protected void setStatusElementsConfirmed(final @NonNull State state) {}
 
     @Override
-    protected void setLocationElementsConfirmed(@NonNull State state) {
+    protected void setLocationElementsConfirmed(final @NonNull State state) {
         tableLayout.setVisibility(View.VISIBLE);
         locationNoData.setVisibility(View.GONE);
         locationNoData.setText("");
@@ -162,28 +166,28 @@ public class LocationStatusFragment extends SubStatusFragment {
     }
 
     @Override
-    protected void setLatConfirmed(@NonNull State state) {
+    protected void setLatConfirmed(final @NonNull State state) {
         latText.setText(String.format(Locale.GERMANY, "%.7f", state.getValue()));
     }
 
     @Override
-    protected void setLngConfirmed(@NonNull State state) {
+    protected void setLngConfirmed(final @NonNull State state) {
         lngText.setText(String.format(Locale.GERMANY, "%.7f", state.getValue()));
     }
 
     @Override
-    protected void setAccConfirmed(@NonNull State state) {
+    protected void setAccConfirmed(final @NonNull State state) {
         accText.setText(String.format(Locale.GERMANY, "%.1f", state.getValue()));
     }
 
     // pending
-    protected void setBatteryElementsPending(@NonNull State state) {}
-    protected void setIntervalElementsPending(@NonNull State state) {}
-    protected void setWifiElementsPending(@NonNull State state) {}
-    protected void setWarningNumberElementsPending(@NonNull State state) {}
+    protected void setBatteryElementsPending(final @NonNull State state) {}
+    protected void setIntervalElementsPending(final @NonNull State state) {}
+    protected void setWifiElementsPending(final @NonNull State state) {}
+    protected void setWarningNumberElementsPending(final @NonNull State state) {}
 
     @Override
-    protected void setLocationElementsPending(@NonNull State state) {
+    protected void setLocationElementsPending(final @NonNull State state) {
         // BB has responded, but not response from Google Maps API yet
         tv.getResidualTime(t1).removeObservers(this);
         tv.cancelTimer(t1);
@@ -199,7 +203,7 @@ public class LocationStatusFragment extends SubStatusFragment {
 
         progressBar.setVisibility(ProgressBar.VISIBLE);
 
-        State lastLocationState = st.getConfirmedLocationSync(state);
+        final @Nullable State lastLocationState = st.getConfirmedLocationSync(state);
         if (lastLocationState != null) {
             buttonOpenMap.setEnabled(true);
             locationLastChangedText.setText(
@@ -211,7 +215,7 @@ public class LocationStatusFragment extends SubStatusFragment {
     }
 
     @Override
-    protected void setLocationElementsTempPending(@NonNull State state) {
+    protected void setLocationElementsTempPending(final @NonNull State state) {
         /*
          User has clicked the update button, but no response from BB yet
          */
@@ -228,8 +232,8 @@ public class LocationStatusFragment extends SubStatusFragment {
     // cached copy of parsed SMS
     private final List<Integer> parsedSms = new ArrayList<>();
 
-    private void updateWapp(List<State> states) {
-        WappState wappState = new WappState(st, new StateList(states));
+    private void updateWapp(final List<State> states) {
+        final @NonNull WappState wappState = new WappState(st, new StateList(states));
         if (wappState.getIsNull())
             return;
 
@@ -248,17 +252,17 @@ public class LocationStatusFragment extends SubStatusFragment {
         ).execute();
     }
 
-    private void updateLatLngAcc(@NonNull WappState wappState, Type type) {
+    private void updateLatLngAcc(final @NonNull WappState wappState, final @NonNull Type type) {
         sm.markParsed(wappState.getSms());
         st.confirmWapp(wappState);
         st.insert(type);
     }
 
-    private void navigateToNext(View v) {
+    private void navigateToNext(final @NonNull View v) {
         Navigation.findNavController(v).navigate(R.id.map_action);
     }
 
-    private void shareLocation(@NonNull View v) {
+    private void shareLocation(final @NonNull View v) {
         if (v.isEnabled())
             assert true;
         else
@@ -268,7 +272,7 @@ public class LocationStatusFragment extends SubStatusFragment {
                 .newShareIntent(this);
     }
 
-    private void onHelpClick(View v) {
+    private void onHelpClick(final @NonNull View v) {
         Snackbar.make(v, R.string.help1, Snackbar.LENGTH_LONG).show();
     }
 }

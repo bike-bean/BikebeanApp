@@ -22,7 +22,7 @@ class BatteryHistoryAdapter extends HistoryAdapter {
     static class BatteryHistoryViewHolder extends HistoryViewHolder {
         private final TextView batteryValue, dateTimeText, smsIdText;
 
-        BatteryHistoryViewHolder(View v) {
+        BatteryHistoryViewHolder(final @NonNull View v) {
             super(v);
 
             batteryValue = v.findViewById(R.id.batteryValue);
@@ -31,14 +31,15 @@ class BatteryHistoryAdapter extends HistoryAdapter {
         }
     }
 
-    BatteryHistoryAdapter(Context context, @Nullable List<? extends DatabaseEntity> states) {
+    BatteryHistoryAdapter(final @NonNull Context context,
+                          final @Nullable List<? extends DatabaseEntity> states) {
         super(context, states);
     }
 
     @NonNull
     @Override
-    public BatteryHistoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(
+    public BatteryHistoryViewHolder onCreateViewHolder(final @NonNull ViewGroup parent, int viewType) {
+        final @NonNull View itemView = mInflater.inflate(
                 R.layout.recyclerview_item_battery_history,
                 parent, false
         );
@@ -46,13 +47,13 @@ class BatteryHistoryAdapter extends HistoryAdapter {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
-        BatteryHistoryViewHolder bHolder = (BatteryHistoryViewHolder) holder;
+    public void onBindViewHolder(final @NonNull HistoryViewHolder holder, int position) {
+        final @NonNull BatteryHistoryViewHolder bHolder = (BatteryHistoryViewHolder) holder;
 
         if (mStates != null) {
-            State current = (State) mStates.get(position);
+            final @NonNull State current = (State) mStates.get(position);
 
-            String batteryStatus = current.getValue() + " %";
+            final @NonNull String batteryStatus = current.getValue() + " %";
             bHolder.batteryValue.setText(batteryStatus);
             bHolder.batteryValue.setCompoundDrawablesWithIntrinsicBounds(
                     Utils.getBatteryDrawable(ctx, current.getValue()),

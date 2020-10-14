@@ -9,12 +9,12 @@ import de.bikebean.app.ui.utils.sms.parser.SmsParser;
 
 public class WarningNumber extends ReplaceIfNewerSetting {
 
-    private static final State.KEY key = State.KEY.WARNING_NUMBER;
+    private static final @NonNull State.KEY key = State.KEY.WARNING_NUMBER;
 
     private final @NonNull State state;
     private final @NonNull String warningNumber;
 
-    public WarningNumber(@NonNull SmsParser smsParser, boolean isStatus) {
+    public WarningNumber(final @NonNull SmsParser smsParser, boolean isStatus) {
         super(smsParser.getSms(), key);
 
         if (isStatus)
@@ -25,7 +25,7 @@ public class WarningNumber extends ReplaceIfNewerSetting {
         state = new State(getDate(), key, 0.0, get(), State.STATUS.CONFIRMED, getId());
     }
 
-    public WarningNumber(@NonNull String warningNumber, @NonNull Sms sms) {
+    public WarningNumber(final @NonNull String warningNumber, final @NonNull Sms sms) {
         super(sms, key);
         this.warningNumber = warningNumber;
         state = new State(getDate(), key, 0.0, get(), State.STATUS.UNSET, getId());

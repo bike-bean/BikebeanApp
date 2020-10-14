@@ -1,13 +1,13 @@
 package de.bikebean.app.ui.main.status.menu.history.position;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.navigation.Navigation;
 
@@ -27,7 +27,7 @@ class PositionHistoryAdapter extends HistoryAdapter {
         private final CardView buttonOpenMap;
         private final TextView lat, lng, acc, dateTimeText, smsIdText;
 
-        PositionHistoryViewHolder(View v) {
+        PositionHistoryViewHolder(final @NonNull View v) {
             super(v);
 
             table = v.findViewById(R.id.tableLayout2);
@@ -40,14 +40,15 @@ class PositionHistoryAdapter extends HistoryAdapter {
         }
     }
 
-    PositionHistoryAdapter(Context context, List<? extends DatabaseEntity> states) {
+    PositionHistoryAdapter(final @NonNull Context context,
+                           final @Nullable List<? extends DatabaseEntity> states) {
         super(context, states);
     }
 
     @NonNull
     @Override
-    public PositionHistoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(
+    public PositionHistoryViewHolder onCreateViewHolder(final @NonNull ViewGroup parent, int viewType) {
+        final @NonNull View itemView = mInflater.inflate(
                 R.layout.recyclerview_item_position_history,
                 parent, false
         );
@@ -55,18 +56,11 @@ class PositionHistoryAdapter extends HistoryAdapter {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
-        PositionHistoryViewHolder pHolder = (PositionHistoryViewHolder) holder;
+    public void onBindViewHolder(final @NonNull HistoryViewHolder holder, int position) {
+        final @NonNull PositionHistoryViewHolder pHolder = (PositionHistoryViewHolder) holder;
 
         if (mStates != null) {
-            LocationState current = (LocationState) mStates.get(position);
-
-            Bundle bundle = new Bundle();
-            bundle.putDouble("lat", current.getLat());
-            bundle.putDouble("lng", current.getLng());
-            bundle.putDouble("acc", current.getAcc());
-            bundle.putInt("noCellTowers", current.getNoCellTowers());
-            bundle.putInt("noWifiAccessPoints", current.getNoWifiAccessPoints());
+            final @NonNull LocationState current = (LocationState) mStates.get(position);
 
             pHolder.table.setVisibility(View.VISIBLE);
             pHolder.lat.setText(String.format(Locale.GERMANY, "%.7f", current.getLat()));
@@ -78,7 +72,7 @@ class PositionHistoryAdapter extends HistoryAdapter {
             );
 
             pHolder.buttonOpenMap.setOnClickListener(v ->
-                    Navigation.findNavController(v).navigate(R.id.map_action, bundle));
+                    Navigation.findNavController(v).navigate(R.id.map_action, current.getArgs()));
         } else {
             pHolder.table.setVisibility(View.INVISIBLE);
             pHolder.buttonOpenMap.setVisibility(View.INVISIBLE);

@@ -25,11 +25,11 @@ public class MutableObject<T extends DatabaseEntity> {
         List<? extends DatabaseEntity> checkDelete();
     }
 
-    public MutableObject(T value) {
+    public MutableObject(final @NonNull T value) {
         nullT = value.getNullType();
     }
 
-    void waitForDelete(DeleteChecker deleteChecker) {
+    void waitForDelete(final @NonNull DeleteChecker deleteChecker) {
         new Thread(() -> {
             while (deleteChecker.checkDelete().size() > 0) {
                 try {
@@ -45,9 +45,10 @@ public class MutableObject<T extends DatabaseEntity> {
         waitForStateChange();
     }
 
-    public @Nullable DatabaseEntity getDbEntitySync(ListGetter listGetter, String sArg, int iArg) {
+    public @Nullable DatabaseEntity getDbEntitySync(final @NonNull ListGetter listGetter,
+                                                    final @NonNull String sArg, int iArg) {
         new Thread(() -> {
-            @NonNull List<? extends DatabaseEntity> stateList = listGetter.getList(sArg, iArg);
+            final @NonNull List<? extends DatabaseEntity> stateList = listGetter.getList(sArg, iArg);
 
             if (stateList.size() > 0)
                 set(stateList.get(0));
@@ -59,7 +60,7 @@ public class MutableObject<T extends DatabaseEntity> {
         return get();
     }
 
-    List<? extends DatabaseEntity> getAllItems(AllItemsGetter allItemsGetter) {
+    @NonNull List<? extends DatabaseEntity> getAllItems(final @NonNull AllItemsGetter allItemsGetter) {
         new Thread(() -> {
             List<? extends DatabaseEntity> stateList = allItemsGetter.getAllItems();
 
@@ -88,12 +89,12 @@ public class MutableObject<T extends DatabaseEntity> {
             }
     }
 
-    private void set(DatabaseEntity i) {
+    private void set(final @Nullable DatabaseEntity i) {
         this.t = i;
         is_set = true;
     }
 
-    private void setAll(List<? extends DatabaseEntity> i) {
+    private void setAll(final @NonNull List<? extends DatabaseEntity> i) {
         this.tAll = i;
         is_set = true;
     }
@@ -105,7 +106,7 @@ public class MutableObject<T extends DatabaseEntity> {
             return nullT;
     }
 
-    private List<? extends DatabaseEntity> getAll() {
+    private @NonNull List<? extends DatabaseEntity> getAll() {
         if (is_set)
             return tAll;
         else {

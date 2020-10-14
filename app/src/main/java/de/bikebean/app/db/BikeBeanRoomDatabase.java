@@ -36,24 +36,22 @@ public abstract class BikeBeanRoomDatabase extends RoomDatabase {
     public static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
-    public static BikeBeanRoomDatabase getDatabase(final Context context) {
-        if (INSTANCE == null) {
+    public static BikeBeanRoomDatabase getDatabase(final @NonNull Context context) {
+        if (INSTANCE == null)
             synchronized (BikeBeanRoomDatabase.class) {
-                if (INSTANCE == null) {
+                if (INSTANCE == null)
                     INSTANCE = Room.databaseBuilder(context,
                             BikeBeanRoomDatabase.class, "bikebean_database")
                             .addCallback(sRoomDatabaseCallback)
                             .fallbackToDestructiveMigration()
                             .build();
-                }
             }
-        }
         return INSTANCE;
     }
 
     private static final RoomDatabase.Callback sRoomDatabaseCallback = new RoomDatabase.Callback() {
         @Override
-        public void onOpen(@NonNull SupportSQLiteDatabase db) {
+        public void onOpen(final @NonNull SupportSQLiteDatabase db) {
             super.onOpen(db);
 
             /*
@@ -64,13 +62,13 @@ public abstract class BikeBeanRoomDatabase extends RoomDatabase {
     };
 
     public static void resetAll() {
-        SmsDao smsDao = INSTANCE.smsDao();
-        StateDao stateDao = INSTANCE.stateDao();
-        LogDao logDao = INSTANCE.logDao();
+        final @NonNull SmsDao smsDao = INSTANCE.smsDao();
+        final @NonNull StateDao stateDao = INSTANCE.stateDao();
+        final @NonNull LogDao logDao = INSTANCE.logDao();
 
-        final MutableObject<Sms> smsIsClearedFlag = new MutableObject<>(new Sms());
-        final MutableObject<State> stateIsClearedFlag = new MutableObject<>(new State());
-        final MutableObject<Log> logIsClearedFlag = new MutableObject<>(new Log());
+        final @NonNull MutableObject<Sms> smsIsClearedFlag = new MutableObject<>(new Sms());
+        final @NonNull MutableObject<State> stateIsClearedFlag = new MutableObject<>(new State());
+        final @NonNull MutableObject<Log> logIsClearedFlag = new MutableObject<>(new Log());
 
         databaseWriteExecutor.execute(() -> {
             smsDao.deleteAll();
@@ -84,45 +82,48 @@ public abstract class BikeBeanRoomDatabase extends RoomDatabase {
     }
 
     public static @NonNull GithubGistUploader createReport(
-            @NonNull Context ctx, LogViewModel lv,
-            GithubGistUploader.UploadSuccessNotifier usn) {
-        SmsDao smsDao = INSTANCE.smsDao();
-        StateDao stateDao = INSTANCE.stateDao();
-        LogDao logDao = INSTANCE.logDao();
+            final @NonNull Context ctx, LogViewModel lv,
+            final @NonNull GithubGistUploader.UploadSuccessNotifier usn) {
+        final @NonNull SmsDao smsDao = INSTANCE.smsDao();
+        final @NonNull StateDao stateDao = INSTANCE.stateDao();
+        final @NonNull LogDao logDao = INSTANCE.logDao();
 
-        final MutableObject<Sms> smsMutableObject = new MutableObject<>(new Sms());
-        final MutableObject<State> stateMutableObject = new MutableObject<>(new State());
-        final MutableObject<Log> logMutableObject = new MutableObject<>(new Log());
+        final @NonNull MutableObject<Sms> smsMutableObject = new MutableObject<>(new Sms());
+        final @NonNull MutableObject<State> stateMutableObject = new MutableObject<>(new State());
+        final @NonNull MutableObject<Log> logMutableObject = new MutableObject<>(new Log());
 
-        List<? extends DatabaseEntity> smsList = smsMutableObject.getAllItems(smsDao::getAllSync);
-        List<? extends DatabaseEntity> stateList = stateMutableObject.getAllItems(stateDao::getAllSync);
-        List<? extends DatabaseEntity> logList = logMutableObject.getAllItems(logDao::getAllSync);
+        final @NonNull List<? extends DatabaseEntity> smsList =
+                smsMutableObject.getAllItems(smsDao::getAllSync);
+        final @NonNull List<? extends DatabaseEntity> stateList =
+                stateMutableObject.getAllItems(stateDao::getAllSync);
+        final List<? extends DatabaseEntity> logList =
+                logMutableObject.getAllItems(logDao::getAllSync);
 
-        String description = "BikeBeanAppCrashReport " + Utils.ConvertToDateHuman() +
+        final @NonNull String description = "BikeBeanAppCrashReport " + Utils.ConvertToDateHuman() +
                 " \nVersion: " + Utils.getVersionName() +
                 " \nID: " + Utils.getUUID(ctx);
-        StringBuilder smsTsv = new StringBuilder();
-        StringBuilder stateTsv = new StringBuilder();
-        StringBuilder logTsv = new StringBuilder();
+        final @NonNull StringBuilder smsTsv = new StringBuilder();
+        final @NonNull StringBuilder stateTsv = new StringBuilder();
+        final @NonNull StringBuilder logTsv = new StringBuilder();
 
         if (smsList.size() > 0) {
             smsTsv.append(smsList.get(0).createReportTitle());
 
-            for (DatabaseEntity sms : smsList)
+            for (final @NonNull DatabaseEntity sms : smsList)
                 smsTsv.append(sms.createReport());
         }
 
         if (stateList.size() > 0) {
             stateTsv.append(stateList.get(0).createReportTitle());
 
-            for (DatabaseEntity state: stateList)
+            for (final @NonNull DatabaseEntity state : stateList)
                 stateTsv.append(state.createReport());
         }
 
         if (logList.size() > 0) {
             logTsv.append(logList.get(0).createReportTitle());
 
-            for (DatabaseEntity log: logList)
+            for (final @NonNull DatabaseEntity log : logList)
                 logTsv.append(log.createReport());
         }
 

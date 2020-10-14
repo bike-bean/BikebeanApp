@@ -17,10 +17,10 @@ public class BatteryStateViewModel extends StateViewModel {
 
     private final LiveData<List<State>> mStatusBattery;
 
-    public BatteryStateViewModel(Application application) {
+    public BatteryStateViewModel(final @NonNull Application application) {
         super(application);
 
-        BatteryStateRepository mRepository = new BatteryStateRepository(application);
+        final @NonNull BatteryStateRepository mRepository = new BatteryStateRepository(application);
         mStatusBattery = mRepository.getStatusBattery();
     }
 
@@ -33,7 +33,7 @@ public class BatteryStateViewModel extends StateViewModel {
     }
 
     static @NonNull String getEstimatedDaysText(@NonNull BatteryStateViewModel st) {
-        @Nullable State lastBatteryState = st.getConfirmedBatterySync();
+        final @Nullable State lastBatteryState = st.getConfirmedBatterySync();
         boolean isWifiOn = st.getConfirmedWifiSync();
         int interval = st.getConfirmedIntervalSync();
 
@@ -41,7 +41,7 @@ public class BatteryStateViewModel extends StateViewModel {
     }
 
     private boolean getConfirmedWifiSync() {
-        @Nullable State wifiConfirmed = getConfirmedStateSync(State.KEY.WIFI);
+        final @Nullable State wifiConfirmed = getConfirmedStateSync(State.KEY.WIFI);
 
         if (wifiConfirmed != null)
             return wifiConfirmed.getValue() > 0;

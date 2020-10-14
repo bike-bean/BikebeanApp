@@ -13,18 +13,18 @@ import de.bikebean.app.db.log.LogDao;
 
 class LogRepository {
 
-    private final LogDao mLogDao;
+    private final @NonNull LogDao mLogDao;
 
-    LogRepository(Application application) {
-        BikeBeanRoomDatabase db = BikeBeanRoomDatabase.getDatabase(application);
+    LogRepository(final @NonNull Application application) {
+        final @NonNull BikeBeanRoomDatabase db = BikeBeanRoomDatabase.getDatabase(application);
         mLogDao = db.logDao();
     }
 
-    void insert(final Log log) {
+    void insert(final @NonNull Log log) {
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() -> mLogDao.insert(log));
     }
 
-    LiveData<List<Log>> getHigherThanLevel(Log.LEVEL level) {
+    LiveData<List<Log>> getHigherThanLevel(final @NonNull Log.LEVEL level) {
         return mLogDao.getHigherThanLevel(level);
     }
 
@@ -32,7 +32,7 @@ class LogRepository {
         return mLogDao.getByLevel(Log.LEVEL.INTERNAL);
     }
 
-    @NonNull List<Log> getLastLevelSync(String s, int i) {
+    @NonNull List<Log> getLastLevelSync(final @NonNull String s, int i) {
         if (i == 0 && s.isEmpty())
             return mLogDao.getByLevelSync(Log.LEVEL.INTERNAL);
         else

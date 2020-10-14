@@ -19,7 +19,8 @@ public abstract class NumberSetting extends Setting {
     private final @NonNull State state;
     protected final @NonNull String mWappString;
 
-    protected NumberSetting(@NonNull String wappString, Sms sms, State.KEY key) {
+    protected NumberSetting(final @NonNull String wappString, final @NonNull Sms sms,
+                            final @NonNull State.KEY key) {
         super(sms, key);
 
         mWappString = wappString;
@@ -29,7 +30,7 @@ public abstract class NumberSetting extends Setting {
         );
     }
 
-    public NumberSetting(@NonNull String wappString, State.KEY key) {
+    public NumberSetting(final @NonNull String wappString, final @NonNull State.KEY key) {
         super(new Sms(), key);
 
         mWappString = wappString;

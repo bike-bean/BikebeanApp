@@ -9,11 +9,11 @@ import de.bikebean.app.ui.utils.sms.parser.SmsParser;
 
 public class Wapp extends Setting {
 
-    private static final State.KEY key = State.KEY.WAPP;
+    private static final @NonNull State.KEY key = State.KEY.WAPP;
 
     private final double wapp;
 
-    public Wapp(double wapp, @NonNull SmsParser smsParser) {
+    public Wapp(double wapp, final @NonNull SmsParser smsParser) {
         super(smsParser.getSms(), key);
         this.wapp = wapp;
     }

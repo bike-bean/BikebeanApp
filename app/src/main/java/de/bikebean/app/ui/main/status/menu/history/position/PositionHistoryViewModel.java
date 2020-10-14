@@ -14,11 +14,11 @@ import de.bikebean.app.ui.main.status.menu.history.HistoryViewModel;
 
 public class PositionHistoryViewModel extends HistoryViewModel {
 
-    private final PositionHistoryRepository mRepository;
+    private final @NonNull PositionHistoryRepository mRepository;
 
     private final MutableLiveData<List<LocationState>> mLocationStates;
 
-    public PositionHistoryViewModel(Application application) {
+    public PositionHistoryViewModel(final @NonNull Application application) {
         super(application);
 
         mRepository = new PositionHistoryRepository(application);
@@ -29,7 +29,7 @@ public class PositionHistoryViewModel extends HistoryViewModel {
         return mRepository.getAllLocationByIdSync(smsId);
     }
 
-    void setLocationsState(List<LocationState> locationStates) {
+    void setLocationsState(final @NonNull List<LocationState> locationStates) {
         mLocationStates.postValue(locationStates);
     }
 

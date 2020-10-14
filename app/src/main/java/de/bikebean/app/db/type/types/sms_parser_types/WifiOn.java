@@ -14,9 +14,9 @@ import de.bikebean.app.ui.utils.sms.parser.SmsParser;
 
 public class WifiOn extends SmsParserType {
 
-    private final List<Setting> settings;
+    private final @NonNull List<Setting> settings;
 
-    public WifiOn(@NonNull SmsParser smsParser) {
+    public WifiOn(final @NonNull SmsParser smsParser) {
         super(SMSTYPE.WIFI_ON);
         this.mSmsParser = smsParser;
         this.settings = new ArrayList<>();
@@ -27,7 +27,7 @@ public class WifiOn extends SmsParserType {
     }
 
     @Override
-    public List<Setting> getSettings() {
+    public @NonNull List<Setting> getSettings() {
         return settings;
     }
 }

@@ -81,9 +81,9 @@ public class MainActivity extends AppCompatActivity {
                         ContextCompat.getColor(this, R.color.white),
                         PorterDuff.Mode.SRC_ATOP
                 );
-
-            setSupportActionBar(toolbar);
         }
+
+        setSupportActionBar(toolbar);
     }
 
     private void handleNewIncomingMessages(final @NonNull List<Sms> newSmsList) {

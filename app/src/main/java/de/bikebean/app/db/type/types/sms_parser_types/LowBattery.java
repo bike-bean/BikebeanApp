@@ -11,9 +11,9 @@ import de.bikebean.app.ui.utils.sms.parser.SmsParser;
 
 public class LowBattery extends SmsParserType {
 
-    private final List<Setting> settings;
+    private final @NonNull List<Setting> settings;
 
-    public LowBattery(@NonNull SmsParser smsParser) {
+    public LowBattery(final @NonNull SmsParser smsParser) {
         super(SMSTYPE.LOW_BATTERY);
         this.mSmsParser = smsParser;
         this.settings = new ArrayList<>();
@@ -22,7 +22,7 @@ public class LowBattery extends SmsParserType {
     }
 
     @Override
-    public List<Setting> getSettings() {
+    public @NonNull List<Setting> getSettings() {
         return settings;
     }
 }

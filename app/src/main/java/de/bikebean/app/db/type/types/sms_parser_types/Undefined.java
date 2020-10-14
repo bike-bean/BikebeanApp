@@ -13,10 +13,10 @@ import de.bikebean.app.ui.utils.sms.parser.SmsParser;
 
 public class Undefined extends SmsParserType {
 
-    private final List<Setting> settings;
+    private final @NonNull List<Setting> settings;
 
-    public Undefined(@NonNull SmsParser smsParser,
-                     @NonNull WeakReference<LogViewModel> logViewModelReference) {
+    public Undefined(final @NonNull SmsParser smsParser,
+                     final @NonNull WeakReference<LogViewModel> logViewModelReference) {
         super(SMSTYPE.UNDEFINED);
         this.mSmsParser = smsParser;
         this.settings = new ArrayList<>();
@@ -25,7 +25,7 @@ public class Undefined extends SmsParserType {
     }
 
     @Override
-    public final List<Setting> getSettings() {
+    public @NonNull List<Setting> getSettings() {
         return settings;
     }
 }

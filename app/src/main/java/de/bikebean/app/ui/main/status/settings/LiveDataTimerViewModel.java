@@ -22,12 +22,12 @@ public class LiveDataTimerViewModel extends AndroidViewModel {
 
     private static final int ONE_SECOND = 1000;
 
-    private final SparseArray<MutableLiveData<Long>> residualTimes = new SparseArray<>();
+    private final @NonNull SparseArray<MutableLiveData<Long>> residualTimes = new SparseArray<>();
 
-    private final SparseLongArray stopTimes = new SparseLongArray();
-    private final SparseArray<Timer> timers = new SparseArray<>();
+    private final @NonNull SparseLongArray stopTimes = new SparseLongArray();
+    private final @NonNull SparseArray<Timer> timers = new SparseArray<>();
 
-    public LiveDataTimerViewModel(Application application) {
+    public LiveDataTimerViewModel(final @NonNull Application application) {
         super(application);
 
         for (int i=0; i<N_TIMERS; i++) {
@@ -36,7 +36,7 @@ public class LiveDataTimerViewModel extends AndroidViewModel {
         }
     }
 
-    public long startTimer(@NonNull final TIMER which, long startTime, int interval) {
+    public long startTimer(final @NonNull TIMER which, long startTime, int interval) {
         timers.put(which.ordinal(), new Timer());
         stopTimes.put(which.ordinal(), startTime + interval * 1000 * 60 * 60);
 

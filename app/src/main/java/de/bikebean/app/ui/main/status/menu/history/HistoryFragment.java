@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -15,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
-import java.util.Objects;
 
 import de.bikebean.app.db.DatabaseEntity;
 
@@ -29,16 +29,18 @@ public abstract class HistoryFragment extends Fragment {
     protected RecyclerView recyclerView;
     protected TextView noDataText;
 
+    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final @NonNull LayoutInflater inflater,
+                             final @Nullable ViewGroup container,
+                             final @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(false);
 
         return null;
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(final @Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         st = getNewStateViewModel();
@@ -51,38 +53,38 @@ public abstract class HistoryFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        // show the toolbar for this fragment
-        AppCompatActivity act = (AppCompatActivity) getActivity();
-        ActionBar actionbar = Objects.requireNonNull(act).getSupportActionBar();
-        Objects.requireNonNull(actionbar).show();
+        /* show the toolbar for this fragment */
+        final @NonNull AppCompatActivity act = (AppCompatActivity) requireActivity();
+        final @Nullable ActionBar actionbar = act.getSupportActionBar();
+
+        if (actionbar != null)
+            actionbar.show();
     }
 
     @Override
     public void onStart() {
         super.onStart();
 
-        // show the tab area
-        HistoryActivity historyActivity = (HistoryActivity) getActivity();
-        if (historyActivity != null) {
-            historyActivity.showButtons(true);
-        }
+        /* show the tab area */
+        final @NonNull HistoryActivity historyActivity = (HistoryActivity) requireActivity();
+        historyActivity.showButtons(true);
     }
 
-    protected abstract HistoryViewModel getNewStateViewModel();
+    protected abstract @NonNull HistoryViewModel getNewStateViewModel();
 
     protected abstract void setupListeners();
 
     private void initRecyclerView() {
-        Context ctx = requireContext();
+        final @NonNull Context ctx = requireContext();
 
         adapter = getNewAdapter(ctx);
         recyclerView.setAdapter(adapter);
 
-        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ctx);
+        final @NonNull LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ctx);
         recyclerView.setLayoutManager(linearLayoutManager);
     }
 
-    protected abstract HistoryAdapter getNewAdapter(Context ctx);
+    protected abstract @NonNull HistoryAdapter getNewAdapter(final @NonNull Context ctx);
 
     protected void setStatesToAdapter(@NonNull List<? extends DatabaseEntity> ls) {
         if (ls.size() != 0) {

@@ -17,7 +17,7 @@ public class NoWifiList extends SmsParserType {
 
     private final @NonNull List<Setting> settings;
 
-    public NoWifiList(@NonNull SmsParser smsParser) {
+    public NoWifiList(final @NonNull SmsParser smsParser) {
         super(SMSTYPE.NO_WIFI_LIST);
         this.mSmsParser = smsParser;
         this.settings = new ArrayList<>();

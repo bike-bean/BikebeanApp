@@ -24,10 +24,11 @@ import de.bikebean.app.ui.main.status.menu.sms_history.SmsViewModel;
 public class PositionHistoryFragment extends HistoryFragment {
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+    public @NonNull View onCreateView(final @NonNull LayoutInflater inflater,
+                             final @Nullable ViewGroup container,
+                             final @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View v = inflater.inflate(R.layout.fragment_position_history, container, false);
+        final @NonNull View v = inflater.inflate(R.layout.fragment_position_history, container, false);
 
         recyclerView = v.findViewById(R.id.recyclerView2);
         noDataText = v.findViewById(R.id.noDataText);
@@ -36,28 +37,28 @@ public class PositionHistoryFragment extends HistoryFragment {
     }
 
     @Override
-    protected HistoryViewModel getNewStateViewModel() {
+    protected @NonNull HistoryViewModel getNewStateViewModel() {
         return new ViewModelProvider(this).get(PositionHistoryViewModel.class);
     }
 
     @Override
     protected void setupListeners() {
-        SmsViewModel smsViewModel = new ViewModelProvider(this).get(SmsViewModel.class);
+        final @NonNull SmsViewModel smsViewModel = new ViewModelProvider(this).get(SmsViewModel.class);
         smsViewModel.getAllIds().observe(this, this::updateStates);
     }
 
     @Override
-    protected HistoryAdapter getNewAdapter(Context ctx) {
+    protected @NonNull HistoryAdapter getNewAdapter(final @NonNull Context ctx) {
         return new PositionHistoryAdapter(ctx,
                 ((PositionHistoryViewModel) st).getLocationStates().getValue());
     }
 
-    private void updateStates(List<Integer> smsIdList) {
+    private void updateStates(final @NonNull List<Integer> smsIdList) {
         final @NonNull List<LocationState> locationStates = new ArrayList<>();
 
         new Thread(() -> {
             for (int smsId : smsIdList) {
-                @Nullable LocationState locationState =
+                final @Nullable LocationState locationState =
                         updateLocationStates(((PositionHistoryViewModel) st).getAllLocation(smsId));
                 if (locationState != null)
                     locationStates.add(locationState);
@@ -70,7 +71,7 @@ public class PositionHistoryFragment extends HistoryFragment {
         ((PositionHistoryViewModel) st).getLocationStates().observe(this, this::setStatesToAdapter);
     }
 
-    private @Nullable LocationState updateLocationStates(@NonNull List<State> states) {
+    private @Nullable LocationState updateLocationStates(final @NonNull List<State> states) {
         State latState = null;
         State lngState = null;
         State accState = null;
@@ -81,7 +82,7 @@ public class PositionHistoryFragment extends HistoryFragment {
             return null;
 
         for (State s : states)
-            switch (State.KEY.getValue(s.getKey())) {
+            switch (State.KEY.getValue(s)) {
                 case LAT:
                     latState = s;
                     break;

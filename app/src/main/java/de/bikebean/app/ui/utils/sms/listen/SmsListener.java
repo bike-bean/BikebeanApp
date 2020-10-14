@@ -14,6 +14,8 @@ import de.bikebean.app.ui.main.status.StateViewModel;
 import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
 import de.bikebean.app.ui.main.status.menu.sms_history.SmsViewModel;
 
+import static de.bikebean.app.ui.main.status.menu.preferences.PreferencesActivity.NUMBER_PREFERENCE;
+
 public class SmsListener extends BroadcastReceiver {
     /*
      SMS Listener
@@ -45,7 +47,7 @@ public class SmsListener extends BroadcastReceiver {
             lv.d("New SMS received...");
 
         final @Nullable String address = PreferenceManager.getDefaultSharedPreferences(ctx)
-                .getString("number", null);
+                .getString(NUMBER_PREFERENCE, null);
         if (address == null) {
             lv.e("Failed to load BB-number! Maybe it's not set?");
             return;

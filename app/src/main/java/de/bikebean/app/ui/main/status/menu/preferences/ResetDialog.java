@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
@@ -20,15 +21,15 @@ public class ResetDialog extends DialogFragment {
     private final @NonNull String address;
 
     public interface ResetHandler {
-        void reset(@NonNull String address);
+        void reset(final @NonNull String address);
     }
 
     public interface ResetCanceller {
         void cancel();
     }
 
-    ResetDialog(@NonNull Activity act, @NonNull String address,
-                @NonNull ResetHandler r1, @NonNull ResetCanceller r2) {
+    ResetDialog(final @NonNull Activity act, final @NonNull String address,
+                final @NonNull ResetHandler r1, final @NonNull ResetCanceller r2) {
         this.act = act;
 
         this.resetHandler = r1;
@@ -39,8 +40,8 @@ public class ResetDialog extends DialogFragment {
 
     @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(act);
+    public Dialog onCreateDialog(final @Nullable Bundle savedInstanceState) {
+        final @NonNull AlertDialog.Builder builder = new AlertDialog.Builder(act);
 
         builder.setTitle(R.string.db_reset)
                 .setMessage(R.string.db_reset_warning)

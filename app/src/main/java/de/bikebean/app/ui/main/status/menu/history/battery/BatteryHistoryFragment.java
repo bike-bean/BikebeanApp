@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
 
@@ -17,11 +18,13 @@ import de.bikebean.app.ui.main.status.menu.history.HistoryViewModel;
 
 public class BatteryHistoryFragment extends HistoryFragment {
 
+    @NonNull
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final @NonNull LayoutInflater inflater,
+                             final @Nullable ViewGroup container,
+                             final @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View v = inflater.inflate(R.layout.fragment_battery_history, container, false);
+        final @NonNull View v = inflater.inflate(R.layout.fragment_battery_history, container, false);
 
         recyclerView = v.findViewById(R.id.recyclerView3);
         noDataText = v.findViewById(R.id.noDataText3);
@@ -30,7 +33,7 @@ public class BatteryHistoryFragment extends HistoryFragment {
     }
 
     @Override
-    protected HistoryViewModel getNewStateViewModel() {
+    protected @NonNull HistoryViewModel getNewStateViewModel() {
         return new ViewModelProvider(this).get(BatteryHistoryViewModel.class);
     }
 
@@ -41,7 +44,7 @@ public class BatteryHistoryFragment extends HistoryFragment {
     }
 
     @Override
-    protected HistoryAdapter getNewAdapter(Context ctx) {
+    protected @NonNull HistoryAdapter getNewAdapter(final @NonNull Context ctx) {
         return new BatteryHistoryAdapter(ctx,
                 ((BatteryHistoryViewModel) st).getBatteryConfirmed().getValue());
     }

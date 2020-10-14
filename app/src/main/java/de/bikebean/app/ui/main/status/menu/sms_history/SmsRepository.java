@@ -15,14 +15,14 @@ import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
 
 class SmsRepository {
 
-    private final SmsDao mSmsDao;
+    private final @NonNull SmsDao mSmsDao;
 
     private final LiveData<List<Sms>> mChat;
     private final LiveData<List<Sms>> mNewIncoming;
     private final LiveData<List<Integer>> mAllIds;
 
-    SmsRepository(Application application) {
-        BikeBeanRoomDatabase db = BikeBeanRoomDatabase.getDatabase(application);
+    SmsRepository(final @NonNull Application application) {
+        final @NonNull BikeBeanRoomDatabase db = BikeBeanRoomDatabase.getDatabase(application);
         mSmsDao = db.smsDao();
 
         mChat = mSmsDao.getAll();
@@ -49,8 +49,8 @@ class SmsRepository {
         return mSmsDao.getSmsById(id);
     }
 
-    int getLatestId(LogViewModel lv, int type) {
-        @NonNull List<Sms> l = mSmsDao.getLatestId(type);
+    int getLatestId(final LogViewModel lv, int type) {
+        final @NonNull List<Sms> l = mSmsDao.getLatestId(type);
 
         if (l.size() > 0) {
             return l.get(0).getId();
@@ -60,11 +60,11 @@ class SmsRepository {
         }
     }
 
-    void insert(final Sms sms) {
+    void insert(final @NonNull Sms sms) {
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() -> mSmsDao.insert(sms));
     }
 
-    void markParsed(Sms sms) {
+    void markParsed(final @NonNull Sms sms) {
         BikeBeanRoomDatabase.databaseWriteExecutor.execute(() ->
                 mSmsDao.updateStateById(Sms.STATUS.PARSED.ordinal(), sms.getId()));
     }
