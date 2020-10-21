@@ -1,37 +1,29 @@
 package de.bikebean.app.ui.utils.sms.send;
 
 import android.app.Dialog;
-import android.content.SharedPreferences;
 import android.telephony.SmsManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
-import androidx.preference.PreferenceManager;
+import androidx.appcompat.app.AppCompatActivity;
 
-import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
-import de.bikebean.app.ui.utils.Utils;
+import de.bikebean.app.MainActivity;
+import de.bikebean.app.ui.drawer.log.LogViewModel;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.utils.PermissionsRationaleDialog;
-import de.bikebean.app.ui.main.status.StatusFragment;
-
-import static de.bikebean.app.ui.main.status.menu.preferences.PreferencesActivity.NUMBER_PREFERENCE;
+import de.bikebean.app.ui.utils.permissions.PermissionUtils;
+import de.bikebean.app.ui.utils.preferences.PreferencesUtils;
 
 public class SmsSender {
 
-    public interface PostSmsSendHandler {
-        void onPostSend(boolean sent, final @NonNull SmsSender smsSender);
-    }
-
-    private final @NonNull FragmentActivity act;
+    private final @NonNull AppCompatActivity act;
     private final @NonNull PostSmsSendHandler postSmsSendHandler;
 
     private final @NonNull String address;
     private final @NonNull Sms.MESSAGE message;
     private final @NonNull State[] updates;
 
-    public SmsSender(final @NonNull FragmentActivity act,
+    public SmsSender(final @NonNull AppCompatActivity act,
                      LogViewModel lv,
                      final @NonNull PostSmsSendHandler postSmsSendHandler,
                      final @NonNull Sms.MESSAGE message,
@@ -39,19 +31,7 @@ public class SmsSender {
         this.act = act;
         this.postSmsSendHandler = postSmsSendHandler;
 
-        final @Nullable SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(act);
-        final @Nullable String number;
-
-        if (sharedPreferences != null)
-            number = sharedPreferences.getString(NUMBER_PREFERENCE, null);
-        else {
-            lv.e("Failed to get sharedPreferences!");
-            this.address = "";
-            this.message = Sms.MESSAGE._STATUS;
-            this.updates = new State[]{};
-            return;
-        }
+        final @Nullable String number = PreferencesUtils.getBikeBeanNumber(act, lv);
 
         if (number != null)
             this.address = number;
@@ -59,7 +39,6 @@ public class SmsSender {
             this.address = "";
             this.message = Sms.MESSAGE._STATUS;
             this.updates = new State[]{};
-            lv.e("Failed to load BB-number! Maybe it's not set?");
             return;
         }
 
@@ -105,21 +84,16 @@ public class SmsSender {
     }
 
     public void getPermissions() {
-        StatusFragment.permissionGrantedHandler = this::reallySend;
+        MainActivity.permissionGrantedHandler = this::reallySend;
 
-        if (Utils.getPermissions(act, Utils.PERMISSION_KEY.SMS, () ->
-                new PermissionsRationaleDialog(act, Utils.PERMISSION_KEY.SMS).show(
-                        act.getSupportFragmentManager(),
-                        "smsRationaleDialog"
-                )
-        )) {
-            StatusFragment.permissionDeniedHandler.continueWithoutPermission(false);
-            StatusFragment.permissionGrantedHandler.continueWithPermission();
+        if (PermissionUtils.hasSmsPermissions(act)) {
+            MainActivity.permissionDeniedHandler.continueWithoutPermission(false);
+            MainActivity.permissionGrantedHandler.continueWithPermission(0);
         } else
             cancelSend();
     }
 
-    private void reallySend() {
+    private void reallySend(final int dummy) {
         /*
         The user decided to send the SMS, so actually send it!
         */
@@ -139,5 +113,9 @@ public class SmsSender {
         The user decided to cancel, don't send an SMS and signal it to the user.
         */
         postSmsSendHandler.onPostSend(false, this);
+    }
+
+    public interface PostSmsSendHandler {
+        void onPostSend(boolean sent, final @NonNull SmsSender smsSender);
     }
 }

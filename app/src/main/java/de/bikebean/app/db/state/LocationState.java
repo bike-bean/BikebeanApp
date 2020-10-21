@@ -5,7 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 
 import de.bikebean.app.db.DatabaseEntity;
-import de.bikebean.app.ui.utils.Utils;
+import de.bikebean.app.ui.utils.date.DateUtils;
 
 import static de.bikebean.app.db.state.State.KEY.ACC;
 import static de.bikebean.app.db.state.State.KEY.LAT;
@@ -31,7 +31,7 @@ public class LocationState extends DatabaseEntity {
                          final @NonNull State noWifiAccessPointsState) {
         smsId = latState.getSmsId();
         timestamp = latState.getTimestamp();
-        daysSinceLastState = Utils.getDaysSinceState(latState);
+        daysSinceLastState = DateUtils.getDaysSinceState(latState);
 
         lat = latState.getValue();
         lng = lngState.getValue();
@@ -86,7 +86,7 @@ public class LocationState extends DatabaseEntity {
         }
 
         LocationBundle putDaysSinceLastState(double value) {
-            bundle.putDouble(Utils.DAYS_SINCE_LAST_STATE, value);
+            bundle.putDouble(DateUtils.DAYS_SINCE_LAST_STATE, value);
             return this;
         }
 

@@ -4,42 +4,43 @@ import androidx.annotation.NonNull;
 
 import de.bikebean.app.db.settings.settings.ReplaceIfNewerSetting;
 import de.bikebean.app.db.sms.Sms;
+import de.bikebean.app.db.sms.SmsFactory;
 import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.utils.sms.parser.SmsParser;
+import de.bikebean.app.db.state.StateFactory;
 
 public class Wifi extends ReplaceIfNewerSetting {
 
+    public static final boolean INITIAL_WIFI = false;
+
     private static final @NonNull State.KEY key = State.KEY.WIFI;
-    private static final boolean INITIAL_WIFI = false;
 
-    private final boolean wifi;
-
-    public Wifi(final @NonNull SmsParser smsParser) {
-        super(smsParser.getSms(), key);
-        this.wifi = smsParser.getStatusWifi();
+    public Wifi(final @NonNull Sms sms, final @NonNull WifiGetter wifiGetter) {
+        super(sms,
+                StateFactory.createNumberState(
+                        sms, key, wifiGetter.getWifi() ? 1.0 : 0.0, State.STATUS.CONFIRMED
+                )
+        );
     }
 
     public Wifi(boolean wifi, final @NonNull Sms sms) {
-        super(sms, key);
-        this.wifi = wifi;
+        super(sms,
+                StateFactory.createNumberState(
+                        sms, key, wifi ? 1.0 : 0.0,
+                        State.STATUS.CONFIRMED
+                )
+        );
     }
 
     public Wifi() {
-        super(new Sms(), key);
-        this.wifi = INITIAL_WIFI;
+        super(SmsFactory.createNullSms(),
+                StateFactory.createNumberState(
+                        SmsFactory.createNullSms(), key, INITIAL_WIFI ? 1.0 : 0.0,
+                        State.STATUS.CONFIRMED
+                )
+        );
     }
 
-    @Override
-    public @NonNull Double get() {
-        return wifi ? 1.0 : 0.0;
-    }
-
-    @Override
-    public @NonNull State getState() {
-        return new State(getDate(), key, get(), "", State.STATUS.CONFIRMED, getId());
-    }
-
-    public boolean getRaw() {
-        return wifi;
+    public interface WifiGetter {
+        boolean getWifi();
     }
 }

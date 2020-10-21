@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
-
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="@color/secondaryColor">
+        android:theme="@style/Theme.BikeBean.AppBarOverlay"
+        >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -50,7 +51,7 @@
         android:orientation="vertical">
 
         <TextView
-            style="@style/TextAppearance.MaterialComponents.Headline3"
+            style="?attr/textAppearanceHeadline3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
@@ -59,13 +60,13 @@
             android:text="@string/status_heading" />
 
         <TextView
-            style="@style/TextAppearance.AppCompat.Body1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:paddingBottom="8dp"
+            android:textAppearance="?attr/textAppearanceBody2"
             android:text="@string/prompt_number" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -95,14 +96,6 @@
             android:layout_marginEnd="16dp"
             android:text="@string/continue_general" />
 
-        <ProgressBar
-            android:id="@+id/progressBar2"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
-
     </LinearLayout>
-
 
 </LinearLayout>

@@ -8,12 +8,7 @@ import de.bikebean.app.db.state.State;
 
 public abstract class ReplaceIfNewerSetting extends Setting {
 
-    public ReplaceIfNewerSetting(final @NonNull Sms sms, final @NonNull State.KEY key) {
-        super(sms, key);
-    }
-
-    @Override
-    public final @NonNull ConversationListAdder getConversationListAdder() {
-        return super::replaceIfNewer;
+    public ReplaceIfNewerSetting(final @NonNull Sms sms, final @NonNull State state) {
+        super(state, Setting::replaceIfNewer);
     }
 }

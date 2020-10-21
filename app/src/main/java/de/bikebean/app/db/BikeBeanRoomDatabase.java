@@ -17,11 +17,14 @@ import de.bikebean.app.db.log.Log;
 import de.bikebean.app.db.log.LogDao;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.sms.SmsDao;
+import de.bikebean.app.db.sms.SmsFactory;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.db.state.StateDao;
-import de.bikebean.app.ui.main.status.menu.log.GithubGistUploader;
-import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
-import de.bikebean.app.ui.utils.Utils;
+import de.bikebean.app.db.state.StateFactory;
+import de.bikebean.app.ui.drawer.log.GithubGistUploader;
+import de.bikebean.app.ui.drawer.log.LogViewModel;
+import de.bikebean.app.ui.utils.date.DateUtils;
+import de.bikebean.app.ui.utils.device.DeviceUtils;
 
 @Database(entities = {Sms.class, State.class, Log.class}, version = 11, exportSchema = false)
 @TypeConverters({LevelConverters.class})
@@ -66,9 +69,12 @@ public abstract class BikeBeanRoomDatabase extends RoomDatabase {
         final @NonNull StateDao stateDao = INSTANCE.stateDao();
         final @NonNull LogDao logDao = INSTANCE.logDao();
 
-        final @NonNull MutableObject<Sms> smsIsClearedFlag = new MutableObject<>(new Sms());
-        final @NonNull MutableObject<State> stateIsClearedFlag = new MutableObject<>(new State());
-        final @NonNull MutableObject<Log> logIsClearedFlag = new MutableObject<>(new Log());
+        final @NonNull MutableObject<Sms> smsIsClearedFlag =
+                new MutableObject<>(SmsFactory.createNullSms());
+        final @NonNull MutableObject<State> stateIsClearedFlag =
+                new MutableObject<>(StateFactory.createNullState());
+        final @NonNull MutableObject<Log> logIsClearedFlag =
+                new MutableObject<>(new Log());
 
         databaseWriteExecutor.execute(() -> {
             smsDao.deleteAll();
@@ -88,9 +94,12 @@ public abstract class BikeBeanRoomDatabase extends RoomDatabase {
         final @NonNull StateDao stateDao = INSTANCE.stateDao();
         final @NonNull LogDao logDao = INSTANCE.logDao();
 
-        final @NonNull MutableObject<Sms> smsMutableObject = new MutableObject<>(new Sms());
-        final @NonNull MutableObject<State> stateMutableObject = new MutableObject<>(new State());
-        final @NonNull MutableObject<Log> logMutableObject = new MutableObject<>(new Log());
+        final @NonNull MutableObject<Sms> smsMutableObject =
+                new MutableObject<>(SmsFactory.createNullSms());
+        final @NonNull MutableObject<State> stateMutableObject =
+                new MutableObject<>(StateFactory.createNullState());
+        final @NonNull MutableObject<Log> logMutableObject =
+                new MutableObject<>(new Log());
 
         final @NonNull List<? extends DatabaseEntity> smsList =
                 smsMutableObject.getAllItems(smsDao::getAllSync);
@@ -99,9 +108,10 @@ public abstract class BikeBeanRoomDatabase extends RoomDatabase {
         final List<? extends DatabaseEntity> logList =
                 logMutableObject.getAllItems(logDao::getAllSync);
 
-        final @NonNull String description = "BikeBeanAppCrashReport " + Utils.ConvertToDateHuman() +
-                " \nVersion: " + Utils.getVersionName() +
-                " \nID: " + Utils.getUUID(ctx);
+        final @NonNull String description =
+                "BikeBeanAppCrashReport " + DateUtils.convertToDateHuman() +
+                        " \nVersion: " + DeviceUtils.getVersionName() +
+                        " \nID: " + DeviceUtils.getUUID(ctx);
         final @NonNull StringBuilder smsTsv = new StringBuilder();
         final @NonNull StringBuilder stateTsv = new StringBuilder();
         final @NonNull StringBuilder logTsv = new StringBuilder();

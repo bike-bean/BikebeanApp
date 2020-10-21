@@ -1,35 +1,20 @@
 package de.bikebean.app.db.type.types;
 
-import androidx.annotation.NonNull;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import de.bikebean.app.db.settings.Setting;
 import de.bikebean.app.db.settings.settings.replace_if_newer_settings.Interval;
 import de.bikebean.app.db.settings.settings.replace_if_newer_settings.Status;
 import de.bikebean.app.db.settings.settings.replace_if_newer_settings.WarningNumber;
 import de.bikebean.app.db.settings.settings.replace_if_newer_settings.Wifi;
-import de.bikebean.app.db.sms.Sms;
-import de.bikebean.app.db.type.Type;
+import de.bikebean.app.db.sms.SmsFactory;
+import de.bikebean.app.db.type.SmsType;
 
-public class InitialConversation extends Type {
-
-    private final @NonNull List<Setting> settings;
+public class InitialConversation extends SmsType {
 
     public InitialConversation() {
-        super(SMSTYPE.INITIAL_CONVERSATION);
+        super(TYPE.INITIAL_CONVERSATION);
 
-        settings = new ArrayList<>();
-
-        settings.add(new Interval());
-        settings.add(new Wifi());
-        settings.add(new Status());
-        settings.add(new WarningNumber("", new Sms()));
-    }
-
-    @Override
-    public @NonNull List<Setting> getSettings() {
-        return settings;
+        getSettings().add(new Interval());
+        getSettings().add(new Wifi());
+        getSettings().add(new Status());
+        getSettings().add(new WarningNumber(SmsFactory.createNullSms(), ""));
     }
 }

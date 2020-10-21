@@ -9,11 +9,11 @@
     <string name="status_heading">Willkommen!</string>
     <string name="location_text">Standort</string>
     <string name="status_text">Einstellungen</string>
-    <string name="status_title">Bike Bean Status</string>
     <string name="battery_text">Batterie</string>
     <string name="charge_text">Ladezustand:</string>
     <string name="estimated_charge_text">Zeit bis 10%:</string>
-    <string name="auf_karte_zeigen">Anzeigen</string>
+    <string name="auf_karte_zeigen">Zur Karte</string>
+
 
     <string name="geolocation_baseurl">https://www.googleapis.com/geolocation/v1/geolocate?key=</string>
     <string name="github_releases_baseurl">https://api.github.com/repos/bike-bean/BikebeanApp/releases</string>
@@ -29,7 +29,7 @@
     <string name="interval_switch_transition">Wird auf %dh umgestellt</string>
 
     <string name="title_activity_sms">SMS Historie</string>
-    <string name="title_activity_settings">Einstellungen</string>
+    <string name="title_fragment_preferences">Einstellungen</string>
 
     <string name="history">Historie (Standort &amp; Batterie)</string>
     <string name="info">Infos &amp; Hilfe</string>
@@ -110,7 +110,7 @@
     <!-- WifiScan -->
     <string name="scanning_wifi">Scanne WLANs</string>
     <string name="phone_hint">+4912345678910</string>
-    <string name="prompt_number">Bitte gib als erstes die Telefonnummer der Bike Bean ein:</string>
+    <string name="prompt_number">Bitte gib als Erstes die Telefonnummer der Bike Bean ein:</string>
     <string name="scan_wifi">WLANs SCANNEN</string>
     <string name="wifi_not_found">BIKEBEAN-WIFI WURDE NICHT GEFUNDEN</string>
     <string name="gps_network_not_enabled">Dein Standort muss leider aktiviert sein um nach WLANs scannen zu können. (Google Anforderung)</string>

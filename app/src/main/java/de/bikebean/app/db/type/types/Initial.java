@@ -1,11 +1,5 @@
 package de.bikebean.app.db.type.types;
 
-import androidx.annotation.NonNull;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import de.bikebean.app.db.settings.Setting;
 import de.bikebean.app.db.settings.settings.Battery;
 import de.bikebean.app.db.settings.settings.location_settings.Acc;
 import de.bikebean.app.db.settings.settings.location_settings.Lat;
@@ -13,28 +7,19 @@ import de.bikebean.app.db.settings.settings.location_settings.Lng;
 import de.bikebean.app.db.settings.settings.location_settings.Location;
 import de.bikebean.app.db.settings.settings.number_settings.CellTowers;
 import de.bikebean.app.db.settings.settings.number_settings.WifiAccessPoints;
-import de.bikebean.app.db.type.Type;
+import de.bikebean.app.db.type.SmsType;
 
-public class Initial extends Type {
-
-    private final @NonNull List<Setting> settings;
+public class Initial extends SmsType {
 
     public Initial() {
-        super(SMSTYPE.INITIAL);
+        super(TYPE.INITIAL);
 
-        settings = new ArrayList<>();
-
-        settings.add(new Battery());
-        settings.add(new Location());
-        settings.add(new Acc());
-        settings.add(new Lat());
-        settings.add(new Lng());
-        settings.add(new CellTowers());
-        settings.add(new WifiAccessPoints());
-    }
-
-    @Override
-    public @NonNull List<Setting> getSettings() {
-        return settings;
+        getSettings().add(new Battery());
+        getSettings().add(new Location());
+        getSettings().add(new Acc());
+        getSettings().add(new Lat());
+        getSettings().add(new Lng());
+        getSettings().add(new CellTowers());
+        getSettings().add(new WifiAccessPoints());
     }
 }

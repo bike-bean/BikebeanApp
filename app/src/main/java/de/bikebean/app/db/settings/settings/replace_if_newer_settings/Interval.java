@@ -4,37 +4,32 @@ import androidx.annotation.NonNull;
 
 import de.bikebean.app.db.settings.settings.ReplaceIfNewerSetting;
 import de.bikebean.app.db.sms.Sms;
+import de.bikebean.app.db.sms.SmsFactory;
 import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.utils.sms.parser.SmsParser;
+import de.bikebean.app.db.state.StateFactory;
 
 public class Interval extends ReplaceIfNewerSetting {
 
+    public static final int INITIAL_INTERVAL = 1;
     private static final @NonNull State.KEY key = State.KEY.INTERVAL;
-    private static final int INITIAL_INTERVAL = 1;
 
-    private final int interval;
+    private Interval(final @NonNull Sms sms, final int interval) {
+        super(sms,
+                StateFactory.createNumberState(
+                        sms, key, interval, State.STATUS.CONFIRMED
+                )
+        );
+    }
 
-    public Interval(final @NonNull SmsParser smsParser, boolean isStatus) {
-        super(smsParser.getSms(), key);
-
-        if (isStatus)
-            interval = smsParser.getStatusInterval();
-        else
-            interval = smsParser.getInterval();
+    public Interval(final @NonNull Sms sms, final @NonNull StatusGetter statusGetter) {
+        this(sms, statusGetter.getStatus());
     }
 
     public Interval() {
-        super(new Sms(), key);
-        interval = INITIAL_INTERVAL;
+        this(SmsFactory.createNullSms(), INITIAL_INTERVAL);
     }
 
-    @Override
-    public final @NonNull Double get() {
-        return (double) interval;
-    }
-
-    @Override
-    public final @NonNull State getState() {
-        return new State(getDate(), key, get(), "", State.STATUS.CONFIRMED, getId());
+    public interface StatusGetter {
+        int getStatus();
     }
 }

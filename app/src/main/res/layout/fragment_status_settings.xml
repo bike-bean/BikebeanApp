@@ -1,238 +1,262 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="@dimen/tile_padding"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
+    android:orientation="vertical" >
 
+    <!-- title -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal" >
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="24dp"
-            android:layout_marginStart="@dimen/fragment_horizontal_margin"
-            android:gravity="bottom"
-            android:text="@string/last_updated"
-            android:textAppearance="@style/TextAppearance.AppTheme.Unemphasized" />
+            android:id="@+id/title"
+            style="?attr/titleText"
+            android:text="@string/status_text"
+            />
 
         <Space
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <TextView
-            android:id="@+id/datetimeText2"
-            android:layout_width="wrap_content"
-            android:layout_height="24dp"
-            android:textAppearance="@style/TextAppearance.AppTheme.Unemphasized" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
         <ImageButton
-            android:id="@+id/helpButton3"
-            android:layout_width="35dp"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/help3"
-            android:src="@drawable/ic_help_outline_black_24dp" />
+            android:id="@+id/helpButton"
+            style="?attr/helpButton"
+            android:contentDescription="@string/help3" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_marginStart="@dimen/fragment_horizontal_margin"
-            android:gravity="bottom"
-            android:text="@string/status_text"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5" />
+    </LinearLayout>
+
+    <!-- meta -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/fragment_vertical_margin" >
+
+        <include layout="@layout/layout_last_changed" />
+
+        <!-- waiting progress bar -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingTop="@dimen/fragment_vertical_margin">
+        android:orientation="vertical"
+        android:paddingStart="0dp"
+        android:paddingEnd="@dimen/fragment_horizontal_margin"
+        android:paddingTop="@dimen/fragment_vertical_margin"
+        android:paddingBottom="@dimen/fragment_vertical_margin" >
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:contentDescription="@string/wlan_header"
-            android:paddingStart="@dimen/fragment_horizontal_margin"
-            android:paddingEnd="@dimen/activity_horizontal_margin"
-            android:src="@drawable/ic_signal_wifi_4_bar_black_24dp" />
-
+        <!-- wlan -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:gravity="center_vertical" >
 
+            <!-- icon -->
+            <ImageView
+                android:id="@+id/wlanImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/activity_horizontal_margin"
+                android:contentDescription="@string/wlan_header"
+                android:src="@drawable/ic_signal_wifi_4_bar_black_24dp" />
+
+            <!-- info -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical" >
 
+                <!-- title with switch -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?attr/textAppearanceBody1"
+                        android:text="@string/wlan_title" />
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/wlanSwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <!-- subtitle -->
                 <TextView
+                    android:id="@+id/wlanSummary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/wlan_title"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+                    android:text="@string/wlan_summary_off"
+                    android:textAppearance="?attr/textAppearanceBody2" />
 
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/wlanSwitch"
+                <!-- pending status -->
+                <TextView
+                    android:id="@+id/wlanPendingStatus"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:visibility="gone" />
+
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/wlanSummary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/wlan_summary_off"
-                android:textAppearance="@style/TextAppearance.AppTheme.Unemphasized" />
-
-            <TextView
-                android:id="@+id/wlanPendingStatus"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppTheme.Error"
-                android:visibility="gone" />
 
         </LinearLayout>
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/fragment_vertical_margin">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:contentDescription="@string/interval_header"
-            android:paddingStart="@dimen/fragment_horizontal_margin"
-            android:paddingEnd="@dimen/activity_horizontal_margin"
-            android:src="@drawable/ic_timer_black_24dp" />
-
+        <!-- interval -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:gravity="center_vertical" >
 
+            <!-- icon -->
+            <ImageView
+                android:id="@+id/intervalImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/activity_horizontal_margin"
+                android:contentDescription="@string/interval_header"
+                android:src="@drawable/ic_timer_black_24dp" />
+
+            <!-- info -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
+                <!-- title with dropdown -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/interval_header"
+                        android:textAppearance="?attr/textAppearanceBody1" />
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:layout_gravity="end"
+                        android:layout_marginEnd="@dimen/fragment_horizontal_margin"
+                        android:gravity="center_vertical"
+                        android:orientation="vertical">
+
+                        <Spinner
+                            android:id="@+id/intervalDropdown"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:spinnerMode="dialog" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- subtitle -->
                 <TextView
+                    android:id="@+id/intervalSummary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/interval_header"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+                    android:text="@string/interval_summary"
+                    android:textAppearance="?attr/textAppearanceBody2" />
 
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
-
-                <Spinner
-                    android:id="@+id/intervalDropdown"
+                <!-- next update estimation (TODO) -->
+                <TextView
+                    android:id="@+id/nextUpdateEstimation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:spinnerMode="dialog" />
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:visibility="gone" />
+
+                <!-- pending status -->
+                <TextView
+                    android:id="@+id/intervalPendingStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:visibility="gone" />
+
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/intervalSummary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppTheme.Unemphasized" />
-
-            <TextView
-                android:id="@+id/nextUpdateEstimation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppTheme.Unemphasized" />
-
-            <TextView
-                android:id="@+id/intervalPendingStatus"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppTheme.Error"
-                android:visibility="gone" />
 
         </LinearLayout>
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/fragment_vertical_margin">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:contentDescription="@string/interval_header"
-            android:paddingStart="@dimen/fragment_horizontal_margin"
-            android:paddingEnd="@dimen/activity_horizontal_margin"
-            android:src="@drawable/ic_add_alert_black_24dp" />
-
+        <!-- warning number -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:gravity="center_vertical" >
 
+            <!-- icon -->
+            <ImageView
+                android:id="@+id/warningNumberImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/activity_horizontal_margin"
+                android:contentDescription="@string/interval_header"
+                android:src="@drawable/ic_add_alert_black_24dp" />
+
+            <!-- info -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
+                <!-- title -->
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_height="48dp"
+                    android:gravity="center_vertical"
                     android:text="@string/warning_number_title"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+                    android:textAppearance="?attr/textAppearanceBody1" />
 
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
+                <!-- subtitle -->
+                <TextView
+                    android:id="@+id/warningNumberSummary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/warning_number_summary"
+                    android:textAppearance="?attr/textAppearanceBody2" />
+
+                <!-- pending status -->
+                <TextView
+                    android:id="@+id/warningNumberPendingStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:visibility="gone" />
 
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/warningNumberSummary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppTheme.Unemphasized" />
-
-            <TextView
-                android:id="@+id/warningNumberPendingStatus"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.AppTheme.Error"
-                android:visibility="gone" />
 
         </LinearLayout>
 

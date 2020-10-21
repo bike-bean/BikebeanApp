@@ -1,35 +1,41 @@
 package de.bikebean.app.db.type.types.sms_parser_types;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.ref.WeakReference;
 
-import de.bikebean.app.db.settings.Setting;
 import de.bikebean.app.db.settings.settings.Battery;
 import de.bikebean.app.db.settings.settings.Wapp;
 import de.bikebean.app.db.settings.settings.number_settings.WifiAccessPoints;
+import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.db.type.types.SmsParserType;
-import de.bikebean.app.ui.utils.sms.parser.SmsParser;
+import de.bikebean.app.ui.drawer.log.LogViewModel;
 
 public class NoWifiList extends SmsParserType {
 
-    private final @NonNull List<Setting> settings;
-
-    public NoWifiList(final @NonNull SmsParser smsParser) {
-        super(SMSTYPE.NO_WIFI_LIST);
-        this.mSmsParser = smsParser;
-        this.settings = new ArrayList<>();
-
-        // battery value is encoded differently in this case
-        settings.add(new WifiAccessPoints(smsParser));
-        settings.add(new Wapp(State.WAPP_WIFI_ACCESS_POINTS, smsParser));
-        settings.add(new Battery(mSmsParser, false, true));
+    private static boolean matches() {
+        return noWifiMatcher.find(0);
     }
 
-    @Override
-    public @NonNull List<Setting> getSettings() {
-        return settings;
+    public static @Nullable NoWifiList createIfMatches(
+            final @NonNull Sms sms,
+            final @NonNull WeakReference<LogViewModel> lv) {
+        noWifiMatcher = noWifiPattern.matcher(sms.getBody());
+
+        if (matches())
+            return new NoWifiList(sms, lv);
+
+        return null;
+    }
+
+    private NoWifiList(final @NonNull Sms sms, final @NonNull WeakReference<LogViewModel> lv) {
+        super(TYPE.NO_WIFI_LIST, sms, lv);
+
+        /* battery value is encoded differently in this case */
+        getSettings().add(new WifiAccessPoints(sms, super::getWappWifiAccessPoints));
+        getSettings().add(new Wapp(sms, State.WAPP_WIFI_ACCESS_POINTS));
+        getSettings().add(new Battery(sms, super::getBatteryNoWifi));
     }
 }

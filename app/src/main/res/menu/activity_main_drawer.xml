@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view" >
+
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/menu_top" >
+        <item
+            android:id="@+id/navigation_map_current"
+            android:icon="@drawable/ic_map_black_24dp"
+            android:title="@string/title_dashboard" />
+        <item
+            android:id="@+id/navigation_wifi"
+            android:icon="@drawable/ic_signal_wifi_4_bar_black_24dp"
+            android:title="@string/title_wifi" />
+        <item
+            android:id="@+id/navigation_sms_history"
+            android:icon="@drawable/ic_textsms_black_24dp"
+            android:title="@string/title_activity_sms" />
+        <item
+            android:id="@+id/navigation_position_history"
+            android:icon="@drawable/ic_baseline_history_24"
+            android:title="@string/history" />
+    </group>
+
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/menu_bottom" >
+        <item
+            android:id="@+id/navigation_preferences"
+            android:icon="@drawable/ic_baseline_settings_24"
+            android:title="@string/title_fragment_preferences" />
+        <item
+            android:id="@+id/navigation_log"
+            android:icon="@drawable/ic_help_outline_white_24dp"
+            android:title="@string/info" />
+    </group>
+
+</menu>

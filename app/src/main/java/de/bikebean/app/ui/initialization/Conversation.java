@@ -7,9 +7,10 @@ import java.util.List;
 import de.bikebean.app.db.settings.Setting;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.type.types.InitialConversation;
-import de.bikebean.app.ui.main.status.StateViewModel;
-import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
-import de.bikebean.app.ui.main.status.menu.sms_history.SmsViewModel;
+import de.bikebean.app.db.type.types.SmsParserType;
+import de.bikebean.app.ui.drawer.status.StateViewModel;
+import de.bikebean.app.ui.drawer.log.LogViewModel;
+import de.bikebean.app.ui.drawer.sms_history.SmsViewModel;
 import de.bikebean.app.ui.utils.sms.parser.SmsParser;
 
 public class Conversation {
@@ -30,7 +31,9 @@ public class Conversation {
     }
 
     public void add(final @NonNull Sms sms) {
-        new SmsParser(sms, null, null, logViewModel).getType().addToConversationList(settings);
+        for (@NonNull SmsParserType type : new SmsParser(sms, null, null, logViewModel).getTypes())
+            type.addToConversationList(settings);
+
         smsViewModel.insert(sms);
     }
 

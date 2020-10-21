@@ -1,33 +1,40 @@
 package de.bikebean.app.db.type.types.sms_parser_types;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.ref.WeakReference;
 
-import de.bikebean.app.db.settings.Setting;
 import de.bikebean.app.db.settings.settings.Battery;
 import de.bikebean.app.db.settings.settings.replace_if_newer_settings.Status;
 import de.bikebean.app.db.settings.settings.replace_if_newer_settings.Wifi;
+import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.type.types.SmsParserType;
-import de.bikebean.app.ui.utils.sms.parser.SmsParser;
+import de.bikebean.app.ui.drawer.log.LogViewModel;
 
 public class WifiOff extends SmsParserType {
 
-    private final @NonNull List<Setting> settings;
-
-    public WifiOff(final @NonNull SmsParser smsParser) {
-        super(SMSTYPE.WIFI_OFF);
-        this.mSmsParser = smsParser;
-        this.settings = new ArrayList<>();
-
-        settings.add(new Battery(mSmsParser, true, false));
-        settings.add(new Wifi(false, smsParser.getSms()));
-        settings.add(new Status(mSmsParser));
+    private static boolean matches() {
+        return wifiStatusOffMatcher.find(0) && statusBatteryStatusMatcher.find(0);
     }
 
-    @Override
-    public @NonNull List<Setting> getSettings() {
-        return settings;
+    public static @Nullable WifiOff createIfMatches(
+            final @NonNull Sms sms,
+            final @NonNull WeakReference<LogViewModel> lv) {
+        wifiStatusOffMatcher = wifiStatusOffPattern.matcher(sms.getBody());
+        statusBatteryStatusMatcher = statusBatteryStatusPattern.matcher(sms.getBody());
+
+        if (matches())
+            return new WifiOff(sms, lv);
+
+        return null;
+    }
+
+    private WifiOff(final @NonNull Sms sms, final @NonNull WeakReference<LogViewModel> lv) {
+        super(TYPE.WIFI_OFF, sms, lv);
+
+        getSettings().add(new Battery(sms, super::getStatusBattery));
+        getSettings().add(new Wifi(false, sms));
+        getSettings().add(new Status(sms));
     }
 }

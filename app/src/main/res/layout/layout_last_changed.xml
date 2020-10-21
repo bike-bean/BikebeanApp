@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HorizontalScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <!-- last changed indicator -->
+        <ImageView
+            android:id="@+id/lastChangedIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/last_updated"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_bike_last_changed_indicator_fg" />
+
+        <!-- last changed text -->
+        <TextView
+            android:id="@+id/lastChangedText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/fragment_horizontal_margin"
+            android:textAppearance="?attr/textAppearanceBody2" />
+
+    </LinearLayout>
+
+</HorizontalScrollView>

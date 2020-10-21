@@ -5,63 +5,63 @@ import androidx.annotation.NonNull;
 import java.util.List;
 
 import de.bikebean.app.db.sms.Sms;
+import de.bikebean.app.db.sms.SmsFactory;
 import de.bikebean.app.db.state.State;
 
 public abstract class Setting {
 
-    public interface ConversationListAdder {
-        void addToConversationList(final @NonNull List<Setting> conversationList);
+    private final State state;
+
+    private final @NonNull ConversationListAdder conversationListAdder;
+
+    public Setting(final @NonNull State state,
+                   final @NonNull ConversationListAdder conversationListAdder) {
+        this.state = state;
+        this.conversationListAdder = conversationListAdder;
     }
 
-    public abstract @NonNull ConversationListAdder getConversationListAdder();
-    public abstract @NonNull State getState();
-    public abstract @NonNull Object get();
-
-    private @NonNull Sms sms;
-    private final @NonNull State.KEY key;
-
-    public Setting(final @NonNull Sms sms, final @NonNull State.KEY key) {
-        this.sms = sms;
-        this.key = key;
-    }
-
-    // setters / getters
-    protected void setSms(final @NonNull Sms sms) {
-        this.sms = sms;
-    }
-
-    public long getDate() {
-        return sms.getTimestamp();
-    }
-
-    protected int getId() {
-        return sms.getId();
+    public final @NonNull State getState() {
+        return state;
     }
 
     public @NonNull Sms getSms() {
-        return sms;
+        return SmsFactory.createSmsFromState(state);
     }
 
-    // interface methods
-    public void addToList(final @NonNull List<Setting> conversationList) {
-        conversationList.add(this);
+    public final @NonNull ConversationListAdder getConversationListAdder() {
+        return conversationListAdder;
     }
 
-    public void replaceIfNewer(final @NonNull List<Setting> conversationList) {
+    public interface ConversationListAdder {
+        void add(final @NonNull List<Setting> conversationList, final @NonNull Setting setting);
+    }
+
+    /* interface methods */
+    public static void addToList(final @NonNull List<Setting> conversationList,
+                                 final @NonNull Setting setting) {
+        conversationList.add(setting);
+    }
+
+    public static void replaceIfNewer(final @NonNull List<Setting> conversationList,
+                                      final @NonNull Setting setting) {
         for (final @NonNull Setting intListItem : conversationList)
-            if (equalsKey(intListItem) && isNewer(intListItem)) {
-                conversationList.add(this);
+            if (setting.equalsKey(intListItem) && setting.isNewerThan(intListItem)) {
+                conversationList.add(setting);
                 conversationList.remove(intListItem);
                 break;
             }
     }
 
-    // utils
+    /* utils */
     private boolean equalsKey(final @NonNull Setting other) {
-        return this.key == other.key;
+        return this.getKey() == other.getKey();
     }
 
-    private boolean isNewer(final @NonNull Setting other) {
-        return this.getDate() > other.getDate();
+    private boolean isNewerThan(final @NonNull Setting other) {
+        return this.getSms().getTimestamp() > other.getSms().getTimestamp();
+    }
+
+    private @NonNull State.KEY getKey() {
+        return State.KEY.getValue(state);
     }
 }

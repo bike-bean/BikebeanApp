@@ -4,35 +4,24 @@ import androidx.annotation.NonNull;
 
 import de.bikebean.app.db.settings.settings.ReplaceIfNewerSetting;
 import de.bikebean.app.db.sms.Sms;
+import de.bikebean.app.db.sms.SmsFactory;
 import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.utils.sms.parser.SmsParser;
+import de.bikebean.app.db.state.StateFactory;
 
 public class Status extends ReplaceIfNewerSetting {
 
-    private static final @NonNull State.KEY key = State.KEY._STATUS;
+    private static final @NonNull
+    State.KEY key = State.KEY._STATUS;
 
-    private final double status;
-    private final @NonNull State state;
-
-    public Status(final @NonNull SmsParser smsParser) {
-        super(smsParser.getSms(), key);
-        status = 0.0;
-        state = new State(getDate(), key, get(), "", State.STATUS.CONFIRMED, getId());
+    public Status(final @NonNull Sms sms) {
+        super(sms, StateFactory.createNumberState(sms, key, 0.0, State.STATUS.CONFIRMED));
     }
 
     public Status() {
-        super(new Sms(), key);
-        status = 0.0;
-        state = new State(getDate(), key, get(), "", State.STATUS.UNSET, getId());
-    }
-
-    @Override
-    public final @NonNull Double get() {
-        return status;
-    }
-
-    @Override
-    public final @NonNull State getState() {
-        return state;
+        super(SmsFactory.createNullSms(),
+                StateFactory.createNumberState(
+                        SmsFactory.createNullSms(), key, 0.0, State.STATUS.UNSET
+                )
+        );
     }
 }

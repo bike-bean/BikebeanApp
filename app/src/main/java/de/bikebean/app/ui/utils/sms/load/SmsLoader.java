@@ -11,11 +11,12 @@ import androidx.annotation.Nullable;
 
 import java.lang.ref.WeakReference;
 
+import de.bikebean.app.db.sms.SmsFactory;
 import de.bikebean.app.ui.initialization.Conversation;
 import de.bikebean.app.db.sms.Sms;
-import de.bikebean.app.ui.main.status.StateViewModel;
-import de.bikebean.app.ui.main.status.menu.log.LogViewModel;
-import de.bikebean.app.ui.main.status.menu.sms_history.SmsViewModel;
+import de.bikebean.app.ui.drawer.status.StateViewModel;
+import de.bikebean.app.ui.drawer.log.LogViewModel;
+import de.bikebean.app.ui.drawer.sms_history.SmsViewModel;
 
 public class SmsLoader extends AsyncTask<String, Void, Void> {
 
@@ -91,7 +92,7 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
         if (inbox.moveToFirst()) {
 
             for (int i=0; i < inbox.getCount(); i++) {
-                final @NonNull Sms sms = new Sms(inbox, Sms.STATUS.NEW);
+                final @NonNull Sms sms = SmsFactory.createSmsFromCursor(inbox, Sms.STATUS.NEW);
 
                 if (smsViewModel.getSmsById(sms.getId()).size() == 0)
                     smsViewModel.insert(sms);
@@ -110,7 +111,7 @@ public class SmsLoader extends AsyncTask<String, Void, Void> {
         if (inbox.moveToFirst()) {
             logViewModel.d("Loading " + inbox.getCount() + " SMS");
             for (int i = 0; i < inbox.getCount(); i++) {
-                conversation.add(new Sms(inbox, Sms.STATUS.PARSED));
+                conversation.add(SmsFactory.createSmsFromCursor(inbox, Sms.STATUS.PARSED));
                 inbox.moveToNext();
             }
 

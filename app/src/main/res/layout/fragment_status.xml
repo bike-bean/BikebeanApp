@@ -1,119 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
         android:orientation="vertical">
 
-        <ImageView
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/location_text"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_map" />
+            android:layout_height="?attr/actionBarSize"
+            android:theme="@style/Theme.BikeBean.AppBarOverlay" >
 
-        <androidx.cardview.widget.CardView
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/topPanel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:navigationIcon="@drawable/ic_baseline_close_24" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/errorView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/fragment_horizontal_margin"
-            android:layout_marginTop="@dimen/fragment_vertical_margin"
-            android:layout_marginEnd="@dimen/fragment_horizontal_margin"
+            android:theme="@style/Theme.BikeBean.ErrorOverlay"
             android:visibility="gone"
-            app:cardElevation="3dp">
+            style="?attr/shapeAppearanceMediumComponent" >
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/design_default_color_error"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/design_default_color_error"
-                    app:drawableStartCompat="@drawable/ic_warning_white_24dp"
                     android:drawablePadding="@dimen/activity_horizontal_margin"
                     android:paddingStart="@dimen/fragment_horizontal_margin"
                     android:paddingTop="@dimen/fragment_horizontal_margin"
                     android:paddingEnd="@dimen/fragment_horizontal_margin"
                     android:text="@string/no_sms_permission_error"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                    android:textColor="@color/white"
-                    android:textStyle="bold" />
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    app:drawableStartCompat="@drawable/ic_warning_white_24dp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/fragment_horizontal_margin"
                     android:text="@string/no_sms_permission_error_2"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                    android:textColor="@color/white" />
+                    android:textAppearance="?attr/textAppearanceBody1"
+                    />
 
                 <Button
                     android:id="@+id/errorViewButton"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
                     android:layout_marginEnd="@dimen/activity_horizontal_margin"
                     android:layout_marginBottom="@dimen/fragment_vertical_margin"
-                    android:text="@string/to_settings"
-                    android:textColor="@color/white" />
+                    android:text="@string/to_settings" />
 
             </LinearLayout>
 
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/fragment_horizontal_margin"
-            android:layout_marginTop="@dimen/fragment_vertical_margin"
-            android:layout_marginEnd="@dimen/fragment_horizontal_margin"
-            app:cardElevation="3dp">
+            style="?attr/shapeAppearanceMediumComponent" >
 
             <FrameLayout
                 android:id="@+id/include0"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </FrameLayout>
-        </androidx.cardview.widget.CardView>
+                android:layout_height="wrap_content"/>
 
-        <androidx.cardview.widget.CardView
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/fragment_horizontal_margin"
-            android:layout_marginTop="@dimen/fragment_vertical_margin"
-            android:layout_marginEnd="@dimen/fragment_horizontal_margin"
-            app:cardElevation="3dp">
+            style="?attr/shapeAppearanceMediumComponent" >
 
             <FrameLayout
                 android:id="@+id/include1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </FrameLayout>
-        </androidx.cardview.widget.CardView>
+                android:layout_height="wrap_content"/>
 
-        <androidx.cardview.widget.CardView
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/fragment_horizontal_margin"
-            android:layout_marginTop="@dimen/fragment_vertical_margin"
-            android:layout_marginEnd="@dimen/fragment_horizontal_margin"
-            app:cardElevation="3dp">
+            android:layout_marginBottom="@dimen/fragment_vertical_margin"
+            style="?attr/shapeAppearanceMediumComponent">
 
             <FrameLayout
                 android:id="@+id/include2"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </FrameLayout>
-        </androidx.cardview.widget.CardView>
+                android:layout_height="wrap_content"/>
+
+        </com.google.android.material.card.MaterialCardView>
+
     </LinearLayout>
-</ScrollView>
+
+</androidx.core.widget.NestedScrollView>

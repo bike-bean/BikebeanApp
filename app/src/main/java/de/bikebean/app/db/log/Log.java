@@ -7,7 +7,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import de.bikebean.app.db.DatabaseEntity;
-import de.bikebean.app.ui.utils.Utils;
+import de.bikebean.app.ui.utils.date.DateUtils;
 
 @Entity(tableName = "log_table")
 public class Log extends DatabaseEntity {
@@ -96,6 +96,6 @@ public class Log extends DatabaseEntity {
     public @NonNull String createReport() {
         final @NonNull String delimiter = "\t";
         return id + delimiter + mMessage.replace("\n", "//") +
-                delimiter + Utils.convertToTimeLog(mTimestamp) + delimiter + mLevel + "\n";
+                delimiter + DateUtils.convertToTimeLog(mTimestamp) + delimiter + mLevel + "\n";
     }
 }

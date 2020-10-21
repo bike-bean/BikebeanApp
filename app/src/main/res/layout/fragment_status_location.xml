@@ -1,215 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:clickable="?android:attr/windowOverscan"
-    android:padding="@dimen/fragment_vertical_margin">
+    android:layout_height="wrap_content" >
 
-    <LinearLayout
-        android:id="@+id/lastUpdated"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
+    <!-- title -->
+    <include layout="@layout/layout_location_title" />
+
+    <!-- help button -->
+    <ImageButton
+        android:id="@+id/helpButton"
+        style="?attr/helpButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed">
+        android:contentDescription="@string/help2" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="24dp"
-            android:layout_marginStart="@dimen/fragment_horizontal_margin"
-            android:gravity="bottom"
-            android:text="@string/last_updated"
-            android:textAppearance="@style/TextAppearance.AppTheme.Unemphasized" />
+    <include
+        layout="@layout/layout_meta_info"
+        android:id="@+id/metaInfo" />
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/datetimeText1"
-            android:layout_width="wrap_content"
-            android:layout_height="24dp"
-            android:gravity="bottom"
-            android:textAppearance="@style/TextAppearance.AppTheme.Unemphasized" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/titleAndButton"
+    <!-- separation line -->
+    <ImageView
+        android:id="@+id/separationLine"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lastUpdated">
-
-        <ImageButton
-            android:id="@+id/helpButton"
-            android:layout_width="35dp"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/help1"
-            android:src="@drawable/ic_help_outline_black_24dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_marginStart="@dimen/fragment_horizontal_margin"
-            android:layout_marginEnd="@dimen/fragment_horizontal_margin"
-            android:gravity="bottom"
-            android:text="@string/location_text"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5" />
-
-        <ImageButton
-            android:id="@+id/shareButton"
-            android:layout_width="35dp"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/share"
-            android:src="@drawable/ic_share_black_24dp" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        <Button
-            android:id="@+id/button_get_location"
-            style="@style/Widget.AppTheme.SendButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:text="@string/button_get_location" />
-
-    </LinearLayout>
+        android:background="?attr/dividerHorizontal"
+        android:contentDescription="@string/share"
+        app:layout_constraintTop_toBottomOf="@id/metaInfo" />
 
     <LinearLayout
-        android:id="@+id/locationPendingStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/titleAndButton">
+        android:padding="@dimen/fragment_vertical_margin"
+        app:layout_constraintTop_toBottomOf="@id/separationLine" >
 
-        <TextView
-            android:id="@+id/locationPendingStatusText"
-            android:layout_width="wrap_content"
+        <!-- info -->
+        <include layout="@layout/layout_location_information" />
+
+        <!-- cellTower and wap number information -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:textAlignment="textEnd"
-            android:textAppearance="@style/TextAppearance.AppTheme.Error"
-            android:visibility="gone" />
-    </LinearLayout>
+            android:layout_marginTop="4dp">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="@style/Widget.AppCompat.ProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/locationPendingStatus" />
-
-    <TableLayout
-        android:id="@+id/tableLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/fragment_horizontal_margin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/locationPendingStatus" >
-
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
-
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="0dp"
-                android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                android:text="@string/lat"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                android:textStyle="bold" />
+                android:layout_marginTop="4dp"
+                android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/lat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
-        </TableRow>
+                <TextView
+                    android:id="@+id/noCellTowersText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?attr/textAppearanceBody2" />
 
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/noWifiAccessPointsText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?attr/textAppearanceBody2" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/lng"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                android:textStyle="bold" />
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/lng"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
-        </TableRow>
+        </HorizontalScrollView>
 
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/acc"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/acc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
-        </TableRow>
-
-    </TableLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/locationPendingStatus">
-
-        <TextView
-            android:id="@+id/locationNoData"
-            android:layout_width="0dp"
+        <!-- buttons -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginStart="@dimen/fragment_horizontal_margin"
-            android:layout_marginBottom="4dp"
-            android:layout_weight="1"
-            android:textAppearance="@style/TextAppearance.AppTheme.Error" />
+            android:layout_marginTop="4dp" >
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight=".1" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
 
-        <Button
-            android:id="@+id/button_open_map"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:text="@string/auf_karte_zeigen"
-            app:icon="@drawable/ic_map_white_24dp" />
+                <!-- open map button -->
+                <Button
+                    android:id="@+id/buttonOpenMap"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="?attr/materialButtonStyle"
+                    app:icon="@drawable/ic_map_white_24dp"
+                    android:text="@string/auf_karte_zeigen" />
+
+                <!-- route button -->
+                <Button
+                    android:id="@+id/routeButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/fragment_vertical_margin"
+                    style="?attr/materialButtonOutlinedStyle"
+                    app:icon="@drawable/ic_directions_white_24dp"
+                    android:text="@string/route" />
+
+                <!-- share button -->
+                <Button
+                    android:id="@+id/shareButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/fragment_vertical_margin"
+                    style="?attr/materialButtonOutlinedStyle"
+                    app:icon="@drawable/ic_share_black_24dp"
+                    android:text="@string/share" />
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
 
     </LinearLayout>
 

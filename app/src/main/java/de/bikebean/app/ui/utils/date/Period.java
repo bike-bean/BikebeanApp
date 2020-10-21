@@ -76,6 +76,16 @@ public class Period {
         return getDateString() + getPeriodString();
     }
 
+    public @NonNull String getLastChangedString() {
+        final @NonNull String preString;
+        if (periodMargin > 4)
+            preString = " um " ;
+        else
+            preString = " am ";
+
+        return "Zuletzt aktualisiert" + preString + getDateString() + getPeriodString();
+    }
+
     private @NonNull String getDateString() {
         if (periodMargin >= 1 && periodMargin <= 2)
             return outputDateWithYear;

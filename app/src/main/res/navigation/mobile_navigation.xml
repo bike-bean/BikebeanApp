@@ -3,101 +3,82 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@+id/navigation_status">
+    app:startDestination="@id/navigation_map_current">
 
     <fragment
-        android:id="@+id/navigation_status"
-        android:name="de.bikebean.app.ui.main.status.StatusFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_status" >
-
-        <action
-            android:id="@+id/map_action"
-            app:destination="@id/navigation_map"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
-
-        <action
-            android:id="@+id/settings_action"
-            app:destination="@id/navigation_settings"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
-
-        <action
-            android:id="@+id/sms_history_action"
-            app:destination="@id/navigation_sms_history"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
-
-        <action
-            android:id="@+id/initial_configuration_action"
-            app:destination="@id/navigation_initial_configuration" />
-
-        <action
-            android:id="@+id/history_action"
-            app:destination="@id/navigation_history"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
-
-        <action
-            android:id="@+id/log_action"
-            app:destination="@id/navigation_log" />
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/navigation_map"
-        android:name="de.bikebean.app.ui.main.map.MapFragmentCurrent"
+        android:id="@+id/navigation_map_current"
+        android:name="de.bikebean.app.ui.drawer.map.MapFragmentCurrent"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_map" >
 
         <action
-            android:id="@+id/back_action"
-            app:destination="@id/navigation_status" />
+            android:id="@+id/map_action"
+            app:destination="@id/navigation_map_current" />
+
     </fragment>
 
     <fragment
+        android:id="@+id/navigation_map_history"
+        android:name="de.bikebean.app.ui.drawer.map.MapFragmentHistory"
+        android:label="@string/title_dashboard"
+        tools:layout="@layout/fragment_map" />
+
+    <fragment
         android:id="@+id/navigation_wifi"
-        android:name="de.bikebean.app.ui.main.wifi_localization.Wifi_localizationFragment"
+        android:name="de.bikebean.app.ui.drawer.wifi_localization.Wifi_localizationFragment"
         android:label="@string/title_wifi"
         tools:layout="@layout/fragment_wifi_localization" />
 
-    <activity
-        android:id="@+id/navigation_settings"
-        android:name="de.bikebean.app.ui.main.status.menu.preferences.PreferencesActivity"
-        android:label="@string/title_activity_settings"
-        tools:layout="@layout/activity_settings" />
+    <fragment
+        android:id="@+id/navigation_preferences"
+        android:name="de.bikebean.app.ui.drawer.preferences.PreferencesFragment"
+        android:label="@string/title_fragment_preferences"
+        tools:layout="@layout/fragment_preferences" />
 
-    <activity
+    <fragment
         android:id="@+id/navigation_sms_history"
-        android:name="de.bikebean.app.ui.main.status.menu.sms_history.SmsActivity"
+        android:name="de.bikebean.app.ui.drawer.sms_history.SmsHistoryFragment"
         android:label="@string/title_activity_sms"
-        tools:layout="@layout/activity_sms" />
+        tools:layout="@layout/fragment_history_sms" />
 
-    <activity
-        android:id="@+id/navigation_initial_configuration"
-        android:name="de.bikebean.app.ui.initialization.InitialConfigurationActivity"
-        android:label="activity_initial_configuration"
-        tools:layout="@layout/activity_initial_configuration" />
-
-    <activity
-        android:id="@+id/navigation_history"
-        android:name="de.bikebean.app.ui.main.status.menu.history.HistoryActivity"
+    <fragment
+        android:id="@+id/navigation_position_history"
+        android:name="de.bikebean.app.ui.drawer.history.position.PositionHistoryFragment"
         android:label="@string/history"
-        tools:layout="@layout/activity_history" />
+        tools:layout="@layout/fragment_history_position" >
 
-    <activity
+        <action
+            android:id="@+id/battery_action"
+            app:destination="@id/navigation_battery_history" />
+
+        <action
+            android:id="@+id/position_action"
+            app:destination="@id/navigation_position_history" />
+
+        <action
+            android:id="@+id/map_action"
+            app:destination="@id/navigation_map_history" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_battery_history"
+        android:name="de.bikebean.app.ui.drawer.history.battery.BatteryHistoryFragment"
+        android:label="@string/history"
+        tools:layout="@layout/fragment_history_battery" >
+
+        <action
+            android:id="@+id/battery_action"
+            app:destination="@id/navigation_battery_history" />
+
+        <action
+            android:id="@+id/position_action"
+            app:destination="@id/navigation_position_history" />
+    </fragment>
+
+    <fragment
         android:id="@+id/navigation_log"
-        android:name="de.bikebean.app.ui.main.status.menu.log.LogActivity"
-        android:label="activity_log"
-        tools:layout="@layout/activity_log" />
+        android:name="de.bikebean.app.ui.drawer.log.LogFragment"
+        android:label="@string/log"
+        tools:layout="@layout/fragment_log" />
 
 </navigation>

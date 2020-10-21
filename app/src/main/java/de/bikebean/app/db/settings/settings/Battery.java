@@ -4,60 +4,32 @@ import androidx.annotation.NonNull;
 
 import de.bikebean.app.db.settings.Setting;
 import de.bikebean.app.db.sms.Sms;
+import de.bikebean.app.db.sms.SmsFactory;
 import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.utils.sms.parser.SmsParser;
+import de.bikebean.app.db.state.StateFactory;
 
 public class Battery extends Setting {
 
-    private final double battery;
-    private final @NonNull State state;
-    private final @NonNull ConversationListAdder conversationListAdder;
-
+    public static final double UNSET_BATTERY = -1.0;
     private static final @NonNull State.KEY key = State.KEY.BATTERY;
-    private static final @NonNull State.STATUS status = State.STATUS.CONFIRMED;
 
-    public Battery(final @NonNull SmsParser smsParser, boolean isStatus, boolean isNoWifi) {
-        super(smsParser.getSms(), key);
-
-        if (isStatus)
-            battery = smsParser.getStatusBattery();
-        else if (isNoWifi)
-            battery = smsParser.getBatteryNoWifi();
-        else
-            battery = smsParser.getBattery();
-
-        conversationListAdder = super::addToList;
-
-        state = new State(
-                getDate(), key, get(), "",
-                status, getId()
+    public Battery(final @NonNull Sms sms, final @NonNull BatteryGetter batteryGetter) {
+        super(
+                StateFactory.createNumberState(
+                        sms, key, batteryGetter.getBattery(), State.STATUS.CONFIRMED
+                ),
+                Setting::addToList
         );
     }
 
     public Battery() {
-        super(new Sms(), key);
-
-        battery = -1.0;
-        conversationListAdder = super::addToList;
-
-        state = new State(
-                getDate(), key, get(), "",
-                State.STATUS.UNSET, getId()
+        super(
+                StateFactory.createNumberState(SmsFactory.createNullSms(), key, UNSET_BATTERY, State.STATUS.UNSET),
+                Setting::addToList
         );
     }
 
-    @Override
-    public final @NonNull State getState() {
-        return state;
-    }
-
-    @Override
-    public final @NonNull ConversationListAdder getConversationListAdder() {
-        return conversationListAdder;
-    }
-
-    @Override
-    public final @NonNull Double get() {
-        return battery;
+    public interface BatteryGetter {
+        double getBattery();
     }
 }

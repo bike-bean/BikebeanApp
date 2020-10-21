@@ -1,35 +1,42 @@
 package de.bikebean.app.db.type.types.sms_parser_types;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.ref.WeakReference;
 
-import de.bikebean.app.db.settings.Setting;
 import de.bikebean.app.db.settings.settings.Battery;
 import de.bikebean.app.db.settings.settings.Wapp;
 import de.bikebean.app.db.settings.settings.number_settings.WifiAccessPoints;
+import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.db.type.types.SmsParserType;
-import de.bikebean.app.ui.utils.sms.parser.SmsParser;
+import de.bikebean.app.ui.drawer.log.LogViewModel;
 
 public class WifiList extends SmsParserType {
 
-    private final @NonNull List<Setting> settings;
-
-    public WifiList(final @NonNull SmsParser smsParser) {
-        super(SMSTYPE.WIFI_LIST);
-        this.mSmsParser = smsParser;
-        this.settings = new ArrayList<>();
-
-        // battery value is encoded differently in this case
-        settings.add(new WifiAccessPoints(smsParser));
-        settings.add(new Wapp(State.WAPP_WIFI_ACCESS_POINTS, smsParser));
-        settings.add(new Battery(mSmsParser, false, false));
+    private static boolean matches() {
+        return wifiMatcher.find(0) && batteryMatcher.find(0);
     }
 
-    @Override
-    public @NonNull List<Setting> getSettings() {
-        return settings;
+    public static @Nullable WifiList createIfMatches(
+            final @NonNull Sms sms,
+            final @NonNull WeakReference<LogViewModel> lv) {
+        wifiMatcher = wifiPattern.matcher(sms.getBody());
+        batteryMatcher = batteryPattern.matcher(sms.getBody());
+
+        if (matches())
+            return new WifiList(sms, lv);
+
+        return null;
+    }
+
+    private WifiList(final @NonNull Sms sms, final @NonNull WeakReference<LogViewModel> lv) {
+        super(TYPE.WIFI_LIST, sms, lv);
+
+        /* battery value is encoded differently in this case */
+        getSettings().add(new WifiAccessPoints(sms, super::getWappWifiAccessPoints));
+        getSettings().add(new Wapp(sms, State.WAPP_WIFI_ACCESS_POINTS));
+        getSettings().add(new Battery(sms, super::getBattery));
     }
 }
