@@ -1,47 +1,14 @@
 package de.bikebean.app.db.sms;
 
-import android.database.Cursor;
-import android.provider.Telephony;
-import android.telephony.SmsMessage;
-
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import de.bikebean.app.db.DatabaseEntity;
-import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.utils.Utils;
 
 @Entity(tableName = "sms_table")
 public class Sms extends DatabaseEntity {
-
-    public enum STATUS {
-        NEW, PARSED
-    }
-
-    public enum MESSAGE {
-        _STATUS("Status"),
-        WAPP("Wapp"),
-        INT(""),
-        WIFI(""),
-        WARNING_NUMBER("Warningnumber");
-
-        private String msg;
-
-        MESSAGE(String msg) {
-            this.msg = msg;
-        }
-
-        public String getMsg() {
-            return msg;
-        }
-
-        public void setValue(String msg) {
-            this.msg = msg;
-        }
-    }
 
     @PrimaryKey
     @ColumnInfo(name = "_id")
@@ -68,13 +35,13 @@ public class Sms extends DatabaseEntity {
     @ColumnInfo(name = "timestamp")
     private final long mTimestamp;
 
-    public Sms(
+    Sms(
             int id,
-            @NonNull String address,
-            @NonNull String body,
+            final @NonNull String address,
+            final @NonNull String body,
             int type,
             int state,
-            @NonNull String date,
+            final @NonNull String date,
             long timestamp
     ) {
         this.mId = id;
@@ -86,120 +53,15 @@ public class Sms extends DatabaseEntity {
         this.mTimestamp = timestamp;
     }
 
-    @Ignore
-    public Sms(
-            int id,
-            @NonNull String address,
-            @NonNull String body,
-            int type,
-            @NonNull STATUS state,
-            @NonNull String date,
-            long timestamp
-    ) {
-        this.mId = id;
-        this.mAddress = address;
-        this.mBody = body;
-        this.mType = type;
-        this.mState = state.ordinal();
-        this.mDate = date;
-        this.mTimestamp = timestamp;
-    }
-
-    // New Sent SMS
-    @Ignore
-    public Sms(
-            int smsId,
-            @NonNull String address,
-            @NonNull String message
-    ) {
-        long timestamp = System.currentTimeMillis();
-
-        this.mId = smsId - 1;
-        this.mAddress = address;
-        this.mBody = message;
-        this.mType = Telephony.Sms.MESSAGE_TYPE_SENT;
-        this.mState = STATUS.NEW.ordinal();
-        this.mDate = Utils.convertToTime(timestamp);
-        this.mTimestamp = timestamp;
-    }
-
-    @Ignore
-    public Sms(
-            @NonNull State state
-    ) {
-        this.mId = state.getSmsId();
-        this.mAddress = "";
-        this.mBody = "";
-        this.mType = 0;
-        this.mState = 0;
-        this.mDate = Utils.convertToTime(state.getTimestamp());
-        this.mTimestamp = state.getTimestamp();
-    }
-
-    // with cursor
-    @Ignore
-    public Sms(
-            @NonNull Cursor inbox,
-            @NonNull STATUS smsState
-    ) {
-        String id = inbox.getString(inbox.getColumnIndexOrThrow("_id"));
-        this.mId = Integer.parseInt(id);
-
-        String type = inbox.getString(inbox.getColumnIndexOrThrow("type"));
-        this.mType = Integer.parseInt(type);
-
-        this.mState = smsState.ordinal();
-
-        this.mAddress = inbox.getString(inbox.getColumnIndexOrThrow("address"));
-        this.mBody = inbox.getString(inbox.getColumnIndexOrThrow("body"));
-
-        String date = inbox.getString(inbox.getColumnIndexOrThrow("date"));
-        this.mTimestamp = Long.parseLong(date);
-        this.mDate = Utils.convertToTime(mTimestamp);
-    }
-
-    // with SmsMessage from Intent
-    @Ignore
-    public Sms(
-            int id,
-            @NonNull SmsMessage smsMessage
-    ) {
-        this.mId = id + 1;
-        this.mType = Telephony.Sms.MESSAGE_TYPE_INBOX;
-        this.mState = STATUS.NEW.ordinal();
-
-        String address = smsMessage.getOriginatingAddress();
-        if (address != null)
-            this.mAddress = address;
-        else
-            this.mAddress = "";
-        this.mBody = smsMessage.getMessageBody();
-
-        this.mTimestamp = smsMessage.getTimestampMillis();
-        this.mDate = Utils.convertToTime(mTimestamp);
-    }
-
-    // nullType
-    @Ignore
-    public Sms() {
-        this.mId = 0;
-        this.mAddress = "";
-        this.mBody = "";
-        this.mType = 0;
-        this.mState = 0;
-        this.mDate = "";
-        this.mTimestamp = 0;
-    }
-
     public int getId() {
         return this.mId;
     }
 
-    public String getAddress() {
+    public @NonNull String getAddress() {
         return this.mAddress;
     }
 
-    public String getBody() {
+    public @NonNull String getBody() {
         return this.mBody;
     }
 
@@ -211,7 +73,7 @@ public class Sms extends DatabaseEntity {
         return this.mState;
     }
 
-    public String getDate() {
+    public @NonNull String getDate() {
         return this.mDate;
     }
 
@@ -220,21 +82,56 @@ public class Sms extends DatabaseEntity {
     }
 
     @Override
-    public DatabaseEntity getNullType() {
-        return new Sms();
+    public @NonNull DatabaseEntity getNullType() {
+        return SmsFactory.createNullSms();
     }
 
     @Override
-    public String createReportTitle() {
-        String delimiter = "\t";
+    public @NonNull String createReportTitle() {
+        final @NonNull String delimiter = "\t";
         return "ID" + delimiter + "Body" + delimiter + "Type" + delimiter +
                 "State" + delimiter + "Date" + "\n";
     }
 
     @Override
-    public String createReport() {
-        String delimiter = "\t";
+    public @NonNull String createReport() {
+        final @NonNull String delimiter = "\t";
         return mId + delimiter + mBody.replace("\n", "//") +
-                delimiter + mType + delimiter + mState + delimiter + mDate + "\n";
+                delimiter + mType + delimiter + STATUS.getName(mState) + delimiter + mDate + "\n";
+    }
+
+    public enum STATUS {
+        NEW, PARSED;
+
+        private static @NonNull String getName(int value) {
+            for (final @NonNull STATUS s : STATUS.values()) {
+                if (s.ordinal() == value)
+                    return s.name();
+            }
+
+            return "UNDEFINED";
+        }
+    }
+
+    public enum MESSAGE {
+        _STATUS("Status"),
+        WAPP("Wapp"),
+        INT(""),
+        WIFI(""),
+        WARNING_NUMBER("Warningnumber");
+
+        private @NonNull String msg;
+
+        MESSAGE(@NonNull String msg) {
+            this.msg = msg;
+        }
+
+        public @NonNull String getMsg() {
+            return msg;
+        }
+
+        public void setValue(final @NonNull String msg) {
+            this.msg = msg;
+        }
     }
 }

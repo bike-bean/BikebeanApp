@@ -7,7 +7,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import de.bikebean.app.db.DatabaseEntity;
-import de.bikebean.app.ui.utils.Utils;
+import de.bikebean.app.ui.utils.date.DateUtils;
 
 @Entity(tableName = "log_table")
 public class Log extends DatabaseEntity {
@@ -31,8 +31,8 @@ public class Log extends DatabaseEntity {
 
     public Log(
             long timestamp,
-            @NonNull String message,
-            LEVEL level
+            final @NonNull String message,
+            final @NonNull LEVEL level
     ) {
         this.mTimestamp = timestamp;
         this.mMessage = message;
@@ -41,8 +41,8 @@ public class Log extends DatabaseEntity {
 
     @Ignore
     public Log(
-            @NonNull String message,
-            LEVEL level
+            final @NonNull String message,
+            final @NonNull LEVEL level
     ) {
         this.mTimestamp = System.currentTimeMillis();
         this.mMessage = message;
@@ -51,9 +51,9 @@ public class Log extends DatabaseEntity {
 
     @Ignore
     public Log(
-            @NonNull String message,
-            @NonNull String callerInformation,
-            LEVEL level
+            final @NonNull String message,
+            final @NonNull String callerInformation,
+            final @NonNull LEVEL level
     ) {
         this.mTimestamp = System.currentTimeMillis();
         this.mMessage = callerInformation + ": "+ message;
@@ -68,7 +68,7 @@ public class Log extends DatabaseEntity {
         this.mLevel = LEVEL.DEBUG;
     }
 
-    public String getMessage() {
+    public @NonNull String getMessage() {
         return this.mMessage;
     }
 
@@ -76,26 +76,26 @@ public class Log extends DatabaseEntity {
         return this.mTimestamp;
     }
 
-    public LEVEL getLevel() {
+    public @NonNull LEVEL getLevel() {
         return this.mLevel;
     }
 
     @Override
-    public DatabaseEntity getNullType() {
+    public @NonNull DatabaseEntity getNullType() {
         return new Log();
     }
 
     @Override
-    public String createReportTitle() {
-        String delimiter = "\t";
+    public @NonNull String createReportTitle() {
+        final @NonNull String delimiter = "\t";
         return "ID" + delimiter + "Message" + delimiter +
                 "Date" + delimiter + "level" + "\n";
     }
 
     @Override
-    public String createReport() {
-        String delimiter = "\t";
+    public @NonNull String createReport() {
+        final @NonNull String delimiter = "\t";
         return id + delimiter + mMessage.replace("\n", "//") +
-                delimiter + Utils.convertToTimeLog(mTimestamp) + delimiter + mLevel + "\n";
+                delimiter + DateUtils.convertToTimeLog(mTimestamp) + delimiter + mLevel + "\n";
     }
 }

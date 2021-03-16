@@ -12,20 +12,20 @@ import java.util.List;
 public interface LogDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insert(Log log);
+    void insert(final Log log);
 
     @Query("DELETE FROM log_table")
     void deleteAll();
 
     @Query("SELECT * FROM log_table WHERE level >= :level ORDER BY timestamp DESC")
-    LiveData<List<Log>> getHigherThanLevel(Log.LEVEL level);
+    LiveData<List<Log>> getHigherThanLevel(final Log.LEVEL level);
 
     @Query("SELECT * FROM log_table WHERE level = :level ORDER BY timestamp DESC LIMIT 1")
-    LiveData<List<Log>> getByLevel(Log.LEVEL level);
+    LiveData<List<Log>> getByLevel(final Log.LEVEL level);
 
     @Query("SELECT * FROM log_table")
     List<Log> getAllSync();
 
     @Query("SELECT * FROM log_table WHERE level =  :level ORDER BY timestamp DESC LIMIT 1")
-    List<Log> getByLevelSync(Log.LEVEL level);
+    List<Log> getByLevelSync(final Log.LEVEL level);
 }

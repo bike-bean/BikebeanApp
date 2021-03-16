@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Widget.BikeBean.ButtonOverlay.Outlined" parent="">
+        <item name="colorPrimary">@color/white</item>
+    </style>
+
+    <style name="Widget.BikeBean.ButtonOverlay.FakeTab" parent="">
+        <item name="colorPrimary">?attr/colorSurface</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+
+</resources>

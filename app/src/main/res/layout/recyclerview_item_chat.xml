@@ -25,15 +25,7 @@
 
         <TextView
             android:id="@+id/txtMsgFrom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_msg_from"
-            android:paddingStart="10dp"
-            android:paddingTop="5dp"
-            android:paddingEnd="10dp"
-            android:paddingBottom="5dp"
-            android:textColor="#434343"
-            android:textSize="16sp" />
+            style="@style/Widget.BikeBean.MessageText.From" />
 
         <TextView
             android:id="@+id/timeMsgFrom"
@@ -57,15 +49,7 @@
 
         <TextView
             android:id="@+id/txtMsgYou"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_msg_you"
-            android:paddingStart="10dp"
-            android:paddingTop="5dp"
-            android:paddingEnd="10dp"
-            android:paddingBottom="5dp"
-            android:textColor="#ffffff"
-            android:textSize="16sp" />
+            style="@style/Widget.BikeBean.MessageText.You" />
 
         <TextView
             android:id="@+id/timeMsgYou"

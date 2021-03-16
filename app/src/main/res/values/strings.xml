@@ -1,38 +1,63 @@
 <resources>
     <string name="app_name">Bike Bean</string>
-    <string name="title_home">Status</string>
     <string name="title_dashboard">Karte</string>
     <string name="title_wifi">WLAN-Ortung</string>
     <string name="button_get_location">Abfragen</string>
-    <string name="button_get_status">Abfragen</string>
     <string name="last_updated">Letzte Aktualisierung:</string>
+    <string name="initial_heading">Einrichtung</string>
     <string name="status_heading">Willkommen!</string>
     <string name="location_text">Standort</string>
     <string name="status_text">Einstellungen</string>
-    <string name="status_title">Bike Bean Status</string>
     <string name="battery_text">Batterie</string>
     <string name="charge_text">Ladezustand:</string>
-    <string name="estimated_charge_text">Zeit bis 10%:</string>
-    <string name="auf_karte_zeigen">Anzeigen</string>
+    <string name="estimated_remaining_text">Es verbleiben noch etwa %s bis 10%% Ladezustand%s.
+    </string>
+    <string name="last_known_text">Der letzte gemeldete Ladezustand war %s.</string>
+    <string name="estimated_charge_text">Dieser Wert ist eine Schätzung des Ladezustands
+        basierend auf der letzten Meldung und den aktuellen Einstellungen.
+    </string>
+    <string name="auf_karte_zeigen">Zur Karte</string>
+    <string name="more_information">Mehr Informationen</string>
+
+    <string name="nav_header_desc">Navigation header</string>
+
+    <string name="geolocation_baseurl">https://www.googleapis.com/geolocation/v1/geolocate?key=</string>
+    <string name="github_releases_baseurl">https://api.github.com/repos/bike-bean/BikebeanApp/releases</string>
+    <string name="github_gists_baseurl">https://api.github.com/gists</string>
 
     <string name="pending_text">Erwarte Bestätigung in ca. %s h (%s)</string>
     <string name="wifi_switch_on_transition">Wird eingeschaltet</string>
     <string name="wifi_switch_off_transition">Wird ausgeschaltet</string>
 
-    <string name="warning_number_summary">Automatisch (%s)</string>
     <string name="warning_number_pending_text">Wird neu gesetzt</string>
+    <string name="warning_number_not_set">Nicht gesetzt</string>
+    <string name="warning_number_set_button">Einstellen</string>
 
     <string name="interval_switch_transition">Wird auf %dh umgestellt</string>
 
     <string name="title_activity_sms">SMS Historie</string>
-    <string name="title_activity_settings">Einstellungen</string>
+    <string name="title_fragment_preferences">Einstellungen</string>
 
     <string name="history">Historie (Standort &amp; Batterie)</string>
     <string name="info">Infos &amp; Hilfe</string>
     <string name="log">Fehlerprotokoll</string>
-    <string name="help1">Hier kannst du den Standort deiner Bike Bean abfragen.</string>
-    <string name="help2">Hier kannst du den Akkustand abfragen falls die letzte Aktualisierung länger her ist.</string>
-    <string name="help3">Das WLAN der Bike Bean solltest du nur für die Nahortung anstellen.</string>
+    <string name="helpLocation">Hier kannst du den Standort deiner Bike Bean abfragen.</string>
+    <string name="helpBattery">Hier kannst du den Akkustand abfragen falls die letzte Aktualisierung länger her ist.</string>
+    <string name="helpSettings">Hier kannst du verschiedene Einstellungen der Bike Bean vornehmen
+        (Siehe Hilfe-Button bei den einzelnen Einstellungen).
+    </string>
+    <string name="helpWlan">Hier kannst du das WLAN der Bike Bean einstellen.
+        Dies solltest du nur für die Nahortung tun!
+    </string>
+    <string name="helpInterval">Hier kannst du das Antwortintervall der Bike Bean einstellen.
+            Beachte, dass kürzere Intervalle deine Akkulaufzeit verringern.
+    </string>
+    <string name="helpWarningNumber">Wenn du Warnungen über einen niedrigen Batterie-Status der
+        Bike Bean erhalten möchtest, kannst du das hier tun.\nWenn du auf "Einstellen" drückst,
+        wird deine jetztige Telefonnummer als Warn-Nummer in der Bike Bean
+        eingespeichert.\n\nBei einem Akkustand von 20% und 10% wird jeweils einmal gewarnt.
+    </string>
+
     <string name="share">Teilen</string>
 
     <string name="menu_satellite">Satellit</string>
@@ -53,7 +78,7 @@
     <!-- General Preferences -->
     <string name="number_title">Telefonnummer der Bike Bean</string>
     <string name="name_title">Anzeigename</string>
-    <string name="warning_number_title">Nummer für Akkustands-Warnungen</string>
+    <string name="warning_number_title">Warn-Nummer</string>
 
     <!-- Intervall Preferences -->
     <string name="interval_summary">Bike Bean wird alle %sh neue Nachrichten prüfen.</string>
@@ -79,7 +104,6 @@
     <string name="number_error">Nummer darf nicht leer sein!</string>
     <string name="continue_send_sms">Senden</string>
     <string name="continue_reset">Zurücksetzen</string>
-    <string name="continue_general">Weiter</string>
     <string name="continue_ok">OK</string>
     <string name="abort_send_sms">Abbrechen</string>
     <string name="overdue">Bestätigung überfällig! (%s)</string>
@@ -100,13 +124,14 @@
     <string name="no_map_permission">Standort-Berechtigungen</string>
     <string name="no_map_permission_warning">Die App benötigt Berechtigungen um Ihren eigenen
         Standort auf der Karte anzuzeigen.</string>
+    <string name="generic_permission">Berechtigungen</string>
+    <string name="generic_permission_warning">Die App benötogt weitere Berechtigungen!</string>
     <string name="warning_sms_permission">Bitte Berechtigungen für SMS vergeben!</string>
     <string name="to_settings">Zu den Einstellungen</string>
 
     <!-- WifiScan -->
     <string name="scanning_wifi">Scanne WLANs</string>
     <string name="phone_hint">+4912345678910</string>
-    <string name="prompt_number">Bitte gib als erstes die Telefonnummer der Bike Bean ein:</string>
     <string name="scan_wifi">WLANs SCANNEN</string>
     <string name="wifi_not_found">BIKEBEAN-WIFI WURDE NICHT GEFUNDEN</string>
     <string name="gps_network_not_enabled">Dein Standort muss leider aktiviert sein um nach WLANs scannen zu können. (Google Anforderung)</string>
@@ -119,4 +144,9 @@
     <string name="continue_update">Herunterladen</string>
     <string name="cancel_update">Jetzt nicht</string>
     <string name="update_text">Update</string>
+    <string name="route">Route</string>
+    <string name="battery_warning_string">Unter 10%%, bitte umgehend aufladen!</string>
+    <string name="initial_configuration_subtitle">Nimm hier die ersten Schritte zur Einrichtung deiner Bike Bean vor!</string>
+
+    <string name="mapbox_access_token">pk.eyJ1Ijoiam9qbzI0MyIsImEiOiJja2xwMm9sN3gwaHMyMm5ud2ZzYmNxaGRpIn0.-XhYvIRw2vRgUMF3BqsCXg</string>
 </resources>

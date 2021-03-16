@@ -12,7 +12,7 @@ import java.util.List;
 public interface SmsDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insert(Sms sms);
+    void insert(final Sms sms);
 
     @Query("DELETE FROM sms_table")
     void deleteAll();
@@ -28,9 +28,6 @@ public interface SmsDao {
 
     @Query("SELECT * FROM sms_table")
     List<Sms> getAllSync();
-
-    @Query("SELECT COUNT(*) FROM sms_table WHERE type LIKE :type")
-    int getCountByType(int type);
 
     @Query("SELECT * FROM sms_table WHERE _id = :id")
     List<Sms> getSmsById(int id);

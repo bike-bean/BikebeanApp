@@ -19,47 +19,28 @@
 
     <TextView
         android:id="@+id/txtMsgYou2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/bg_msg_you"
-        android:gravity="end"
-        android:paddingStart="10dp"
-        android:paddingTop="5dp"
-        android:paddingEnd="10dp"
-        android:paddingBottom="5dp"
-        android:textColor="#ffffff"
-        android:textSize="16sp"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
         app:layout_constraintBottom_toBottomOf="@id/smsBackground"
-        app:layout_constraintEnd_toEndOf="@id/smsBackground" />
+        app:layout_constraintEnd_toEndOf="@id/smsBackground"
+        style="@style/Widget.BikeBean.MessageText.You" />
 
     <TextView
         android:id="@+id/txtMsgFrom2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:background="@drawable/bg_msg_from"
-        android:paddingStart="10dp"
-        android:paddingTop="5dp"
-        android:paddingEnd="10dp"
-        android:paddingBottom="5dp"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
         app:layout_constraintTop_toTopOf="@id/smsBackground"
         app:layout_constraintStart_toStartOf="@id/smsBackground"
-        android:textColor="#434343"
-        android:textSize="16sp" />
+        style="@style/Widget.BikeBean.MessageText.From" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginEnd="@dimen/fragment_horizontal_margin"
+        android:layout_marginTop="@dimen/fragment_vertical_margin"
         android:clickable="false"
         android:focusable="false"
         android:src="@drawable/ic_send_white_24dp"
-        app:backgroundTint="@color/primaryColor"
         app:fabSize="mini"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

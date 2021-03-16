@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="Theme">
+
+        <attr name="materialSendButton" format="reference" />
+        <attr name="helpButton" format="reference" />
+        <attr name="moreInfoButton" format="reference" />
+        <attr name="noDataText" format="reference" />
+        <attr name="titleText" format="reference" />
+        <attr name="textAppearanceUnemphasized" format="reference" />
+
+    </declare-styleable>
+
+    <declare-styleable name="InitialItemView">
+
+        <attr name="checked" format="boolean" />
+
+    </declare-styleable>
+
+</resources>

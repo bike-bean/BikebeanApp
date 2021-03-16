@@ -12,7 +12,7 @@ import java.util.List;
 public interface StateDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insert(State state);
+    void insert(final State state);
 
     @Query("DELETE FROM state_table")
     void deleteAll();
@@ -21,10 +21,10 @@ public interface StateDao {
     Async
      */
     @Query("SELECT * FROM state_table WHERE _key LIKE :key ORDER BY timestamp DESC")
-    LiveData<List<State>> getAllByKey(String key);
+    LiveData<List<State>> getAllByKey(final String key);
 
     @Query("SELECT * FROM state_table WHERE _key = :key AND state = :state ORDER BY timestamp DESC")
-    LiveData<List<State>> getByKeyAndState(String key, int state);
+    LiveData<List<State>> getByKeyAndState(final String key, int state);
 
     /*
     Sync
@@ -35,15 +35,12 @@ public interface StateDao {
     @Query("SELECT * FROM state_table WHERE sms_id = :smsId ORDER BY timestamp DESC")
     List<State> getAllByIdSync(int smsId);
 
-    @Query("SELECT * FROM state_table WHERE _key LIKE :key ORDER BY timestamp DESC LIMIT 1")
-    List<State> getByKeySync(String key);
-
     @Query("SELECT * FROM state_table WHERE _key = :key AND state = :state ORDER BY timestamp DESC")
-    List<State> getByKeyAndStateSync(String key, int state);
+    List<State> getByKeyAndStateSync(final String key, int state);
 
     @Query("SELECT * FROM state_table WHERE _key = :key AND sms_id = :smsId ORDER BY timestamp DESC")
-    List<State> getByKeyAndIdSync(String key, int smsId);
+    List<State> getByKeyAndIdSync(final String key, int smsId);
 
     @Query("UPDATE state_table SET state = :state, value = :value WHERE _key = :key AND sms_id = :smsId")
-    void updateStateByKeyAndSmsId(int state, double value, String key, int smsId);
+    void updateStateByKeyAndSmsId(int state, double value, final String key, int smsId);
 }

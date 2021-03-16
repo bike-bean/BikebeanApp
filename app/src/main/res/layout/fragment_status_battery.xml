@@ -1,134 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/battery"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="@dimen/tile_padding">
+    android:layout_height="wrap_content" >
 
-    <LinearLayout
+    <!-- title -->
+    <include layout="@layout/layout_title_small_more" />
+
+    <include
+        layout="@layout/layout_meta_info"
+        android:id="@+id/metaInfo" />
+
+    <!-- separation line -->
+    <ImageView
+        android:id="@+id/separationLine"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_marginStart="@dimen/fragment_horizontal_margin"
+        android:layout_marginEnd="@dimen/fragment_horizontal_margin"
+        android:background="?attr/dividerHorizontal"
+        android:contentDescription="@string/share"
+        app:layout_constraintTop_toBottomOf="@id/metaInfo" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="24dp"
-            android:layout_marginStart="@dimen/fragment_horizontal_margin"
-            android:gravity="bottom"
-            android:text="@string/last_updated"
-            android:textAppearance="@style/TextAppearance.AppTheme.Unemphasized" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/datetimeText3"
-            android:layout_width="wrap_content"
-            android:layout_height="24dp"
-            android:gravity="bottom"
-            android:textAppearance="@style/TextAppearance.AppTheme.Unemphasized" />
-    </LinearLayout>
-
+    <!-- battery charge -->
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/helpButton2"
-            android:layout_width="35dp"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/help1"
-            android:src="@drawable/ic_help_outline_black_24dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_marginStart="@dimen/fragment_horizontal_margin"
-            android:gravity="bottom"
-            android:text="@string/battery_text"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        <Button
-            android:id="@+id/statusButton"
-            style="@style/Widget.AppTheme.SendButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:gravity="center"
-            android:icon="@drawable/ic_send_white_24dp"
-            android:text="@string/button_get_status" />
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/statusPendingStatus"
-        android:layout_width="match_parent"
+        android:id="@+id/batteryStatus"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="end"
-        android:textAppearance="@style/TextAppearance.AppTheme.Error"
-        android:visibility="gone" />
+        android:orientation="horizontal"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/fragment_vertical_margin"
+        android:paddingBottom="@dimen/fragment_vertical_margin"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@id/separationLine"
+        app:layout_constraintStart_toStartOf="parent" >
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_marginStart="@dimen/fragment_horizontal_margin"
-            android:gravity="center"
-            android:text="@string/charge_text"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+        <ImageView
+            android:id="@+id/batteryStatusImage"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="@string/battery_text"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_battery_unknown_black_24dp" />
 
         <TextView
             android:id="@+id/batteryStatusText"
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            app:drawableStartCompat="@drawable/ic_battery_unknown_black_24dp"
-            android:gravity="center"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-            android:textStyle="bold" />
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/fragment_horizontal_margin"
+            android:layout_gravity="center"
+            android:textAppearance="?attr/textAppearanceHeadline6" />
+
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_marginStart="@dimen/fragment_horizontal_margin"
-            android:gravity="center"
-            android:text="@string/estimated_charge_text"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/batteryStatus" >
 
         <TextView
             android:id="@+id/batteryEstimatedStatusText"
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:gravity="center"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/fragment_vertical_margin"
+            android:textAppearance="?attr/textAppearanceBody2" />
+
+        <TextView
+            android:id="@+id/batteryRuntimeEstimationText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/fragment_vertical_margin"
+            android:textAppearance="?attr/textAppearanceBody2" />
+
+        <TextView
+            android:id="@+id/batteryLastKnownStatusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/fragment_vertical_margin"
+            android:paddingBottom="@dimen/fragment_vertical_margin"
+            android:textAppearance="?attr/textAppearanceBody2" />
+
     </LinearLayout>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

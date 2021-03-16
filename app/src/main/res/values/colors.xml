@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Material color tool. See https://material.io/tools/color -->
-    <color name="primaryColor">#00007f</color>
-    <color name="primaryVariant">#000052</color>
-    <color name="primaryDarkColor">@color/secondaryVariant</color>
-    <color name="secondaryColor">#2b871b</color>
-    <color name="secondaryVariant">#005900</color>
-    <color name="primaryTextColor">#ffffff</color>
-    <color name="secondaryTextColor">#ffffff</color>
-    <color name="onSurface">#000000</color>
+    <color name="brandColorGreen">#2b871b</color>
+    <color name="brandColorGreenDark">#005900</color>
+    <color name="brandColorBlue">#00007f</color>
+    <color name="complementary">#771b87</color>
 
-    <color name="lightGreen">#558B2F</color>
+    <color name="lightGreen">#558B2F</color> <!-- for Sms history -->
     <color name="blue">#1565C0</color>
     <color name="grey">#555555</color>
+    <color name="middleGrey">#888888</color>
     <color name="lightGrey">#F6F6F6</color>
     <color name="white">#FFFFFF</color>
+    <color name="extraLightGrey">#e5e7eb</color>
 </resources>
