@@ -23,7 +23,7 @@ class NoWifiList(
     )
 
     override val settings get() = listOf(
-            WifiAccessPoints(sms) { wappWifiAccessPoints },
+            WifiAccessPoints("", sms),
             Wapp(sms, State.WAPP_WIFI_ACCESS_POINTS),
             /* battery value is encoded differently in this case */
             Battery(sms) { batteryNoWifi }

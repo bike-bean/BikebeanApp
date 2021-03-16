@@ -43,6 +43,7 @@
         <Preference
             android:key="reset"
             android:title="@string/db_reset" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

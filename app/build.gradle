@@ -9,15 +9,13 @@ android {
         applicationId "de.bikebean.app"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 12
-        versionName "0.12.0"
+        versionCode 13
+        versionName "0.12.1"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
             proguardFiles getDefaultProguardFile(
                     'proguard-android-optimize.txt'),
                     'proguard-rules.pro'
