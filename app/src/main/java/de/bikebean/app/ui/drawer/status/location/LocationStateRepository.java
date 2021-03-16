@@ -8,7 +8,7 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 import de.bikebean.app.db.BikeBeanRoomDatabase;
-import de.bikebean.app.db.settings.settings.WappState;
+import de.bikebean.app.db.settings.settings.add_to_list_settings.WappState;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.drawer.status.StateRepository;
 

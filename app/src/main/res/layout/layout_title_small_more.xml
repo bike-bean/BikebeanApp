@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/title"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    app:layout_constraintTop_toTopOf="parent" >
+
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?attr/titleText" />
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- help button -->
+    <ImageView
+        android:id="@+id/helpButton"
+        style="?attr/helpButton"
+        android:contentDescription="@string/helpBattery" />
+
+    <ImageView
+        android:id="@+id/moreInfoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginEnd="@dimen/title_padding"
+        android:src="@drawable/ic_baseline_arrow_forward_30"
+        android:contentDescription="@string/more_information" />
+
+</LinearLayout>
+
+    

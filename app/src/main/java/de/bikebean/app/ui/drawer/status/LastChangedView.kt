@@ -36,7 +36,7 @@ class LastChangedView(private val text: TextView, private val image: ImageView) 
                 context: Context,
                 mf: MapFragmentViewModel): Bitmap? {
             @ColorInt val color = getMarkerColor(context, getDaysSinceState(state))
-            return mf.getMapMarkerBitmap(MapMarkerCache.DRAWABLES.lastChangedIndicator, color)
+            return mf.getMapMarkerBitmap(MapMarkerCache.DRAWABLES.LastChangedIndicator, color)
         }
 
         @JvmStatic
@@ -45,7 +45,7 @@ class LastChangedView(private val text: TextView, private val image: ImageView) 
                 context: Context,
                 mf: MapFragmentViewModel): Bitmap? {
             @ColorInt val color = getMarkerColor(context, getDaysSinceState(state))
-            return mf.getMapMarkerBitmap(MapMarkerCache.DRAWABLES.mapMarker, color)
+            return mf.getMapMarkerBitmap(MapMarkerCache.DRAWABLES.MapMarker, color)
         }
     }
 }

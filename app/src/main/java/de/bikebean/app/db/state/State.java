@@ -9,6 +9,8 @@ import androidx.room.PrimaryKey;
 import de.bikebean.app.db.DatabaseEntity;
 import de.bikebean.app.ui.utils.date.DateUtils;
 
+import static java.lang.Math.abs;
+
 @Entity(tableName = "state_table")
 public class State extends DatabaseEntity {
 
@@ -129,9 +131,9 @@ public class State extends DatabaseEntity {
                 STATUS.getName(mState) + delimiter + mSmsId + "\n";
     }
 
-    public boolean isRecent() {
-        /* Return true if state is younger than 48 hours. */
-        return System.currentTimeMillis() - mTimestamp < (48 * 60 * 60 * 1000);
+    public boolean isWithinDayRange(@NonNull State other) {
+        /* Return true if other state lays in range of 24 hours. */
+        return abs(other.mTimestamp - mTimestamp) < (24 * 60 * 60 * 1000);
     }
 
     public enum STATUS {

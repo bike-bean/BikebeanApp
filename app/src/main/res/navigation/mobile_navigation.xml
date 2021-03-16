@@ -23,11 +23,12 @@
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_map" />
 
+    <!--
     <fragment
         android:id="@+id/navigation_wifi"
         android:name="de.bikebean.app.ui.drawer.wifi_localization.Wifi_localizationFragment"
         android:label="@string/title_wifi"
-        tools:layout="@layout/fragment_wifi_localization" />
+        tools:layout="@layout/fragment_wifi_localization" />-->
 
     <fragment
         android:id="@+id/navigation_preferences"

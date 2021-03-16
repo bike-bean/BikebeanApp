@@ -25,17 +25,16 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
-import de.bikebean.app.db.settings.settings.number_settings.WifiAccessPoints;
+import de.bikebean.app.db.settings.settings.add_to_list_settings.number_settings.WifiAccessPoints;
 import de.bikebean.app.db.sms.SmsFactory;
 import de.bikebean.app.ui.drawer.status.StateViewModel;
 import de.bikebean.app.ui.drawer.log.LogViewModel;
@@ -49,25 +48,23 @@ public class Wifi_localizationFragment extends Fragment {
     private TextView textView;
     private Button buttonScan;
     private final ArrayList<String> arrayList = new ArrayList<>();
-    private final HashMap<String, Integer> hashmap = new HashMap<>();
-    private ArrayAdapter adapter;
+    private final HashMap<String, Integer> hashMap = new HashMap<>();
+    private ArrayAdapter<String> adapter;
 
     private LogViewModel logViewModel;
     private StateViewModel stateViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_wifi_localization, container, false);
+        View v = inflater.inflate(R.layout.fragment_wifi_localization, container, false);
 
-        buttonScan = root.findViewById(R.id.scanBtn);
-        listView = root.findViewById(R.id.wifiList);
+        buttonScan = v.findViewById(R.id.scanBtn);
+        listView = v.findViewById(R.id.wifiList);
+        textView = v.findViewById(R.id.bikebean_wifi);
 
-        textView = root.findViewById(R.id.bikebean_wifi);
-
-        return root;
+        return v;
     }
 
-    // LM: Methode onActivityCreated: Alternative in einem Fragment (Superklasse: Fragment) Zum Erben von Superklasse AppCompatActivty (Implementierung: this = getActivity())
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
@@ -76,79 +73,53 @@ public class Wifi_localizationFragment extends Fragment {
         ctx = act.getApplicationContext();
 
         buttonScan.setOnClickListener(view -> scanWifi());
-        adapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_list_item_1, arrayList);
+        adapter = new ArrayAdapter<>(
+                requireActivity(), android.R.layout.simple_list_item_1, arrayList
+        );
         listView.setAdapter(adapter);
 
         stateViewModel = new ViewModelProvider(requireActivity()).get(StateViewModel.class);
         logViewModel = new ViewModelProvider(requireActivity()).get(LogViewModel.class);
-
-        scanWifi();
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        ((MainActivity) requireActivity()).setToolbarScrollEnabled(false);
+        final @NonNull MainActivity activity = (MainActivity) requireActivity();
+        activity.setToolbarScrollEnabled(false);
+        activity.resumeToolbarAndBottomSheet();
     }
 
     private void scanWifi() {
-        // Nachträglich hinzugefügt (ohne diese Überprüfung wurden keine WLANs gefunden):
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                 act.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
         }
         wifiManager = (WifiManager) act.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        if (!Objects.requireNonNull(wifiManager).isWifiEnabled()) {
+        if (wifiManager.isWifiEnabled()) {
             // Aktiviere WLAN, falls deaktiviert
             wifiManager.setWifiEnabled(true);
         }
 
-//        TODO: Überprüfen, ob Standort eingeschaltet ist
-//        // IMPLEMTIERUNG ÜBER HILFSKLASSE ÜBERPRÜFEN -> https://stackoverflow.com/questions/12320857/how-to-get-my-activity-context
-//        // Überprüfen, ob GPS-Standort eingeschaltet ist -> Nur dann können mittlerweile WLAN-Netzwerke gelesen werden
-//        // https://stackoverflow.com/questions/10311834/how-to-check-if-location-services-are-enabled
-//        LocationManager lm = (LocationManager)ctx.getSystemService(Context.LOCATION_SERVICE);
-//        boolean gps_enabled = false;
-//        boolean network_enabled = false;
-//
-//        try {
-//            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-//        } catch(Exception ex) {}
-//
-//        try {
-//            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-//        } catch(Exception ex) {}
-//
-//        if(!gps_enabled && !network_enabled) {
-//        if (!gps_enabled) {
-//            // notify user
-//            new AlertDialog.Builder(ctx)
-//                    .setMessage(R.string.gps_network_not_enabled)
-//                    .setPositiveButton(R.string.open_location_settings, new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-//                            ctx.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-//                        }
-//                    })
-//                            .setNegativeButton(R.string.Cancel,null)
-//                            .show();
-//        }
-//
-//
-//        // Ende Überprüfung GPS-Standort
-//        // App stürzt ab, wenn man aufs Wifi-Fragment klickt und GPS deaktiviert ist
-//        // Fehlermeldung: "java.lang.IllegalStateException: You need to use a Theme.AppCompat theme (or descendant) with this activity."
+        // TODO: Überprüfen, ob Standort eingeschaltet ist
+        // IMPLEMTIERUNG ÜBER HILFSKLASSE ÜBERPRÜFEN -> https://stackoverflow.com/questions/12320857/how-to-get-my-activity-context
+        // Überprüfen, ob GPS-Standort eingeschaltet ist -> Nur dann können mittlerweile WLAN-Netzwerke gelesen werden
+        // https://stackoverflow.com/questions/10311834/how-to-check-if-location-services-are-enabled
 
+        // Ende Überprüfung GPS-Standort
+        // App stürzt ab, wenn man aufs Wifi-Fragment klickt und GPS deaktiviert ist
+        // Fehlermeldung: "java.lang.IllegalStateException: You need to use a Theme.AppCompat theme (or descendant) with this activity."
 
-//mirkos testecke start
         LocationManager lm = (LocationManager)ctx.getSystemService(Context.LOCATION_SERVICE);
         boolean gps_enabled = false;
-        boolean network_enabled = false;
+        // boolean network_enabled = false;
 
         try {
             gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch(Exception ex) {}
+        } catch(Exception ex) {
+            assert true;
+        }
 
         if (!gps_enabled) {
             // notify user
@@ -157,10 +128,8 @@ public class Wifi_localizationFragment extends Fragment {
                 alert.create().show();
         }
 
-//mirkos testecke ende
-
         arrayList.clear();
-        hashmap.clear();
+        hashMap.clear();
 
         act.registerReceiver(wifiReceiver, new IntentFilter(
                 WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
@@ -175,9 +144,12 @@ public class Wifi_localizationFragment extends Fragment {
             List<ScanResult> results = wifiManager.getScanResults();
             act.unregisterReceiver(this);
 
-            WifiAccessPoints wifiAccessPoints = new WifiAccessPoints(stateViewModel.getWifiAccessPointsSync(), SmsFactory.createNullSms());
-            WifiAccessPoints.WifiAccessPointList wifiAccessPointsList_bikebean =
-                    (WifiAccessPoints.WifiAccessPointList) wifiAccessPoints.getList();
+            WifiAccessPoints wifiAccessPoints = new WifiAccessPoints(
+                    stateViewModel.getWifiAccessPointsSync(),
+                    SmsFactory.createNullSms()
+            );
+            WifiAccessPoints.WifiAccessPointListBuilder wifiAccessPointsList_bikebean =
+                    (WifiAccessPoints.WifiAccessPointListBuilder) wifiAccessPoints.getList();
 
             int counter_bikebean_wifi = 0;
             int counter_wifis = 0;
@@ -201,9 +173,9 @@ public class Wifi_localizationFragment extends Fragment {
 
             for (WifiAccessPoints.WifiAccessPoint w : wifiAccessPointsList_bikebean){
                 for (ScanResult scanResult : results) {
-                    if (scanResult.BSSID.equals(w.macAddress)) {
-                        Integer difference_signal_strength = java.lang.Math.abs(scanResult.level - w.signalStrength);
-                        hashmap.put("\u0394 " + difference_signal_strength.toString() + " dBm bei WLAN [" + scanResult.SSID + "]\n(Bikebean: " + w.signalStrength + " dBm | Handy: " + scanResult.level + " dBm)", difference_signal_strength);
+                    if (scanResult.BSSID.equals(w.getMacAddress())) {
+                        Integer difference_signal_strength = java.lang.Math.abs(scanResult.level - w.getSignalStrength());
+                        hashMap.put("\u0394 " + difference_signal_strength.toString() + " dBm bei WLAN [" + scanResult.SSID + "]\n(Bikebean: " + w.getSignalStrength() + " dBm | Handy: " + scanResult.level + " dBm)", difference_signal_strength);
                         counter_wifis++;
                     }
                 }
@@ -212,14 +184,16 @@ public class Wifi_localizationFragment extends Fragment {
                 arrayList.add("Keine relevanten WiFi-Access-Points in der Nähe gefunden");
             }
             else {
-                hashmap.put("VERGLEICH SIGNALSTÄRKEN:",-1);
+                hashMap.put("VERGLEICH SIGNALSTÄRKEN:",-1);
                 //hashmap sortieren
-                Object[] a = hashmap.entrySet().toArray();
-                Arrays.sort(a, (Comparator) (o1, o2) -> ((Map.Entry<String, Integer>) o1).getValue()
-                        .compareTo(((Map.Entry<String, Integer>) o2).getValue()));
+                @SuppressWarnings("unchecked")
+                Map.Entry<String, Integer>[] a =
+                        (Map.Entry<String, Integer>[]) hashMap.entrySet().toArray();
+
+                Arrays.sort(a, (o1, o2) -> o1.getValue().compareTo(o2.getValue()));
                 //Aufsteigend nach den Integern sortierte Strings der hashmap an arrayList übergeben
-                for (Object e : a) {
-                    arrayList.add(((Map.Entry<String, Integer>) e).getKey());
+                for (Map.Entry<String, Integer> e : a) {
+                    arrayList.add(e.getKey());
                 }
             }
             adapter.notifyDataSetChanged();

@@ -1,15 +1,10 @@
 package de.bikebean.app.ui.utils.geo_coordinates
 
-class GeoCoordinates(decimal: Double, lat: Boolean) {
+class GeoCoordinates(decimal: Double, private val isLat: Boolean) {
 
     private val degrees: Int = decimal.toInt()
-    private val minutes: Int
-    private val seconds: Double
-    private val isLat: Boolean
-
-    override fun toString(): String {
-        return "$degrees°$minutes'%.3f''$direction$delimiter".format(seconds)
-    }
+    private val minutes: Int = (60 * (decimal - degrees)).toInt()
+    private val seconds: Double = 3600 * (decimal - degrees) - 60 * minutes
 
     private val direction: String
         get() = when {
@@ -25,9 +20,7 @@ class GeoCoordinates(decimal: Double, lat: Boolean) {
             else -> ""
         }
 
-    init {
-        minutes = (60 * (decimal - degrees)).toInt()
-        seconds = 3600 * (decimal - degrees) - 60 * minutes
-        isLat = lat
-    }
+    override fun toString(): String =
+            "$degrees°$minutes'%.3f''$direction$delimiter".format(seconds)
+    
 }

@@ -6,15 +6,8 @@
     android:layout_height="wrap_content" >
 
     <!-- title -->
-    <include layout="@layout/layout_location_title" />
+    <include layout="@layout/layout_title_small_more" />
 
-    <!-- help button -->
-    <ImageButton
-        android:id="@+id/helpButton"
-        style="?attr/helpButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="@string/help2" />
 
     <include
         layout="@layout/layout_meta_info"
@@ -25,6 +18,8 @@
         android:id="@+id/separationLine"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/fragment_horizontal_margin"
+        android:layout_marginEnd="@dimen/fragment_horizontal_margin"
         android:background="?attr/dividerHorizontal"
         android:contentDescription="@string/share"
         app:layout_constraintTop_toBottomOf="@id/metaInfo" />
@@ -33,7 +28,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/fragment_vertical_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/fragment_vertical_margin"
         app:layout_constraintTop_toBottomOf="@id/separationLine" >
 
         <!-- info -->
@@ -43,12 +41,13 @@
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp">
+            android:layout_marginTop="4dp"
+            android:scrollbars="none" >
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="@dimen/fragment_vertical_margin"
                 android:orientation="vertical" >
 
                 <TextView
@@ -71,7 +70,8 @@
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp" >
+            android:layout_marginTop="@dimen/fragment_vertical_margin"
+            android:scrollbars="none" >
 
             <LinearLayout
                 android:layout_width="wrap_content"

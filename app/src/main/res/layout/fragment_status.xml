@@ -2,8 +2,9 @@
 <androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/statusScrollView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -38,31 +39,30 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    style="?attr/titleText"
                     android:drawablePadding="@dimen/activity_horizontal_margin"
-                    android:paddingStart="@dimen/fragment_horizontal_margin"
-                    android:paddingTop="@dimen/fragment_horizontal_margin"
-                    android:paddingEnd="@dimen/fragment_horizontal_margin"
                     android:text="@string/no_sms_permission_error"
-                    android:textAppearance="?attr/textAppearanceHeadline6"
                     app:drawableStartCompat="@drawable/ic_warning_white_24dp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/fragment_horizontal_margin"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
                     android:text="@string/no_sms_permission_error_2"
                     android:textAppearance="?attr/textAppearanceBody1"
                     />
 
                 <Button
                     android:id="@+id/errorViewButton"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
-                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                    android:layout_marginBottom="@dimen/fragment_vertical_margin"
+                    android:layout_marginStart="@dimen/button_padding"
+                    android:layout_marginEnd="@dimen/button_padding"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
                     android:text="@string/to_settings" />
 
             </LinearLayout>
@@ -76,6 +76,9 @@
 
             <FrameLayout
                 android:id="@+id/include0"
+                android:focusable="true"
+                android:clickable="true"
+                android:background="?attr/selectableItemBackground"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
@@ -88,6 +91,9 @@
 
             <FrameLayout
                 android:id="@+id/include1"
+                android:focusable="true"
+                android:clickable="true"
+                android:background="?attr/selectableItemBackground"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
@@ -96,11 +102,14 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="@dimen/fragment_vertical_margin"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
             style="?attr/shapeAppearanceMediumComponent">
 
             <FrameLayout
                 android:id="@+id/include2"
+                android:focusable="true"
+                android:clickable="true"
+                android:background="?attr/selectableItemBackground"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 

@@ -25,16 +25,19 @@
             android:title="@string/theme_header"
             android:entries="@array/theme_entries"
             android:entryValues="@array/theme_values"
+            app:defaultValue="1"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/app_general_header">
 
+        <!-- TODO: provide string resources for keys -->
         <ListPreference
             android:key="@string/internationalization_header"
             android:title="@string/internationalization_header"
             android:entries="@array/language_entries"
             android:entryValues="@array/language_values"
+            app:defaultValue="0"
             app:useSimpleSummaryProvider="true" />
 
         <Preference

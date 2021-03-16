@@ -28,11 +28,6 @@ public class StateRepository {
         return mStateDao.getByKeyAndStateSync(key, State.STATUS.CONFIRMED.ordinal());
     }
 
-    @NonNull List<State> getLastStateSync(final @NonNull String key, int smsId) {
-        discard(smsId);
-        return mStateDao.getByKeySync(key);
-    }
-
     @NonNull List<State> getStateByIdSync(final @NonNull String key, int smsId) {
         return mStateDao.getByKeyAndIdSync(key, smsId);
     }

@@ -18,47 +18,34 @@ object DateUtils {
     }
 
     @JvmStatic
-    fun getDaysSinceState(args: Bundle?): Double {
-        return args?.getDouble(DAYS_SINCE_LAST_STATE, 0.0) ?: 0.0
-    }
+    fun getDaysSinceState(args: Bundle?): Double =
+            args?.getDouble(DAYS_SINCE_LAST_STATE, 0.0) ?: 0.0
 
     @JvmStatic
-    fun getLastChanged(state: State): String {
-        return Period(state.timestamp).lastChangedString
-    }
+    fun getLastChanged(state: State): String = Period(state.timestamp).lastChangedString
 
     @JvmStatic
-    fun convertToDateHuman(): String {
-        return Period(Date().time).convertPeriodToHuman()
-    }
+    fun convertToDateHuman(): String = Period(Date().time).convertPeriodToHuman()
 
     @JvmStatic
-    fun convertPeriodToHuman(datetime: Long): String {
-        return Period(datetime).convertPeriodToHuman()
-    }
+    fun convertPeriodToHuman(datetime: Long): String = Period(datetime).convertPeriodToHuman()
 
     @JvmStatic
-    fun convertToTimeLog(datetime: Long): String {
-        return formatDate("dd.MM.yy HH:mm", datetime)
-    }
+    fun convertToTimeLog(datetime: Long): String = formatDate("dd.MM.yy HH:mm", datetime)
 
     @JvmStatic
-    fun convertToTime(datetime: Long): String {
-        return formatDate("dd.MM HH:mm", datetime)
-    }
+    fun convertToTime(datetime: Long): String = formatDate("dd.MM HH:mm", datetime)
 
-    private fun formatDate(pattern: String, datetime: Long): String {
-        return SimpleDateFormat(pattern, Locale.GERMANY).format(Date(datetime))
-    }
+    private fun formatDate(pattern: String, datetime: Long): String =
+            SimpleDateFormat(pattern, Locale.GERMANY).format(Date(datetime))
 
     @JvmStatic
-    fun getDateFromUTCString(UTCString: String): Date {
-        val df1 = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.GERMANY)
-        val tmpDate = try {
-            df1.parse(UTCString)
-        } catch (e: ParseException) {
-            return Date(1)
-        }
-        return tmpDate ?: Date(1)
-    }
+    fun getDateFromUTCString(UTCString: String): Date =
+            with (SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.GERMANY)) {
+                try {
+                    parse(UTCString)
+                } catch (e: ParseException) {
+                    Date(1)
+                } ?: Date(1)
+            }
 }

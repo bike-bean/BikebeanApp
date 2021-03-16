@@ -4,8 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/activity_horizontal_margin"
+    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    android:padding="@dimen/fragment_vertical_margin"
     app:layout_constraintTop_toBottomOf="@id/title" >
 
     <include layout="@layout/layout_last_changed" />
@@ -13,9 +15,9 @@
     <!-- send button -->
     <Button
         android:id="@+id/sendButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_width="match_parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         style="?attr/materialSendButton"
         android:text="@string/button_get_location" />
 
@@ -30,7 +32,8 @@
     <!-- pending text -->
     <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:scrollbars="none" >
 
         <TextView
             android:id="@+id/pendingStatusText"

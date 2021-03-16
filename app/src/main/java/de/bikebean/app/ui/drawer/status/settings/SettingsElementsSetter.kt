@@ -12,6 +12,7 @@ interface SettingsElementsSetter {
     fun setWifiElementsPending(state: State)
     fun setWarningNumberElementsPending(state: State)
 
-    fun setWarningNumberElementsUnset(state: State)
+    fun setIntervalElementsUnset(state: State)
+    fun setWarningNumberElementsUnset()
     fun setStatusElementsUnset()
 }

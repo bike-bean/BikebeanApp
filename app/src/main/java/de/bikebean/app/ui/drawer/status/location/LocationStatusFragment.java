@@ -5,7 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,33 +15,30 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
-import de.bikebean.app.db.settings.settings.WappState;
 import de.bikebean.app.db.state.StateFactory;
-import de.bikebean.app.db.type.SmsType;
 import de.bikebean.app.ui.drawer.status.LastChangedView;
 import de.bikebean.app.ui.drawer.status.ProgressView;
-import de.bikebean.app.ui.initialization.StateList;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.drawer.status.SubStatusFragment;
 import de.bikebean.app.ui.drawer.status.settings.LiveDataTimerViewModel;
 
+import static de.bikebean.app.ui.drawer.status.SubStatusFragmentSmallExtKt.sendSms;
+import static de.bikebean.app.ui.drawer.status.location.LocationStatusFragmentExtKt.startObservingWapp;
+
 public class LocationStatusFragment extends SubStatusFragment implements LocationElementsSetter {
 
-    private LocationStateViewModel st;
+    LocationStateViewModel st;
 
     private final @NonNull LiveDataTimerViewModel.TIMER t1 = LiveDataTimerViewModel.TIMER.FIVE;
 
     // UI Elements
-    private ImageButton helpButton;
-
     private ProgressView progressView;
     private Button buttonGetLocation;
+    private ImageView buttonBack, helpButton;
+    private TextView titleText;
 
     private LocationInformationView locationInformationView;
 
@@ -61,6 +59,8 @@ public class LocationStatusFragment extends SubStatusFragment implements Locatio
                 v.findViewById(R.id.pendingStatusText),
                 v.findViewById(R.id.progressBar)
         );
+        buttonBack = v.findViewById(R.id.moreInfoButton);
+        titleText = v.findViewById(R.id.titleText);
 
         locationInformationView = new LocationInformationView(
                 v.findViewById(R.id.lat),
@@ -69,8 +69,8 @@ public class LocationStatusFragment extends SubStatusFragment implements Locatio
                 v.findViewById(R.id.bikeMarker),
                 v.findViewById(R.id.locationNoData),
                 v.findViewById(R.id.buttonOpenMap),
-                v.findViewById(R.id.shareButton),
                 v.findViewById(R.id.routeButton),
+                v.findViewById(R.id.shareButton),
                 v.findViewById(R.id.noCellTowersText),
                 v.findViewById(R.id.noWifiAccessPointsText)
         );
@@ -96,7 +96,8 @@ public class LocationStatusFragment extends SubStatusFragment implements Locatio
         st.getLocation().observe(l, this::setElements);
         st.getStatusNumberCellTowers().observe(l, this::setElements);
         st.getStatusNumberWifiAccessPoints().observe(l, this::setElements);
-        st.getWapp().observe(l, this::updateWapp);
+
+        startObservingWapp(this, l);
     }
 
     @Override
@@ -111,13 +112,16 @@ public class LocationStatusFragment extends SubStatusFragment implements Locatio
 
         /* Insert two new pending States to mark waiting for response */
         buttonGetLocation.setOnClickListener(v ->
-                sendSms(Sms.MESSAGE.WAPP,
+                sendSms(this, Sms.MESSAGE.WAPP,
                         new State[] {
                                 StateFactory.createPendingState(State.KEY.LOCATION, 0.0),
                                 StateFactory.createPendingState(State.KEY.CELL_TOWERS, 0.0),
                                 StateFactory.createPendingState(State.KEY.WIFI_ACCESS_POINTS, 0.0)
                         })
         );
+
+        initTransitionButton(buttonBack, helpButton, this, false);
+        titleText.setText(R.string.location_text);
     }
 
     @Override
@@ -218,35 +222,6 @@ public class LocationStatusFragment extends SubStatusFragment implements Locatio
         progressView.setText("Rohdaten empfangen, empfange genaue Position vom Server...");
     }
 
-    // cached copy of parsed SMS
-    private final List<Integer> parsedSms = new ArrayList<>();
-
-    private void updateWapp(final List<State> states) {
-        final @NonNull WappState wappState = new WappState(st, new StateList(states));
-        if (wappState.getIsNull())
-            return;
-
-        int id1 = wappState.getCellTowers().id;
-        int id2 = wappState.getWifiAccessPoints().id;
-
-        if (parsedSms.contains(id1) || parsedSms.contains(id2))
-            return;
-
-        parsedSms.add(id1);
-        parsedSms.add(id2);
-
-        new LocationUpdater(
-                requireContext(), st, lv,
-                this::updateLatLngAcc, wappState
-        ).execute();
-    }
-
-    private void updateLatLngAcc(final @NonNull WappState wappState, final @NonNull SmsType smsType) {
-        sm.markParsed(wappState.getSms());
-        st.confirmWapp(wappState);
-        st.insert(smsType);
-    }
-
     private void navigateToNext(final @NonNull View v) {
         final @NonNull MainActivity act = (MainActivity) requireActivity();
 
@@ -260,7 +235,7 @@ public class LocationStatusFragment extends SubStatusFragment implements Locatio
 
     private void onHelpClick(final @NonNull View v) {
         Snackbar.make(v,
-                R.string.help1,
+                R.string.helpLocation,
                 Snackbar.LENGTH_LONG
         ).show();
     }

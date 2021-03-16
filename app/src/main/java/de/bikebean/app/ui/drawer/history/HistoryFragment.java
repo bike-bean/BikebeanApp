@@ -49,7 +49,9 @@ public abstract class HistoryFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        ((MainActivity) requireActivity()).setToolbarScrollEnabled(true);
+        final @NonNull MainActivity activity = (MainActivity) requireActivity();
+        activity.setToolbarScrollEnabled(true);
+        activity.resumeToolbarAndBottomSheet();
     }
 
     private void initRecyclerView() {

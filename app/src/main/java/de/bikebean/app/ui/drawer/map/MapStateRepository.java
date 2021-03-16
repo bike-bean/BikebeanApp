@@ -2,6 +2,7 @@ package de.bikebean.app.ui.drawer.map;
 
 import android.app.Application;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
@@ -52,6 +53,11 @@ class MapStateRepository extends StateRepository {
 
 
     @Nullable Bitmap getMapMarkerBitmap(final MapMarkerCache.DRAWABLES drawable,
+                                        final @ColorInt int color) {
+        return mapMarkerCache.getBitmap(drawable, color);
+    }
+
+    @NonNull Bitmap getMapMarkerBitmap(final Drawable drawable,
                                         final @ColorInt int color) {
         return mapMarkerCache.getBitmap(drawable, color);
     }

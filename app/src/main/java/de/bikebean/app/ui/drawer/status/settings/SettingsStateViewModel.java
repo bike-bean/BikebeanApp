@@ -13,6 +13,7 @@ import de.bikebean.app.ui.drawer.status.StateViewModel;
 
 import static de.bikebean.app.db.settings.settings.replace_if_newer_settings.Interval.INITIAL_INTERVAL;
 import static de.bikebean.app.db.settings.settings.replace_if_newer_settings.Wifi.INITIAL_WIFI;
+import static de.bikebean.app.ui.drawer.status.StateViewModelExtKt.getConfirmedStateSync;
 
 public class SettingsStateViewModel extends StateViewModel {
 
@@ -49,7 +50,8 @@ public class SettingsStateViewModel extends StateViewModel {
     }
 
     boolean getWifiStatusSync() {
-        final @Nullable State wifi = getLastStateSync(State.KEY.WIFI);
+        final @Nullable State wifi =
+                getConfirmedStateSync(this, State.KEY.WIFI);
 
         if (wifi != null)
             return wifi.getValue() > 0;
@@ -58,7 +60,8 @@ public class SettingsStateViewModel extends StateViewModel {
     }
 
     int getIntervalStatusSync() {
-        final @Nullable State intervalState = getLastStateSync(State.KEY.INTERVAL);
+        final @Nullable State intervalState =
+                getConfirmedStateSync(this, State.KEY.INTERVAL);
 
         if (intervalState != null)
             return intervalState.getValue().intValue();

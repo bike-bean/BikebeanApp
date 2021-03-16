@@ -57,44 +57,59 @@
         <item name="textAllCaps">false</item>
     </style>
 
-    <style name="Widget.BikeBean.ButtonOverlay" parent="Widget.MaterialComponents.Button">
+    <style name="Widget.BikeBean.Button" parent="Widget.MaterialComponents.Button">
+        <item name="materialThemeOverlay">@style/Widget.BikeBean.ButtonOverlay</item>
+    </style>
+
+    <style name="Widget.BikeBean.Button.Outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="materialThemeOverlay">@style/Widget.BikeBean.ButtonOverlay.Outlined</item>
+    </style>
+
+    <style name="Widget.BikeBean.Button.Dialog" parent="Widget.MaterialComponents.Button.TextButton.Dialog.Flush">
+        <item name="materialThemeOverlay">@style/Widget.BikeBean.ButtonOverlay.Outlined</item>
+    </style>
+
+    <style name="Widget.BikeBean.Button.FakeTab" parent="Widget.MaterialComponents.Button">
+        <item name="materialThemeOverlay">@style/Widget.BikeBean.ButtonOverlay.FakeTab</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.BikeBean.NoRoundedCorners</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+
+    <style name="Widget.BikeBean.ButtonOverlay" parent="">
         <item name="colorPrimary">@color/brandColorBlue</item>
-        <item name="textAppearanceButton">@style/TextAppearance.BikeBean.Button</item>
+        <item name="colorOnPrimary">@color/white</item>
     </style>
 
-    <style name="Widget.BikeBean.ButtonOverlay.FakeTab" parent="Widget.MaterialComponents.Button">
-        <item name="textAppearanceButton">@style/TextAppearance.BikeBean.Button</item>
+    <style name="Widget.BikeBean.ButtonOverlay.Outlined" parent="">
+        <item name="colorPrimary">@color/brandColorBlue</item>
     </style>
 
-    <style name="Widget.BikeBean.Button.EmphasizeButton.SendButton">
-        <item name="android:theme">@style/Widget.BikeBean.ButtonOverlay</item>
+    <style name="Widget.BikeBean.ButtonOverlay.FakeTab" parent="">
+        <item name="colorPrimary">@color/brandColorGreen</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+
+    <style name="Widget.BikeBean.Button.SendButton">
         <item name="icon">@drawable/ic_send_white_24dp</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="Widget.BikeBean.Button.EmphasizeButton.FakeTab">
-        <item name="android:theme">@style/Widget.BikeBean.ButtonOverlay.FakeTab</item>
+    <style name="Widget.BikeBean.Button.HelpButton" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginTop">@dimen/activity_vertical_margin</item>
+        <item name="android:src">@drawable/ic_outline_help_outline_30</item>
     </style>
 
-    <style name="Widget.BikeBean.Button.EmphasizeButton" parent="Widget.MaterialComponents.Button">
-        <item name="android:theme">@style/Widget.BikeBean.ButtonOverlay</item>
+    <style name="Widget.BikeBean.FakeTabLayout" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
     </style>
-
-    <style name="Widget.BikeBean.Button.MediumEmphasizeButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="android:theme">@style/Widget.BikeBean.ButtonOverlay</item>
-    </style>
-
-    <style name="Widget.BikeBean.Button.LowEmphasizeButton" parent="Widget.MaterialComponents.Button.TextButton">
-        <item name="android:theme">@style/Widget.BikeBean.ButtonOverlay</item>
-    </style>
-
-    <style name="Theme.BikeBean.AlertDialog" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
-        <item name="buttonBarPositiveButtonStyle">@style/Widget.BikeBean.Button.Positive</item>
-        <item name="buttonBarNegativeButtonStyle">@style/Widget.BikeBean.Button.Neutral</item>
-        <item name="buttonBarNeutralButtonStyle">@style/Widget.BikeBean.Button.Neutral</item>
-    </style>
-
-    <style name="Widget.BikeBean.Button.Positive" parent="Widget.BikeBean.Button.LowEmphasizeButton" />
-    <style name="Widget.BikeBean.Button.Neutral" parent="Widget.BikeBean.Button.LowEmphasizeButton" />
 
     <style name="Widget.BikeBean.Button.FakeButton" parent="">
         <item name="android:layout_width">wrap_content</item>
@@ -144,24 +159,26 @@
     <style name="Widget.BikeBean.TitleText" parent="">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingTop">@dimen/fragment_vertical_margin</item>
-        <item name="android:paddingStart">@dimen/fragment_horizontal_margin</item>
-        <item name="android:paddingEnd">@dimen/fragment_horizontal_margin</item>
+        <item name="android:layout_marginTop">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginBottom">@dimen/fragment_horizontal_margin</item>
+        <item name="android:layout_marginStart">@dimen/title_padding</item>
+        <item name="android:layout_marginEnd">@dimen/title_padding</item>
         <item name="android:textAppearance">?attr/textAppearanceHeadline5</item>
     </style>
 
     <style name="ShapeAppearance.BikeBean.Small"
         parent="ShapeAppearance.MaterialComponents.SmallComponent">
-        <item name="cornerSize">@dimen/corner_radius</item>
+        <item name="cornerSize">@dimen/corner_radius_small</item>
+        <item name="android:layout_height">56dp</item>
     </style>
 
     <style name="ShapeAppearance.BikeBean.Medium"
         parent="ShapeAppearance.MaterialComponents.MediumComponent">
         <item name="cornerSize">@dimen/corner_radius</item>
         <item name="cardElevation">@dimen/card_elevation</item>
-        <item name="android:layout_marginStart">@dimen/fragment_horizontal_margin</item>
-        <item name="android:layout_marginEnd">@dimen/fragment_horizontal_margin</item>
-        <item name="android:layout_marginTop">@dimen/fragment_vertical_margin</item>
+        <item name="android:layout_marginStart">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginEnd">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginTop">@dimen/activity_vertical_margin</item>
     </style>
 
     <style name="ShapeAppearance.BikeBean.NoRoundedCorners"

@@ -5,7 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +23,8 @@ import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.drawer.status.SubStatusFragment;
 import de.bikebean.app.ui.drawer.status.settings.LiveDataTimerViewModel;
 
+import static de.bikebean.app.ui.drawer.status.SubStatusFragmentSmallExtKt.sendSms;
+
 public class BatteryStatusFragment extends SubStatusFragment implements BatteryElementsSetter {
 
     private BatteryStateViewModel st;
@@ -29,10 +32,11 @@ public class BatteryStatusFragment extends SubStatusFragment implements BatteryE
     private final @NonNull LiveDataTimerViewModel.TIMER t1 = LiveDataTimerViewModel.TIMER.FOUR;
 
     // UI Elements
-    private ImageButton helpButton;
     private Button statusButton;
     private ProgressView progressView;
     private BatteryView batteryView;
+    private ImageView buttonBack, helpButton;
+    private TextView titleText;
 
     @Override
     public View onCreateView(final @NonNull LayoutInflater inflater,
@@ -51,6 +55,8 @@ public class BatteryStatusFragment extends SubStatusFragment implements BatteryE
                 v.findViewById(R.id.pendingStatusText),
                 v.findViewById(R.id.progressBar)
         );
+        buttonBack = v.findViewById(R.id.moreInfoButton);
+        titleText = v.findViewById(R.id.titleText);
 
         batteryView = new BatteryView(
                 v.findViewById(R.id.batteryStatusText),
@@ -75,11 +81,14 @@ public class BatteryStatusFragment extends SubStatusFragment implements BatteryE
     @Override
     protected void initUserInteractionElements() {
         statusButton.setOnClickListener(v ->
-                sendSms(Sms.MESSAGE._STATUS, new State[]{
+                sendSms(this, Sms.MESSAGE._STATUS, new State[]{
                         StateFactory.createPendingState(State.KEY.BATTERY, 0.0)
                 })
         );
         helpButton.setOnClickListener(Utils::onHelpClick);
+
+        initTransitionButton(buttonBack, helpButton, this, false);
+        titleText.setText(R.string.battery_text);
     }
 
     @Override

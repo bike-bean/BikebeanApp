@@ -6,16 +6,16 @@
     android:orientation="vertical" >
 
     <!-- title -->
-    <TextView
-        android:id="@+id/title"
-        style="?attr/titleText"
-        android:text="@string/status_text" />
+    <include layout="@layout/layout_title_small_more" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/fragment_vertical_margin" >
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/fragment_vertical_margin" >
 
         <!-- wlan -->
         <LinearLayout
@@ -28,7 +28,7 @@
             <ImageView
                 android:id="@+id/wlanImage"
                 android:layout_width="56dp"
-                android:layout_height="48dp"
+                android:layout_height="56dp"
                 android:contentDescription="@string/wlan_header"
                 android:padding="@dimen/fragment_horizontal_margin"
                 android:scaleType="centerCrop"
@@ -55,8 +55,8 @@
             <!-- icon -->
             <ImageView
                 android:id="@+id/intervalImage"
-                android:layout_width="58dp"
-                android:layout_height="48dp"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
                 android:contentDescription="@string/interval_header"
                 android:padding="@dimen/fragment_horizontal_margin"
                 android:scaleType="centerCrop"
@@ -82,7 +82,7 @@
             <ImageView
                 android:id="@+id/warningNumberImage"
                 android:layout_width="56dp"
-                android:layout_height="48dp"
+                android:layout_height="56dp"
                 android:contentDescription="@string/interval_header"
                 android:padding="@dimen/fragment_horizontal_margin"
                 android:scaleType="centerCrop"

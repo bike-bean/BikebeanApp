@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,27 +13,24 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
-import de.bikebean.app.db.settings.settings.WappState;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.db.state.StateFactory;
-import de.bikebean.app.db.type.SmsType;
 import de.bikebean.app.ui.drawer.status.SubStatusFragmentSmall;
-import de.bikebean.app.ui.initialization.StateList;
+
+import static de.bikebean.app.ui.drawer.status.SubStatusFragmentSmallExtKt.sendSms;
+import static de.bikebean.app.ui.drawer.status.location.LocationStatusFragmentSmallExtKt.startObservingWapp;
 
 public class LocationStatusFragmentSmall extends SubStatusFragmentSmall
         implements LocationElementsSetter {
 
-    private LocationStateViewModel st;
+    LocationStateViewModel st;
 
     // UI Elements
     private Button buttonGetLocation;
-    private TextView moreInfoButton;
+    private ImageView moreInfoButton, helpButton;
+    private TextView titleText;
 
     private LocationInformationViewSmall locationInformationViewSmall;
 
@@ -43,7 +41,9 @@ public class LocationStatusFragmentSmall extends SubStatusFragmentSmall
         final @NonNull View v = inflater.inflate(R.layout.fragment_status_location_small, container, false);
 
         buttonGetLocation = v.findViewById(R.id.sendButton);
-        moreInfoButton = v.findViewById(R.id.moreInfoButton0);
+        moreInfoButton = v.findViewById(R.id.moreInfoButton);
+        helpButton = v.findViewById(R.id.helpButton);
+        titleText = v.findViewById(R.id.titleText);
 
         locationInformationViewSmall = new LocationInformationViewSmall(
                 v.findViewById(R.id.lat),
@@ -72,23 +72,24 @@ public class LocationStatusFragmentSmall extends SubStatusFragmentSmall
         st.getCellTowers().observe(l, this::setElements);
         st.getWifiAccessPoints().observe(l, this::setElements);
         st.getLocation().observe(l, this::setElements);
-        st.getWapp().observe(l, this::updateWapp);
+
+        startObservingWapp(this, l);
     }
 
     @Override
     protected void initUserInteractionElements() {
         /* Insert two new pending States to mark waiting for response */
         buttonGetLocation.setOnClickListener(v ->
-                sendSms(Sms.MESSAGE.WAPP,
+                sendSms(this, Sms.MESSAGE.WAPP,
                         new State[] {
                                 StateFactory.createPendingState(State.KEY.LOCATION, 0.0),
                                 StateFactory.createPendingState(State.KEY.CELL_TOWERS, 0.0),
                                 StateFactory.createPendingState(State.KEY.WIFI_ACCESS_POINTS, 0.0)
                         })
         );
-        moreInfoButton.setOnClickListener(v ->
-                ((MainActivity) requireActivity()).transitionSmallNormal(v)
-        );
+
+        initTransitionButton(moreInfoButton, helpButton, this, true);
+        titleText.setText(R.string.location_text);
     }
 
     @Override
@@ -159,33 +160,4 @@ public class LocationStatusFragmentSmall extends SubStatusFragmentSmall
 
     @Override
     public void setLocationElementsProgressTextPending() {}
-
-    // cached copy of parsed SMS
-    private final List<Integer> parsedSms = new ArrayList<>();
-
-    private void updateWapp(final List<State> states) {
-        final @NonNull WappState wappState = new WappState(st, new StateList(states));
-        if (wappState.getIsNull())
-            return;
-
-        int id1 = wappState.getCellTowers().id;
-        int id2 = wappState.getWifiAccessPoints().id;
-
-        if (parsedSms.contains(id1) || parsedSms.contains(id2))
-            return;
-
-        parsedSms.add(id1);
-        parsedSms.add(id2);
-
-        new LocationUpdater(
-                requireContext(), st, lv,
-                this::updateLatLngAcc, wappState
-        ).execute();
-    }
-
-    private void updateLatLngAcc(final @NonNull WappState wappState, final @NonNull SmsType smsType) {
-        sm.markParsed(wappState.getSms());
-        st.confirmWapp(wappState);
-        st.insert(smsType);
-    }
 }

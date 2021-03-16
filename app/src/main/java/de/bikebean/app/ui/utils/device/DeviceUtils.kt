@@ -16,18 +16,13 @@ object DeviceUtils {
     @Synchronized
     fun getUUID(context: Context): String {
         val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
-        sharedPrefs ?: return UUID.randomUUID().toString()
+                ?: return UUID.randomUUID().toString()
 
-        val uniqueID = sharedPrefs.getString(SettingsFragment.PREF_UNIQUE_ID, null)
-
-        uniqueID ?: run{
-            sharedPrefs.edit()
-                    .putString(SettingsFragment.PREF_UNIQUE_ID, uniqueID)
-                    .apply()
-
-            return UUID.randomUUID().toString()
-        }
-
-        return uniqueID
+        return (sharedPrefs.getString(SettingsFragment.PREF_UNIQUE_ID, null)
+                        ?: UUID.randomUUID().toString().also {
+                            sharedPrefs.edit()
+                                    .putString(SettingsFragment.PREF_UNIQUE_ID, it)
+                                    .apply()
+                        })
     }
 }

@@ -2,39 +2,106 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:padding="10dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/bikebean_wifi"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/wlanStatusBikeBean"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.97"
-        android:fontFamily="sans-serif"
-        android:gravity="center"
-        android:textAlignment="center"
-        android:textColor="@color/onSurface"
-        android:textSize="20sp" />
+        style="?attr/shapeAppearanceMediumComponent" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:paddingBottom="@dimen/fragment_vertical_margin"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/wlan_title"
+                android:textAppearance="?attr/textAppearanceBody1" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/wlanSwitchBikeBean"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/wlanStatusDevice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?attr/shapeAppearanceMediumComponent" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:paddingBottom="@dimen/fragment_vertical_margin"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/wlan_title"
+                android:textAppearance="?attr/textAppearanceBody1" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/wlanSwitchDevice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        style="?attr/shapeAppearanceMediumComponent" >
+
+        <TextView
+            android:id="@+id/bikebean_wifi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:paddingBottom="@dimen/fragment_vertical_margin"
+            android:gravity="center"
+            android:textAlignment="center" />
+
+    </com.google.android.material.card.MaterialCardView>
 
     <ListView
         android:id="@+id/wifiList"
         android:layout_width="match_parent"
-        android:layout_height="260dp"
-        android:layout_weight="0.97"
-        android:fontFamily="sans-serif"
-        android:textSize="20sp"
-        android:textColor="@color/onSurface">
-
-    </ListView>
+        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/scanBtn"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="bottom"
-        android:layout_margin="15dp"
-        android:fontFamily="sans-serif"
+        android:layout_height="56dp"
         android:text="@string/scan_wifi" />
 
 </LinearLayout>

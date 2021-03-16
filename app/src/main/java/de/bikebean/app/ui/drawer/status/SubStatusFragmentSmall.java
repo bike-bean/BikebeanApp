@@ -1,15 +1,12 @@
 package de.bikebean.app.ui.drawer.status;
 
-import android.graphics.ColorFilter;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
-import android.util.TypedValue;
+import android.view.View;
+import android.widget.ImageView;
 
-import androidx.annotation.ColorInt;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
@@ -22,7 +19,6 @@ import java.util.List;
 
 import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
-import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.ui.drawer.log.LogViewModel;
 import de.bikebean.app.ui.drawer.map.MapFragmentViewModel;
@@ -32,12 +28,14 @@ import de.bikebean.app.ui.drawer.status.location.LocationElementsSetter;
 import de.bikebean.app.ui.drawer.status.settings.SettingsElementsSetter;
 import de.bikebean.app.ui.utils.sms.send.SmsSender;
 
+import static de.bikebean.app.ui.utils.resource.ResourceUtils.getCurrentTextColorFilter;
+
 public abstract class SubStatusFragmentSmall extends Fragment {
 
     private StateViewModel st;
 
-    protected LogViewModel lv;
-    protected SmsViewModel sm;
+    public LogViewModel lv;
+    public SmsViewModel sm;
     protected MapFragmentViewModel mf;
 
     @Override
@@ -49,11 +47,16 @@ public abstract class SubStatusFragmentSmall extends Fragment {
         sm = new ViewModelProvider(this).get(SmsViewModel.class);
         mf = new ViewModelProvider(this).get(MapFragmentViewModel.class);
 
+        requireView().getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+                if (shouldScrollAfterTransition())
+                    ((MainActivity) requireActivity()).scrollToStatusFragment(requireView());
+        });
+
         setupListeners(getViewLifecycleOwner());
         initUserInteractionElements();
     }
 
-    private void onPostSend(boolean sent, final @NonNull SmsSender smsSender) {
+    protected void onPostSend(boolean sent, final @NonNull SmsSender smsSender) {
         if (sent) {
             Snackbar.make(requireView(),
                     String.format("SMS an %s gesendet", smsSender.getAddress()),
@@ -72,6 +75,47 @@ public abstract class SubStatusFragmentSmall extends Fragment {
 
     protected abstract void initUserInteractionElements();
 
+    private boolean transitionHappened = false;
+
+    private boolean shouldScrollAfterTransition() {
+        if (transitionHappened) {
+            transitionHappened = false;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void setTransitionHappened() {
+        transitionHappened = true;
+    }
+
+    protected void initTransitionButton(
+            ImageView navButton,
+            ImageView helpButton,
+            SubStatusFragmentSmall f,
+            boolean small) {
+        final @DrawableRes int drawableRes;
+        final int helpButtonVisibility;
+
+        if (small) {
+            drawableRes = R.drawable.ic_baseline_arrow_forward_30;
+            helpButtonVisibility = View.GONE;
+        } else {
+            drawableRes = R.drawable.ic_baseline_close_30;
+            helpButtonVisibility = View.VISIBLE;
+        }
+
+        navButton.setOnClickListener(view ->
+                ((MainActivity) requireActivity()).transitionSmallNormal(f)
+        );
+        navButton.setImageDrawable(ContextCompat.getDrawable(requireContext(), drawableRes));
+        navButton.setColorFilter(getCurrentTextColorFilter(requireContext()));
+
+        helpButton.setColorFilter(getCurrentTextColorFilter(requireContext()));
+        helpButton.setVisibility(helpButtonVisibility);
+    }
+
     protected abstract void resetElements();
 
     /*
@@ -89,7 +133,7 @@ public abstract class SubStatusFragmentSmall extends Fragment {
         return false;
     }
 
-    protected void setElements(final @NonNull List<State> states) {
+    public void setElements(final @NonNull List<State> states) {
         if (states.size() == 0 || isAlreadyParsed(states.get(0)))
             return;
 
@@ -121,7 +165,7 @@ public abstract class SubStatusFragmentSmall extends Fragment {
                         }
                         break;
                     case WARNING_NUMBER:
-                        getSSetter().setWarningNumberElementsUnset(state);
+                        getSSetter().setWarningNumberElementsUnset();
                         break;
                     case _STATUS:
                         getSSetter().setStatusElementsUnset();
@@ -262,28 +306,6 @@ public abstract class SubStatusFragmentSmall extends Fragment {
 
     private SettingsElementsSetter getSSetter() {
         return (SettingsElementsSetter) this;
-    }
-
-    protected ColorFilter getCurrentIconColorFilter() {
-        final @NonNull TypedValue typedValue = new TypedValue();
-        final @ColorInt int color;
-
-        requireContext().getTheme().resolveAttribute(
-                R.attr.colorPrimary, typedValue, true
-        );
-
-        if (((MainActivity) requireActivity()).isLightTheme())
-            color = ContextCompat.getColor(requireContext(), typedValue.resourceId);
-        else color = ContextCompat.getColor(requireContext(), R.color.white);
-
-        return new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN);
-    }
-
-    protected void sendSms(final @NonNull Sms.MESSAGE message, final @NonNull State[] updates) {
-        new SmsSender(
-                (AppCompatActivity) requireActivity(), lv,
-                this::onPostSend, message, updates
-        ).send();
     }
 
     public MapFragmentViewModel getMf() { return mf; }

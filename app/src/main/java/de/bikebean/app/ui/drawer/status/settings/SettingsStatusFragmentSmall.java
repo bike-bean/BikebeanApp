@@ -15,11 +15,15 @@ import androidx.lifecycle.ViewModelProvider;
 
 import java.util.Locale;
 
+import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
 import de.bikebean.app.db.sms.Sms;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.db.state.StateFactory;
 import de.bikebean.app.ui.drawer.status.SubStatusFragmentSmall;
+
+import static de.bikebean.app.ui.drawer.status.SubStatusFragmentSmallExtKt.sendSms;
+import static de.bikebean.app.ui.utils.resource.ResourceUtils.getCurrentIconColorFilter;
 
 public class SettingsStatusFragmentSmall extends SubStatusFragmentSmall
         implements SettingsElementsSetter {
@@ -29,6 +33,8 @@ public class SettingsStatusFragmentSmall extends SubStatusFragmentSmall
     // UI Elements
     private SwitchCompat wlanSwitch;
     private TextView intervalValue, warningNumberSummary;
+    private TextView titleText;
+    private ImageView moreInfoButton, helpButton;
 
     private ImageView wlanImage, intervalImage, warningNumberImage;
 
@@ -48,6 +54,10 @@ public class SettingsStatusFragmentSmall extends SubStatusFragmentSmall
         wlanImage = v.findViewById(R.id.wlanImage);
         intervalImage = v.findViewById(R.id.intervalImage);
         warningNumberImage = v.findViewById(R.id.warningNumberImage);
+
+        titleText = v.findViewById(R.id.titleText);
+        moreInfoButton = v.findViewById(R.id.moreInfoButton);
+        helpButton = v.findViewById(R.id.helpButton);
 
         return v;
     }
@@ -76,14 +86,23 @@ public class SettingsStatusFragmentSmall extends SubStatusFragmentSmall
             final @NonNull Sms.MESSAGE msg = Sms.MESSAGE.WIFI;
             msg.setValue("Wifi " + (isChecked ? "on" : "off"));
 
-            sendSms(msg, new State[]{StateFactory.createPendingState(
+            sendSms(this, msg, new State[]{StateFactory.createPendingState(
                     State.KEY.WIFI, isChecked ? 1.0 : 0.0)
             });
         });
 
-        wlanImage.setColorFilter(getCurrentIconColorFilter());
-        intervalImage.setColorFilter(getCurrentIconColorFilter());
-        warningNumberImage.setColorFilter(getCurrentIconColorFilter());
+        wlanImage.setColorFilter(
+                getCurrentIconColorFilter((MainActivity) requireActivity())
+        );
+        intervalImage.setColorFilter(
+                getCurrentIconColorFilter((MainActivity) requireActivity())
+        );
+        warningNumberImage.setColorFilter(
+                getCurrentIconColorFilter((MainActivity) requireActivity())
+        );
+
+        initTransitionButton(moreInfoButton, helpButton, this, true);
+        titleText.setText(R.string.status_text);
     }
 
     @Override
@@ -93,12 +112,14 @@ public class SettingsStatusFragmentSmall extends SubStatusFragmentSmall
 
     // unset
     @Override
-    public void setWarningNumberElementsUnset(final @NonNull State state) {
-        sendSms(Sms.MESSAGE.WARNING_NUMBER, new State[]{StateFactory.createPendingState(
-                State.KEY.WARNING_NUMBER, 0.0)
-        });
+    public void setIntervalElementsUnset(final @NonNull State state) {
+        final @NonNull String interval = state.getValue().intValue() + " h";
+        intervalValue.setText(interval);
+    }
 
-        warningNumberSummary.setText(state.getLongValue());
+    @Override
+    public void setWarningNumberElementsUnset() {
+        warningNumberSummary.setText(getString(R.string.warning_number_not_set));
     }
 
     @Override

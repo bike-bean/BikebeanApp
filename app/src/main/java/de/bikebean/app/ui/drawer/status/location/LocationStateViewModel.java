@@ -8,9 +8,13 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
-import de.bikebean.app.db.settings.settings.WappState;
+import de.bikebean.app.db.settings.settings.add_to_list_settings.WappState;
 import de.bikebean.app.db.state.State;
+import de.bikebean.app.db.state.StateFactory;
 import de.bikebean.app.ui.drawer.status.StateViewModel;
+
+import static de.bikebean.app.ui.drawer.status.StateViewModelExtKt.getConfirmedStateSync;
+import static de.bikebean.app.ui.drawer.status.StateViewModelExtKt.getStateByIdSync;
 
 public class LocationStateViewModel extends StateViewModel {
 
@@ -87,18 +91,28 @@ public class LocationStateViewModel extends StateViewModel {
     }
 
     public @Nullable State getConfirmedLocationSync(final @NonNull State state) {
-        return getConfirmedStateSync(State.KEY.getValue(state));
+        return getConfirmedStateSync(this, State.KEY.getValue(state));
     }
 
     boolean getLocationByIdSync(final @NonNull WappState wappState) {
-        return getStateByIdSync(State.KEY.LOCATION, wappState.getSmsId()) != null;
+        return getStateByIdSync(this, State.KEY.LOCATION, wappState.getSmsId()) != null;
     }
 
-    public @Nullable State getWifiAccessPointsByWappSync(final @NonNull State wappState) {
-        return getStateByIdSync(State.KEY.WIFI_ACCESS_POINTS, wappState.getSmsId());
+    public @NonNull State getWifiAccessPointsByWappSync(final @NonNull State wappState) {
+        final @Nullable State state =
+                getStateByIdSync(this, State.KEY.WIFI_ACCESS_POINTS, wappState.getSmsId());
+
+        if (state != null)
+            return state;
+        else return StateFactory.createNullState();
     }
 
-    public @Nullable State getCellTowersByWappSync(final @NonNull State wappState) {
-        return getStateByIdSync(State.KEY.CELL_TOWERS, wappState.getSmsId());
+    public @NonNull State getCellTowersByWappSync(final @NonNull State wappState) {
+        final @Nullable State state =
+                getStateByIdSync(this, State.KEY.CELL_TOWERS, wappState.getSmsId());
+
+        if (state != null)
+            return state;
+        else return StateFactory.createNullState();
     }
 }

@@ -2,7 +2,8 @@
 <HorizontalScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:scrollbars="none" >
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -20,7 +21,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/fragment_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:orientation="vertical">
 
             <LinearLayout
@@ -33,7 +34,8 @@
                     android:id="@+id/lat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?attr/textAppearanceHeadline6" />
+                    android:textAppearance="?attr/textAppearanceBody1"
+                    android:textStyle="bold" />
 
                 <!-- lng -->
                 <TextView
@@ -41,7 +43,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
-                    android:textAppearance="?attr/textAppearanceHeadline6" />
+                    android:textAppearance="?attr/textAppearanceBody1"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 

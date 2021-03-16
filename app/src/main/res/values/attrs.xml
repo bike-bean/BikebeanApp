@@ -12,4 +12,10 @@
 
     </declare-styleable>
 
+    <declare-styleable name="InitialItemView">
+
+        <attr name="checked" format="boolean" />
+
+    </declare-styleable>
+
 </resources>

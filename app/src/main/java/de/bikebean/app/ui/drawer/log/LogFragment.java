@@ -17,22 +17,21 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.android.material.snackbar.Snackbar;
-
 import java.util.List;
 
 import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
-import de.bikebean.app.db.BikeBeanRoomDatabase;
 import de.bikebean.app.db.log.Log;
+
+import static de.bikebean.app.ui.drawer.log.LogFragmentExtKt.generateLogAndUpload;
 
 public class LogFragment extends Fragment {
 
-    private LogViewModel logViewModel;
+    LogViewModel logViewModel;
 
     private LogAdapter adapter;
 
-    private Button sendButton;
+    Button sendButton;
     private TextView noDataText;
     private Spinner spinner;
     private RecyclerView recyclerView;
@@ -69,7 +68,9 @@ public class LogFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        ((MainActivity) requireActivity()).setToolbarScrollEnabled(true);
+        final @NonNull MainActivity activity = (MainActivity) requireActivity();
+        activity.setToolbarScrollEnabled(true);
+        activity.resumeToolbarAndBottomSheet();
     }
 
     private void initSpinner() {
@@ -113,34 +114,7 @@ public class LogFragment extends Fragment {
                 // do nothing
             }
         });
-        sendButton.setOnClickListener(this::generateLogAndUpload);
-    }
-
-    private void generateLogAndUpload(final @NonNull View v) {
-        logViewModel.d("Exporting database...");
-        Snackbar.make(v,
-                "Fehlerbericht senden...",
-                Snackbar.LENGTH_LONG
-        ).show();
-
-        final @NonNull GithubGistUploader githubGistUploader = BikeBeanRoomDatabase.createReport(
-                requireContext(), logViewModel, this::notifyUploadSuccess
-        );
-
-        githubGistUploader.execute();
-    }
-
-    private void notifyUploadSuccess(boolean success) {
-        if (success)
-            Snackbar.make(sendButton,
-                    "Fehlerbericht gesendet",
-                    Snackbar.LENGTH_LONG
-            ).show();
-        else
-            Snackbar.make(sendButton,
-                    "Fehlerbericht konnte nicht gesendet werden!",
-                    Snackbar.LENGTH_LONG
-            ).show();
+        sendButton.setOnClickListener(v -> generateLogAndUpload(this));
     }
 
     private void initRecyclerView() {

@@ -3,7 +3,8 @@ package de.bikebean.app.ui.drawer.status.battery
 import android.content.Context
 import android.widget.ImageView
 import android.widget.TextView
-import de.bikebean.app.db.settings.settings.Battery.UNSET_BATTERY
+
+import de.bikebean.app.db.settings.settings.add_to_list_settings.Battery.Companion.UNSET_BATTERY
 import de.bikebean.app.ui.utils.date.BatteryBehaviour
 import de.bikebean.app.ui.utils.resource.ResourceUtils.getBatteryDrawable
 

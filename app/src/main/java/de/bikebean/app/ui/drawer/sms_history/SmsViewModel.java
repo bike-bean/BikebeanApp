@@ -5,6 +5,7 @@ import android.content.Context;
 import android.provider.Telephony;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
@@ -97,7 +98,7 @@ public class SmsViewModel extends AndroidViewModel {
         new SmsLoader(context, this, st, lv).execute(address);
     }
 
-    public void fetchSmsSync(final @NonNull Context context,
+    public void fetchSmsSync(final @Nullable Context context,
                              final StateViewModel st, final LogViewModel lv,
                              final @NonNull String address) {
         /* load the sms list in foreground */

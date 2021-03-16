@@ -1,7 +1,5 @@
 package de.bikebean.app.ui.drawer.preferences;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import de.bikebean.app.MainActivity;
@@ -20,12 +17,16 @@ import de.bikebean.app.R;
 import de.bikebean.app.ui.drawer.log.LogViewModel;
 import de.bikebean.app.ui.utils.device.DeviceUtils;
 
-import static android.content.Intent.*;
+import static de.bikebean.app.ui.drawer.preferences.PreferencesFragmentExtKt.startObservingNewVersion;
+import static de.bikebean.app.ui.drawer.preferences.PreferencesFragmentExtKt.startVersionChecker;
 
 public class PreferencesFragment extends Fragment {
 
-    private TextView versionNameNew;
-    private Button downloadNewVersionButton;
+    TextView versionNameNew;
+    Button downloadNewVersionButton;
+
+    LogViewModel logViewModel;
+    PreferencesViewModel preferencesViewModel;
 
     @Nullable
     @Override
@@ -39,10 +40,8 @@ public class PreferencesFragment extends Fragment {
                 .replace(R.id.settings, new SettingsFragment())
                 .commit();
 
-        final @NonNull LogViewModel logViewModel =
-                new ViewModelProvider(this).get(LogViewModel.class);
-        final @NonNull PreferencesViewModel preferencesViewModel =
-                new ViewModelProvider(this).get(PreferencesViewModel.class);
+        logViewModel = new ViewModelProvider(this).get(LogViewModel.class);
+        preferencesViewModel = new ViewModelProvider(this).get(PreferencesViewModel.class);
 
         final @Nullable TextView versionName = v.findViewById(R.id.versionName);
         final @NonNull String versionNameString =
@@ -54,13 +53,9 @@ public class PreferencesFragment extends Fragment {
 
         versionNameNew = v.findViewById(R.id.versionName2);
         downloadNewVersionButton = v.findViewById(R.id.downloadNewVersion);
-        preferencesViewModel.getNewVersion().observe(getViewLifecycleOwner(), setVersionNameNew);
 
-        new VersionChecker(
-                requireContext(),
-                logViewModel, preferencesViewModel,
-                this::newerVersionHandler
-        ).execute();
+        startObservingNewVersion(this);
+        startVersionChecker(this);
 
         return v;
     }
@@ -69,35 +64,9 @@ public class PreferencesFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        ((MainActivity) requireActivity()).setToolbarScrollEnabled(false);
+        final @NonNull MainActivity activity = (MainActivity) requireActivity();
+        activity.setToolbarScrollEnabled(false);
+        activity.resumeToolbarAndBottomSheet();
     }
 
-    private final @NonNull Observer<Release> setVersionNameNew = s -> {
-        if (s.getUrl().equals(""))
-            return;
-
-        final @NonNull String versionNameString = "Neueste Version: " + s.getName();
-
-        versionNameNew.setVisibility(View.VISIBLE);
-        versionNameNew.setText(versionNameString);
-        downloadNewVersionButton.setVisibility(View.VISIBLE);
-        downloadNewVersionButton.setOnClickListener(v -> downloadNewVersion(s.getUrl()));
-    };
-
-    void newerVersionHandler(final @NonNull Release release) {
-        new NewVersionDialog(
-                requireActivity(), release,
-                this::downloadNewVersion, this::cancelNewVersionDownload
-        ).show(getChildFragmentManager(),"newVersionDialog");
-    }
-
-    void downloadNewVersion(final @NonNull String url) {
-        final @NonNull Intent intent = new Intent(ACTION_VIEW, Uri.parse(url));
-        if (intent.resolveActivity(requireActivity().getPackageManager()) != null)
-            startActivity(intent);
-    }
-
-    void cancelNewVersionDownload() {
-        assert true;
-    }
 }

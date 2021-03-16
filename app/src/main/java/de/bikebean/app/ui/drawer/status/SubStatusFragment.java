@@ -10,7 +10,7 @@ import de.bikebean.app.ui.drawer.status.settings.LiveDataTimerViewModel;
 
 public abstract class SubStatusFragment extends SubStatusFragmentSmall {
 
-    protected LiveDataTimerViewModel tv;
+    public LiveDataTimerViewModel tv;
 
     protected LastChangedView lastChangedView;
 
@@ -21,7 +21,7 @@ public abstract class SubStatusFragment extends SubStatusFragmentSmall {
         tv = new ViewModelProvider(this).get(LiveDataTimerViewModel.class);
     }
 
-    protected void updatePendingText(final @NonNull ProgressView progressView,
+    public void updatePendingText(final @NonNull ProgressView progressView,
                                      long startTime, long stopTime, long residualSeconds) {
         if (residualSeconds > 0)
             progressView.setProgress(requireContext(), startTime, stopTime, residualSeconds);

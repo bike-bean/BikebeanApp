@@ -51,7 +51,9 @@ public class SmsHistoryFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        ((MainActivity) requireActivity()).setToolbarScrollEnabled(false);
+        final @NonNull MainActivity activity = (MainActivity) requireActivity();
+        activity.setToolbarScrollEnabled(false);
+        activity.resumeToolbarAndBottomSheet();
     }
 
     private void initRecyclerView(final @NonNull View v) {

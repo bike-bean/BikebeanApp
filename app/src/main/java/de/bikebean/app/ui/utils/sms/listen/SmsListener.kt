@@ -25,30 +25,30 @@ class SmsListener : BroadcastReceiver() {
          When a new message arrives, just trigger the MainActivity
          */
 
-        val number = PreferencesUtils.getBikeBeanNumber(ctx) ?: return
+        // Exit if the intent is something else
         isIncomingSms(intent.action) ?: return
-        isFromOurBikeBean(intent, number) ?: return
 
-        val backIntent = Intent(ctx, MainActivity::class.java)
+        (PreferencesUtils.getBikeBeanNumber(ctx) ?: return).let { number ->
+            // Exit if the message is NOT from our bikeBean
+            isFromOurBikeBean(intent, number) ?: return
+        }
+
+        // Trigger the MainActivity for a new message
+        Intent(ctx, MainActivity::class.java)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 .putExtra(newSmsString, 1)
-
-        ctx.startActivity(backIntent)
+                .let(ctx::startActivity)
     }
 
-    private fun isIncomingSms(action: String?): Unit? {
-        if (action != null && action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION)
-            return Unit
-
-        return null
+    private fun isIncomingSms(action: String?): Unit? = when {
+        action != null && action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION -> Unit
+        else -> null
     }
 
-    private fun isFromOurBikeBean(intent: Intent, number: String): Unit? {
-        if (Telephony.Sms.Intents.getMessagesFromIntent(intent).any {
+    private fun isFromOurBikeBean(intent: Intent, number: String): Unit? = when {
+        Telephony.Sms.Intents.getMessagesFromIntent(intent).any {
             it.originatingAddress != null && it.originatingAddress.equals(number)
-        })
-            return Unit
-
-        return null
+        } -> Unit
+        else -> null
     }
 }

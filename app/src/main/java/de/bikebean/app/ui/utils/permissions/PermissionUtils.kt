@@ -8,15 +8,15 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import de.bikebean.app.ui.drawer.map.MapFragment
+import androidx.fragment.app.Fragment
+import de.bikebean.app.ui.drawer.map.MapFragmentOld
 
 object PermissionUtils {
 
-    val smsPermissions: Array<String>
-        get() = if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O) {
-            smsPermissionsAndroid8_0
-        } else {
-            smsPermissionsAndroidX_X
+    private val smsPermissions: Array<String>
+        get() = when (Build.VERSION.SDK_INT) {
+            Build.VERSION_CODES.O -> smsPermissionsAndroid8_0
+            else -> smsPermissionsAndroidX_X
         }
 
     private val smsPermissionsAndroid8_0 = arrayOf(
@@ -32,58 +32,91 @@ object PermissionUtils {
             Manifest.permission.RECEIVE_SMS
     )
 
-    private val permissionMap: HashMap<KEYS, Array<String>> = object : HashMap<KEYS, Array<String>>() {
-        init {
-            put(KEYS.SMS, smsPermissions)
-            put(KEYS.MAPS, MapFragment.mapsPermissions)
+    private val permissionMap = mapOf(
+            KEYS.SMS to smsPermissions,
+            KEYS.MAPS to MapFragmentOld.mapsPermissions
+    )
+
+    private fun getPermissions(activity: AppCompatActivity, p: KEYS, tag: String): Boolean {
+        (permissionMap[p] ?: return false).filter {
+            checkSelfPermission(activity, it)
+        }.let { unGrantedPermissions ->
+            return unGrantedPermissions.isEmpty().also { isEmpty ->
+                if (!isEmpty) handleDialog(activity, p, tag, unGrantedPermissions.first())
+            }
+        }
+    }
+
+    private fun getPermissions(fragment: Fragment, p: KEYS, tag: String): Boolean {
+        (permissionMap[p] ?: return false).filter {
+            checkSelfPermission(fragment.requireContext(), it)
+        }.let { unGrantedPermissions ->
+            return unGrantedPermissions.isEmpty().also { isEmpty ->
+                if (!isEmpty) handleDialog(fragment, p, tag, unGrantedPermissions.first())
+            }
+        }
+    }
+
+    private fun handleDialog(activity: AppCompatActivity, p: KEYS, tag: String, perm: String) =
+            when {
+                ActivityCompat.shouldShowRequestPermissionRationale(activity, perm) ->
+                    showPermissionsRationaleDialog(activity, p, tag)
+                else -> askForPermissions(activity, p)
+            }
+
+    private fun handleDialog(fragment: Fragment, p: KEYS, tag: String, perm: String) =
+            when {
+                fragment.shouldShowRequestPermissionRationale(perm) ->
+                    showPermissionsRationaleDialog(fragment, p, tag)
+                else -> askForPermissions(fragment, p)
+            }
+
+    private fun showPermissionsRationaleDialog(activity: AppCompatActivity, p: KEYS, tag: String) =
+            PermissionsRationaleDialog(activity, p).show(activity.supportFragmentManager, tag)
+
+    private fun showPermissionsRationaleDialog(fragment: Fragment, p: KEYS, tag: String) =
+            PermissionsRationaleDialog(fragment, p).show(fragment.parentFragmentManager, tag)
+
+    private fun checkSelfPermission(context: Context, permission: String): Boolean =
+            (ContextCompat.checkSelfPermission(context, permission)
+                    != PackageManager.PERMISSION_GRANTED)
+
+    @JvmStatic
+    fun askForPermissions(activity: Activity, p: KEYS) {
+        (permissionMap[p] ?: return).let { permissions ->
+            ActivityCompat.requestPermissions(activity, permissions, p.ordinal)
         }
     }
 
     @JvmStatic
-    fun getPermissions(activity: AppCompatActivity, p: KEYS, tag: String): Boolean {
-        val permissions = permissionMap[p] ?: return false
-
-        for (perm in permissions)
-            if (checkSelfPermission(activity, perm))
-                return if (ActivityCompat.shouldShowRequestPermissionRationale(activity, perm)) {
-                    PermissionsRationaleDialog(activity, p).show(
-                            activity.supportFragmentManager, tag
-                    )
-                    false
-                } else {
-                    askForPermissions(activity, p)
-                    false
-                }
-
-        return true
-    }
-
-    private fun checkSelfPermission(context: Context, permission: String): Boolean {
-        return (ContextCompat.checkSelfPermission(context, permission)
-                != PackageManager.PERMISSION_GRANTED)
+    fun askForPermissions(fragment: Fragment, p: KEYS) {
+        (permissionMap[p] ?: return).let { permissions ->
+            fragment.requestPermissions(permissions, p.ordinal)
+        }
     }
 
     @JvmStatic
-    fun askForPermissions(activity: Activity, p: KEYS) {
-        val permissions = permissionMap[p] ?: return
+    fun checkResult(grantResults: IntArray): Boolean =
+            grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
 
-        ActivityCompat.requestPermissions(activity, permissions, p.ordinal)
+    @JvmStatic
+    fun hasSmsPermissions(act: AppCompatActivity): Boolean =
+            getPermissions(act, KEYS.SMS, "smsRationaleDialog")
+
+    @JvmStatic
+    fun hasSmsPermissions(fragment: Fragment): Boolean =
+            getPermissions(fragment, KEYS.SMS, "smsRationaleDialog")
+
+    @JvmStatic
+    fun lacksSmsPermissions(context: Context): Boolean {
+        return (permissionMap[KEYS.SMS] ?: return false).any {
+            checkSelfPermission(context, it)
+        }
     }
 
     @JvmStatic
-    fun checkResult(grantResults: IntArray): Boolean {
-        return grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
-    }
-
-    @JvmStatic
-    fun hasSmsPermissions(act: AppCompatActivity): Boolean {
-        return getPermissions(act, KEYS.SMS, "smsRationaleDialog")
-    }
-
-    @JvmStatic
-    fun hasMapsPermissions(act: AppCompatActivity): Boolean {
-        return getPermissions(act, KEYS.MAPS, "mapsRationaleDialog")
-    }
+    fun hasMapsPermissions(fragment: Fragment): Boolean =
+            getPermissions(fragment, KEYS.MAPS, "mapsRationaleDialog")
 
     enum class KEYS {
         SMS, MAPS

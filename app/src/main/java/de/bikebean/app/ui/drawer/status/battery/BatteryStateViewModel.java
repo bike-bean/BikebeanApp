@@ -13,6 +13,7 @@ import de.bikebean.app.ui.drawer.status.StateViewModel;
 import de.bikebean.app.ui.utils.date.BatteryBehaviour;
 
 import static de.bikebean.app.db.settings.settings.replace_if_newer_settings.Wifi.INITIAL_WIFI;
+import static de.bikebean.app.ui.drawer.status.StateViewModelExtKt.getConfirmedStateSync;
 
 public class BatteryStateViewModel extends StateViewModel {
 
@@ -48,7 +49,7 @@ public class BatteryStateViewModel extends StateViewModel {
     }
 
     @Nullable State getConfirmedBatterySync() {
-        return getConfirmedStateSync(State.KEY.BATTERY);
+        return getConfirmedStateSync(this, State.KEY.BATTERY);
     }
 
     @Nullable BatteryBehaviour getBatteryBehaviour() {
@@ -62,7 +63,8 @@ public class BatteryStateViewModel extends StateViewModel {
     }
 
     private boolean getConfirmedWifiSync() {
-        final @Nullable State wifiConfirmed = getConfirmedStateSync(State.KEY.WIFI);
+        final @Nullable State wifiConfirmed =
+                getConfirmedStateSync(this, State.KEY.WIFI);
 
         if (wifiConfirmed != null)
             return wifiConfirmed.getValue() > 0;

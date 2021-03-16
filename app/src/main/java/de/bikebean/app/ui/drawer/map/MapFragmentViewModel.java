@@ -3,6 +3,7 @@ package de.bikebean.app.ui.drawer.map;
 import android.app.Application;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 
 import androidx.annotation.ColorInt;
@@ -97,6 +98,11 @@ public class MapFragmentViewModel extends StateViewModel {
     }
 
     public @Nullable Bitmap getMapMarkerBitmap(final MapMarkerCache.DRAWABLES drawable,
+                                               final @ColorInt int color) {
+        return mRepository.getMapMarkerBitmap(drawable, color);
+    }
+
+    public @NonNull Bitmap getMapMarkerBitmap(final Drawable drawable,
                                                final @ColorInt int color) {
         return mRepository.getMapMarkerBitmap(drawable, color);
     }

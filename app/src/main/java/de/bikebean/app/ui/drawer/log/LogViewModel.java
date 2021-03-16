@@ -71,7 +71,7 @@ public class LogViewModel extends AndroidViewModel {
     }
 
     private @Nullable Log getLastLog() {
-        final @NonNull MutableObject<Log> log = new MutableObject<>(new Log());
+        final @NonNull MutableObject log = new MutableObject();
 
         return (Log) log.getDbEntitySync(mRepository::getLastLevelSync, "", 0);
     }

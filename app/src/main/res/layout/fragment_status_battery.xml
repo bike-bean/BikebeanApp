@@ -7,20 +7,7 @@
     android:layout_height="wrap_content" >
 
     <!-- title -->
-    <TextView
-        android:id="@+id/title"
-        style="?attr/titleText"
-        android:text="@string/battery_text"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- help button -->
-    <ImageButton
-        android:id="@+id/helpButton"
-        style="?attr/helpButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="@string/help1" />
+    <include layout="@layout/layout_title_small_more" />
 
     <include
         layout="@layout/layout_meta_info"
@@ -31,6 +18,8 @@
         android:id="@+id/separationLine"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/fragment_horizontal_margin"
+        android:layout_marginEnd="@dimen/fragment_horizontal_margin"
         android:background="?attr/dividerHorizontal"
         android:contentDescription="@string/share"
         app:layout_constraintTop_toBottomOf="@id/metaInfo" />
@@ -41,18 +30,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingStart="@dimen/fragment_horizontal_margin"
-        android:paddingEnd="0dp"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/fragment_vertical_margin"
+        android:paddingBottom="@dimen/fragment_vertical_margin"
         android:gravity="center_vertical"
         app:layout_constraintTop_toBottomOf="@id/separationLine"
         app:layout_constraintStart_toStartOf="parent" >
 
         <ImageView
             android:id="@+id/batteryStatusImage"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:contentDescription="@string/battery_text"
-            android:rotation="90"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_battery_unknown_black_24dp" />
 
@@ -60,7 +49,7 @@
             android:id="@+id/batteryStatusText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
+            android:layout_marginStart="@dimen/fragment_horizontal_margin"
             android:layout_gravity="center"
             android:textAppearance="?attr/textAppearanceHeadline6" />
 
@@ -69,29 +58,31 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:orientation="vertical"
-        android:padding="@dimen/fragment_horizontal_margin"
         app:layout_constraintTop_toBottomOf="@id/batteryStatus" >
 
         <TextView
             android:id="@+id/batteryEstimatedStatusText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="4dp"
+            android:paddingBottom="@dimen/fragment_vertical_margin"
             android:textAppearance="?attr/textAppearanceBody2" />
 
         <TextView
             android:id="@+id/batteryRuntimeEstimationText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="4dp"
+            android:paddingBottom="@dimen/fragment_vertical_margin"
             android:textAppearance="?attr/textAppearanceBody2" />
 
         <TextView
             android:id="@+id/batteryLastKnownStatusText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="@dimen/fragment_vertical_margin"
+            android:paddingBottom="@dimen/fragment_vertical_margin"
             android:textAppearance="?attr/textAppearanceBody2" />
 
     </LinearLayout>
