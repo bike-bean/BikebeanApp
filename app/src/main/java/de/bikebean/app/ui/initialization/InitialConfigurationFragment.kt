@@ -211,15 +211,19 @@ class InitialConfigurationFragment : Fragment() {
      *   - Map: Show Fab only when location is not visible on the map
      *   - Map: Provide Zoom Controls
      *   - Map: Provide Device's Location
+     *   - Map: If no position is found, map won't load
      *   - ...
      *   - UI: Do make buttons available if another query is running, but maybe indicate that in
      *         an extra dialog prior to sending the sms (or even in the same...)
      *   - UI: Provide a shortcut to the position history (from location status view) and
      *         to battery history (from battery status view)
+     *   - UI: Provide nice way into wifi localization
+     *   - UI: Position History: Provide button to show all of them!
      *   - UI: Make WLAN switched On more annoying ("warning" icons, orange background etc.)
      *   - UI: Help Snackbar Texts are rather short-lived and, more importantly, only 2 lines
      *         long! Make better!
      *   - UI: WifiLoc-Fragment should inform about the Wifi Status and react accordingly
+     *   - UI: SmsListener maybe is not working??!
      *   - ...
      *   - Code: More Kotlin (Next: MainActivity split)
      *   - Code: API 19: WHAT is with the Fabs??
