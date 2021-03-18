@@ -48,4 +48,4 @@ To test the SMS API, use the following strings:
 | Low Battery   | BATTERY LOW!<br>BATTERY STATUS: 19% |
 | Very Low Battery | BATTERY LOW!<br>BATTERY STATUS: 8% <br>Interval set to 24h |
 | No Wifi Available | no wifi available |
-| No Wifi Available 2 | no wifi available<br> |
+| No Wifi Available 2 | no wifi available<br> <br> |
