@@ -16,7 +16,13 @@ See [Design Doc](doc/Doc.md).
 
 ## Where to get
 
-You can download a prebuilt version (apk) in the
+<a href="https://apt.izzysoft.de/fdroid/index/apk/de.bikebean.app">
+  <img alt="AvailableOnIzzyOnDroid" src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" width="220">
+</a>
+                                                                                                                                        
+The App is currently listed on [IzzyDroid](https://apt.izzysoft.de/fdroid/index/apk/de.bikebean.app) as we rework some of the code to apply for f-droid.
+
+You can also download a prebuilt version (apk) in the
 [release](https://github.com/bike-bean/BikebeanApp/releases) section.
 
 ## Todos
