@@ -16,9 +16,10 @@ class NewVersionDialog (
         private val newVersionDownloadCanceller: () -> Unit
 ) : DialogFragment() {
 
-    private val message = getString(R.string.update_text_1) +
-            release.name +
-            getString(R.string.update_text_2)
+    private val message by lazy {
+        act.getString(R.string.update_text_1) +
+                release.name + act.getString(R.string.update_text_2)
+    }
 
     private val positiveButtonListener: (DialogInterface, Int) -> Unit =
             { _, _ -> newVersionDownloadHandler(release.url) }
