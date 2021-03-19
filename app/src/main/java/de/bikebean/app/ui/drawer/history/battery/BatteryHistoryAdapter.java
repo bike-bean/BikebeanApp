@@ -54,7 +54,7 @@ class BatteryHistoryAdapter extends HistoryAdapter {
         if (mStates != null) {
             final @NonNull State current = (State) mStates.get(position);
 
-            final @NonNull String batteryStatus = current.getValue() + " %";
+            final @NonNull String batteryStatus = current.getValue().intValue() + " %";
             bHolder.batteryValue.setText(batteryStatus);
             bHolder.batteryValue.setCompoundDrawablesWithIntrinsicBounds(
                     ResourceUtils.getBatteryDrawable(ctx, current.getValue()),

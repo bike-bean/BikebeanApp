@@ -17,7 +17,7 @@ class BatteryView (
 
     override fun setStatus(context: Context, st: BatteryStateViewModel) : BatteryBehaviour? {
         val batteryBehaviour = super.setStatus(context, st) ?: run {
-            setEstimationText(R.string.no_data)
+            setEstimationText(context, R.string.no_data)
             return null
         }
 
@@ -27,12 +27,12 @@ class BatteryView (
         )
 
         if (batteryBehaviour.referenceState.percent < 10) {
-            setEstimationText(R.string.battery_warning_string)
+            setEstimationText(context, R.string.battery_warning_string)
             return batteryBehaviour
         }
 
         if (batteryBehaviour.getRemainingString().isEmpty()) {
-            setEstimationText(R.string.battery_warning_string)
+            setEstimationText(context, R.string.battery_warning_string)
             return batteryBehaviour
         }
 
@@ -46,8 +46,8 @@ class BatteryView (
         return batteryBehaviour
     }
 
-    fun setEstimationText(@StringRes stringRes: Int) {
+    fun setEstimationText(context: Context, @StringRes stringRes: Int) {
         runtimeEstimation.visibility = View.GONE
-        estimatedStatus.setText(stringRes)
+        estimatedStatus.text = context.getString(stringRes, "")
     }
 }
