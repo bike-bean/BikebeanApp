@@ -106,7 +106,7 @@ public class BatteryStatusFragment extends SubStatusFragment implements BatteryE
         progressView.setVisibility(false);
 
         batteryView.setStatus(requireContext(), st);
-        batteryView.setEstimationText(R.string.no_data);
+        batteryView.setEstimationText(requireContext(), R.string.no_data);
     }
 
     // confirmed

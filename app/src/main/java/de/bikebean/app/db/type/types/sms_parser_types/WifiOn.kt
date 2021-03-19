@@ -12,19 +12,14 @@ import java.lang.ref.WeakReference
 
 class WifiOn(sms: Sms, lv: WeakReference<LogViewModel>) : ParserType(TYPE.WIFI_ON, sms, lv) {
 
-    init {
-        wifiStatusOnMatcher = wifiStatusOnPattern.matcher(sms.body)
-        statusBatteryStatusMatcher = statusBatteryStatusPattern.matcher(sms.body)
-    }
-
     override val matchers = listOf(
-            wifiStatusOnMatcher,
-            statusBatteryStatusMatcher
+            wifiStatusOnPattern.matcher(sms.body),
+            statusBatteryStatusPattern.matcher(sms.body)
     )
 
     override val settings get() = listOf(
-            Battery(sms) { statusBattery },
-            Wifi(true, sms),
+            Battery(sms, matchers[1].battery),
+            Wifi(sms, true),
             Status(sms)
     )
 }

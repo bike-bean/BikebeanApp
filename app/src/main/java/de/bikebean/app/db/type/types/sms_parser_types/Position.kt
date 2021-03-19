@@ -10,14 +10,9 @@ import java.lang.ref.WeakReference
 
 class Position(sms: Sms, lv: WeakReference<LogViewModel>) : ParserType(TYPE.POSITION, sms, lv) {
 
-    init {
-        positionMatcher = positionPattern.matcher(sms.body)
-        statusBatteryStatusMatcher = statusBatteryStatusPattern.matcher(sms.body)
-    }
-
     override val matchers = listOf(
-            positionMatcher,
-            statusBatteryStatusMatcher
+            positionPattern.matcher(sms.body),
+            statusBatteryStatusPattern.matcher(sms.body)
     )
 
     override val settings: List<Setting> = emptyList()

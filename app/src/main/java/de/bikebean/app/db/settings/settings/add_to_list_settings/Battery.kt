@@ -8,10 +8,8 @@ import de.bikebean.app.db.state.StateFactory
 
 class Battery : AddToListSetting {
 
-    constructor(
-            sms: Sms, batteryGetter: () -> Double
-    ) : super(StateFactory.createNumberState(
-            sms, key, batteryGetter(), State.STATUS.CONFIRMED
+    constructor(sms: Sms, battery: Double) : super(StateFactory.createNumberState(
+            sms, key, battery, State.STATUS.CONFIRMED
     ))
 
     constructor() : super(StateFactory.createUnsetState(key, UNSET_BATTERY))

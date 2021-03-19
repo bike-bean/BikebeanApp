@@ -12,7 +12,7 @@ class WifiAccessPoints : NumberSetting {
 
     override val list: List<WifiAccessPoint>
 
-    constructor(wifiAccessPoints: String, sms: Sms) :
+    constructor(sms: Sms, wifiAccessPoints: String) :
             super(wifiAccessPoints, sms, key,
                     StateFactory.createNumberState(
                             sms, numberKey,
@@ -22,11 +22,7 @@ class WifiAccessPoints : NumberSetting {
         list = WifiAccessPointListBuilder(wifiAccessPoints)
             }
 
-    constructor(sms: Sms, wifiAccessPointsGetter: () -> String) :
-            this(wifiAccessPointsGetter(), sms)
-
-    constructor(wappState: WappState) :
-            this(wappState.wifiAccessPoints.longValue, wappState.sms)
+    constructor(wappState: WappState) : this(wappState.sms, wappState.wifiAccessPoints.longValue)
 
     constructor() : super("", key, StateFactory.createNullState()) {
         list = WifiAccessPointListBuilder("")

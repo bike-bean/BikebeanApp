@@ -16,12 +16,10 @@ import java.lang.ref.WeakReference
 
 class StatusType(sms: Sms, lv: WeakReference<LogViewModel>) : ParserType(TYPE.STATUS, sms, lv) {
 
-    init {
-        statusWarningNumberMatcher = statusWarningNumberPattern.matcher(sms.body)
-        statusIntervalMatcher = statusIntervalPattern.matcher(sms.body)
-        statusWifiStatusMatcher = statusWifiStatusPattern.matcher(sms.body)
-        statusBatteryStatusMatcher = statusBatteryStatusPattern.matcher(sms.body)
-    }
+    private val statusWarningNumberMatcher = statusWarningNumberPattern.matcher(sms.body)
+    private val statusIntervalMatcher = statusIntervalPattern.matcher(sms.body)
+    private val statusWifiStatusMatcher = statusWifiStatusPattern.matcher(sms.body)
+    private val statusBatteryStatusMatcher = statusBatteryStatusPattern.matcher(sms.body)
 
     override val matchers = listOf(
             statusWarningNumberMatcher,
@@ -31,10 +29,10 @@ class StatusType(sms: Sms, lv: WeakReference<LogViewModel>) : ParserType(TYPE.ST
     )
 
     override val settings get() = listOf(
-            WarningNumber(sms) { statusWarningNumber },
-            Interval(sms) { statusInterval },
-            Wifi(sms) { statusWifi },
-            Battery(sms) { statusBattery },
+            WarningNumber(sms, statusWarningNumberMatcher.result),
+            Interval(sms, statusIntervalMatcher.interval),
+            Wifi(sms, statusWifiStatusMatcher.wifi),
+            Battery(sms, statusBatteryStatusMatcher.battery),
             Status(sms)
     )
 

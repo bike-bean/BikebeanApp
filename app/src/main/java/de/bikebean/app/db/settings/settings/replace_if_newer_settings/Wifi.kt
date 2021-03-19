@@ -10,17 +10,13 @@ import de.bikebean.app.db.state.StateFactory
 class Wifi : ReplaceIfNewerSetting {
 
     constructor(
-            wifi: Boolean, sms: Sms
+            sms: Sms, wifi: Boolean
     ) : super(StateFactory.createNumberState(
             sms, key, when {
                 wifi -> 1.0
                 else -> 0.0
             }, status
     ))
-
-    constructor(
-            sms: Sms, wifiGetter: () -> Boolean
-    ) : this(wifiGetter(), sms)
 
     constructor() : super(StateFactory.createNumberState(
             SmsFactory.createNullSms(), key, 0.0, status

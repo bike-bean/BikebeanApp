@@ -24,40 +24,16 @@ abstract class ParserType(
     }
 
     /* Get results of Sms Parser */
-    val statusWifi: Boolean get() = statusWifiStatusMatcher.result == "on"
+    protected val Matcher.battery: Double get() = result.toDoubleSafe()
+    protected val Matcher.wifi : Boolean get() = result == "on"
+    protected val Matcher.interval : Int get() = result.toInt()
 
-    val interval: Int get() = intervalChangedMatcher.result.toInt()
-    val statusInterval: Int get() = statusIntervalMatcher.result.toInt()
-
-    val warningNumber: String get() = warningNumberMatcher.result
-
-    val statusWarningNumber: String get() = statusWarningNumberMatcher.result
-
-    val wappCellTowers: String get() = positionMatcher.groupStrings()
-    val wappWifiAccessPoints: String get() = wifiMatcher.groupStrings()
-
-    val battery: Double
-        get() {
-            var result = ""
-            batteryMatcher.reset()
-            while (batteryMatcher.find()) {
-                // use the last entry that matches battery specs
-                result = batteryMatcher.group()
-            }
-            return result.toDoubleSafe()
-        }
-
-    val statusBattery: Double get() = statusBatteryStatusMatcher.result.toDoubleSafe()
-    val batteryNoWifi: Double get() = noWifiMatcher.result.toDoubleSafe()
-    val batteryNoWifiAlt: Double get() = noWifiMatcherAlt.result.toDoubleSafe()
-    val lowBattery: Double get() = lowBatteryMatcher.result.toDoubleSafe()
-
-    private fun String.toDoubleSafe() = when {
+    protected fun String.toDoubleSafe() = when {
         isEmpty() -> 0.0
         else -> toDouble()
     }
 
-    private fun Matcher.groupStrings(): String = StringBuilder().let {
+    protected fun Matcher.groupStrings(): String = StringBuilder().let {
         reset()
         while (find()) {
             it.append(group())
@@ -66,49 +42,32 @@ abstract class ParserType(
         it.toString()
     }
 
-    private val Matcher.result : String
-        get() {
-            var count = 0
-            var result = ""
+    protected val Matcher.result : String
+    get() {
+        var count = 0
+        var result = ""
 
-            reset()
-            while (find()) {
-                count++
-                result = group(2) ?: "".also {
-                    lv.get()?.e(
-                            "Failed to parse SMS. Matcher: $this, SMS: ${sms.body}"
-                    )
-                }
-                if (count > 1)
-                    lv.get()?.e(
-                            "There should only be one instance per message!"
-                    )
+        reset()
+        while (find()) {
+            count++
+            result = group(2) ?: "".also {
+                lv.get()?.e(
+                        "Failed to parse SMS. Matcher: $this, SMS: ${sms.body}"
+                )
             }
-
-            return result
+            if (count > 1)
+                lv.get()?.e(
+                        "There should only be one instance per message!"
+                )
         }
 
-    /* MATCHERS */
-    lateinit var positionMatcher: Matcher
-    lateinit var statusWarningNumberMatcher: Matcher
-    lateinit var statusNoWarningNumberMatcher: Matcher
-    lateinit var statusBatteryStatusMatcher: Matcher
-    lateinit var statusIntervalMatcher: Matcher
-    lateinit var statusWifiStatusMatcher: Matcher
-    lateinit var warningNumberMatcher: Matcher
-    lateinit var wifiStatusOnMatcher: Matcher
-    lateinit var wifiStatusOffMatcher: Matcher
-    lateinit var wifiMatcher: Matcher
-    lateinit var batteryMatcher: Matcher
-    lateinit var noWifiMatcher: Matcher
-    lateinit var noWifiMatcherAlt: Matcher
-    lateinit var intervalChangedMatcher: Matcher
-    lateinit var lowBatteryMatcher: Matcher
+        return result
+    }
 
     enum class TYPE {
         POSITION, STATUS, STATUS_NO_WARNING_NUMBER, WIFI_ON, WIFI_OFF,
         WARNING_NUMBER, CELL_TOWERS, WIFI_LIST, NO_WIFI_LIST, NO_WIFI_LIST_ALT,
-        INT, LOW_BATTERY
+        INT, LOW_BATTERY, VERY_LOW_BATTERY
     }
 
 }

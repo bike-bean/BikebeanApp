@@ -13,15 +13,13 @@ class CellTowersType(
         sms: Sms, lv: WeakReference<LogViewModel>
 ) : ParserType(TYPE.CELL_TOWERS, sms, lv) {
 
-    init {
-        positionMatcher = positionPattern.matcher(sms.body)
-    }
-
-    override val matchers = listOf(positionMatcher)
+    override val matchers = listOf(
+            positionPattern.matcher(sms.body)
+    )
 
     override val settings get() = listOf(
             /* no battery entry in this special case */
-            CellTowers(sms) { wappCellTowers },
+            CellTowers(sms, matchers[0].groupStrings()),
             Wapp(sms, State.WAPP_CELL_TOWERS)
     )
 }
