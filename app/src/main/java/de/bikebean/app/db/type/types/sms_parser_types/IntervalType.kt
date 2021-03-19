@@ -12,10 +12,8 @@ import java.lang.ref.WeakReference
 
 class IntervalType(sms: Sms, lv: WeakReference<LogViewModel>) : ParserType(TYPE.INT, sms, lv) {
 
-    init {
-        intervalChangedMatcher = intervalChangedPattern.matcher(sms.body)
-        statusBatteryStatusMatcher = statusBatteryStatusPattern.matcher(sms.body)
-    }
+    private val intervalChangedMatcher = intervalChangedPattern.matcher(sms.body)
+    private val statusBatteryStatusMatcher = statusBatteryStatusPattern.matcher(sms.body)
 
     override val matchers = listOf(
             intervalChangedMatcher,
@@ -23,8 +21,8 @@ class IntervalType(sms: Sms, lv: WeakReference<LogViewModel>) : ParserType(TYPE.
     )
 
     override val settings get() = listOf(
-            Battery(sms) { statusBattery },
-            Interval(sms) { interval },
+            Battery(sms, statusBatteryStatusMatcher.battery),
+            Interval(sms, intervalChangedMatcher.interval),
             Status(sms)
     )
 }

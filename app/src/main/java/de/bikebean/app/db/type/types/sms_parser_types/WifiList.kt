@@ -13,10 +13,8 @@ import java.lang.ref.WeakReference
 
 class WifiList(sms: Sms, lv: WeakReference<LogViewModel>) : ParserType(TYPE.WIFI_LIST, sms, lv) {
 
-    init {
-        wifiMatcher = wifiPattern.matcher(sms.body)
-        batteryMatcher = batteryPattern.matcher(sms.body)
-    }
+    private val batteryMatcher = batteryPattern.matcher(sms.body)
+    private val wifiMatcher = wifiPattern.matcher(sms.body)
 
     override val matchers = listOf(
             wifiMatcher,
@@ -24,10 +22,20 @@ class WifiList(sms: Sms, lv: WeakReference<LogViewModel>) : ParserType(TYPE.WIFI
     )
 
     override val settings get() = listOf(
-            WifiAccessPoints(sms) { wappWifiAccessPoints },
+            WifiAccessPoints(sms, wifiMatcher.groupStrings()),
             Wapp(sms, State.WAPP_WIFI_ACCESS_POINTS),
             /* battery value is encoded differently in this case */
-            Battery(sms) { battery }
+            Battery(sms, getBattery())
     )
+
+    private fun getBattery(): Double {
+        var result = ""
+        batteryMatcher.reset()
+        while (batteryMatcher.find()) {
+            // use the last entry that matches battery specs
+            result = batteryMatcher.group()
+        }
+        return result.toDoubleSafe()
+    }
 
 }

@@ -14,10 +14,8 @@ class WarningNumberType(
         sms: Sms, lv: WeakReference<LogViewModel>
 ) : ParserType(TYPE.WARNING_NUMBER, sms, lv) {
 
-    init {
-        warningNumberMatcher = warningNumberPattern.matcher(sms.body)
-        statusBatteryStatusMatcher = statusBatteryStatusPattern.matcher(sms.body)
-    }
+    private val statusBatteryStatusMatcher = statusBatteryStatusPattern.matcher(sms.body)
+    private val warningNumberMatcher = warningNumberPattern.matcher(sms.body)
 
     override val matchers = listOf(
             warningNumberMatcher,
@@ -25,8 +23,8 @@ class WarningNumberType(
     )
 
     override val settings get() = listOf(
-            Battery(sms) { statusBattery },
-            WarningNumber(sms) { warningNumber },
+            Battery(sms, statusBatteryStatusMatcher.battery),
+            WarningNumber(sms, warningNumberMatcher.result),
             Status(sms)
     )
 }

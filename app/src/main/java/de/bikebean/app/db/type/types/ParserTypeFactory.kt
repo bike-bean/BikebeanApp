@@ -22,7 +22,8 @@ object ParserTypeFactory {
             NoWifiList(sms, lv),
             NoWifiListAlt(sms, lv),
             IntervalType(sms, lv),
-            LowBatteryType(sms, lv)
+            LowBatteryType(sms, lv),
+            VeryLowBatteryType(sms, lv)
     )
 
     private fun checkAllPatternsMatch(parserType: ParserType): Boolean =

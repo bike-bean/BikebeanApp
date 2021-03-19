@@ -18,12 +18,10 @@ class StatusTypeNoWarningNumber(
         sms: Sms, lv: WeakReference<LogViewModel>
 ) : ParserType(TYPE.STATUS_NO_WARNING_NUMBER, sms, lv) {
 
-    init {
-        statusNoWarningNumberMatcher = statusNoWarningNumberPattern.matcher(sms.body)
-        statusIntervalMatcher = statusIntervalPattern.matcher(sms.body)
-        statusWifiStatusMatcher = statusWifiStatusPattern.matcher(sms.body)
-        statusBatteryStatusMatcher = statusBatteryStatusPattern.matcher(sms.body)
-    }
+    private val statusNoWarningNumberMatcher = statusNoWarningNumberPattern.matcher(sms.body)
+    private val statusIntervalMatcher = statusIntervalPattern.matcher(sms.body)
+    private val statusWifiStatusMatcher = statusWifiStatusPattern.matcher(sms.body)
+    private val statusBatteryStatusMatcher = statusBatteryStatusPattern.matcher(sms.body)
 
     override val matchers = listOf(
             statusNoWarningNumberMatcher,
@@ -34,9 +32,9 @@ class StatusTypeNoWarningNumber(
 
     override val settings get() = listOf(
             WarningNumber(sms),
-            Interval(sms) { statusInterval },
-            Wifi(sms) { statusWifi },
-            Battery(sms) { statusBattery },
+            Interval(sms, statusIntervalMatcher.interval),
+            Wifi(sms, statusWifiStatusMatcher.wifi),
+            Battery(sms, statusBatteryStatusMatcher.battery),
             Status(sms)
     )
 }

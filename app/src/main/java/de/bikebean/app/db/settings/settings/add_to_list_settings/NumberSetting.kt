@@ -30,8 +30,7 @@ abstract class NumberSetting : AddToListSetting {
         numberState = _numberState
     }
 
-    val number: Int
-        get() = numberState.value.toInt()
+    val number: Int get() = numberState.value.toInt()
 
     abstract class RawNumberSettings
     abstract val list: List<RawNumberSettings?>

@@ -17,7 +17,7 @@ class Interval private constructor(
         )
 ) {
 
-    constructor(sms: Sms, statusGetter: () -> Int) : this(sms, statusGetter(), State.STATUS.CONFIRMED)
+    constructor(sms: Sms, interval: Int) : this(sms, interval, State.STATUS.CONFIRMED)
 
     constructor() : this(SmsFactory.createNullSms(), INITIAL_INTERVAL, State.STATUS.UNSET)
 

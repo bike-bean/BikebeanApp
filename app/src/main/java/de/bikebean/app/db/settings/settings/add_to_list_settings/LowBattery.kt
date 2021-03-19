@@ -7,9 +7,10 @@ import de.bikebean.app.db.state.StateFactory
 
 class LowBattery(
         sms: Sms,
-        lowBatteryGetter: () -> Double
+        lowBattery: Double
 ) : AddToListSetting(
         StateFactory.createNumberState(
-                sms, State.KEY.BATTERY, lowBatteryGetter(),
-                State.STATUS.CONFIRMED)
+                sms, State.KEY.BATTERY, lowBattery,
+                State.STATUS.CONFIRMED
+        )
 )

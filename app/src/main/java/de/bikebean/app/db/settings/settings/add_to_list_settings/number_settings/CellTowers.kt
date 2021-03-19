@@ -22,9 +22,6 @@ class CellTowers : NumberSetting {
         list = CellTowerListBuilder(cellTowers)
             }
 
-    constructor(sms: Sms, cellTowersGetter: () -> String) :
-            this(sms, cellTowersGetter())
-
     constructor(wappState: WappState) :
             this(wappState.sms, wappState.cellTowers.longValue)
 

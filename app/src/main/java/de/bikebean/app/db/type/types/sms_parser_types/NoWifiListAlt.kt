@@ -14,17 +14,14 @@ class NoWifiListAlt(
         sms: Sms, lv: WeakReference<LogViewModel>
 ) : ParserType(TYPE.NO_WIFI_LIST_ALT, sms, lv) {
 
-    init {
-        noWifiMatcherAlt = noWifiPatternAlt.matcher(sms.body)
-    }
-
-    override val matchers = listOf(noWifiMatcherAlt)
+    override val matchers = listOf(
+            noWifiPatternAlt.matcher(sms.body)
+    )
 
     override val settings get() = listOf(
-            WifiAccessPoints("", sms),
+            WifiAccessPoints(sms, ""),
             Wapp(sms, State.WAPP_WIFI_ACCESS_POINTS),
-            /* battery value is encoded differently in this case */
-            Battery(sms) { batteryNoWifiAlt }
+            Battery(sms, matchers[0].battery)
     )
 
 }

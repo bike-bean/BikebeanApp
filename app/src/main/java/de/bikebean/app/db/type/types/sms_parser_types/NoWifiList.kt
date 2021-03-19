@@ -14,18 +14,13 @@ class NoWifiList(
         sms: Sms, lv: WeakReference<LogViewModel>
 ) : ParserType(TYPE.NO_WIFI_LIST, sms, lv) {
 
-    init {
-        noWifiMatcher = noWifiPattern.matcher(sms.body)
-    }
-
     override val matchers = listOf(
-            noWifiMatcher
+            noWifiPattern.matcher(sms.body)
     )
 
     override val settings get() = listOf(
-            WifiAccessPoints("", sms),
+            WifiAccessPoints(sms, ""),
             Wapp(sms, State.WAPP_WIFI_ACCESS_POINTS),
-            /* battery value is encoded differently in this case */
-            Battery(sms) { batteryNoWifi }
+            Battery(sms, matchers[0].battery)
     )
 }
