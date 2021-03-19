@@ -44,3 +44,7 @@ To test the SMS API, use the following strings:
 | Warningnumber | Warningnumber has been changed to 0179987654321<br>Battery Status: 15% |
 | Wapp          | 77788102493fd4<br>831062e5b58896<br>6564cc22b982ba<br>6758904350f67d<br>42<br>..............<br>262,03,55f1,a473,34<br>262,03,55f1,efb4,21<br>262,03,55f1,5653,21<br>262,03,55f1,4400,21<br>262,03,55f1,8b40,20<br>262,03,55f1,efb6,13<br>262,03,55f1,6bb2,11<br> |
 | Int \<x\>     | GSM will be switched on every 12 hours.<br>Battery Status: 64% |
+| **Edge Cases** |  |
+| Low Battery   | BATTERY LOW!<br>BATTERY STATUS: 19% |
+| Very Low Battery | BATTERY LOW!<br>BATTERY STATUS: 8% <br>Interval set to 24h |
+| No Wifi Available | no wifi available<br>88 |
