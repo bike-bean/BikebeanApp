@@ -23,7 +23,7 @@
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:padding="@dimen/fragment_horizontal_margin"
-            android:contentDescription="@string/interval_header"
+            android:contentDescription="@string/heading_interval"
             android:src="@drawable/ic_add_alert_black_24dp" />
 
         <Space
@@ -62,7 +62,7 @@
             android:layout_width="match_parent"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             style="?attr/materialSendButton"
-            android:text="@string/warning_number_set_button" />
+            android:text="@string/button_set_warning_number" />
 
     </LinearLayout>
 

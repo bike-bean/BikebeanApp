@@ -23,7 +23,7 @@
     <ImageView
         android:id="@+id/helpButton"
         style="?attr/helpButton"
-        android:contentDescription="@string/helpBattery" />
+        android:contentDescription="@string/text_help_battery" />
 
     <ImageView
         android:id="@+id/moreInfoButton"
@@ -32,7 +32,7 @@
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:layout_marginEnd="@dimen/title_padding"
         android:src="@drawable/ic_baseline_arrow_forward_30"
-        android:contentDescription="@string/more_information" />
+        android:contentDescription="@string/button_more_information" />
 
 </LinearLayout>
 

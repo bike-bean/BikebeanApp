@@ -9,7 +9,7 @@
 
     <TextView
         android:id="@+id/noDataText"
-        android:text="@string/no_data"
+        android:text="@string/text_no_data"
         style="@style/Widget.BikeBean.NoDataText" />
 
     <androidx.recyclerview.widget.RecyclerView

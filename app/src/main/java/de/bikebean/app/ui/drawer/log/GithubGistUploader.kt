@@ -17,7 +17,7 @@ class GithubGistUploader(
         private val mStateTsv: String,
         private val mLogTsv: String) : AsyncTask<String, Void?, Boolean>() {
 
-    private val mUrl: String = context.getString(R.string.github_gists_baseurl)
+    private val mUrl: String = context.getString(R.string.url_github_gists)
     private val githubGistsToken: String = context.getString(R.string.github_gist_token)
 
     override fun doInBackground(vararg args: String): Boolean = try {

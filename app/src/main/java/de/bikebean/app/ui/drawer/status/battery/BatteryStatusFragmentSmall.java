@@ -70,7 +70,7 @@ public class BatteryStatusFragmentSmall extends SubStatusFragmentSmall
                 })
         );
 
-        titleText.setText(R.string.battery_text);
+        titleText.setText(R.string.heading_battery);
         initTransitionButton(buttonBack, helpButton, this, true);
     }
 

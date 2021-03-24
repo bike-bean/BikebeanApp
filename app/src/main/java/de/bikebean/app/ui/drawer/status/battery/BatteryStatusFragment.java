@@ -88,7 +88,7 @@ public class BatteryStatusFragment extends SubStatusFragment implements BatteryE
         helpButton.setOnClickListener(Utils::onHelpClick);
 
         initTransitionButton(buttonBack, helpButton, this, false);
-        titleText.setText(R.string.battery_text);
+        titleText.setText(R.string.heading_battery);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class BatteryStatusFragment extends SubStatusFragment implements BatteryE
         progressView.setVisibility(false);
 
         batteryView.setStatus(requireContext(), st);
-        batteryView.setEstimationText(requireContext(), R.string.no_data);
+        batteryView.setEstimationText(requireContext(), R.string.text_no_data);
     }
 
     // confirmed

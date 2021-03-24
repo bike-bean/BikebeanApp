@@ -24,7 +24,8 @@ fun resetAll() {
 }
 
 fun createReport(ctx: Context, lv: LogViewModel?,
-                 usn: (Boolean) -> Unit): GithubGistUploader {
+                 usn: (Boolean) -> Unit,
+                 extraText: String): GithubGistUploader {
     val smsDao = BikeBeanRoomDatabase.INSTANCE.smsDao()
     val stateDao = BikeBeanRoomDatabase.INSTANCE.stateDao()
     val logDao = BikeBeanRoomDatabase.INSTANCE.logDao()
@@ -35,7 +36,8 @@ fun createReport(ctx: Context, lv: LogViewModel?,
 
     val description = """BikeBeanAppCrashReport ${convertToDateHuman()} 
 Version: $versionName 
-ID: ${getUUID(ctx)}"""
+ID: ${getUUID(ctx)}
+Beschreibung: $extraText"""
 
     return GithubGistUploader(
             ctx, lv!!, usn,

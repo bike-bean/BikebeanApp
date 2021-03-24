@@ -122,7 +122,7 @@ public class SettingsStatusFragment extends SubStatusFragment implements Setting
         helpButton.setOnClickListener(this::onHelpClick);
 
         initTransitionButton(backButton, helpButton, this, false);
-        titleText.setText(R.string.status_text);
+        titleText.setText(R.string.heading_settings);
 
         for (SettingsStatusSubView s : settingsStatusSubViews)
             s.initUserInteractionElements(this);
@@ -190,7 +190,7 @@ public class SettingsStatusFragment extends SubStatusFragment implements Setting
     private void onHelpClick(final @NonNull View v) {
         Snackbar.make(
                 v,
-                R.string.helpSettings,
+                R.string.text_help_settings,
                 Snackbar.LENGTH_LONG
         ).show();
     }

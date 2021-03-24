@@ -5,11 +5,8 @@ import android.text.InputType
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.lifecycle.ViewModelProvider
-import androidx.preference.EditTextPreference
+import androidx.preference.*
 import androidx.preference.EditTextPreference.OnBindEditTextListener
-import androidx.preference.ListPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
 import com.google.android.material.snackbar.Snackbar
 import de.bikebean.app.R
 import de.bikebean.app.db.type.types.Initial
@@ -49,7 +46,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
          */
         findPreference<EditTextPreference>(NUMBER_PREFERENCE)?.apply {
             setOnBindEditTextListener(numberEditTextListener)
-            setDialogMessage(R.string.number_subtitle)
+            setDialogMessage(R.string.message_pref_number)
             onPreferenceChangeListener = numberChangeListener
         }
 
@@ -76,18 +73,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
             Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
 
             when (it) {
-                R.string.number_no_blanks -> {
+                R.string.message_pref_number_no_blanks -> {
                     findPreference<EditTextPreference>(NUMBER_PREFERENCE)?.run {
                         text = eliminateSpaces(newValue.toString())
                     } ?: logViewModel!!.e("Failed to load BB-number! Maybe it's not set?")
                 }
             }
 
-            return@OnPreferenceChangeListener false
+            false
         } ?: run {
             resetAll(newValue.toString())
 
-            return@OnPreferenceChangeListener true
+            true
         }
     }
 
@@ -101,7 +98,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun createResetDialog(address: String?): ResetDialog? = address?.let {
-        ResetDialog(requireActivity(), address, ::resetAll, ::cancelReset)
+        ResetDialog(requireActivity(), address, ::resetAll)
     }
 
     private fun resetAll(address: String) {
@@ -111,12 +108,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         smsViewModel?.fetchSmsSync(requireContext(), stateViewModel, logViewModel, address)
         Snackbar.make(
                 requireView(),
-                R.string.db_is_reset,
+                R.string.toast_db_reset,
                 Snackbar.LENGTH_LONG
         ).show()
     }
-
-    private fun cancelReset() = Unit
 
     enum class InitState {
         NEW, DONE

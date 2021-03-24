@@ -21,8 +21,8 @@ class SettingsStatusWlanView(
         progressView: ProgressView
 ) : SettingsStatusSubView(cardView, icon, subTitle, progressView, TIMER.ONE) {
 
-    override val helpResId: Int = R.string.helpWlan
-    override val titleResId: Int = R.string.wlan_title
+    override val helpResId: Int = R.string.text_help_wifi
+    override val titleResId: Int = R.string.heading_wifi
     override val onCardViewClickListener: (View) -> Unit = { wlanSwitch.toggle() }
 
     override fun setupListeners(l: LifecycleOwner, f: SettingsStatusFragment) {
@@ -60,10 +60,10 @@ class SettingsStatusWlanView(
         f.tv.getResidualTime(t).removeObservers(f)
         f.tv.cancelTimer(t)
         if (state.value > 0) {
-            subTitle.setText(R.string.wlan_summary_on)
+            subTitle.setText(R.string.text_wifi_summary_on)
             wlanSwitch.isChecked = true
         } else {
-            subTitle.setText(R.string.wlan_summary_off)
+            subTitle.setText(R.string.text_wifi_summary_off)
             wlanSwitch.isChecked = false
         }
         progressView.setVisibility(false)
@@ -77,10 +77,10 @@ class SettingsStatusWlanView(
         }
 
         if (state.value > 0) {
-            subTitle.setText(R.string.wifi_switch_on_transition)
+            subTitle.setText(R.string.text_wifi_on_transition)
             wlanSwitch.isChecked = true
         } else {
-            subTitle.setText(R.string.wifi_switch_off_transition)
+            subTitle.setText(R.string.text_wifi_off_transition)
             wlanSwitch.isChecked = false
         }
 

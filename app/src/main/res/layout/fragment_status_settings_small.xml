@@ -29,7 +29,7 @@
                 android:id="@+id/wlanImage"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
-                android:contentDescription="@string/wlan_header"
+                android:contentDescription="@string/heading_wifi"
                 android:padding="@dimen/fragment_horizontal_margin"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_signal_wifi_4_bar_black_24dp" />
@@ -57,7 +57,7 @@
                 android:id="@+id/intervalImage"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
-                android:contentDescription="@string/interval_header"
+                android:contentDescription="@string/heading_interval"
                 android:padding="@dimen/fragment_horizontal_margin"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_timer_black_24dp" />
@@ -83,7 +83,7 @@
                 android:id="@+id/warningNumberImage"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
-                android:contentDescription="@string/interval_header"
+                android:contentDescription="@string/heading_interval"
                 android:padding="@dimen/fragment_horizontal_margin"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_add_alert_black_24dp" />

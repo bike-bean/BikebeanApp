@@ -102,7 +102,7 @@ public class SettingsStatusFragmentSmall extends SubStatusFragmentSmall
         );
 
         initTransitionButton(moreInfoButton, helpButton, this, true);
-        titleText.setText(R.string.status_text);
+        titleText.setText(R.string.heading_settings);
     }
 
     @Override
@@ -119,7 +119,7 @@ public class SettingsStatusFragmentSmall extends SubStatusFragmentSmall
 
     @Override
     public void setWarningNumberElementsUnset() {
-        warningNumberSummary.setText(getString(R.string.warning_number_not_set));
+        warningNumberSummary.setText(getString(R.string.text_warning_number_not_set));
     }
 
     @Override
@@ -134,10 +134,7 @@ public class SettingsStatusFragmentSmall extends SubStatusFragmentSmall
 
     @Override
     public void setWifiElementsConfirmed(final @NonNull State state) {
-        if (state.getValue() > 0)
-            wlanSwitch.setChecked(true);
-        else
-            wlanSwitch.setChecked(false);
+        wlanSwitch.setChecked(state.getValue() > 0);
     }
 
     @Override
@@ -163,15 +160,12 @@ public class SettingsStatusFragmentSmall extends SubStatusFragmentSmall
 
     @Override
     public void setWifiElementsPending(final @NonNull State state) {
-        if (state.getValue() > 0)
-            wlanSwitch.setChecked(true);
-        else
-            wlanSwitch.setChecked(false);
+        wlanSwitch.setChecked(state.getValue() > 0);
     }
 
     @Override
     public void setWarningNumberElementsPending(final @NonNull State state) {
-        warningNumberSummary.setText(R.string.warning_number_pending_text);
+        warningNumberSummary.setText(R.string.text_warning_number_pending);
     }
 }
 

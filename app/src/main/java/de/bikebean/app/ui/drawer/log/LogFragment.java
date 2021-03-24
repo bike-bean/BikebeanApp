@@ -23,7 +23,7 @@ import de.bikebean.app.MainActivity;
 import de.bikebean.app.R;
 import de.bikebean.app.db.log.Log;
 
-import static de.bikebean.app.ui.drawer.log.LogFragmentExtKt.generateLogAndUpload;
+import static de.bikebean.app.ui.drawer.log.LogFragmentExtKt.onSendButtonClick;
 
 public class LogFragment extends Fragment {
 
@@ -114,7 +114,7 @@ public class LogFragment extends Fragment {
                 // do nothing
             }
         });
-        sendButton.setOnClickListener(v -> generateLogAndUpload(this));
+        sendButton.setOnClickListener(v -> onSendButtonClick(this));
     }
 
     private void initRecyclerView() {

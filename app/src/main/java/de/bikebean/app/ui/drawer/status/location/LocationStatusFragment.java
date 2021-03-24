@@ -121,7 +121,7 @@ public class LocationStatusFragment extends SubStatusFragment implements Locatio
         );
 
         initTransitionButton(buttonBack, helpButton, this, false);
-        titleText.setText(R.string.location_text);
+        titleText.setText(R.string.heading_location);
     }
 
     @Override
@@ -235,7 +235,7 @@ public class LocationStatusFragment extends SubStatusFragment implements Locatio
 
     private void onHelpClick(final @NonNull View v) {
         Snackbar.make(v,
-                R.string.helpLocation,
+                R.string.text_help_location,
                 Snackbar.LENGTH_LONG
         ).show();
     }

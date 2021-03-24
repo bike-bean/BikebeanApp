@@ -20,8 +20,8 @@ class SettingsStatusWarningNumberView(
         cardView: MaterialCardView
 ) : SettingsStatusSubView(cardView, icon, subTitle, progressView, TIMER.THREE) {
 
-    override val helpResId: Int = R.string.helpWarningNumber
-    override val titleResId: Int = R.string.warning_number_title
+    override val helpResId: Int = R.string.text_help_warning_number
+    override val titleResId: Int = R.string.heading_warning_number
     override val onCardViewClickListener: (View) -> Unit = { sendButton.callOnClick() }
 
     override fun setupListeners(l: LifecycleOwner, f: SettingsStatusFragment) {
@@ -44,7 +44,7 @@ class SettingsStatusWarningNumberView(
     fun setWarningNumberElementsUnset(f: SettingsStatusFragment) {
         f.tv.getResidualTime(t).removeObservers(f)
         f.tv.cancelTimer(t)
-        subTitle.text = f.getString(R.string.warning_number_not_set)
+        subTitle.text = f.getString(R.string.text_warning_number_not_set)
         progressView.setVisibility(false)
     }
 
@@ -62,7 +62,7 @@ class SettingsStatusWarningNumberView(
         f.tv.getResidualTime(t).observe(f, { s ->
             f.updatePendingText(progressView, state.timestamp, stopTime, s!!) }
         )
-        subTitle.setText(R.string.warning_number_pending_text)
+        subTitle.setText(R.string.text_warning_number_pending)
         progressView.setVisibility(true)
     }
 

@@ -3,12 +3,18 @@ package de.bikebean.app.ui.drawer.log
 import com.google.android.material.snackbar.Snackbar
 import de.bikebean.app.db.createReport
 
-fun LogFragment.generateLogAndUpload() {
+fun LogFragment.onSendButtonClick() {
+    LogUploadWarnDialog(requireActivity(), ::generateLogAndUpload).show(
+            requireActivity().supportFragmentManager, "logUploadDialog"
+    )
+}
+
+fun LogFragment.generateLogAndUpload(extraText: String) {
     logViewModel.d("Exporting database...")
 
     showSnackbarText("Fehlerbericht senden...")
 
-    createReport(requireContext(), logViewModel, ::notifyUploadSuccess).execute()
+    createReport(requireContext(), logViewModel, ::notifyUploadSuccess, extraText).execute()
 }
 
 fun LogFragment.notifyUploadSuccess(success: Boolean) = when {

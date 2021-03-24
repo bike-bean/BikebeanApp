@@ -23,7 +23,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/wlan_title"
+                android:text="@string/heading_wifi"
                 android:textAppearance="?attr/textAppearanceBody1" />
 
             <Space
@@ -58,7 +58,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/wlan_title"
+                android:text="@string/heading_wifi"
                 android:textAppearance="?attr/textAppearanceBody1" />
 
             <Space
@@ -102,6 +102,6 @@
         android:id="@+id/scanBtn"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:text="@string/scan_wifi" />
+        android:text="@string/text_scan_wifi" />
 
 </LinearLayout>

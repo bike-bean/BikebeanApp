@@ -23,7 +23,7 @@ internal class LocationUpdater(
         private val mWappState: WappState)
     : AsyncTask<String, Void?, Boolean>() {
 
-    private val mUrl: String = context.getString(R.string.geolocation_baseurl) +
+    private val mUrl: String = context.getString(R.string.url_geolocation) +
             context.getString(R.string.google_maps_api_key)
 
     override fun doInBackground(vararg args: String): Boolean {

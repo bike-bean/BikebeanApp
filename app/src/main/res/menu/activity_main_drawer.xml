@@ -7,22 +7,23 @@
     <group
         android:checkableBehavior="single"
         android:id="@+id/menu_top" >
+
         <item
             android:id="@+id/navigation_map_current"
             android:icon="@drawable/ic_map_black_24dp"
-            android:title="@string/title_dashboard" />
+            android:title="@string/drawer_title_maps" />
         <!--<item
             android:id="@+id/navigation_wifi"
             android:icon="@drawable/ic_signal_wifi_4_bar_black_24dp"
-            android:title="@string/title_wifi" />-->
+            android:title="@string/drawer_title_wifi" />-->
         <item
             android:id="@+id/navigation_sms_history"
             android:icon="@drawable/ic_textsms_black_24dp"
-            android:title="@string/title_activity_sms" />
+            android:title="@string/drawer_title_sms_history" />
         <item
             android:id="@+id/navigation_position_history"
             android:icon="@drawable/ic_baseline_history_24"
-            android:title="@string/history" />
+            android:title="@string/drawer_title_history" />
     </group>
 
     <group
@@ -31,11 +32,11 @@
         <item
             android:id="@+id/navigation_preferences"
             android:icon="@drawable/ic_baseline_settings_24"
-            android:title="@string/title_fragment_preferences" />
+            android:title="@string/drawer_title_preferences" />
         <item
-            android:id="@+id/navigation_log"
+            android:id="@+id/navigation_info_help"
             android:icon="@drawable/ic_outline_help_outline_30"
-            android:title="@string/info" />
+            android:title="@string/drawer_title_info_help" />
     </group>
 
 </menu>

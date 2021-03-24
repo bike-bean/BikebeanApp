@@ -20,7 +20,7 @@ fun PreferencesFragment.startVersionChecker() {
 private fun PreferencesFragment.newerVersionHandler(release: AppRelease) {
     NewVersionDialog(
             requireActivity(), release,
-            ::downloadNewVersion, ::cancelNewVersionDownload
+            ::downloadNewVersion
     ).show(childFragmentManager, "newVersionDialog")
 }
 
@@ -46,8 +46,6 @@ private fun PreferencesFragment.downloadNewVersion(url: String) {
         }
     }?.let(::startActivity)
 }
-
-private fun cancelNewVersionDownload() = Unit
 
 private fun setVisible(v: View) {
     v.visibility = View.VISIBLE

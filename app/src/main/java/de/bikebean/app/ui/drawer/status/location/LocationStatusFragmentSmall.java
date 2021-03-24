@@ -89,7 +89,7 @@ public class LocationStatusFragmentSmall extends SubStatusFragmentSmall
         );
 
         initTransitionButton(moreInfoButton, helpButton, this, true);
-        titleText.setText(R.string.location_text);
+        titleText.setText(R.string.heading_location);
     }
 
     @Override

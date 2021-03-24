@@ -8,12 +8,12 @@
 
     <Button
         android:id="@+id/positionButton"
-        android:text="@string/location_text"
+        android:text="@string/heading_location"
         style="@style/Widget.BikeBean.FakeTabLayout" />
 
     <Button
         android:id="@+id/batteryButton"
-        android:text="@string/battery_text"
+        android:text="@string/heading_battery"
         style="@style/Widget.BikeBean.FakeTabLayout" />
 
 </LinearLayout>

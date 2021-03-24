@@ -23,8 +23,8 @@ class SettingsStatusIntervalView(
         cardView: MaterialCardView
 ) : SettingsStatusSubView(cardView, icon, intervalSummary, intervalProgressView, TIMER.TWO) {
 
-    override val helpResId: Int = R.string.helpInterval
-    override val titleResId: Int = R.string.interval_header
+    override val helpResId: Int = R.string.text_help_interval
+    override val titleResId: Int = R.string.heading_interval
     override val onCardViewClickListener: (View) -> Unit = { intervalDropdown.performClick() }
 
     override fun setupListeners(l: LifecycleOwner, f: SettingsStatusFragment) {
@@ -89,7 +89,7 @@ class SettingsStatusIntervalView(
 
     // unset
     fun setIntervalElementsUnset(state: State, f: SettingsStatusFragment) {
-        val intervalSummaryString = f.getString(R.string.interval_summary)
+        val intervalSummaryString = f.getString(R.string.text_interval_summary)
         f.tv.getResidualTime(t).removeObservers(f)
         f.tv.cancelTimer(t)
         val oldValue = state.value.toInt().toString()
@@ -99,7 +99,7 @@ class SettingsStatusIntervalView(
 
     // confirmed
     fun setIntervalElementsConfirmed(state: State, f: SettingsStatusFragment) {
-        val intervalSummaryString = f.getString(R.string.interval_summary)
+        val intervalSummaryString = f.getString(R.string.text_interval_summary)
         f.tv.getResidualTime(t).removeObservers(f)
         f.tv.cancelTimer(t)
         val oldValue = state.value.toInt().toString()
@@ -109,7 +109,7 @@ class SettingsStatusIntervalView(
 
     // pending
     fun setIntervalElementsPending(state: State, f: SettingsStatusFragment) {
-        val intervalTransitionString = f.getString(R.string.interval_switch_transition)
+        val intervalTransitionString = f.getString(R.string.text_interval_transition)
         val stopTime = f.tv.startTimer(t, state.timestamp, f.st.confirmedIntervalSync)
         f.tv.getResidualTime(t).observe(f) { s ->
             f.updatePendingText(progressView, state.timestamp, stopTime, s!!)

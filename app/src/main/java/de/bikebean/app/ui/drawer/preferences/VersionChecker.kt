@@ -16,7 +16,7 @@ class VersionChecker(
         private val mNewerVersionNotifier: (VersionJsonParser.AppRelease) -> Unit
         ) : AsyncTask<String, Void?, VersionJsonParser>() {
 
-    private val mUrl: String = context.getString(R.string.github_releases_baseurl)
+    private val mUrl: String = context.getString(R.string.url_github_releases)
     private val githubGistsToken: String = context.getString(R.string.github_gist_token)
     private val request = Request.Builder()
             .url(mUrl)
