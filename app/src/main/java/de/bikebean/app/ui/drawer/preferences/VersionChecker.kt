@@ -1,9 +1,12 @@
 package de.bikebean.app.ui.drawer.preferences
 
 import android.content.Context
-import android.os.AsyncTask
 import de.bikebean.app.R
 import de.bikebean.app.ui.drawer.log.LogViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -14,7 +17,7 @@ class VersionChecker(
         private val mLogViewModel: LogViewModel,
         private val mPreferencesViewModel: PreferencesViewModel,
         private val mNewerVersionNotifier: (VersionJsonParser.AppRelease) -> Unit
-        ) : AsyncTask<String, Void?, VersionJsonParser>() {
+        ) {
 
     private val mUrl: String = context.getString(R.string.url_github_releases)
     private val githubGistsToken: String = context.getString(R.string.github_gist_token)
@@ -25,34 +28,44 @@ class VersionChecker(
             .addHeader("Content-Type", "application/json")
             .build()
 
-    override fun doInBackground(vararg args: String): VersionJsonParser {
-        val response = buildResponse() ?: return VersionJsonParser()
-
-        response.body ?: return VersionJsonParser()
-
-        return try {
-            VersionJsonParser(response.body!!.string())
-        } catch (e: IOException) {
-            mLogViewModel.w("Could not parse Github Releases: ${e.message}")
-            VersionJsonParser()
+    fun execute() {
+        CoroutineScope(Dispatchers.Main).launch {
+            onPostExecute(doInBackground())
         }
     }
 
-    private fun buildResponse() : Response? = try {
-        OkHttpClient()
-                .newBuilder()
-                .build()
-                .newCall(request)
-                .execute()
-                .also {
-                    mLogViewModel.d("Successfully retrieved Github Releases (${it.code})")
-                }
-    } catch (e: IOException) {
-        mLogViewModel.w("Could not get Github Releases: ${e.message}")
-        null
-    }
+    private suspend fun doInBackground(): VersionJsonParser =
+        withContext(Dispatchers.IO) {
+            val response = buildResponse() ?: return@withContext VersionJsonParser()
 
-    override fun onPostExecute(versionJsonParser: VersionJsonParser) {
+            response.body ?: VersionJsonParser()
+
+            try {
+                VersionJsonParser(response.body!!.string())
+            } catch (e: IOException) {
+                mLogViewModel.w("Could not parse Github Releases: ${e.message}")
+                VersionJsonParser()
+            }
+        }
+
+    private suspend fun buildResponse() : Response? =
+            withContext(Dispatchers.IO) {
+                try {
+                    OkHttpClient()
+                            .newBuilder()
+                            .build()
+                            .newCall(request)
+                            .execute()
+                            .also {
+                                mLogViewModel.d("Successfully retrieved Github Releases (${it.code})")
+                            }
+                } catch (e: IOException) {
+                    mLogViewModel.w("Could not get Github Releases: ${e.message}")
+                    null
+                }
+            }
+
+    private fun onPostExecute(versionJsonParser: VersionJsonParser) {
         if (!versionJsonParser.checkIfExistsNewerVersion()) {
             mPreferencesViewModel.setNewVersion("n/a")
             return

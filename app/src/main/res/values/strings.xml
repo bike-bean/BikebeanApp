@@ -69,7 +69,7 @@
     <string name="title_error_sms_permission">Achtung!</string>
     <string name="text_error_sms_permission">Die App hat keine Berechtigungen für Sms.
         Diese Informationen sind eventuell veraltet oder falsch.
-        Aktivieren Sie die Berechtigungen in den App-Einstellungen.
+        Aktiviere die Berechtigungen in den App-Einstellungen.
     </string>
     <string name="text_to_settings">Zu den Einstellungen</string>
 
@@ -77,7 +77,7 @@
     <string name="text_lat">Lat: </string>
     <string name="text_lng">Lng: </string>
     <string name="text_acc">+/-: </string>
-    <string name="text_help_location">Hier kannst du den Standort deiner
+    <string name="text_help_location">Hier kannst Du den Standort deiner
         Bike Bean abfragen.
     </string>
 
@@ -91,12 +91,12 @@
     <string name="text_explanation_charge">Dieser Wert ist eine Schätzung des Ladezustands
         basierend auf der letzten Meldung und den aktuellen Einstellungen.
     </string>
-    <string name="text_help_battery">Hier kannst du den Akkustand abfragen falls
+    <string name="text_help_battery">Hier kannst Du den Akkustand abfragen falls
         die letzte Aktualisierung länger her ist.
     </string>
 
     <!-- settings UI -->
-    <string name="text_help_settings">Hier kannst du verschiedene Einstellungen der Bike Bean vornehmen
+    <string name="text_help_settings">Hier kannst Du verschiedene Einstellungen der Bike Bean vornehmen
         (Siehe Hilfe-Button bei den einzelnen Einstellungen).
     </string>
 
@@ -107,22 +107,22 @@
         Die Batterielaufzeit der Bike Bean wird stark reduziert!
     </string>
     <string name="text_wifi_summary_off">Bike Bean strahlt aktuell kein WLAN aus.</string>
-    <string name="text_help_wifi">Hier kannst du das WLAN der Bike Bean einstellen.
-        Dies solltest du nur für die Nahortung tun!
+    <string name="text_help_wifi">Hier kannst Du das WLAN der Bike Bean einstellen.
+        Dies solltest Du nur für die Nahortung tun!
     </string>
 
     <!-- interval UI -->
     <string name="text_interval_transition">Wird auf %dh umgestellt</string>
     <string name="text_interval_summary">Bike Bean wird alle %sh neue Nachrichten prüfen.</string>
-    <string name="text_help_interval">Hier kannst du das Antwortintervall der Bike Bean einstellen.
+    <string name="text_help_interval">Hier kannst Du das Antwortintervall der Bike Bean einstellen.
             Beachte, dass kürzere Intervalle deine Akkulaufzeit verringern.
     </string>
 
     <!-- warningNumber UI -->
     <string name="text_warning_number_pending">Wird neu gesetzt</string>
     <string name="text_warning_number_not_set">Nicht gesetzt</string>
-    <string name="text_help_warning_number">Wenn du Warnungen über einen niedrigen Batterie-Status der
-        Bike Bean erhalten möchtest, kannst du das hier tun.\nWenn du auf "Einstellen" drückst,
+    <string name="text_help_warning_number">Wenn Du Warnungen über einen niedrigen Batterie-Status der
+        Bike Bean erhalten möchtest, kannst Du das hier tun.\nWenn Du auf "Einstellen" drückst,
         wird deine jetztige Telefonnummer als Warn-Nummer in der Bike Bean
         eingespeichert.\n\nBei einem Akkustand von 20% und 10% wird jeweils einmal gewarnt.
     </string>
@@ -201,7 +201,7 @@
     <string name="title_mapbox_telemetry">Hilf mit, Mapbox besser zu machen</string>
     <string name="message_mapbox_telemetry">Bike Bean verwendet Mapbox als
         Kartenanbieter.\n\nDu kannst OpenStreetMap und Mapbox-Karten besser machen,
-        indem du anonyme Nutzungsdaten beisteuerst.
+        indem Du anonyme Nutzungsdaten beisteuerst.
     </string>
     <string name="text_error_no_browser">Auf deinem Gerät ist kein Webbrowser
         installiert, Website kann nicht geöffnet werden!
@@ -215,7 +215,7 @@
     <!-- version check dialog -->
     <string name="title_update">Update verfügbar</string>
     <string name="message_update_1">Es ist eine neue Version der App verfügbar (</string>
-    <string name="message_update_2">). Möchten Sie sie herunterladen?</string>
+    <string name="message_update_2">). Möchtest Du sie herunterladen?</string>
 
     <!-- permission rationale dialog -->
     <!-- sms permission -->
@@ -223,7 +223,7 @@
     <string name="message_permission_sms">Damit diese App richtig funktioniert, muss sie SMS
         an Bike Bean lesen und versenden können.
         Es werden nur SMS von und an Bike Bean gelesen.\nBitte
-        vergeben Sie die Berechtigungen für SMS.
+        vergib die Berechtigungen für SMS.
     </string>
 
     <!-- map permission -->

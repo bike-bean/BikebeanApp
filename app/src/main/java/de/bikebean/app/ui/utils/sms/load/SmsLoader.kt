@@ -3,7 +3,6 @@ package de.bikebean.app.ui.utils.sms.load
 import android.content.ContentResolver
 import android.content.Context
 import android.database.Cursor
-import android.os.AsyncTask
 import android.provider.Telephony
 import de.bikebean.app.db.sms.Sms
 import de.bikebean.app.db.sms.SmsFactory
@@ -11,14 +10,17 @@ import de.bikebean.app.ui.drawer.log.LogViewModel
 import de.bikebean.app.ui.drawer.sms_history.SmsViewModel
 import de.bikebean.app.ui.drawer.status.StateViewModel
 import de.bikebean.app.ui.initialization.Conversation
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.lang.ref.WeakReference
 
 class SmsLoader(
         private val contextWeakReference: WeakReference<Context?>,
         private val smsViewModel: SmsViewModel?,
         private val stateViewModel: StateViewModel?,
-        private val logViewModel: LogViewModel?
-) : AsyncTask<String, Void?, Unit>() {
+        private val logViewModel: LogViewModel?) {
 
     constructor(context: Context?,
                 smsViewModel: SmsViewModel?,
@@ -29,9 +31,17 @@ class SmsLoader(
     constructor(context: Context) :
             this(WeakReference(context),null, null, null)
 
-    override fun doInBackground(vararg args: String) =
-            getCursor(args[0])?.let {
-                traverseInboxAndClose(it, ::insertSmsIfNotPresent, null)
+    fun execute(address: String) {
+        CoroutineScope(Dispatchers.Main).launch {
+            doInBackground(address)
+        }
+    }
+
+    private suspend fun doInBackground(address: String) =
+            withContext(Dispatchers.IO) {
+                getCursor(address)?.let {
+                    traverseInboxAndClose(it, ::insertSmsIfNotPresent, null)
+                }
             }
 
     fun loadInitial(phoneNumber: String) {
