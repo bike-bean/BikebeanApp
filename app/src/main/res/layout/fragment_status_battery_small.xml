@@ -30,7 +30,7 @@
                 android:id="@+id/batteryStatusImage"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:contentDescription="@string/battery_text"
+                android:contentDescription="@string/heading_battery"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_battery_unknown_black_24dp" />
 

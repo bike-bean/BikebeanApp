@@ -15,7 +15,7 @@
             android:id="@+id/bikeMarker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/share"
+            android:contentDescription="@string/button_share"
             android:src="@drawable/ic_bike_map_marker_fg" />
 
         <LinearLayout

@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
         final @Nullable Toolbar topPanel2 = findViewById(R.id.topPanel2);
         if (topPanel2 != null)
-            topPanel2.setTitle(R.string.initial_heading);
+            topPanel2.setTitle(R.string.heading_initialization);
 
         fragmentContainerView.getViewTreeObserver().addOnGlobalLayoutListener(() ->
                 bottomSheetBehavior.setPeekHeight(fragmentContainerView.getHeight() / 3)
@@ -365,7 +365,7 @@ public class MainActivity extends AppCompatActivity {
                 //R.id.navigation_wifi,
                 R.id.navigation_sms_history,
                 R.id.navigation_position_history, R.id.navigation_battery_history,
-                R.id.navigation_preferences, R.id.navigation_log
+                R.id.navigation_preferences, R.id.navigation_info_help
         )
                 .setOpenableLayout(drawer)
                 .build();
@@ -489,7 +489,7 @@ public class MainActivity extends AppCompatActivity {
         if (show) {
             errorView.setVisibility(View.VISIBLE);
             Snackbar.make(findViewById(android.R.id.content),
-                    getString(R.string.warning_sms_permission),
+                    getString(R.string.toast_sms_permission),
                     Snackbar.LENGTH_LONG
             ).show();
         } else

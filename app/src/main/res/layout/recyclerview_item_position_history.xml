@@ -39,7 +39,7 @@
                         android:layout_marginStart="0dp"
                         android:layout_marginEnd="@dimen/activity_horizontal_margin"
                         android:textAppearance="?attr/textAppearanceBody1"
-                        android:text="@string/lat" />
+                        android:text="@string/text_lat" />
 
                     <TextView
                         android:id="@+id/lat2"
@@ -55,7 +55,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/lng"
+                        android:text="@string/text_lng"
                         android:textAppearance="?attr/textAppearanceBody1" />
 
                     <TextView
@@ -72,7 +72,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/acc"
+                        android:text="@string/text_acc"
                         android:textAppearance="?attr/textAppearanceBody1" />
 
                     <TextView
@@ -100,9 +100,9 @@
                 app:cardElevation="2dp">
 
                 <TextView
-                    android:contentDescription="@string/auf_karte_zeigen"
+                    android:contentDescription="@string/button_to_map"
                     app:drawableStartCompat="@drawable/ic_map_white_24dp"
-                    android:text="@string/auf_karte_zeigen"
+                    android:text="@string/button_to_map"
                     style="@style/Widget.BikeBean.Button.FakeButton" />
 
             </androidx.cardview.widget.CardView>

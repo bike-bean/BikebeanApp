@@ -13,6 +13,6 @@ class InitialConversation : Type() {
             Interval(),
             Wifi(),
             Status(),
-            WarningNumber(SmsFactory.createNullSms(), "")
+            WarningNumber()
     )
 }

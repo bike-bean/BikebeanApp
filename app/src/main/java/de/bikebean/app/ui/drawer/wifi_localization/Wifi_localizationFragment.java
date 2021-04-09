@@ -124,7 +124,7 @@ public class Wifi_localizationFragment extends Fragment {
         if (!gps_enabled) {
             // notify user
             AlertDialog.Builder alert = new AlertDialog.Builder(requireActivity()); //ctx
-                alert.setMessage(R.string.gps_network_not_enabled);
+                alert.setMessage(R.string.text_gps_network_not_enabled);
                 alert.create().show();
         }
 
@@ -135,7 +135,7 @@ public class Wifi_localizationFragment extends Fragment {
                 WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
         );
         wifiManager.startScan();
-        Toast.makeText(act, R.string.scanning_wifi, Toast.LENGTH_SHORT).show();
+        Toast.makeText(act, R.string.text_scanning_wifi, Toast.LENGTH_SHORT).show();
     }
 
     private final BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
@@ -198,7 +198,7 @@ public class Wifi_localizationFragment extends Fragment {
             adapter.notifyDataSetChanged();
 
             if (counter_bikebean_wifi == 0) {
-                textView.setText(R.string.wifi_not_found);
+                textView.setText(R.string.text_wifi_not_found);
             }
         }
     };

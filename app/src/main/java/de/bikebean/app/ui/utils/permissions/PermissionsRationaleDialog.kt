@@ -39,16 +39,16 @@ class PermissionsRationaleDialog(
         return AlertDialog.Builder(_context).apply {
             setTitle(title)
             setMessage(message)
-            setPositiveButton(R.string.continue_ok, buttonClickListener)
+            setPositiveButton(R.string.button_ok, buttonClickListener)
         }.create()
     }
 
     companion object {
         private val permissionMap = mapOf(
-                KEYS.SMS to (R.string.no_sms_permission to R.string.no_sms_permission_warning),
-                KEYS.MAPS to (R.string.no_map_permission to R.string.no_map_permission_warning)
+                KEYS.SMS to (R.string.title_permission_sms to R.string.message_permission_sms),
+                KEYS.MAPS to (R.string.title_permissions_map to R.string.message_permission_map)
         )
 
-        private val default = R.string.generic_permission to R.string.generic_permission_warning
+        private val default = R.string.title_permission_generic to R.string.message_permission_generic
     }
 }

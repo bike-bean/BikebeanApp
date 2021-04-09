@@ -11,14 +11,13 @@ class ResetDialog (
         private val act: Activity,
         private val address: String,
         private val resetHandler: (String) -> Unit,
-        private val resetCanceller: () -> Unit
 ) : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
             AlertDialog.Builder(act).apply {
-                setTitle(R.string.db_reset)
-                setMessage(R.string.db_reset_warning)
-                setPositiveButton(R.string.continue_reset) { _, _ -> resetHandler(address) }
-                setNegativeButton(R.string.abort_send_sms) { _, _ -> resetCanceller() }
+                setTitle(R.string.pref_db_reset)
+                setMessage(R.string.message_db_reset)
+                setPositiveButton(R.string.button_reset) { _, _ -> resetHandler(address) }
+                setNegativeButton(R.string.button_cancel) { _, _ -> }
             }.create()
 }

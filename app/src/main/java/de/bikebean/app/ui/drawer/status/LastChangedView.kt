@@ -17,7 +17,7 @@ class LastChangedView(private val text: TextView, private val image: ImageView) 
 
     fun set(state: State?, context: SubStatusFragment) {
         state ?: run {
-            text.setText(R.string.no_data)
+            text.setText(R.string.text_no_data)
             image.setImageBitmap(getLastChangedBitmap(
                     null, context.requireContext(), context.mf)
             )

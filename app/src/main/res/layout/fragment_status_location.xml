@@ -21,7 +21,7 @@
         android:layout_marginStart="@dimen/fragment_horizontal_margin"
         android:layout_marginEnd="@dimen/fragment_horizontal_margin"
         android:background="?attr/dividerHorizontal"
-        android:contentDescription="@string/share"
+        android:contentDescription="@string/button_share"
         app:layout_constraintTop_toBottomOf="@id/metaInfo" />
 
     <LinearLayout
@@ -85,7 +85,7 @@
                     android:layout_height="wrap_content"
                     style="?attr/materialButtonStyle"
                     app:icon="@drawable/ic_map_white_24dp"
-                    android:text="@string/auf_karte_zeigen" />
+                    android:text="@string/button_to_map" />
 
                 <!-- route button -->
                 <Button
@@ -95,7 +95,7 @@
                     android:layout_marginStart="@dimen/fragment_vertical_margin"
                     style="?attr/materialButtonOutlinedStyle"
                     app:icon="@drawable/ic_directions_white_24dp"
-                    android:text="@string/route" />
+                    android:text="@string/button_route" />
 
                 <!-- share button -->
                 <Button
@@ -105,7 +105,7 @@
                     android:layout_marginStart="@dimen/fragment_vertical_margin"
                     style="?attr/materialButtonOutlinedStyle"
                     app:icon="@drawable/ic_share_black_24dp"
-                    android:text="@string/share" />
+                    android:text="@string/button_share" />
 
             </LinearLayout>
 

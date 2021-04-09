@@ -20,7 +20,7 @@
     <!-- help button -->
     <ImageView
         style="?attr/helpButton"
-        android:contentDescription="@string/helpBattery" />
+        android:contentDescription="@string/text_help_battery" />
 
 </LinearLayout>
 

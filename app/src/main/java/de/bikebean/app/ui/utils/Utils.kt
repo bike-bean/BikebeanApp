@@ -13,9 +13,9 @@ object Utils {
     @JvmStatic
     @StringRes
     fun getErrorString(number: String): Int? = when {
-        number.isEmpty() -> R.string.number_error
-        !beginsWithPlus(number) -> R.string.number_subtitle
-        hasSpaces(number) -> R.string.number_no_blanks
+        number.isEmpty() -> R.string.message_pref_number_empty
+        !beginsWithPlus(number) -> R.string.message_pref_number
+        hasSpaces(number) -> R.string.message_pref_number_no_blanks
         else -> null
     }
 
@@ -49,7 +49,7 @@ object Utils {
     @JvmStatic
     fun onHelpClick(v: View) {
         Snackbar.make(v,
-                R.string.helpBattery,
+                R.string.text_help_battery,
                 Snackbar.LENGTH_LONG)
                 //                .setAction(R.string.history, (v1 -> {}))
                 .show()

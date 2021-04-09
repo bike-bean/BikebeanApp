@@ -17,6 +17,5 @@ interface LocationElementsSetter {
     fun setLocationElementsUnset()
     fun setLocationElementsProgressTimeUnset()
 
-    fun setButtonEnabled()
-    fun setButtonDisabled()
+    fun setLocationPending(pending: Boolean)
 }

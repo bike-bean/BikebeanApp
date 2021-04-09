@@ -56,7 +56,7 @@ class InitialConfigurationFragment : Fragment() {
     override fun onViewCreated(view: View,
                                savedInstanceState: Bundle?) {
         val subTitle = view.findViewById<TextView>(R.id.subTitle)
-        subTitle.setText(R.string.initial_configuration_subtitle)
+        subTitle.setText(R.string.subtitle_initial_configuration)
 
         preferences = getDefaultSharedPreferences(context)
 
@@ -207,12 +207,13 @@ class InitialConfigurationFragment : Fragment() {
     /*
      * TODO:
      *   - Map: Adapt route and share intents to non-googly maps
-     *   - Map: Fix "Jumping" behaviour when clicking the marker
-     *   - Map: Show Fab only when location is not visible on the map
+     *   - Map: Fix "Jumping" behaviour when clicking the marker?
+     *   - Map: Show Fab only when location is not visible on the map?
      *   - Map: Provide Zoom Controls
      *   - Map: Provide Device's Location
      *   - Map: If no position is found, map won't load
      *   - ...
+     *   - UI: Make Wifi transitioning to on/off more clear in SettingsStatusFragmentSmall
      *   - UI: Do make buttons available if another query is running, but maybe indicate that in
      *         an extra dialog prior to sending the sms (or even in the same...)
      *   - UI: Provide a shortcut to the position history (from location status view) and
@@ -223,7 +224,6 @@ class InitialConfigurationFragment : Fragment() {
      *   - UI: Help Snackbar Texts are rather short-lived and, more importantly, only 2 lines
      *         long! Make better!
      *   - UI: WifiLoc-Fragment should inform about the Wifi Status and react accordingly
-     *   - UI: SmsListener maybe is not working??!
      *   - ...
      *   - Code: More Kotlin (Next: MainActivity split)
      *   - Code: API 19: WHAT is with the Fabs??

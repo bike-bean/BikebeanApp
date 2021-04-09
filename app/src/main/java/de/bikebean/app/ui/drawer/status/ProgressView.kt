@@ -39,7 +39,7 @@ class ProgressView(private val textView: TextView, private val progressBar: Prog
         val minutesPadded = if (minutes < 10) "0$minutes" else minutes.toString()
 
         textView.text = context.getString(
-                R.string.pending_text,
+                R.string.text_pending,
                 "$hoursPadded:$minutesPadded",
                 convertToTime(stopTime)
         )
@@ -47,7 +47,7 @@ class ProgressView(private val textView: TextView, private val progressBar: Prog
 
     fun setIndeterminateProgress(context: Context, stopTime: Long) {
         textView.text = context.getString(
-                R.string.overdue,
+                R.string.text_overdue,
                 convertPeriodToHuman(stopTime)
         )
 

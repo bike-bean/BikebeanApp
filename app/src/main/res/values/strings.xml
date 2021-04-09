@@ -1,152 +1,260 @@
 <resources>
+
     <string name="app_name">Bike Bean</string>
-    <string name="title_dashboard">Karte</string>
-    <string name="title_wifi">WLAN-Ortung</string>
+
+    <!-- navigation drawer -->
+    <string name="drawer_title_maps">Karte</string>
+    <string name="drawer_title_wifi">WLAN-Ortung</string>
+    <string name="drawer_title_sms_history">SMS Historie</string>
+    <string name="drawer_title_history">Historie (Standort &amp; Batterie)</string>
+    <string name="drawer_title_preferences">Einstellungen</string>
+    <string name="drawer_title_info_help">Infos &amp; Hilfe</string>
+
+
+
+    <!-- headings -->
+    <string name="heading_initialization">Einrichtung</string>
+    <string name="heading_welcome">Willkommen!</string>
+    <string name="heading_location">Standort</string>
+    <string name="heading_battery">Batterie</string>
+    <string name="heading_settings">Einstellungen</string>
+    <string name="heading_wifi">WLAN Status</string>
+    <string name="heading_interval">Intervall</string>
+    <string name="heading_warning_number">Warn-Nummer</string>
+
+
+
+    <!-- button texts -->
     <string name="button_get_location">Abfragen</string>
-    <string name="last_updated">Letzte Aktualisierung:</string>
-    <string name="initial_heading">Einrichtung</string>
-    <string name="status_heading">Willkommen!</string>
-    <string name="location_text">Standort</string>
-    <string name="status_text">Einstellungen</string>
-    <string name="battery_text">Batterie</string>
-    <string name="charge_text">Ladezustand:</string>
-    <string name="estimated_remaining_text">Es verbleiben noch etwa %s bis 10%% Ladezustand%s.
+    <string name="button_to_map">Zur Karte</string>
+    <string name="button_route">Route</string>
+    <string name="button_more_information">Mehr Informationen</string>
+    <string name="button_set_warning_number">Einstellen</string>
+    <string name="button_share">Teilen</string>
+    <string name="button_send_sms">Senden</string>
+    <string name="button_reset">Zurücksetzen</string>
+    <string name="button_ok">OK</string>
+    <string name="button_continue">Fortfahren</string>
+    <string name="button_cancel">Abbrechen</string>
+    <string name="button_send_log">Fehlerprotokoll senden</string>
+    <string name="button_download">Herunterladen</string>
+    <string name="button_update">Update</string>
+    <string name="button_update_cancel">Jetzt nicht</string>
+    <string name="button_mapbox_agree">Zustimmen</string>
+    <string name="button_mapbox_disagree">Ablehnen</string>
+    <string name="button_mapbox_more_info">Mehr Darüber</string>
+
+
+
+    <!-- content description -->
+    <string name="description_last_updated">Letzte Aktualisierung:</string>
+    <string name="description_navigation">Navigation header</string>
+    <string name="description_map_type">MapType</string>
+
+    <!-- Toast messages -->
+    <string name="toast_db_reset">Datenbank zurückgesetzt</string>
+    <string name="toast_sms_permission">Bitte Berechtigungen für SMS vergeben!</string>
+
+
+
+    <!-- initial configuration UI -->
+    <string name="subtitle_initial_configuration">Nimm hier die ersten
+        Schritte zur Einrichtung deiner Bike Bean vor!
     </string>
-    <string name="last_known_text">Der letzte gemeldete Ladezustand war %s.</string>
-    <string name="estimated_charge_text">Dieser Wert ist eine Schätzung des Ladezustands
+
+    <!-- status fragment UI -->
+    <string name="text_pending">Erwarte Bestätigung in ca. %s h (%s)</string>
+    <string name="text_overdue">Bestätigung überfällig! (%s)</string>
+    <string name="text_no_data">Keine Daten vorhanden!</string>
+    <string name="title_error_sms_permission">Achtung!</string>
+    <string name="text_error_sms_permission">Die App hat keine Berechtigungen für Sms.
+        Diese Informationen sind eventuell veraltet oder falsch.
+        Aktiviere die Berechtigungen in den App-Einstellungen.
+    </string>
+    <string name="text_to_settings">Zu den Einstellungen</string>
+
+    <!-- location UI -->
+    <string name="text_lat">Lat: </string>
+    <string name="text_lng">Lng: </string>
+    <string name="text_acc">+/-: </string>
+    <string name="text_help_location">Hier kannst Du den Standort deiner
+        Bike Bean abfragen.
+    </string>
+
+    <!-- battery UI -->
+    <string name="text_charge_state">Ladezustand:</string>
+    <string name="text_estimated_remaining">Es verbleiben noch
+        etwa %s bis 10%% Ladezustand%s.
+    </string>
+    <string name="text_battery_warning">Unter 10%%, bitte umgehend aufladen!</string>
+    <string name="text_last_known">Der letzte gemeldete Ladezustand war %s.</string>
+    <string name="text_explanation_charge">Dieser Wert ist eine Schätzung des Ladezustands
         basierend auf der letzten Meldung und den aktuellen Einstellungen.
     </string>
-    <string name="auf_karte_zeigen">Zur Karte</string>
-    <string name="more_information">Mehr Informationen</string>
+    <string name="text_help_battery">Hier kannst Du den Akkustand abfragen falls
+        die letzte Aktualisierung länger her ist.
+    </string>
 
-    <string name="nav_header_desc">Navigation header</string>
-
-    <string name="geolocation_baseurl">https://www.googleapis.com/geolocation/v1/geolocate?key=</string>
-    <string name="github_releases_baseurl">https://api.github.com/repos/bike-bean/BikebeanApp/releases</string>
-    <string name="github_gists_baseurl">https://api.github.com/gists</string>
-
-    <string name="pending_text">Erwarte Bestätigung in ca. %s h (%s)</string>
-    <string name="wifi_switch_on_transition">Wird eingeschaltet</string>
-    <string name="wifi_switch_off_transition">Wird ausgeschaltet</string>
-
-    <string name="warning_number_pending_text">Wird neu gesetzt</string>
-    <string name="warning_number_not_set">Nicht gesetzt</string>
-    <string name="warning_number_set_button">Einstellen</string>
-
-    <string name="interval_switch_transition">Wird auf %dh umgestellt</string>
-
-    <string name="title_activity_sms">SMS Historie</string>
-    <string name="title_fragment_preferences">Einstellungen</string>
-
-    <string name="history">Historie (Standort &amp; Batterie)</string>
-    <string name="info">Infos &amp; Hilfe</string>
-    <string name="log">Fehlerprotokoll</string>
-    <string name="helpLocation">Hier kannst du den Standort deiner Bike Bean abfragen.</string>
-    <string name="helpBattery">Hier kannst du den Akkustand abfragen falls die letzte Aktualisierung länger her ist.</string>
-    <string name="helpSettings">Hier kannst du verschiedene Einstellungen der Bike Bean vornehmen
+    <!-- settings UI -->
+    <string name="text_help_settings">Hier kannst Du verschiedene Einstellungen der Bike Bean vornehmen
         (Siehe Hilfe-Button bei den einzelnen Einstellungen).
     </string>
-    <string name="helpWlan">Hier kannst du das WLAN der Bike Bean einstellen.
-        Dies solltest du nur für die Nahortung tun!
+
+    <!-- wifi UI -->
+    <string name="text_wifi_on_transition">Wird eingeschaltet</string>
+    <string name="text_wifi_off_transition">Wird ausgeschaltet</string>
+    <string name="text_wifi_summary_on">Bike Bean strahlt WLAN aus.\nACHTUNG:
+        Die Batterielaufzeit der Bike Bean wird stark reduziert!
     </string>
-    <string name="helpInterval">Hier kannst du das Antwortintervall der Bike Bean einstellen.
+    <string name="text_wifi_summary_off">Bike Bean strahlt aktuell kein WLAN aus.</string>
+    <string name="text_help_wifi">Hier kannst Du das WLAN der Bike Bean einstellen.
+        Dies solltest Du nur für die Nahortung tun!
+    </string>
+
+    <!-- interval UI -->
+    <string name="text_interval_transition">Wird auf %dh umgestellt</string>
+    <string name="text_interval_summary">Bike Bean wird alle %sh neue Nachrichten prüfen.</string>
+    <string name="text_help_interval">Hier kannst Du das Antwortintervall der Bike Bean einstellen.
             Beachte, dass kürzere Intervalle deine Akkulaufzeit verringern.
     </string>
-    <string name="helpWarningNumber">Wenn du Warnungen über einen niedrigen Batterie-Status der
-        Bike Bean erhalten möchtest, kannst du das hier tun.\nWenn du auf "Einstellen" drückst,
+
+    <!-- warningNumber UI -->
+    <string name="text_warning_number_pending">Wird neu gesetzt</string>
+    <string name="text_warning_number_not_set">Nicht gesetzt</string>
+    <string name="text_help_warning_number">Wenn Du Warnungen über einen niedrigen Batterie-Status der
+        Bike Bean erhalten möchtest, kannst Du das hier tun.\nWenn Du auf "Einstellen" drückst,
         wird deine jetztige Telefonnummer als Warn-Nummer in der Bike Bean
         eingespeichert.\n\nBei einem Akkustand von 20% und 10% wird jeweils einmal gewarnt.
     </string>
 
-    <string name="share">Teilen</string>
 
+
+    <!-- Map UI -->
     <string name="menu_satellite">Satellit</string>
     <string name="menu_hybrid">Hybrid</string>
     <string name="menu_normal">Normal</string>
 
-    <!-- Preference Titles -->
-    <string name="general_header">Bike Bean Einstellungen</string>
-    <string name="ui_header">Design</string>
-    <string name="theme_header">Thema</string>
-    <string name="app_general_header">App Einstellungen</string>
-    <string name="internationalization_header">Sprache</string>
-    <string name="interval_header">Intervall</string>
-    <string name="wlan_header">Bike Bean WLAN</string>
-    <string name="db_reset">Datenbank zurücksetzen</string>
-    <string name="db_is_reset">Datenbank zurückgesetzt</string>
 
-    <!-- General Preferences -->
-    <string name="number_title">Telefonnummer der Bike Bean</string>
-    <string name="name_title">Anzeigename</string>
-    <string name="warning_number_title">Warn-Nummer</string>
 
-    <!-- Intervall Preferences -->
-    <string name="interval_summary">Bike Bean wird alle %sh neue Nachrichten prüfen.</string>
+    <!-- wifi scan UI -->
+    <string name="text_scanning_wifi">Scanne WLANs</string>
+    <string name="text_phone_hint">+4912345678910</string>
+    <string name="text_scan_wifi">WLANs SCANNEN</string>
+    <string name="text_wifi_not_found">BIKEBEAN-WIFI WURDE NICHT GEFUNDEN</string>
+    <string name="text_gps_network_not_enabled">Dein Standort muss leider aktiviert sein
+        um nach WLANs scannen zu können. (Google Anforderung)
+    </string>
 
-    <!-- WLAN Preferences -->
-    <string name="wlan_title">WLAN Status</string>
-    <string name="wlan_summary_on">Bike Bean strahlt WLAN aus.\nACHTUNG:
-        Die Batterielaufzeit der Bike Bean wird stark reduziert!</string>
-    <string name="wlan_summary_off">Bike Bean strahlt aktuell kein WLAN aus.</string>
 
-    <!-- Location Preferences -->
-    <string name="lat">Lat: </string>
-    <string name="lng">Lng: </string>
-    <string name="acc">+/-: </string>
 
-    <!-- Warning Strings -->
-    <string name="sms_send_warning">Achtung! Es wird eine
+    <!-- Preferences -->
+    <!-- Pref Category headers -->
+    <string name="header_general">Bike Bean Einstellungen</string>
+    <string name="header_ui">Design</string>
+    <string name="header_app">App Einstellungen</string>
+
+    <!-- Pref titles -->
+    <string name="pref_number">Telefonnummer der Bike Bean</string>
+    <string name="pref_name">Anzeigename</string>
+    <string name="pref_theme">Thema</string>
+    <string name="pref_internationalization">Sprache</string>
+    <string name="pref_db_reset">Datenbank zurücksetzen</string>
+    <string name="pref_mapbox_telemetry">Mapbox Telemetrie</string>
+
+    <!-- Pref key -->
+    <string name="pref_number_key">number</string>
+    <string name="pref_name_key">name</string>
+    <string name="pref_theme_key">thema</string>
+    <string name="pref_internationalization_key">language</string>
+    <string name="pref_db_reset_key">reset</string>
+    <string name="pref_mapbox_telemetry_key">mapbox_telemetry</string>
+
+
+
+    <!-- Dialogs -->
+    <!-- sms send warn dialog -->
+    <string name="message_sms_send">Achtung! Es wird eine
         SMS an Bike Bean gesendet um den Befehl zu übertragen.
-        Dies kann Kosten des Netzbetreibers verursachen!</string>
-    <string name="number_subtitle">Bitte mit Ländercode (z.B. +49 für Deutschland) eingeben"</string>
-    <string name="number_no_blanks">Nummer darf keine Leerzeichen enthalten,
+        Dies kann Kosten des Netzbetreibers verursachen!
+    </string>
+
+    <!-- sms send warn dialog -->
+    <string name="message_sms_pending">Es wurde bereits eine Abfrage gesendet, bei der noch
+        auf Antwort gewartet wird. Möchtest Du trotzdem eine neue Abfrage starten?
+    </string>
+
+    <!-- log upload dialog -->
+    <string name="message_upload_log">Beschreibe kurz, was nicht funktioniert!
+        Deine Log-Dateien werden zu Github hochgeladen, damit wir den
+        Fehler beheben können. Anschließend werden sie gelöscht.
+    </string>
+    <string name="dialog_edittext_hint">Fehlerbeschreibung</string>
+
+    <!-- number edit text preference -->
+    <string name="message_pref_number">Bitte mit Ländercode (z.B. +49 für Deutschland) eingeben"
+    </string>
+    <string name="message_pref_number_no_blanks">Nummer darf keine Leerzeichen enthalten,
         Leerzeichen wurden automatisch gelöscht</string>
-    <string name="number_error">Nummer darf nicht leer sein!</string>
-    <string name="continue_send_sms">Senden</string>
-    <string name="continue_reset">Zurücksetzen</string>
-    <string name="continue_ok">OK</string>
-    <string name="abort_send_sms">Abbrechen</string>
-    <string name="overdue">Bestätigung überfällig! (%s)</string>
-    <string name="no_data">Keine Daten vorhanden!</string>
-    <string name="db_reset_warning">Dadurch werden alle Daten zurückgesetzt und vom
-        bisherigen SMS-Verlauf neu eingelesen. Fortfahren?</string>
-    <string name="no_sms_permission">SMS Berechtigungen</string>
-    <string name="no_sms_permission_warning">Damit diese App richtig funktioniert, muss sie SMS
+    <string name="message_pref_number_empty">Nummer darf nicht leer sein!</string>
+
+    <!-- mapbox telemetry dialog -->
+    <string name="title_mapbox_telemetry">Hilf mit, Mapbox besser zu machen</string>
+    <string name="message_mapbox_telemetry">Bike Bean verwendet Mapbox als
+        Kartenanbieter.\n\nDu kannst OpenStreetMap und Mapbox-Karten besser machen,
+        indem Du anonyme Nutzungsdaten beisteuerst.
+    </string>
+    <string name="text_error_no_browser">Auf deinem Gerät ist kein Webbrowser
+        installiert, Website kann nicht geöffnet werden!
+    </string>
+
+    <!-- db reset dialog -->
+    <string name="message_db_reset">Dadurch werden alle Daten zurückgesetzt und vom
+        bisherigen SMS-Verlauf neu eingelesen. Fortfahren?
+    </string>
+
+    <!-- version check dialog -->
+    <string name="title_update">Update verfügbar</string>
+    <string name="message_update_1">Es ist eine neue Version der App verfügbar (</string>
+    <string name="message_update_2">). Möchtest Du sie herunterladen?</string>
+
+    <!-- permission rationale dialog -->
+    <!-- sms permission -->
+    <string name="title_permission_sms">SMS Berechtigungen</string>
+    <string name="message_permission_sms">Damit diese App richtig funktioniert, muss sie SMS
         an Bike Bean lesen und versenden können.
         Es werden nur SMS von und an Bike Bean gelesen.\nBitte
-        vergeben Sie die Berechtigungen für SMS.
+        vergib die Berechtigungen für SMS.
     </string>
-    <string name="no_sms_permission_error">Achtung!</string>
-    <string name="no_sms_permission_error_2">Die App hat keine Berechtigungen für Sms.
-        Diese Informationen sind eventuell veraltet oder falsch.
-        Aktivieren Sie die Berechtigungen in den App-Einstellungen.
+
+    <!-- map permission -->
+    <string name="title_permissions_map">Standort-Berechtigungen</string>
+    <string name="message_permission_map">Die App benötigt Berechtigungen um Ihren eigenen
+        Standort auf der Karte anzuzeigen.
     </string>
-    <string name="no_map_permission">Standort-Berechtigungen</string>
-    <string name="no_map_permission_warning">Die App benötigt Berechtigungen um Ihren eigenen
-        Standort auf der Karte anzuzeigen.</string>
-    <string name="generic_permission">Berechtigungen</string>
-    <string name="generic_permission_warning">Die App benötogt weitere Berechtigungen!</string>
-    <string name="warning_sms_permission">Bitte Berechtigungen für SMS vergeben!</string>
-    <string name="to_settings">Zu den Einstellungen</string>
 
-    <!-- WifiScan -->
-    <string name="scanning_wifi">Scanne WLANs</string>
-    <string name="phone_hint">+4912345678910</string>
-    <string name="scan_wifi">WLANs SCANNEN</string>
-    <string name="wifi_not_found">BIKEBEAN-WIFI WURDE NICHT GEFUNDEN</string>
-    <string name="gps_network_not_enabled">Dein Standort muss leider aktiviert sein um nach WLANs scannen zu können. (Google Anforderung)</string>
-    <string name="send_log">Fehlerprotokoll senden</string>
+    <!-- generic permission -->
+    <string name="title_permission_generic">Berechtigungen</string>
+    <string name="message_permission_generic">Die App benötogt weitere Berechtigungen!</string>
 
-    <!-- VersionCheck -->
-    <string name="update_title">Update verfügbar</string>
-    <string name="update_text_1">Es ist eine neue Version der App verfügbar (</string>
-    <string name="update_text_2">). Möchten Sie sie herunterladen?</string>
-    <string name="continue_update">Herunterladen</string>
-    <string name="cancel_update">Jetzt nicht</string>
-    <string name="update_text">Update</string>
-    <string name="route">Route</string>
-    <string name="battery_warning_string">Unter 10%%, bitte umgehend aufladen!</string>
-    <string name="initial_configuration_subtitle">Nimm hier die ersten Schritte zur Einrichtung deiner Bike Bean vor!</string>
 
-    <string name="mapbox_access_token">pk.eyJ1Ijoiam9qbzI0MyIsImEiOiJja2xwMm9sN3gwaHMyMm5ud2ZzYmNxaGRpIn0.-XhYvIRw2vRgUMF3BqsCXg</string>
+
+    <!-- urls -->
+    <string name="url_geolocation" translatable="false">https://www.googleapis.com/geolocation/v1/geolocate?key=</string>
+    <string name="url_github_releases" translatable="false">https://api.github.com/repos/bike-bean/BikebeanApp/releases</string>
+    <string name="url_github_gists" translatable="false">https://api.github.com/gists</string>
+
+    <!-- mapbox attribution html -->
+    <string name="text_attribution_mapbox">© Mapbox</string>
+    <string name="url_attribution_mapbox">https://www.mapbox.com/about/maps/</string>
+    <string name="text_attribution_osm">© OpenStreetMap</string>
+    <string name="url_attribution_osm">http://www.openstreetmap.org/about/</string>
+    <string name="text_attribution_mapbox_improve">Karte verbessern</string>
+    <string name="url_attribution_mapbox_improve">https://www.mapbox.com/map-feedback/</string>
+
+    <!-- tokens -->
+    <string name="mapbox_access_token" translatable="false">pk.eyJ1Ijoiam9qbzI0MyIsImEiOiJja2xwMm9sN3gwaHMyMm5ud2ZzYmNxaGRpIn0.-XhYvIRw2vRgUMF3BqsCXg</string>
+
+    <!-- unused?? -->
+    <string name="error_log">Fehlerprotokoll</string>
+
 </resources>

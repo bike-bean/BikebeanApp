@@ -84,7 +84,7 @@ class PhoneNumberInitialView(
             Utils.getErrorString(this)?.let {
                 itemAdditionalLayout.error = context.getString(it)
                 when (it) {
-                    R.string.number_no_blanks -> editText?.setText(Utils.eliminateSpaces(this))
+                    R.string.message_pref_number_no_blanks -> editText?.setText(Utils.eliminateSpaces(this))
                 }
                 hideSoftKeyboard(context, editText)
                 return
@@ -103,7 +103,7 @@ class PhoneNumberInitialView(
 
     private fun listenKeys(): Boolean = when {
         !Utils.beginsWithPlus(editText?.text.toString()) -> {
-            itemAdditionalLayout.error = context.getString(R.string.number_subtitle)
+            itemAdditionalLayout.error = context.getString(R.string.message_pref_number)
             false
         }
         else -> {

@@ -3,6 +3,7 @@ package de.bikebean.app.ui.utils.sms.send
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -23,10 +24,15 @@ class SmsSendWarnDialog(
 
         return AlertDialog.Builder(act).apply {
             setView(v)
-            setMessage(R.string.sms_send_warning)
-            setPositiveButton(R.string.continue_send_sms) { _, _ -> smsSender.permissions }
-            setNegativeButton(R.string.abort_send_sms) { _, _ -> smsSender.cancelSend() }
+            setMessage(R.string.message_sms_send)
+            setPositiveButton(R.string.button_send_sms) { _, _ -> smsSender.permissions }
+            setNegativeButton(R.string.button_cancel) { _, _ -> smsSender.cancelSend() }
         }.create()
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        smsSender.cancelSend()
     }
 
     private fun setBubbleText(v: View) {

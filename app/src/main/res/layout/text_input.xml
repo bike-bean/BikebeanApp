@@ -5,11 +5,11 @@
     android:id="@+id/textInput"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:hint="@string/number_title"
+    android:hint="@string/pref_number"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    app:helperText="@string/number_subtitle"
-    app:placeholderText="@string/phone_hint">
+    app:helperText="@string/message_pref_number"
+    app:placeholderText="@string/text_phone_hint">
 
     <com.google.android.material.textfield.TextInputEditText
         android:layout_width="match_parent"

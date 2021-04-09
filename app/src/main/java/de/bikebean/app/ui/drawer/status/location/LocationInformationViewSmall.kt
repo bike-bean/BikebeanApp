@@ -47,7 +47,7 @@ open class LocationInformationViewSmall(
             acc.visibility = View.GONE
 
             noData.visibility = View.VISIBLE
-            noData.setText(R.string.no_data)
+            noData.setText(R.string.text_no_data)
         }
     }
 }

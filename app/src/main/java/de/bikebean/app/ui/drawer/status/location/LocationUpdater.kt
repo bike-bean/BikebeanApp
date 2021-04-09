@@ -1,12 +1,15 @@
 package de.bikebean.app.ui.drawer.status.location
 
 import android.content.Context
-import android.os.AsyncTask
 import de.bikebean.app.R
 import de.bikebean.app.db.settings.settings.add_to_list_settings.WappState
 import de.bikebean.app.db.settings.settings.add_to_list_settings.location_settings.Location
 import de.bikebean.app.db.type.types.LocationType
 import de.bikebean.app.ui.drawer.log.LogViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import okhttp3.*
@@ -19,50 +22,54 @@ internal class LocationUpdater(
         context: Context,
         private val mStateViewModel: LocationStateViewModel,
         private val mLogViewModel: LogViewModel,
-        private val mPostResponseHandler: (LocationType) -> Unit,
-        private val mWappState: WappState)
-    : AsyncTask<String, Void?, Boolean>() {
+        private val mPostResponseHandler: (LocationType?) -> Unit,
+        private val mWappState: WappState) {
 
-    private val mUrl: String = context.getString(R.string.geolocation_baseurl) +
+    private val mUrl: String = context.getString(R.string.url_geolocation) +
             context.getString(R.string.google_maps_api_key)
 
-    override fun doInBackground(vararg args: String): Boolean {
-        val request = buildRequest() ?: return false
-
-        if (mStateViewModel.getLocationByIdSync(mWappState))
-            return false
-
-        mStateViewModel.insertNumberStates(mWappState)
-        mLogViewModel.d("Updating Coordinates (Lat/Lng)...")
-
-        val response = try {
-            OkHttpClient()
-                    .newCall(request)
-                    .execute()
-                    .also {
-                        mLogViewModel.d("Successfully posted to geolocation API (${it.code})")
-                    }
-        } catch (e: IOException) {
-            mLogViewModel.w("Could not reach geolocation API: ${e.message}")
-            null
-        } ?: return false
-
-        /*
-         Mark location is updating in the UI (if it is the newest)
-         */
-        if (mWappState.getIfNewest(mStateViewModel))
-            mStateViewModel.insert(Location(mWappState))
-
-        try {
-            val responseBody = buildResponseObject(response) ?: return false
-            mPostResponseHandler(LocationType(responseBody, mWappState))
-        } catch (e: IOException) {
-            mLogViewModel.w("Could not parse Geolocation: ${e.message}")
-            return false
+    fun execute() {
+        CoroutineScope(Dispatchers.Main).launch {
+            mPostResponseHandler(doInBackground())
         }
-
-        return true
     }
+
+    private suspend fun doInBackground(): LocationType? =
+        withContext(Dispatchers.IO) {
+            val request = buildRequest() ?: return@withContext null
+
+            if (mStateViewModel.getLocationByIdSync(mWappState))
+                return@withContext null
+
+            mStateViewModel.insertNumberStates(mWappState)
+            mLogViewModel.d("Updating Coordinates (Lat/Lng)...")
+
+            val response = try {
+                OkHttpClient()
+                        .newCall(request)
+                        .execute()
+                        .also {
+                            mLogViewModel.d("Successfully posted to geolocation API (${it.code})")
+                        }
+            } catch (e: IOException) {
+                mLogViewModel.w("Could not reach geolocation API: ${e.message}")
+                return@withContext null
+            }
+
+            /*
+             Mark location is updating in the UI (if it is the newest)
+             */
+            if (mWappState.getIfNewest(mStateViewModel))
+                mStateViewModel.insert(Location(mWappState))
+
+            try {
+                val responseBody = buildResponseObject(response) ?: return@withContext null
+                LocationType(responseBody, mWappState)
+            } catch (e: IOException) {
+                mLogViewModel.w("Could not parse Geolocation: ${e.message}")
+                null
+            }
+        }
 
     private fun buildResponseObject(response: Response): ResponseBody? {
         response.body ?: return null.also {
