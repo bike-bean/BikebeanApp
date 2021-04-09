@@ -34,7 +34,7 @@ class SettingsStatusWarningNumberView(
         super.initUserInteractionElements(f)
 
         sendButton.setOnClickListener {
-            f.sendSms(Sms.MESSAGE.WARNING_NUMBER, arrayOf(createPendingState(
+            f.sendSms(Sms.MESSAGE.WARNING_NUMBER, listOf(createPendingState(
                     State.KEY.WARNING_NUMBER, 0.0)
             ))
         }
@@ -60,7 +60,7 @@ class SettingsStatusWarningNumberView(
     fun setWarningNumberElementsPending(state: State, f: SettingsStatusFragment) {
         val stopTime = f.tv.startTimer(t, state.timestamp, f.st.confirmedIntervalSync)
         f.tv.getResidualTime(t).observe(f, { s ->
-            f.updatePendingText(progressView, state.timestamp, stopTime, s!!) }
+            f.updatePendingText(progressView, state.timestamp, stopTime, s) }
         )
         subTitle.setText(R.string.text_warning_number_pending)
         progressView.setVisibility(true)

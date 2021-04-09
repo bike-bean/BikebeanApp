@@ -147,7 +147,7 @@ public abstract class SubStatusFragmentSmall extends Fragment {
             case UNSET:
                 switch (key) {
                     case BATTERY:
-                        getBSetter().setButtonEnabled();
+                        getBSetter().setBatteryPending(false);
                         getBSetter().setBatteryElementsUnset(state);
                         break;
                     case INTERVAL:
@@ -176,10 +176,10 @@ public abstract class SubStatusFragmentSmall extends Fragment {
                     case CELL_TOWERS: // And
                     case WIFI_ACCESS_POINTS:
                         try {
-                            getLSetter().setButtonEnabled();
+                            getLSetter().setLocationPending(false);
                             getLSetter().setLocationElementsProgressTimeUnset();
                         } catch (ClassCastException e) {
-                            getBSetter().setButtonForceEnabled();
+                            getBSetter().setLocationPending(false);
                         }
                         break;
                     case LAT: // And
@@ -194,7 +194,7 @@ public abstract class SubStatusFragmentSmall extends Fragment {
             case CONFIRMED:
                 switch (key) {
                     case BATTERY:
-                        getBSetter().setButtonEnabled();
+                        getBSetter().setBatteryPending(false);
                         getBSetter().setBatteryElementsConfirmed(state);
                         break;
                     case INTERVAL:
@@ -232,10 +232,10 @@ public abstract class SubStatusFragmentSmall extends Fragment {
                     case CELL_TOWERS: // And
                     case WIFI_ACCESS_POINTS:
                         try {
-                            getLSetter().setButtonEnabled();
+                            getLSetter().setLocationPending(false);
                             getLSetter().setLocationElementsProgressTimeConfirmed();
                         } catch (ClassCastException e) {
-                            getBSetter().setButtonForceEnabled();
+                            getBSetter().setLocationPending(false);
                         }
                         break;
                     case NO_WIFI_ACCESS_POINTS: // And
@@ -249,7 +249,7 @@ public abstract class SubStatusFragmentSmall extends Fragment {
             case PENDING:
                 switch (key) {
                     case BATTERY:
-                        getBSetter().setButtonDisabled();
+                        getBSetter().setBatteryPending(true);
                         getBSetter().setBatteryElementsPending(state);
                         break;
                     case INTERVAL:
@@ -275,10 +275,10 @@ public abstract class SubStatusFragmentSmall extends Fragment {
                     case CELL_TOWERS: // And
                     case WIFI_ACCESS_POINTS:
                         try {
-                            getLSetter().setButtonDisabled();
+                            getLSetter().setLocationPending(true);
                             getLSetter().setLocationElementsProgressTimePending(state);
                         } catch (ClassCastException e) {
-                            getBSetter().setButtonForceDisabled();
+                            getBSetter().setLocationPending(true);
                         }
                         break;
                     case WAPP:

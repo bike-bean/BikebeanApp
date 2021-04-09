@@ -59,7 +59,7 @@ class SettingsStatusIntervalView(
                 with(MESSAGE.INT) {
                     setValue("Int $newValue")
 
-                    f.sendSms(this, arrayOf(createPendingState(
+                    f.sendSms(this, listOf(createPendingState(
                             State.KEY.INTERVAL, newValue.toDouble())
                     ))
                 }
@@ -90,8 +90,10 @@ class SettingsStatusIntervalView(
     // unset
     fun setIntervalElementsUnset(state: State, f: SettingsStatusFragment) {
         val intervalSummaryString = f.getString(R.string.text_interval_summary)
-        f.tv.getResidualTime(t).removeObservers(f)
-        f.tv.cancelTimer(t)
+        f.tv.apply {
+            getResidualTime(t).removeObservers(f)
+            cancelTimer(t)
+        }
         val oldValue = state.value.toInt().toString()
         subTitle.text = String.format(intervalSummaryString, oldValue)
         progressView.setVisibility(false)
@@ -100,8 +102,10 @@ class SettingsStatusIntervalView(
     // confirmed
     fun setIntervalElementsConfirmed(state: State, f: SettingsStatusFragment) {
         val intervalSummaryString = f.getString(R.string.text_interval_summary)
-        f.tv.getResidualTime(t).removeObservers(f)
-        f.tv.cancelTimer(t)
+        f.tv.apply {
+            getResidualTime(t).removeObservers(f)
+            cancelTimer(t)
+        }
         val oldValue = state.value.toInt().toString()
         subTitle.text = String.format(intervalSummaryString, oldValue)
         progressView.setVisibility(false)

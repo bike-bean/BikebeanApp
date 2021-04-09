@@ -34,6 +34,7 @@
     <string name="button_send_sms">Senden</string>
     <string name="button_reset">Zurücksetzen</string>
     <string name="button_ok">OK</string>
+    <string name="button_continue">Fortfahren</string>
     <string name="button_cancel">Abbrechen</string>
     <string name="button_send_log">Fehlerprotokoll senden</string>
     <string name="button_download">Herunterladen</string>
@@ -176,13 +177,18 @@
         SMS an Bike Bean gesendet um den Befehl zu übertragen.
         Dies kann Kosten des Netzbetreibers verursachen!
     </string>
-    <string name="dialog_edittext_hint">Fehlerbeschreibung</string>
+
+    <!-- sms send warn dialog -->
+    <string name="message_sms_pending">Es wurde bereits eine Abfrage gesendet, bei der noch
+        auf Antwort gewartet wird. Möchtest Du trotzdem eine neue Abfrage starten?
+    </string>
 
     <!-- log upload dialog -->
     <string name="message_upload_log">Beschreibe kurz, was nicht funktioniert!
         Deine Log-Dateien werden zu Github hochgeladen, damit wir den
         Fehler beheben können. Anschließend werden sie gelöscht.
     </string>
+    <string name="dialog_edittext_hint">Fehlerbeschreibung</string>
 
     <!-- number edit text preference -->
     <string name="message_pref_number">Bitte mit Ländercode (z.B. +49 für Deutschland) eingeben"

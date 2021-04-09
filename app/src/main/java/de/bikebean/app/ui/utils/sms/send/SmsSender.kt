@@ -15,22 +15,34 @@ class SmsSender(
         val updates: List<State>,
         private val act: AppCompatActivity,
         private val postSmsSendHandler: (Boolean, SmsSender) -> Unit,
-        lv: LogViewModel?) {
+        lv: LogViewModel?,
+        private val isLocationPending: Boolean = false,
+        private val isBatteryPending: Boolean = false) {
 
     val address: String = getBikeBeanNumber(act, lv) ?: ""
 
     fun showDialogBeforeSend() = when {
         address.isEmpty() -> cancelSend()
-        else -> {
-            with (SmsSendWarnDialog(act, this)) {
-                if ((dialog ?: onCreateDialog(null)).isShowing) {
-                    cancelSend()
-                    return
-                }
+        isLocationPending or isBatteryPending -> showPendingDialog()
+        else -> showWarnDialog()
+    }
 
-                show(act.supportFragmentManager, "smsWarning")
-            }
+    private fun showPendingDialog() = with(SmsPendingWarnDialog(act, this)) {
+        if ((dialog ?: onCreateDialog(null)).isShowing) {
+            cancelSend()
+            return
         }
+
+        show(act.supportFragmentManager, "smsWarning")
+    }
+
+    fun showWarnDialog() = with(SmsSendWarnDialog(act, this)) {
+        if ((dialog ?: onCreateDialog(null)).isShowing) {
+            cancelSend()
+            return
+        }
+
+        show(act.supportFragmentManager, "smsWarning")
     }
 
     val permissions: Unit

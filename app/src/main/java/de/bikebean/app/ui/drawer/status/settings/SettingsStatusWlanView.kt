@@ -45,7 +45,7 @@ class SettingsStatusWlanView(
                 with(MESSAGE.WIFI) {
                     setValue("Wifi " + if (isChecked) "on" else "off")
 
-                    f.sendSms(this, arrayOf(createPendingState(
+                    f.sendSms(this, listOf(createPendingState(
                             State.KEY.WIFI, if (isChecked) 1.0 else 0.0)
                     ))
                 }
@@ -57,8 +57,10 @@ class SettingsStatusWlanView(
 
     // confirmed
     fun setWifiElementsConfirmed(state: State, f: SettingsStatusFragment) {
-        f.tv.getResidualTime(t).removeObservers(f)
-        f.tv.cancelTimer(t)
+        f.tv.apply {
+            getResidualTime(t).removeObservers(f)
+            cancelTimer(t)
+        }
         if (state.value > 0) {
             subTitle.setText(R.string.text_wifi_summary_on)
             wlanSwitch.isChecked = true

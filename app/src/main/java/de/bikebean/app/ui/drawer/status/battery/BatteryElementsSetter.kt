@@ -10,8 +10,6 @@ interface BatteryElementsSetter {
     fun setBatteryElementsPending(state: State)
     fun setBatteryElementsUnset(state: State)
 
-    fun setButtonEnabled()
-    fun setButtonDisabled()
-    fun setButtonForceEnabled()
-    fun setButtonForceDisabled()
+    fun setBatteryPending(pending: Boolean)
+    fun setLocationPending(pending: Boolean)
 }
