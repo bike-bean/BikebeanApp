@@ -31,7 +31,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:layout_marginEnd="@dimen/title_padding"
-        android:src="@drawable/ic_baseline_arrow_forward_30"
         android:contentDescription="@string/button_more_information" />
 
 </LinearLayout>
