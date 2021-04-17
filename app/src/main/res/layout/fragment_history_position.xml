@@ -5,8 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/layout_tabs" />
-
     <TextView
         android:id="@+id/noDataText"
         android:text="@string/text_no_data"

@@ -194,5 +194,25 @@ public class State extends DatabaseEntity {
 
             return KEY.BATTERY;
         }
+
+        public static boolean isLat(final @NonNull State state) {
+            return getValue(state) == LAT;
+        }
+
+        public static boolean isLng(final @NonNull State state) {
+            return getValue(state) == LNG;
+        }
+
+        public static boolean isAcc(final @NonNull State state) {
+            return getValue(state) == ACC;
+        }
+
+        public static boolean isNoCellTowers(final @NonNull State state) {
+            return getValue(state) == NO_CELL_TOWERS;
+        }
+
+        public static boolean isNoWifiAccessPoints(final @NonNull State state) {
+            return getValue(state) == NO_WIFI_ACCESS_POINTS;
+        }
     }
 }

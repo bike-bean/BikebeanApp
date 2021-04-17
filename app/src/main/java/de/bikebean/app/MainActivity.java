@@ -213,6 +213,22 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public interface LimitedBackScope {
+        boolean onBackPressed();
+    }
+
+    @Override
+    public void onBackPressed() {
+        final @NonNull Fragment fragment = getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment)
+                .getChildFragmentManager()
+                .getFragments()
+                .get(0);
+        if (!(fragment instanceof LimitedBackScope) || !((LimitedBackScope) fragment).onBackPressed()) {
+            super.onBackPressed();
+        }
+    }
+
     private int locationCurrentView = SMALL;
     private int batteryCurrentView = SMALL;
     private int settingsCurrentView = SMALL;

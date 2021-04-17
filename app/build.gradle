@@ -11,8 +11,8 @@ android {
         applicationId "de.bikebean.app"
         minSdkVersion 19
         targetSdkVersion 30
-        versionCode 15
-        versionName "0.12.3"
+        versionCode 16
+        versionName "0.12.4"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

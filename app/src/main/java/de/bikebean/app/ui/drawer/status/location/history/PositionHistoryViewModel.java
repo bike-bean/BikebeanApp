@@ -1,4 +1,4 @@
-package de.bikebean.app.ui.drawer.history.position;
+package de.bikebean.app.ui.drawer.status.location.history;
 
 import android.app.Application;
 
@@ -10,7 +10,7 @@ import java.util.List;
 
 import de.bikebean.app.db.state.LocationState;
 import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.drawer.history.HistoryViewModel;
+import de.bikebean.app.ui.drawer.status.history.HistoryViewModel;
 
 public class PositionHistoryViewModel extends HistoryViewModel {
 

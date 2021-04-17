@@ -1,4 +1,4 @@
-package de.bikebean.app.ui.drawer.history.battery;
+package de.bikebean.app.ui.drawer.status.battery.history;
 
 import android.app.Application;
 
@@ -8,7 +8,7 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 import de.bikebean.app.db.state.State;
-import de.bikebean.app.ui.drawer.history.HistoryViewModel;
+import de.bikebean.app.ui.drawer.status.history.HistoryViewModel;
 
 public class BatteryHistoryViewModel extends HistoryViewModel {
 

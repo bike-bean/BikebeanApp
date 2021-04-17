@@ -7,6 +7,7 @@ import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager
 import com.mapbox.mapboxsdk.plugins.annotation.Symbol
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions
+import com.mapbox.mapboxsdk.style.layers.Property.ICON_ANCHOR_BOTTOM
 
 class BikeSymbolManager(
         mapView: MapView,
@@ -28,6 +29,7 @@ class BikeSymbolManager(
 
     private fun addMarker(currentPosition: Point, iconId: String) : Symbol = create(
             SymbolOptions()
+                    .withIconAnchor(ICON_ANCHOR_BOTTOM)
                     .withGeometry(currentPosition)
                     .withIconImage(iconId)
     )

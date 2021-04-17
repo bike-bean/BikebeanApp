@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
+import de.bikebean.app.MainActivity
 import de.bikebean.app.R
 import de.bikebean.app.db.sms.Sms
 import de.bikebean.app.db.state.State
@@ -27,6 +28,7 @@ class BatteryStatusFragment : SubStatusFragment(), BatteryElementsSetter {
 
     // UI Elements
     private var statusButton: Button? = null
+    private var historyButton: Button? = null
     private var progressView: ProgressView? = null
     private var batteryView: BatteryView? = null
     private var buttonBack: ImageView? = null
@@ -44,6 +46,7 @@ class BatteryStatusFragment : SubStatusFragment(), BatteryElementsSetter {
                         findViewById(R.id.lastChangedIndicator)
                 )
                 statusButton = findViewById(R.id.sendButton)
+                historyButton = findViewById(R.id.historyButton)
                 progressView = ProgressView(
                         findViewById(R.id.pendingStatusText),
                         findViewById(R.id.progressBar)
@@ -76,6 +79,7 @@ class BatteryStatusFragment : SubStatusFragment(), BatteryElementsSetter {
                     isBatteryPending
             )
         }
+        historyButton!!.setOnClickListener{ navigateToHistory() }
         helpButton!!.setOnClickListener(Utils::onHelpClick)
         initTransitionButton(buttonBack, helpButton, this, false)
         titleText!!.setText(R.string.heading_battery)
@@ -140,5 +144,12 @@ class BatteryStatusFragment : SubStatusFragment(), BatteryElementsSetter {
         lastChangedView.set(st.confirmedBatterySync, this)
         progressView!!.setVisibility(true)
         batteryView!!.setStatus(requireContext(), st)
+    }
+
+    private fun navigateToHistory() {
+        (requireActivity() as MainActivity).apply {
+            resumeToolbarAndBottomSheet()
+            navigateTo(R.id.battery_action, null)
+        }
     }
 }

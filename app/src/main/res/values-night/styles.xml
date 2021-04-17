@@ -5,9 +5,4 @@
         <item name="colorPrimary">@color/white</item>
     </style>
 
-    <style name="Widget.BikeBean.ButtonOverlay.FakeTab" parent="">
-        <item name="colorPrimary">?attr/colorSurface</item>
-        <item name="colorOnPrimary">@color/white</item>
-    </style>
-
 </resources>

@@ -11,10 +11,20 @@
         android:label="@string/drawer_title_maps"
         tools:layout="@layout/fragment_map" >
 
+        <!-- to open up the map from the location info view -->
         <action
             android:id="@+id/map_action"
             app:destination="@id/navigation_map_current" />
 
+        <!-- to open up the battery history from the battery info view -->
+        <action
+            android:id="@+id/battery_action"
+            app:destination="@id/navigation_battery_history" />
+
+        <!-- to open up the position history from the location info view -->
+        <action
+            android:id="@+id/position_action"
+            app:destination="@id/navigation_position_history" />
     </fragment>
 
     <fragment
@@ -34,52 +44,70 @@
         android:id="@+id/navigation_sms_history"
         android:name="de.bikebean.app.ui.drawer.sms_history.SmsHistoryFragment"
         android:label="@string/drawer_title_sms_history"
-        tools:layout="@layout/fragment_history_sms" />
+        tools:layout="@layout/fragment_history_sms">
+
+        <!-- to get back to the main map -->
+        <action
+            android:id="@+id/map_back_action"
+            app:destination="@id/navigation_map_current" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_position_history"
-        android:name="de.bikebean.app.ui.drawer.history.position.PositionHistoryFragment"
-        android:label="@string/drawer_title_history"
+        android:name="de.bikebean.app.ui.drawer.status.location.history.PositionHistoryFragment"
+        android:label="@string/drawer_title_history_position"
         tools:layout="@layout/fragment_history_position" >
 
-        <action
-            android:id="@+id/battery_action"
-            app:destination="@id/navigation_battery_history" />
-
-        <action
-            android:id="@+id/position_action"
-            app:destination="@id/navigation_position_history" />
-
+        <!-- to open up the map from the position history view -->
         <action
             android:id="@+id/map_action"
             app:destination="@id/navigation_map_history" />
+
+        <!-- to get back to the main map -->
+        <action
+            android:id="@+id/map_back_action"
+            app:destination="@id/navigation_map_current" />
+
     </fragment>
 
     <fragment
         android:id="@+id/navigation_battery_history"
-        android:name="de.bikebean.app.ui.drawer.history.battery.BatteryHistoryFragment"
-        android:label="@string/drawer_title_history"
+        android:name="de.bikebean.app.ui.drawer.status.battery.history.BatteryHistoryFragment"
+        android:label="@string/drawer_title_history_battery"
         tools:layout="@layout/fragment_history_battery" >
 
+        <!-- to get back to the main map -->
         <action
-            android:id="@+id/battery_action"
-            app:destination="@id/navigation_battery_history" />
+            android:id="@+id/map_back_action"
+            app:destination="@id/navigation_map_current" />
 
-        <action
-            android:id="@+id/position_action"
-            app:destination="@id/navigation_position_history" />
     </fragment>
 
     <fragment
         android:id="@+id/navigation_preferences"
         android:name="de.bikebean.app.ui.drawer.preferences.PreferencesFragment"
         android:label="@string/drawer_title_preferences"
-        tools:layout="@layout/fragment_preferences" />
+        tools:layout="@layout/fragment_preferences" >
+
+        <!-- to get back to the main map -->
+        <action
+            android:id="@+id/map_back_action"
+            app:destination="@id/navigation_map_current" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_info_help"
         android:name="de.bikebean.app.ui.drawer.log.LogFragment"
         android:label="@string/drawer_title_info_help"
-        tools:layout="@layout/fragment_log" />
+        tools:layout="@layout/fragment_log" >
+
+        <!-- to get back to the main map -->
+        <action
+            android:id="@+id/map_back_action"
+            app:destination="@id/navigation_map_current" />
+
+    </fragment>
 
 </navigation>

@@ -25,7 +25,7 @@ import de.bikebean.app.db.log.Log;
 
 import static de.bikebean.app.ui.drawer.log.LogFragmentExtKt.onSendButtonClick;
 
-public class LogFragment extends Fragment {
+public class LogFragment extends Fragment implements MainActivity.LimitedBackScope {
 
     LogViewModel logViewModel;
 
@@ -71,6 +71,12 @@ public class LogFragment extends Fragment {
         final @NonNull MainActivity activity = (MainActivity) requireActivity();
         activity.setToolbarScrollEnabled(true);
         activity.resumeToolbarAndBottomSheet();
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        ((MainActivity) requireActivity()).navigateTo(R.id.map_back_action, null);
+        return true;
     }
 
     private void initSpinner() {

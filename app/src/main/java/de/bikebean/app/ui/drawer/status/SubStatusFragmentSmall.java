@@ -99,7 +99,7 @@ public abstract class SubStatusFragmentSmall extends Fragment {
         final int helpButtonVisibility;
 
         if (small) {
-            drawableRes = R.drawable.ic_baseline_arrow_forward_30;
+            drawableRes = R.drawable.ic_baseline_keyboard_arrow_down_36;
             helpButtonVisibility = View.GONE;
         } else {
             drawableRes = R.drawable.ic_baseline_close_30;
