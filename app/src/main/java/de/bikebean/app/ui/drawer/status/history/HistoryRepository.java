@@ -1,4 +1,4 @@
-package de.bikebean.app.ui.drawer.history;
+package de.bikebean.app.ui.drawer.status.history;
 
 import android.app.Application;
 

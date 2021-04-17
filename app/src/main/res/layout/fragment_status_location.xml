@@ -8,7 +8,6 @@
     <!-- title -->
     <include layout="@layout/layout_title_small_more" />
 
-
     <include
         layout="@layout/layout_meta_info"
         android:id="@+id/metaInfo" />
@@ -25,13 +24,14 @@
         app:layout_constraintTop_toBottomOf="@id/metaInfo" />
 
     <LinearLayout
+        android:id="@+id/locationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/fragment_vertical_margin"
+        android:layout_marginBottom="@dimen/fragment_vertical_margin"
         app:layout_constraintTop_toBottomOf="@id/separationLine" >
 
         <!-- info -->
@@ -71,6 +71,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/fragment_vertical_margin"
+            android:layout_marginBottom="@dimen/fragment_vertical_margin"
             android:scrollbars="none" >
 
             <LinearLayout
@@ -110,6 +111,46 @@
             </LinearLayout>
 
         </HorizontalScrollView>
+
+    </LinearLayout>
+
+    <!-- separation line -->
+    <ImageView
+        android:id="@+id/separationLine2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/fragment_horizontal_margin"
+        android:layout_marginEnd="@dimen/fragment_horizontal_margin"
+        android:background="?attr/dividerHorizontal"
+        android:contentDescription="@string/button_share"
+        app:layout_constraintTop_toBottomOf="@id/locationView" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/fragment_vertical_margin"
+        app:layout_constraintTop_toBottomOf="@id/separationLine2" >
+
+        <TextView
+            android:id="@+id/textPrevious"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBody2" />
+
+        <!-- history button -->
+        <Button
+            android:id="@+id/historyButton"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            style="?attr/materialButtonStyle"
+            android:textSize="16sp"
+            app:icon="@drawable/ic_baseline_history_24"
+            android:text="@string/button_history" />
 
     </LinearLayout>
 

@@ -28,9 +28,11 @@ class LocationStatusFragment : SubStatusFragment(), LocationElementsSetter {
     // UI Elements
     private var progressView: ProgressView? = null
     private var buttonGetLocation: Button? = null
+    private var historyButton: Button? = null
     private var buttonBack: ImageView? = null
     private var helpButton: ImageView? = null
     private var titleText: TextView? = null
+    private var previousText: TextView? = null
     private var locationInformationView: LocationInformationView? = null
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -44,12 +46,14 @@ class LocationStatusFragment : SubStatusFragment(), LocationElementsSetter {
                         findViewById(R.id.lastChangedIndicator)
                 )
                 buttonGetLocation = findViewById(R.id.sendButton)
+                historyButton = findViewById(R.id.historyButton)
                 progressView = ProgressView(
                         findViewById(R.id.pendingStatusText),
                         findViewById(R.id.progressBar)
                 )
                 buttonBack = findViewById(R.id.moreInfoButton)
                 titleText = findViewById(R.id.titleText)
+                previousText = findViewById(R.id.textPrevious)
                 locationInformationView = LocationInformationView(
                         findViewById(R.id.lat),
                         findViewById(R.id.lng),
@@ -81,6 +85,7 @@ class LocationStatusFragment : SubStatusFragment(), LocationElementsSetter {
             statusNumberCellTowers.observe(l, ::setElements)
             statusNumberWifiAccessPoints.observe(l, ::setElements)
             wapp.observe(l, ::updateWapp)
+            statusLocationLat.observe(l, ::setHistoryNumber)
         }
     }
 
@@ -94,6 +99,7 @@ class LocationStatusFragment : SubStatusFragment(), LocationElementsSetter {
                 { shareLocation() }
         )
         helpButton!!.setOnClickListener { v -> onHelpClick(v) }
+        historyButton!!.setOnClickListener{ navigateToHistory() }
 
         /* Insert two new pending States to mark waiting for response */
         buttonGetLocation!!.setOnClickListener {
@@ -215,6 +221,13 @@ class LocationStatusFragment : SubStatusFragment(), LocationElementsSetter {
         }
     }
 
+    private fun setHistoryNumber(states: List<State>) {
+        previousText?.text =
+                String.format("Anzahl der bisher gefundenen Standorte: ${states.filter { 
+                    State.STATUS.getValue(it) == State.STATUS.CONFIRMED 
+                }.size}")
+    }
+
     private fun updateLatLngAcc(locationType: LocationType?) {
         locationType ?: return
 
@@ -244,4 +257,12 @@ class LocationStatusFragment : SubStatusFragment(), LocationElementsSetter {
     private fun onRouteClick() {
         mf.startRouteIntent(this)
     }
+
+    private fun navigateToHistory() {
+        (requireActivity() as MainActivity).apply {
+            resumeToolbarAndBottomSheet()
+            navigateTo(R.id.position_action, null)
+        }
+    }
+
 }

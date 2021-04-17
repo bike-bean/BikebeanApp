@@ -6,7 +6,8 @@
     <string name="drawer_title_maps">Karte</string>
     <string name="drawer_title_wifi">WLAN-Ortung</string>
     <string name="drawer_title_sms_history">SMS Historie</string>
-    <string name="drawer_title_history">Historie (Standort &amp; Batterie)</string>
+    <string name="drawer_title_history_position">Standort-Historie</string>
+    <string name="drawer_title_history_battery">Batterie-Historie</string>
     <string name="drawer_title_preferences">Einstellungen</string>
     <string name="drawer_title_info_help">Infos &amp; Hilfe</string>
 
@@ -39,6 +40,7 @@
     <string name="button_send_log">Fehlerprotokoll senden</string>
     <string name="button_download">Herunterladen</string>
     <string name="button_update">Update</string>
+    <string name="button_history">Historie anzeigen</string>
     <string name="button_update_cancel">Jetzt nicht</string>
     <string name="button_mapbox_agree">Zustimmen</string>
     <string name="button_mapbox_disagree">Ablehnen</string>

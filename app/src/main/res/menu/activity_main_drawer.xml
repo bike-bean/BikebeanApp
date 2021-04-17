@@ -20,10 +20,7 @@
             android:id="@+id/navigation_sms_history"
             android:icon="@drawable/ic_textsms_black_24dp"
             android:title="@string/drawer_title_sms_history" />
-        <item
-            android:id="@+id/navigation_position_history"
-            android:icon="@drawable/ic_baseline_history_24"
-            android:title="@string/drawer_title_history" />
+
     </group>
 
     <group

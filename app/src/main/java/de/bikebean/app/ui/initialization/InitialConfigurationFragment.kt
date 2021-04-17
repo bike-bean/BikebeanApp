@@ -214,12 +214,9 @@ class InitialConfigurationFragment : Fragment() {
      *   - Map: If no position is found, map won't load
      *   - ...
      *   - UI: Make Wifi transitioning to on/off more clear in SettingsStatusFragmentSmall
-     *   - UI: Do make buttons available if another query is running, but maybe indicate that in
-     *         an extra dialog prior to sending the sms (or even in the same...)
-     *   - UI: Provide a shortcut to the position history (from location status view) and
-     *         to battery history (from battery status view)
      *   - UI: Provide nice way into wifi localization
      *   - UI: Position History: Provide button to show all of them!
+     *   - UI: Battery History: Provide Graph
      *   - UI: Make WLAN switched On more annoying ("warning" icons, orange background etc.)
      *   - UI: Help Snackbar Texts are rather short-lived and, more importantly, only 2 lines
      *         long! Make better!

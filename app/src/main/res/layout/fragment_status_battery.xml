@@ -85,6 +85,18 @@
             android:paddingBottom="@dimen/fragment_vertical_margin"
             android:textAppearance="?attr/textAppearanceBody2" />
 
+        <!-- history button -->
+        <Button
+            android:id="@+id/historyButton"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            style="?attr/materialButtonStyle"
+            android:textSize="16sp"
+            app:icon="@drawable/ic_baseline_history_24"
+            android:text="@string/button_history" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
