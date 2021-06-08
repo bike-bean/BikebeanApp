@@ -32,7 +32,7 @@ jobs:
         cat app/src/main/res/values/secrets.xml
       
     - name: Build with Gradle
-      uses: jojo243/android-gradle-action@1.0.0
+      uses: jojo243/android-gradle-action@2.1.0
       with:
         # The gradle command you wish to run (required)
         # Here, `./gradlew test` will be run
