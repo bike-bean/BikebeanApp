@@ -1,0 +1,24 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+  
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: set up JDK 14
+      uses: actions/setup-java@v2
+      with:
+        java-version: '14'
+        distribution: 'adopt'
+
+    - name: Build with Gradle
+      run: sh gradlew build
