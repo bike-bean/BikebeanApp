@@ -23,6 +23,9 @@ object ParserPatterns {
     var statusBatteryStatusPattern: Pattern = Pattern.compile(
             "(Battery Status: )([0-9]{1,3})(%)"
     )
+    var statusBatteryStatusPatternShort: Pattern = Pattern.compile(
+            "([0-9]{1,3})(%)"
+    )
     var warningNumberPattern: Pattern = Pattern.compile(
             "(Warningnumber has been changed to )([+0-9]{8,})"
     )
