@@ -22,6 +22,7 @@ jobs:
         MAPBOX_TOKEN: ${{ secrets.MAPBOX_TOKEN }}
       run: |
         cat << EOF > app/src/main/res/values/secrets.xml
+        <?xml version="1.0" encoding="utf-8"?>
         <resources xmlns:tools="http://schemas.android.com/tools">
           <string name="google_maps_api_key">$GOOGLE_MAPS_API_KEY</string>
           <string name="github_gist_token">$GITHUB_GIST_TOKEN</string>
