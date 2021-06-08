@@ -14,6 +14,7 @@ object ParserTypeFactory {
             Position(sms, lv),
             StatusType(sms, lv),
             StatusTypeNoWarningNumber(sms, lv),
+            StatusTypeNoWarningNumberWifiOn(sms, lv),
             WifiOn(sms, lv),
             WifiOff(sms, lv),
             WarningNumberType(sms, lv),

@@ -25,6 +25,7 @@ abstract class ParserType(
 
     /* Get results of Sms Parser */
     protected val Matcher.battery: Double get() = result.toDoubleSafe()
+    protected val Matcher.batterySimple: Double get() = resultSimple
     protected val Matcher.wifi : Boolean get() = result == "on"
     protected val Matcher.interval : Int get() = result.toInt()
 
@@ -64,9 +65,32 @@ abstract class ParserType(
         return result
     }
 
+    private val Matcher.resultSimple : Double
+        get() {
+            var count = 0
+            var result = ""
+
+            reset()
+            while (find()) {
+                count++
+                result = group(1) ?: "".also {
+                    lv.get()?.e(
+                            "Failed to parse SMS. Matcher: $this, SMS: ${sms.body}"
+                    )
+                }
+                if (count > 1)
+                    lv.get()?.e(
+                            "There should only be one instance per message!"
+                    )
+            }
+
+            return result.toDoubleSafe()
+        }
+
     enum class TYPE {
-        POSITION, STATUS, STATUS_NO_WARNING_NUMBER, WIFI_ON, WIFI_OFF,
-        WARNING_NUMBER, CELL_TOWERS, WIFI_LIST, NO_WIFI_LIST, NO_WIFI_LIST_ALT,
+        POSITION, STATUS, STATUS_NO_WARNING_NUMBER, STATUS_NO_WARNING_NUMBER_WIFI_ON,
+        WIFI_ON, WIFI_OFF, WARNING_NUMBER,
+        CELL_TOWERS, WIFI_LIST, NO_WIFI_LIST, NO_WIFI_LIST_ALT,
         INT, LOW_BATTERY, VERY_LOW_BATTERY
     }
 
