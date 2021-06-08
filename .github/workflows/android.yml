@@ -28,6 +28,7 @@ jobs:
           <string name="mapbox_token" tools:keep="@string/mapbox_token">$MAPBOX_TOKEN</string>
         </resources>
         EOF
+        cat app/src/main/res/values/secrets.xml
       
     - name: set up JDK 14
       uses: actions/setup-java@v2
