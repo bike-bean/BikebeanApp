@@ -14,6 +14,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Create dummy secrets.xml
+      run: | 
+        echo $PWD
+        echo "" > $PWD/BikebeanApp/BikebeanApp/app/src/main/res/values/secrets.xml
     - name: set up JDK 14
       uses: actions/setup-java@v2
       with:
