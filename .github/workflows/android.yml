@@ -18,7 +18,7 @@ jobs:
     - name: Create secrets.xml
       env:
         GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
-        GITHUB_GIST_TOKEN: ${{ secrets.GITHUB_GIST_TOKEN }}
+        GITHUB_GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
         MAPBOX_TOKEN: ${{ secrets.MAPBOX_TOKEN }}
       run: |
         cat << EOF > app/src/main/res/values/secrets.xml
@@ -42,5 +42,5 @@ jobs:
         # Android licence agreement id
         # You can find it on your own machine under
         # `$ANDROID_HOME/licenses/android-sdk-license`,
-        # and add the file content as a GitHub secret named `$ANDROID_LICENCE`.
-        android-licence: ${{ secrets.ANDROID_LICENCE }}
+        # and add the file content as a GitHub secret named `$ANDROID_LICENSE`.
+        android-licence: ${{ secrets.ANDROID_LICENSE }}
