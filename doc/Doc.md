@@ -49,5 +49,5 @@ To test the SMS API, use the following strings:
 | Very Low Battery | BATTERY LOW!<br>BATTERY STATUS: 8% <br>Interval set to 24h |
 | No Wifi Available | no wifi available<br>88 |
 | No Warning number set | Warningnumber: no number set<br>Interval: 12h<br>Wifi Status: off<br>Battery Status: 90% |
-| Wifi is on (bike-bean/Bike-Bean#6) | Warningnumber: 015112345678<br>Interval: 12h<br>Wifi Status: on<br>90% |
-| Wifi is on & no warning number | Warningnumber: no number set<br>Interval: 12h<br>Wifi Status: on<br>90% |
+| Wifi is on <br>([bike-bean/Bike-Bean#6](https://github.com/bike-bean/Bike-Bean/pull/6)) | Warningnumber: 015112345678<br>Interval: 12h<br>Wifi Status: on<br>90% |
+| Wifi is on & <br>no warning number | Warningnumber: no number set<br>Interval: 12h<br>Wifi Status: on<br>90% |
