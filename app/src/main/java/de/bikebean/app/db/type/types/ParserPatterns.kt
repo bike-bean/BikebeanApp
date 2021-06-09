@@ -12,13 +12,16 @@ object ParserPatterns {
             "(Warningnumber: )([+0-9]{8,})"
     )
     var statusNoWarningNumberPattern: Pattern = Pattern.compile(
-            "(Warningnumber: )"
+            "(Warningnumber: )(no number set)"
     )
     var statusIntervalPattern: Pattern = Pattern.compile(
             "(Interval: )(1|2|4|8|12|24)(h)"
     )
-    var statusWifiStatusPattern: Pattern = Pattern.compile(
-            "(Wifi Status: )(on|off)"
+    var statusWifiStatusOffPattern: Pattern = Pattern.compile(
+            "(Wifi Status: )(off)"
+    )
+    var statusWifiStatusOnPattern: Pattern = Pattern.compile(
+            "(Wifi Status: )(on)"
     )
     var statusBatteryStatusPattern: Pattern = Pattern.compile(
             "(Battery Status: )([0-9]{1,3})(%)"
