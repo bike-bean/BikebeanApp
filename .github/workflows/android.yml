@@ -29,18 +29,9 @@ jobs:
           <string name="mapbox_token" tools:keep="@string/mapbox_token">$MAPBOX_TOKEN</string>
         </resources>
         EOF
-        cat app/src/main/res/values/secrets.xml
       
     - name: Build with Gradle
-      uses: jojo243/android-gradle-action@2.1.0
+      uses: jojo243/android-gradle-action@2.1.1
       with:
-        # The gradle command you wish to run (required)
-        # Here, `./gradlew test` will be run
         script: :app:assembleDebug
-        
-        # In some cases, you may need to provide
-        # Android licence agreement id
-        # You can find it on your own machine under
-        # `$ANDROID_HOME/licenses/android-sdk-license`,
-        # and add the file content as a GitHub secret named `$ANDROID_LICENSE`.
         android-licence: ${{ secrets.ANDROID_LICENSE }}
