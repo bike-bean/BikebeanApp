@@ -38,7 +38,7 @@ To test the SMS API, use the following strings:
 | SMS Befehl    | Text |
 | ------------- | ------------------------------------ |
 | Pos           | 262,03,55f1,a473,36<br>262,03,55f1,5653,21<br>262,03,55f1,4400,20<br>262,03,55f1,8b40,12<br>262,03,55f1,6bb2,10<br>262,03,55f1,0833,09<br>262,03,55f1,6bcd,03<br>.............<br>Battery Status: 30% |
-| Status        | Warningnumber: 015112345678<br>Interval: 12h<br>Wifi Status: on<br>Battery Status: 90% |
+| Status        | Warningnumber: 015112345678<br>Interval: 12h<br>Wifi Status: off<br>Battery Status: 90% |
 | Wifi on       | Fancy Wifi SSID,30<br>Another Wifi SSID,60<br>Wifi is on!<br>Battery Status: 5% |
 | Wifi off      | Wifi Off<br>Battery Status: 100% |
 | Warningnumber | Warningnumber has been changed to 0179987654321<br>Battery Status: 15% |
@@ -48,3 +48,6 @@ To test the SMS API, use the following strings:
 | Low Battery   | BATTERY LOW!<br>BATTERY STATUS: 19% |
 | Very Low Battery | BATTERY LOW!<br>BATTERY STATUS: 8% <br>Interval set to 24h |
 | No Wifi Available | no wifi available<br>88 |
+| No Warning number set | Warningnumber: no number set<br>Interval: 12h<br>Wifi Status: off<br>Battery Status: 90% |
+| Wifi is on (bike-bean/Bike-Bean#6) | Warningnumber: 015112345678<br>Interval: 12h<br>Wifi Status: on<br>90% |
+| Wifi is on & no warning number | Warningnumber: no number set<br>Interval: 12h<br>Wifi Status: on<br>90% |

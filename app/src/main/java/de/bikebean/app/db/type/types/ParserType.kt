@@ -26,7 +26,6 @@ abstract class ParserType(
     /* Get results of Sms Parser */
     protected val Matcher.battery: Double get() = result.toDoubleSafe()
     protected val Matcher.batterySimple: Double get() = resultSimple
-    protected val Matcher.wifi : Boolean get() = result == "on"
     protected val Matcher.interval : Int get() = result.toInt()
 
     protected fun String.toDoubleSafe() = when {
@@ -88,7 +87,8 @@ abstract class ParserType(
         }
 
     enum class TYPE {
-        POSITION, STATUS, STATUS_NO_WARNING_NUMBER, STATUS_NO_WARNING_NUMBER_WIFI_ON,
+        POSITION, STATUS_WIFI_OFF, STATUS_WIFI_ON,
+        STATUS_NO_WARNING_NUMBER_WIFI_OFF, STATUS_NO_WARNING_NUMBER_WIFI_ON,
         WIFI_ON, WIFI_OFF, WARNING_NUMBER,
         CELL_TOWERS, WIFI_LIST, NO_WIFI_LIST, NO_WIFI_LIST_ALT,
         INT, LOW_BATTERY, VERY_LOW_BATTERY
