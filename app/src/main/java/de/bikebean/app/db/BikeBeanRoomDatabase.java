@@ -19,7 +19,7 @@ import de.bikebean.app.db.sms.SmsDao;
 import de.bikebean.app.db.state.State;
 import de.bikebean.app.db.state.StateDao;
 
-@Database(entities = {Sms.class, State.class, Log.class}, version = 11, exportSchema = false)
+@Database(entities = {Sms.class, State.class, Log.class}, version = 12, exportSchema = false)
 @TypeConverters({LevelConverters.class})
 public abstract class BikeBeanRoomDatabase extends RoomDatabase {
 
