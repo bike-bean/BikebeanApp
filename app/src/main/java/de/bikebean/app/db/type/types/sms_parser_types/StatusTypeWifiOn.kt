@@ -8,33 +8,32 @@ import de.bikebean.app.db.settings.settings.replace_if_newer_settings.Wifi
 import de.bikebean.app.db.sms.Sms
 import de.bikebean.app.db.type.types.ParserPatterns.statusBatteryStatusPattern
 import de.bikebean.app.db.type.types.ParserPatterns.statusIntervalPattern
-import de.bikebean.app.db.type.types.ParserPatterns.statusNoWarningNumberPattern
-import de.bikebean.app.db.type.types.ParserPatterns.statusWifiStatusPattern
+import de.bikebean.app.db.type.types.ParserPatterns.statusWarningNumberPattern
+import de.bikebean.app.db.type.types.ParserPatterns.statusWifiStatusOnPattern
 import de.bikebean.app.db.type.types.ParserType
 import de.bikebean.app.ui.drawer.log.LogViewModel
 import java.lang.ref.WeakReference
 
-class StatusTypeNoWarningNumber(
-        sms: Sms, lv: WeakReference<LogViewModel>
-) : ParserType(TYPE.STATUS_NO_WARNING_NUMBER, sms, lv) {
+class StatusTypeWifiOn(sms: Sms, lv: WeakReference<LogViewModel>) : ParserType(TYPE.STATUS_WIFI_ON, sms, lv) {
 
-    private val statusNoWarningNumberMatcher = statusNoWarningNumberPattern.matcher(sms.body)
+    private val statusWarningNumberMatcher = statusWarningNumberPattern.matcher(sms.body)
     private val statusIntervalMatcher = statusIntervalPattern.matcher(sms.body)
-    private val statusWifiStatusMatcher = statusWifiStatusPattern.matcher(sms.body)
+    private val statusWifiStatusOnMatcher = statusWifiStatusOnPattern.matcher(sms.body)
     private val statusBatteryStatusMatcher = statusBatteryStatusPattern.matcher(sms.body)
 
     override val matchers = listOf(
-            statusNoWarningNumberMatcher,
-            statusBatteryStatusMatcher,
+            statusWarningNumberMatcher,
             statusIntervalMatcher,
-            statusWifiStatusMatcher
+            statusWifiStatusOnMatcher,
+            statusBatteryStatusMatcher
     )
 
     override val settings get() = listOf(
-            WarningNumber(sms),
+            WarningNumber(sms, statusWarningNumberMatcher.result),
             Interval(sms, statusIntervalMatcher.interval),
-            Wifi(sms, statusWifiStatusMatcher.wifi),
+            Wifi(sms, true),
             Battery(sms, statusBatteryStatusMatcher.battery),
             Status(sms)
     )
+
 }

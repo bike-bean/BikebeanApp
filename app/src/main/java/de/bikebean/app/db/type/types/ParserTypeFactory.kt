@@ -12,8 +12,9 @@ object ParserTypeFactory {
 
     private fun typesToCheck(sms: Sms, lv: WeakReference<LogViewModel>) = listOf(
             Position(sms, lv),
-            StatusType(sms, lv),
-            StatusTypeNoWarningNumber(sms, lv),
+            StatusTypeWifiOff(sms, lv),
+            StatusTypeWifiOn(sms, lv),
+            StatusTypeNoWarningNumberWifiOff(sms, lv),
             StatusTypeNoWarningNumberWifiOn(sms, lv),
             WifiOn(sms, lv),
             WifiOff(sms, lv),
