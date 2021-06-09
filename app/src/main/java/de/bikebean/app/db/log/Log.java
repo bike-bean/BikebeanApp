@@ -49,17 +49,6 @@ public class Log extends DatabaseEntity {
         this.mLevel = level;
     }
 
-    @Ignore
-    public Log(
-            final @NonNull String message,
-            final @NonNull String callerInformation,
-            final @NonNull LEVEL level
-    ) {
-        this.mTimestamp = System.currentTimeMillis();
-        this.mMessage = callerInformation + ": "+ message;
-        this.mLevel = level;
-    }
-
     // nullType
     @Ignore
     public Log() {
