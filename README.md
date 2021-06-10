@@ -1,3 +1,5 @@
+[![Android CI](https://github.com/bike-bean/BikebeanApp/actions/workflows/android.yml/badge.svg)](https://github.com/bike-bean/BikebeanApp/actions/workflows/android.yml)
+
 # Bike Bean App
 
 This repository contains the source code for the Bike Bean App.

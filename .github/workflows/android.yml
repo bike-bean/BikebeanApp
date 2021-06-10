@@ -1,0 +1,37 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+  
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+    - name: Create secrets.xml
+      env:
+        GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+        GITHUB_GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
+        MAPBOX_TOKEN: ${{ secrets.MAPBOX_TOKEN }}
+      run: |
+        cat << EOF > app/src/main/res/values/secrets.xml
+        <?xml version="1.0" encoding="utf-8"?>
+        <resources xmlns:tools="http://schemas.android.com/tools">
+          <string name="google_maps_api_key">$GOOGLE_MAPS_API_KEY</string>
+          <string name="github_gist_token">$GITHUB_GIST_TOKEN</string>
+          <string name="mapbox_token" tools:keep="@string/mapbox_token">$MAPBOX_TOKEN</string>
+        </resources>
+        EOF
+      
+    - name: Build with Gradle
+      uses: jojo243/android-gradle-action@2.1.3
+      with:
+        script: :app:assembleDebug
+        android-license: ${{ secrets.ANDROID_LICENSE }}
