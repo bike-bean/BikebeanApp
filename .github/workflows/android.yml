@@ -31,7 +31,7 @@ jobs:
         EOF
       
     - name: Build with Gradle
-      uses: jojo243/android-gradle-action@2.1.2
+      uses: jojo243/android-gradle-action@2.1.3
       with:
         script: :app:assembleDebug
         android-license: ${{ secrets.ANDROID_LICENSE }}
